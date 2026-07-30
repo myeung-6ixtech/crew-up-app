@@ -1,0 +1,76 @@
+{
+  "appName": "CrewUp",
+  "tabs": {
+    "home": "Home",
+    "network": "Network",
+    "events": "Events",
+    "messages": "Messages",
+    "profile": "Profile"
+  },
+  "auth": {
+    "login": "Sign in",
+    "register": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "signOut": "Sign out"
+  },
+  "onboarding": {
+    "title": "Set up your profile",
+    "role": "Role",
+    "base": "Base airport",
+    "language": "Preferred language",
+    "visibility": "Default visibility",
+    "continue": "Continue"
+  },
+  "verification": {
+    "pending": "Verification pending",
+    "pendingBody": "We're reviewing your crew credentials. You'll get full access once approved.",
+    "verified": "Verified crew",
+    "uploadId": "Upload crew ID"
+  },
+  "home": {
+    "layovers": "Upcoming layovers",
+    "whosAround": "Who's around",
+    "suggestedEvents": "Suggested events",
+    "emptyRoster": "Upload your roster to see layovers and matching."
+  },
+  "roster": {
+    "upload": "Update schedule",
+    "confirm": "Confirm layovers",
+    "manage": "My schedule",
+    "manual": "Enter manually"
+  },
+  "network": {
+    "connections": "Connections",
+    "discover": "Discover crew",
+    "connect": "Connect",
+    "accept": "Accept",
+    "decline": "Decline"
+  },
+  "events": {
+    "create": "Create meetup",
+    "rsvp": "RSVP",
+    "going": "Going",
+    "waitlisted": "Waitlisted"
+  },
+  "messages": {
+    "title": "Messages",
+    "placeholder": "Type a message…",
+    "send": "Send"
+  },
+  "safety": {
+    "report": "Report",
+    "block": "Block",
+    "safetyCenter": "Safety Center",
+    "nudgeTitle": "Meeting someone new?",
+    "nudgeBody": "Prefer a public place or a group meetup. You can share plans with a friend outside the app."
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "save": "Save",
+    "cancel": "Cancel"
+  }
+}

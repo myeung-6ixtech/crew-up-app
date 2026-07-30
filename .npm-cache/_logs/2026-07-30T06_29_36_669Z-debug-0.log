@@ -1,0 +1,1328 @@
+0 verbose cli /usr/local/bin/node /usr/local/bin/npm
+1 info using npm@11.10.0
+2 info using node@v24.13.0
+3 silly config load:file:/usr/local/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/museryeung/Documents/dev/crew-up-project/crew-up-app/.npmrc
+5 silly config load:file:/Users/museryeung/.npmrc
+6 silly config load:file:/usr/local/etc/npmrc
+7 verbose title npm install @nhost/nhost-js @apollo/client graphql @shopify/flash-list react-native-gesture-handler zustand react-hook-form zod @hookform/resolvers i18next react-i18next expo-localization expo-secure-store expo-notifications expo-image-picker expo-document-picker clsx
+8 verbose argv "install" "@nhost/nhost-js" "@apollo/client" "graphql" "@shopify/flash-list" "react-native-gesture-handler" "zustand" "react-hook-form" "zod" "@hookform/resolvers" "i18next" "react-i18next" "expo-localization" "expo-secure-store" "expo-notifications" "expo-image-picker" "expo-document-picker" "clsx"
+9 verbose logfile logs-max:10 dir:/Users/museryeung/Documents/dev/crew-up-project/crew-up-app/.npm-cache/_logs/2026-07-30T06_29_36_669Z-
+10 verbose logfile /Users/museryeung/Documents/dev/crew-up-project/crew-up-app/.npm-cache/_logs/2026-07-30T06_29_36_669Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+13 silly idealTree buildDeps
+14 silly fetch manifest @nhost/nhost-js@*
+15 silly packumentCache full:https://registry.npmjs.org/@nhost%2fnhost-js cache-miss
+16 http cache https://registry.npmjs.org/@nhost%2fnhost-js 37ms (cache hit)
+17 silly packumentCache full:https://registry.npmjs.org/@nhost%2fnhost-js set size:758308 disposed:false
+18 silly fetch manifest @apollo/client@*
+19 silly packumentCache full:https://registry.npmjs.org/@apollo%2fclient cache-miss
+20 http cache https://registry.npmjs.org/@apollo%2fclient 5ms (cache hit)
+21 silly packumentCache full:https://registry.npmjs.org/@apollo%2fclient set size:3839069 disposed:false
+22 silly fetch manifest graphql@*
+23 silly packumentCache full:https://registry.npmjs.org/graphql cache-miss
+24 http cache https://registry.npmjs.org/graphql 2ms (cache hit)
+25 silly packumentCache full:https://registry.npmjs.org/graphql set size:886172 disposed:false
+26 silly fetch manifest graphql-ws@^5.5.5 || ^6.0.3
+27 silly packumentCache full:https://registry.npmjs.org/graphql-ws cache-miss
+28 http cache https://registry.npmjs.org/graphql-ws 2ms (cache hit)
+29 silly packumentCache full:https://registry.npmjs.org/graphql-ws set size:781653 disposed:false
+30 silly fetch manifest @fastify/websocket@^10 || ^11
+31 silly packumentCache full:https://registry.npmjs.org/@fastify%2fwebsocket cache-miss
+32 http cache https://registry.npmjs.org/@fastify%2fwebsocket 1ms (cache hit)
+33 silly packumentCache full:https://registry.npmjs.org/@fastify%2fwebsocket set size:108337 disposed:false
+34 silly fetch manifest crossws@~0.3
+35 silly packumentCache full:https://registry.npmjs.org/crossws cache-miss
+36 http cache https://registry.npmjs.org/crossws 1ms (cache hit)
+37 silly packumentCache full:https://registry.npmjs.org/crossws set size:111477 disposed:false
+38 silly fetch manifest ws@^8
+39 silly packumentCache full:https://registry.npmjs.org/ws cache-miss
+40 http cache https://registry.npmjs.org/ws 2ms (cache hit)
+41 silly packumentCache full:https://registry.npmjs.org/ws set size:426890 disposed:false
+42 silly fetch manifest bufferutil@^4.0.1
+43 silly packumentCache full:https://registry.npmjs.org/bufferutil cache-miss
+44 http cache https://registry.npmjs.org/bufferutil 2ms (cache hit)
+45 silly packumentCache full:https://registry.npmjs.org/bufferutil set size:52763 disposed:false
+46 silly fetch manifest utf-8-validate@>=5.0.2
+47 silly packumentCache full:https://registry.npmjs.org/utf-8-validate cache-miss
+48 http cache https://registry.npmjs.org/utf-8-validate 1ms (cache hit)
+49 silly packumentCache full:https://registry.npmjs.org/utf-8-validate set size:77148 disposed:false
+50 silly fetch manifest react@19.2.3
+51 silly packumentCache full:https://registry.npmjs.org/react cache-miss
+52 http cache https://registry.npmjs.org/react 6ms (cache hit)
+53 silly packumentCache full:https://registry.npmjs.org/react set size:6844555 disposed:false
+54 silly fetch manifest react-dom@19.2.3
+55 silly packumentCache full:https://registry.npmjs.org/react-dom cache-miss
+56 http cache https://registry.npmjs.org/react-dom 11ms (cache hit)
+57 silly packumentCache full:https://registry.npmjs.org/react-dom set size:9183359 disposed:false
+58 silly fetch manifest rxjs@^7.3.0
+59 silly packumentCache full:https://registry.npmjs.org/rxjs cache-miss
+60 http fetch GET 200 https://registry.npmjs.org/rxjs 455ms (cache miss)
+61 silly packumentCache full:https://registry.npmjs.org/rxjs set size:undefined disposed:false
+62 silly fetch manifest subscriptions-transport-ws@^0.9.0 || ^0.11.0
+63 silly packumentCache full:https://registry.npmjs.org/subscriptions-transport-ws cache-miss
+64 http cache https://registry.npmjs.org/subscriptions-transport-ws 1ms (cache hit)
+65 silly packumentCache full:https://registry.npmjs.org/subscriptions-transport-ws set size:245499 disposed:false
+66 silly fetch manifest graphql@^15.7.2 || ^16.0.0
+67 silly packumentCache full:https://registry.npmjs.org/graphql cache-hit
+68 silly fetch manifest @shopify/flash-list@*
+69 silly packumentCache full:https://registry.npmjs.org/@shopify%2fflash-list cache-miss
+70 http cache https://registry.npmjs.org/@shopify%2fflash-list 1ms (cache hit)
+71 silly packumentCache full:https://registry.npmjs.org/@shopify%2fflash-list set size:354614 disposed:false
+72 silly fetch manifest @babel/runtime@*
+73 silly packumentCache full:https://registry.npmjs.org/@babel%2fruntime cache-miss
+74 http cache https://registry.npmjs.org/@babel%2fruntime 4ms (cache hit)
+75 silly packumentCache full:https://registry.npmjs.org/@babel%2fruntime set size:3471810 disposed:false
+76 silly fetch manifest react-native@0.86.2
+77 silly packumentCache full:https://registry.npmjs.org/react-native cache-miss
+78 http cache https://registry.npmjs.org/react-native 14ms (cache hit)
+79 silly packumentCache full:https://registry.npmjs.org/react-native set size:15588295 disposed:false
+80 silly fetch manifest @react-native/jest-preset@0.86.2
+81 silly packumentCache full:https://registry.npmjs.org/@react-native%2fjest-preset cache-miss
+82 http cache https://registry.npmjs.org/@react-native%2fjest-preset 3ms (cache hit)
+83 silly packumentCache full:https://registry.npmjs.org/@react-native%2fjest-preset set size:312357 disposed:false
+84 silly fetch manifest @types/react@~19.2.2
+85 silly packumentCache full:https://registry.npmjs.org/@types%2freact cache-miss
+86 http cache https://registry.npmjs.org/@types%2freact 4ms (cache hit)
+87 silly packumentCache full:https://registry.npmjs.org/@types%2freact set size:2632776 disposed:false
+88 silly fetch manifest react-native-gesture-handler@*
+89 silly packumentCache full:https://registry.npmjs.org/react-native-gesture-handler cache-miss
+90 http cache https://registry.npmjs.org/react-native-gesture-handler 3ms (cache hit)
+91 silly packumentCache full:https://registry.npmjs.org/react-native-gesture-handler set size:1263534 disposed:false
+92 silly fetch manifest zustand@*
+93 silly packumentCache full:https://registry.npmjs.org/zustand cache-miss
+94 http cache https://registry.npmjs.org/zustand 1ms (cache hit)
+95 silly packumentCache full:https://registry.npmjs.org/zustand set size:486775 disposed:false
+96 silly fetch manifest immer@>=9.0.6
+97 silly packumentCache full:https://registry.npmjs.org/immer cache-miss
+98 http cache https://registry.npmjs.org/immer 2ms (cache hit)
+99 silly packumentCache full:https://registry.npmjs.org/immer set size:787228 disposed:false
+100 silly fetch manifest use-sync-external-store@>=1.2.0
+101 silly packumentCache full:https://registry.npmjs.org/use-sync-external-store cache-miss
+102 http cache https://registry.npmjs.org/use-sync-external-store 5ms (cache hit)
+103 silly packumentCache full:https://registry.npmjs.org/use-sync-external-store set size:4877685 disposed:false
+104 silly fetch manifest react-hook-form@*
+105 silly packumentCache full:https://registry.npmjs.org/react-hook-form cache-miss
+106 http cache https://registry.npmjs.org/react-hook-form 6ms (cache hit)
+107 silly packumentCache full:https://registry.npmjs.org/react-hook-form set size:5189031 disposed:false
+108 silly fetch manifest zod@*
+109 silly packumentCache full:https://registry.npmjs.org/zod cache-miss
+110 http cache https://registry.npmjs.org/zod 7ms (cache hit)
+111 silly packumentCache full:https://registry.npmjs.org/zod set size:3552562 disposed:false
+112 silly fetch manifest @hookform/resolvers@*
+113 silly packumentCache full:https://registry.npmjs.org/@hookform%2fresolvers cache-miss
+114 http cache https://registry.npmjs.org/@hookform%2fresolvers 1ms (cache hit)
+115 silly packumentCache full:https://registry.npmjs.org/@hookform%2fresolvers set size:1019236 disposed:false
+116 silly fetch manifest @sinclair/typebox@>=0.25.24
+117 silly packumentCache full:https://registry.npmjs.org/@sinclair%2ftypebox cache-miss
+118 http cache https://registry.npmjs.org/@sinclair%2ftypebox 2ms (cache hit)
+119 silly packumentCache full:https://registry.npmjs.org/@sinclair%2ftypebox set size:1212785 disposed:false
+120 silly fetch manifest @standard-schema/spec@^1.0.0
+121 silly packumentCache full:https://registry.npmjs.org/@standard-schema%2fspec cache-miss
+122 http cache https://registry.npmjs.org/@standard-schema%2fspec 3ms (cache hit)
+123 silly packumentCache full:https://registry.npmjs.org/@standard-schema%2fspec set size:27284 disposed:false
+124 silly fetch manifest @typeschema/main@>=0.13.7
+125 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fmain cache-miss
+126 http cache https://registry.npmjs.org/@typeschema%2fmain 2ms (cache hit)
+127 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fmain set size:64746 disposed:false
+128 silly fetch manifest @typeschema/arktype@0.14.0
+129 silly packumentCache full:https://registry.npmjs.org/@typeschema%2farktype cache-miss
+130 http cache https://registry.npmjs.org/@typeschema%2farktype 1ms (cache hit)
+131 silly packumentCache full:https://registry.npmjs.org/@typeschema%2farktype set size:13451 disposed:false
+132 silly fetch manifest arktype@^2.0.0-rc.0
+133 silly packumentCache full:https://registry.npmjs.org/arktype cache-miss
+134 http cache https://registry.npmjs.org/arktype 3ms (cache hit)
+135 silly packumentCache full:https://registry.npmjs.org/arktype set size:423205 disposed:false
+136 silly fetch manifest @typeschema/class-validator@0.3.0
+137 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fclass-validator cache-miss
+138 http cache https://registry.npmjs.org/@typeschema%2fclass-validator 3ms (cache hit)
+139 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fclass-validator set size:16735 disposed:false
+140 silly fetch manifest class-validator@^0.14.1
+141 silly packumentCache full:https://registry.npmjs.org/class-validator cache-miss
+142 http cache https://registry.npmjs.org/class-validator 2ms (cache hit)
+143 silly packumentCache full:https://registry.npmjs.org/class-validator set size:223768 disposed:false
+144 silly fetch manifest @typeschema/deepkit@0.14.0
+145 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fdeepkit cache-miss
+146 http cache https://registry.npmjs.org/@typeschema%2fdeepkit 2ms (cache hit)
+147 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fdeepkit set size:19158 disposed:false
+148 silly fetch manifest @deepkit/type@^1.0.1-alpha.145
+149 silly packumentCache full:https://registry.npmjs.org/@deepkit%2ftype cache-miss
+150 http cache https://registry.npmjs.org/@deepkit%2ftype 1ms (cache hit)
+151 silly packumentCache full:https://registry.npmjs.org/@deepkit%2ftype set size:402687 disposed:false
+152 silly fetch manifest @deepkit/core@^1.0.1
+153 silly packumentCache full:https://registry.npmjs.org/@deepkit%2fcore cache-miss
+154 http cache https://registry.npmjs.org/@deepkit%2fcore 1ms (cache hit)
+155 silly packumentCache full:https://registry.npmjs.org/@deepkit%2fcore set size:237858 disposed:false
+156 silly fetch manifest @typeschema/effect@0.14.0
+157 silly packumentCache full:https://registry.npmjs.org/@typeschema%2feffect cache-miss
+158 http cache https://registry.npmjs.org/@typeschema%2feffect 1ms (cache hit)
+159 silly packumentCache full:https://registry.npmjs.org/@typeschema%2feffect set size:19715 disposed:false
+160 silly fetch manifest @effect/schema@^0.71.1
+161 silly packumentCache full:https://registry.npmjs.org/@effect%2fschema cache-miss
+162 http cache https://registry.npmjs.org/@effect%2fschema 2ms (cache hit)
+163 silly packumentCache full:https://registry.npmjs.org/@effect%2fschema set size:1278231 disposed:false
+164 silly fetch manifest effect@^3.6.8
+165 silly packumentCache full:https://registry.npmjs.org/effect cache-miss
+166 http cache https://registry.npmjs.org/effect 8ms (cache hit)
+167 silly packumentCache full:https://registry.npmjs.org/effect set size:10286679 disposed:false
+168 silly fetch manifest @typeschema/fastest-validator@0.2.0
+169 silly packumentCache full:https://registry.npmjs.org/@typeschema%2ffastest-validator cache-miss
+170 http cache https://registry.npmjs.org/@typeschema%2ffastest-validator 6ms (cache hit)
+171 silly packumentCache full:https://registry.npmjs.org/@typeschema%2ffastest-validator set size:8241 disposed:false
+172 silly fetch manifest fastest-validator@^1.19.0
+173 silly packumentCache full:https://registry.npmjs.org/fastest-validator cache-miss
+174 http cache https://registry.npmjs.org/fastest-validator 1ms (cache hit)
+175 silly packumentCache full:https://registry.npmjs.org/fastest-validator set size:240519 disposed:false
+176 silly fetch manifest @typeschema/function@0.14.0
+177 silly packumentCache full:https://registry.npmjs.org/@typeschema%2ffunction cache-miss
+178 http cache https://registry.npmjs.org/@typeschema%2ffunction 1ms (cache hit)
+179 silly packumentCache full:https://registry.npmjs.org/@typeschema%2ffunction set size:13118 disposed:false
+180 silly fetch manifest @typeschema/io-ts@0.14.0
+181 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fio-ts cache-miss
+182 http cache https://registry.npmjs.org/@typeschema%2fio-ts 2ms (cache hit)
+183 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fio-ts set size:16584 disposed:false
+184 silly fetch manifest fp-ts@^2.16.9
+185 silly packumentCache full:https://registry.npmjs.org/fp-ts cache-miss
+186 http cache https://registry.npmjs.org/fp-ts 3ms (cache hit)
+187 silly packumentCache full:https://registry.npmjs.org/fp-ts set size:662771 disposed:false
+188 silly fetch manifest io-ts@^2.2.21
+189 silly packumentCache full:https://registry.npmjs.org/io-ts cache-miss
+190 http cache https://registry.npmjs.org/io-ts 2ms (cache hit)
+191 silly packumentCache full:https://registry.npmjs.org/io-ts set size:367490 disposed:false
+192 silly fetch manifest @typeschema/joi@0.14.0
+193 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fjoi cache-miss
+194 http cache https://registry.npmjs.org/@typeschema%2fjoi 1ms (cache hit)
+195 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fjoi set size:16153 disposed:false
+196 silly fetch manifest joi@^17.13.3
+197 silly packumentCache full:https://registry.npmjs.org/joi cache-miss
+198 http cache https://registry.npmjs.org/joi 1ms (cache hit)
+199 silly packumentCache full:https://registry.npmjs.org/joi set size:525242 disposed:false
+200 silly fetch manifest joi-to-json@^4.3.0
+201 silly packumentCache full:https://registry.npmjs.org/joi-to-json cache-miss
+202 http cache https://registry.npmjs.org/joi-to-json 1ms (cache hit)
+203 silly packumentCache full:https://registry.npmjs.org/joi-to-json set size:122751 disposed:false
+204 silly fetch manifest @typeschema/json@0.14.0
+205 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fjson cache-miss
+206 http cache https://registry.npmjs.org/@typeschema%2fjson 1ms (cache hit)
+207 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fjson set size:16546 disposed:false
+208 silly fetch manifest ajv@^8.17.1
+209 silly packumentCache full:https://registry.npmjs.org/ajv cache-miss
+210 http cache https://registry.npmjs.org/ajv 2ms (cache hit)
+211 silly packumentCache full:https://registry.npmjs.org/ajv set size:1142658 disposed:false
+212 silly fetch manifest json-schema-to-ts@^3.1.0
+213 silly packumentCache full:https://registry.npmjs.org/json-schema-to-ts cache-miss
+214 http cache https://registry.npmjs.org/json-schema-to-ts 1ms (cache hit)
+215 silly packumentCache full:https://registry.npmjs.org/json-schema-to-ts set size:287972 disposed:false
+216 silly fetch manifest @typeschema/ow@0.14.0
+217 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fow cache-miss
+218 http cache https://registry.npmjs.org/@typeschema%2fow 2ms (cache hit)
+219 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fow set size:15748 disposed:false
+220 silly fetch manifest ow@^0.28.2
+221 silly packumentCache full:https://registry.npmjs.org/ow cache-miss
+222 http cache https://registry.npmjs.org/ow 2ms (cache hit)
+223 silly packumentCache full:https://registry.npmjs.org/ow set size:190008 disposed:false
+224 silly fetch manifest @typeschema/runtypes@0.14.0
+225 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fruntypes cache-miss
+226 http cache https://registry.npmjs.org/@typeschema%2fruntypes 2ms (cache hit)
+227 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fruntypes set size:13458 disposed:false
+228 silly fetch manifest runtypes@^6.7.0
+229 silly packumentCache full:https://registry.npmjs.org/runtypes cache-miss
+230 http cache https://registry.npmjs.org/runtypes 1ms (cache hit)
+231 silly packumentCache full:https://registry.npmjs.org/runtypes set size:254447 disposed:false
+232 silly fetch manifest @typeschema/superstruct@0.14.0
+233 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fsuperstruct cache-miss
+234 http cache https://registry.npmjs.org/@typeschema%2fsuperstruct 2ms (cache hit)
+235 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fsuperstruct set size:13577 disposed:false
+236 silly fetch manifest superstruct@^2.0.2
+237 silly packumentCache full:https://registry.npmjs.org/superstruct cache-miss
+238 http cache https://registry.npmjs.org/superstruct 2ms (cache hit)
+239 silly packumentCache full:https://registry.npmjs.org/superstruct set size:403823 disposed:false
+240 silly fetch manifest @typeschema/suretype@0.2.0
+241 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fsuretype cache-miss
+242 http cache https://registry.npmjs.org/@typeschema%2fsuretype 2ms (cache hit)
+243 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fsuretype set size:8423 disposed:false
+244 silly fetch manifest suretype@^3.3.1
+245 silly packumentCache full:https://registry.npmjs.org/suretype cache-miss
+246 http cache https://registry.npmjs.org/suretype 2ms (cache hit)
+247 silly packumentCache full:https://registry.npmjs.org/suretype set size:96800 disposed:false
+248 silly fetch manifest @typeschema/typebox@0.14.0
+249 silly packumentCache full:https://registry.npmjs.org/@typeschema%2ftypebox cache-miss
+250 http cache https://registry.npmjs.org/@typeschema%2ftypebox 1ms (cache hit)
+251 silly packumentCache full:https://registry.npmjs.org/@typeschema%2ftypebox set size:19229 disposed:false
+252 silly fetch manifest @sinclair/typebox@^0.33.7
+253 silly packumentCache full:https://registry.npmjs.org/@sinclair%2ftypebox cache-miss
+254 http cache https://registry.npmjs.org/@sinclair%2ftypebox 1ms (cache hit)
+255 silly packumentCache full:https://registry.npmjs.org/@sinclair%2ftypebox set size:1212785 disposed:false
+256 silly fetch manifest @typeschema/valibot@0.14.0
+257 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fvalibot cache-miss
+258 http cache https://registry.npmjs.org/@typeschema%2fvalibot 1ms (cache hit)
+259 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fvalibot set size:22952 disposed:false
+260 silly fetch manifest @gcornut/valibot-json-schema@^0.37.0
+261 silly packumentCache full:https://registry.npmjs.org/@gcornut%2fvalibot-json-schema cache-miss
+262 http cache https://registry.npmjs.org/@gcornut%2fvalibot-json-schema 1ms (cache hit)
+263 silly packumentCache full:https://registry.npmjs.org/@gcornut%2fvalibot-json-schema set size:212480 disposed:false
+264 silly fetch manifest valibot@^0.39.0
+265 silly packumentCache full:https://registry.npmjs.org/valibot cache-miss
+266 http cache https://registry.npmjs.org/valibot 1ms (cache hit)
+267 silly packumentCache full:https://registry.npmjs.org/valibot set size:258931 disposed:false
+268 silly fetch manifest typescript@~6.0.3
+269 silly packumentCache full:https://registry.npmjs.org/typescript cache-miss
+270 http cache https://registry.npmjs.org/typescript 13ms (cache hit)
+271 silly packumentCache full:https://registry.npmjs.org/typescript set size:15488832 disposed:false
+272 silly fetch manifest @typeschema/valita@0.2.0
+273 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fvalita cache-miss
+274 http cache https://registry.npmjs.org/@typeschema%2fvalita 15ms (cache hit)
+275 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fvalita set size:8271 disposed:false
+276 silly fetch manifest @badrap/valita@^0.3.9
+277 silly packumentCache full:https://registry.npmjs.org/@badrap%2fvalita cache-miss
+278 http cache https://registry.npmjs.org/@badrap%2fvalita 1ms (cache hit)
+279 silly packumentCache full:https://registry.npmjs.org/@badrap%2fvalita set size:259629 disposed:false
+280 silly fetch manifest @typeschema/vine@0.2.0
+281 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fvine cache-miss
+282 http cache https://registry.npmjs.org/@typeschema%2fvine 1ms (cache hit)
+283 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fvine set size:8211 disposed:false
+284 silly fetch manifest @vinejs/vine@^2.1.0
+285 silly packumentCache full:https://registry.npmjs.org/@vinejs%2fvine cache-miss
+286 http cache https://registry.npmjs.org/@vinejs%2fvine 1ms (cache hit)
+287 silly packumentCache full:https://registry.npmjs.org/@vinejs%2fvine set size:114849 disposed:false
+288 silly fetch manifest @typeschema/yup@0.14.0
+289 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fyup cache-miss
+290 http cache https://registry.npmjs.org/@typeschema%2fyup 1ms (cache hit)
+291 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fyup set size:16778 disposed:false
+292 silly fetch manifest @sodaru/yup-to-json-schema@^2.0.1
+293 silly packumentCache full:https://registry.npmjs.org/@sodaru%2fyup-to-json-schema cache-miss
+294 http cache https://registry.npmjs.org/@sodaru%2fyup-to-json-schema 1ms (cache hit)
+295 silly packumentCache full:https://registry.npmjs.org/@sodaru%2fyup-to-json-schema set size:30812 disposed:false
+296 silly fetch manifest yup@^1.4.0
+297 silly packumentCache full:https://registry.npmjs.org/yup cache-miss
+298 http cache https://registry.npmjs.org/yup 1ms (cache hit)
+299 silly packumentCache full:https://registry.npmjs.org/yup set size:439032 disposed:false
+300 silly fetch manifest @typeschema/zod@0.14.0
+301 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fzod cache-miss
+302 http cache https://registry.npmjs.org/@typeschema%2fzod 1ms (cache hit)
+303 silly packumentCache full:https://registry.npmjs.org/@typeschema%2fzod set size:16629 disposed:false
+304 silly fetch manifest zod@^3.23.8
+305 silly packumentCache full:https://registry.npmjs.org/zod cache-miss
+306 http cache https://registry.npmjs.org/zod 3ms (cache hit)
+307 silly packumentCache full:https://registry.npmjs.org/zod set size:3552562 disposed:false
+308 silly fetch manifest zod-to-json-schema@^3.23.2
+309 silly packumentCache full:https://registry.npmjs.org/zod-to-json-schema cache-miss
+310 http cache https://registry.npmjs.org/zod-to-json-schema 2ms (cache hit)
+311 silly packumentCache full:https://registry.npmjs.org/zod-to-json-schema set size:309584 disposed:false
+312 silly fetch manifest ajv-errors@^3.0.0
+313 silly packumentCache full:https://registry.npmjs.org/ajv-errors cache-miss
+314 http cache https://registry.npmjs.org/ajv-errors 1ms (cache hit)
+315 silly packumentCache full:https://registry.npmjs.org/ajv-errors set size:52956 disposed:false
+316 silly fetch manifest ajv-formats@^2.1.1
+317 silly packumentCache full:https://registry.npmjs.org/ajv-formats cache-miss
+318 http cache https://registry.npmjs.org/ajv-formats 1ms (cache hit)
+319 silly packumentCache full:https://registry.npmjs.org/ajv-formats set size:141264 disposed:false
+320 silly fetch manifest ata-validator@^0.7.0
+321 silly packumentCache full:https://registry.npmjs.org/ata-validator cache-miss
+322 http cache https://registry.npmjs.org/ata-validator 1ms (cache hit)
+323 silly packumentCache full:https://registry.npmjs.org/ata-validator set size:297180 disposed:false
+324 silly fetch manifest class-transformer@>=0.4.0
+325 silly packumentCache full:https://registry.npmjs.org/class-transformer cache-miss
+326 http cache https://registry.npmjs.org/class-transformer 3ms (cache hit)
+327 silly packumentCache full:https://registry.npmjs.org/class-transformer set size:106571 disposed:false
+328 silly fetch manifest computed-types@^1.0.0
+329 silly packumentCache full:https://registry.npmjs.org/computed-types cache-miss
+330 http cache https://registry.npmjs.org/computed-types 1ms (cache hit)
+331 silly packumentCache full:https://registry.npmjs.org/computed-types set size:165470 disposed:false
+332 silly fetch manifest fluentvalidation-ts@^3.0.0
+333 silly packumentCache full:https://registry.npmjs.org/fluentvalidation-ts cache-miss
+334 http cache https://registry.npmjs.org/fluentvalidation-ts 1ms (cache hit)
+335 silly packumentCache full:https://registry.npmjs.org/fluentvalidation-ts set size:361999 disposed:false
+336 silly fetch manifest nope-validator@>=0.12.0
+337 silly packumentCache full:https://registry.npmjs.org/nope-validator cache-miss
+338 http cache https://registry.npmjs.org/nope-validator 1ms (cache hit)
+339 silly packumentCache full:https://registry.npmjs.org/nope-validator set size:124638 disposed:false
+340 silly fetch manifest typanion@^3.3.2
+341 silly packumentCache full:https://registry.npmjs.org/typanion cache-miss
+342 http cache https://registry.npmjs.org/typanion 1ms (cache hit)
+343 silly packumentCache full:https://registry.npmjs.org/typanion set size:72113 disposed:false
+344 silly fetch manifest vest@>=3.0.0
+345 silly packumentCache full:https://registry.npmjs.org/vest cache-miss
+346 http cache https://registry.npmjs.org/vest 4ms (cache hit)
+347 silly packumentCache full:https://registry.npmjs.org/vest set size:3545645 disposed:false
+348 silly fetch manifest i18next@*
+349 silly packumentCache full:https://registry.npmjs.org/i18next cache-miss
+350 http cache https://registry.npmjs.org/i18next 6ms (cache hit)
+351 silly packumentCache full:https://registry.npmjs.org/i18next set size:2562052 disposed:false
+352 silly fetch manifest react-i18next@*
+353 silly packumentCache full:https://registry.npmjs.org/react-i18next cache-miss
+354 http cache https://registry.npmjs.org/react-i18next 3ms (cache hit)
+355 silly packumentCache full:https://registry.npmjs.org/react-i18next set size:2127704 disposed:false
+356 silly fetch manifest expo-localization@*
+357 silly packumentCache full:https://registry.npmjs.org/expo-localization cache-miss
+358 http cache https://registry.npmjs.org/expo-localization 3ms (cache hit)
+359 silly packumentCache full:https://registry.npmjs.org/expo-localization set size:836729 disposed:false
+360 silly fetch manifest expo@~57.0.9
+361 silly packumentCache full:https://registry.npmjs.org/expo cache-miss
+362 http cache https://registry.npmjs.org/expo 7ms (cache hit)
+363 silly packumentCache full:https://registry.npmjs.org/expo set size:3978069 disposed:false
+364 silly fetch manifest @expo/metro-runtime@*
+365 silly packumentCache full:https://registry.npmjs.org/@expo%2fmetro-runtime cache-miss
+366 http cache https://registry.npmjs.org/@expo%2fmetro-runtime 3ms (cache hit)
+367 silly packumentCache full:https://registry.npmjs.org/@expo%2fmetro-runtime set size:782309 disposed:false
+368 silly fetch manifest react-native-web@~0.21.0
+369 silly packumentCache full:https://registry.npmjs.org/react-native-web cache-miss
+370 http cache https://registry.npmjs.org/react-native-web 3ms (cache hit)
+371 silly packumentCache full:https://registry.npmjs.org/react-native-web set size:1090416 disposed:false
+372 silly fetch manifest react-native-webview@*
+373 silly packumentCache full:https://registry.npmjs.org/react-native-webview cache-miss
+374 http cache https://registry.npmjs.org/react-native-webview 3ms (cache hit)
+375 silly packumentCache full:https://registry.npmjs.org/react-native-webview set size:1379763 disposed:false
+376 silly fetch manifest expo-secure-store@*
+377 silly packumentCache full:https://registry.npmjs.org/expo-secure-store cache-miss
+378 http cache https://registry.npmjs.org/expo-secure-store 3ms (cache hit)
+379 silly packumentCache full:https://registry.npmjs.org/expo-secure-store set size:774687 disposed:false
+380 silly fetch manifest expo-notifications@*
+381 silly packumentCache full:https://registry.npmjs.org/expo-notifications cache-miss
+382 http cache https://registry.npmjs.org/expo-notifications 2ms (cache hit)
+383 silly packumentCache full:https://registry.npmjs.org/expo-notifications set size:1307385 disposed:false
+384 silly fetch manifest expo-image-picker@*
+385 silly packumentCache full:https://registry.npmjs.org/expo-image-picker cache-miss
+386 http cache https://registry.npmjs.org/expo-image-picker 3ms (cache hit)
+387 silly packumentCache full:https://registry.npmjs.org/expo-image-picker set size:1010833 disposed:false
+388 silly fetch manifest expo-document-picker@*
+389 silly packumentCache full:https://registry.npmjs.org/expo-document-picker cache-miss
+390 http cache https://registry.npmjs.org/expo-document-picker 5ms (cache hit)
+391 silly packumentCache full:https://registry.npmjs.org/expo-document-picker set size:842997 disposed:false
+392 silly fetch manifest clsx@*
+393 silly packumentCache full:https://registry.npmjs.org/clsx cache-miss
+394 http cache https://registry.npmjs.org/clsx 1ms (cache hit)
+395 silly packumentCache full:https://registry.npmjs.org/clsx set size:42506 disposed:false
+396 silly placeDep ROOT @apollo/client@4.2.8 OK for: crew-up-app@1.0.0 want: *
+397 silly placeDep ROOT rxjs@7.8.2 OK for: @apollo/client@4.2.8 want: ^7.3.0
+398 silly placeDep ROOT graphql@16.14.2 OK for: @apollo/client@4.2.8 want: ^16.0.0 || ^17.0.0
+399 silly placeDep ROOT @hookform/resolvers@5.5.7 OK for: crew-up-app@1.0.0 want: *
+400 silly placeDep ROOT react-hook-form@7.83.0 OK for: @hookform/resolvers@5.5.7 want: ^7.55.0
+401 silly placeDep ROOT @nhost/nhost-js@4.7.3 OK for: crew-up-app@1.0.0 want: *
+402 silly placeDep ROOT @shopify/flash-list@2.3.2 OK for: crew-up-app@1.0.0 want: *
+403 silly placeDep ROOT clsx@2.1.1 OK for: crew-up-app@1.0.0 want: *
+404 silly placeDep ROOT expo-document-picker@57.0.1 OK for: crew-up-app@1.0.0 want: *
+405 silly placeDep ROOT expo-image-picker@57.0.7 OK for: crew-up-app@1.0.0 want: *
+406 silly placeDep ROOT expo-localization@57.0.1 OK for: crew-up-app@1.0.0 want: *
+407 silly placeDep ROOT expo-notifications@57.0.8 OK for: crew-up-app@1.0.0 want: *
+408 silly placeDep ROOT expo-secure-store@57.0.1 OK for: crew-up-app@1.0.0 want: *
+409 silly placeDep ROOT graphql@16.14.2 REPLACE for: crew-up-app@1.0.0 want: *
+410 silly placeDep ROOT i18next@26.3.6 OK for: crew-up-app@1.0.0 want: *
+411 silly placeDep ROOT react-hook-form@7.83.0 REPLACE for: crew-up-app@1.0.0 want: *
+412 silly placeDep ROOT react-i18next@17.0.11 OK for: crew-up-app@1.0.0 want: *
+413 silly placeDep ROOT react-native-gesture-handler@3.1.0 REPLACE for: crew-up-app@1.0.0 want: *
+414 silly placeDep ROOT zod@4.4.3 REPLACE for: crew-up-app@1.0.0 want: *
+415 silly placeDep ROOT zustand@5.0.14 OK for: crew-up-app@1.0.0 want: *
+416 silly fetch manifest optimism@^0.18.0
+417 silly packumentCache full:https://registry.npmjs.org/optimism cache-miss
+418 silly fetch manifest @wry/trie@^0.5.0
+419 silly packumentCache full:https://registry.npmjs.org/@wry%2ftrie cache-miss
+420 silly fetch manifest @wry/caches@^1.0.0
+421 silly packumentCache full:https://registry.npmjs.org/@wry%2fcaches cache-miss
+422 silly fetch manifest graphql-tag@^2.12.6
+423 silly packumentCache full:https://registry.npmjs.org/graphql-tag cache-miss
+424 silly fetch manifest @wry/equality@^0.5.6
+425 silly packumentCache full:https://registry.npmjs.org/@wry%2fequality cache-miss
+426 silly fetch manifest @graphql-typed-document-node/core@^3.1.1
+427 silly packumentCache full:https://registry.npmjs.org/@graphql-typed-document-node%2fcore cache-miss
+428 silly fetch manifest @standard-schema/utils@^0.3.0
+429 silly packumentCache full:https://registry.npmjs.org/@standard-schema%2futils cache-miss
+430 silly fetch manifest expo-image-loader@~57.0.1
+431 silly packumentCache full:https://registry.npmjs.org/expo-image-loader cache-miss
+432 silly fetch manifest rtl-detect@^1.0.2
+433 silly packumentCache full:https://registry.npmjs.org/rtl-detect cache-miss
+434 http cache https://registry.npmjs.org/@wry%2fequality 3ms (cache hit)
+435 silly packumentCache full:https://registry.npmjs.org/@wry%2fequality set size:71796 disposed:false
+436 silly fetch manifest badgin@^1.1.5
+437 silly packumentCache full:https://registry.npmjs.org/badgin cache-miss
+438 http cache https://registry.npmjs.org/@wry%2ftrie 3ms (cache hit)
+439 silly packumentCache full:https://registry.npmjs.org/@wry%2ftrie set size:29788 disposed:false
+440 silly fetch manifest expo-application@~57.0.2
+441 silly packumentCache full:https://registry.npmjs.org/expo-application cache-miss
+442 http cache https://registry.npmjs.org/@wry%2fcaches 4ms (cache hit)
+443 silly packumentCache full:https://registry.npmjs.org/@wry%2fcaches set size:4918 disposed:false
+444 silly fetch manifest html-parse-stringify@^4.0.1
+445 silly packumentCache full:https://registry.npmjs.org/html-parse-stringify cache-miss
+446 http cache https://registry.npmjs.org/graphql-tag 5ms (cache hit)
+447 silly packumentCache full:https://registry.npmjs.org/graphql-tag set size:150958 disposed:false
+448 silly fetch manifest use-sync-external-store@^1.6.0
+449 silly packumentCache full:https://registry.npmjs.org/use-sync-external-store cache-miss
+450 http cache https://registry.npmjs.org/rtl-detect 6ms (cache hit)
+451 silly packumentCache full:https://registry.npmjs.org/rtl-detect set size:19799 disposed:false
+452 http cache https://registry.npmjs.org/optimism 7ms (cache hit)
+453 silly packumentCache full:https://registry.npmjs.org/optimism set size:181846 disposed:false
+454 http cache https://registry.npmjs.org/@standard-schema%2futils 7ms (cache hit)
+455 silly packumentCache full:https://registry.npmjs.org/@standard-schema%2futils set size:15545 disposed:false
+456 http cache https://registry.npmjs.org/expo-image-loader 8ms (cache hit)
+457 silly packumentCache full:https://registry.npmjs.org/expo-image-loader set size:538845 disposed:false
+458 http cache https://registry.npmjs.org/@graphql-typed-document-node%2fcore 10ms (cache hit)
+459 silly packumentCache full:https://registry.npmjs.org/@graphql-typed-document-node%2fcore set size:49750 disposed:false
+460 http cache https://registry.npmjs.org/badgin 10ms (cache hit)
+461 silly packumentCache full:https://registry.npmjs.org/badgin set size:54082 disposed:false
+462 http cache https://registry.npmjs.org/html-parse-stringify 9ms (cache hit)
+463 silly packumentCache full:https://registry.npmjs.org/html-parse-stringify set size:49468 disposed:false
+464 http cache https://registry.npmjs.org/expo-application 12ms (cache hit)
+465 silly packumentCache full:https://registry.npmjs.org/expo-application set size:878908 disposed:false
+466 http cache https://registry.npmjs.org/use-sync-external-store 14ms (cache hit)
+467 silly packumentCache full:https://registry.npmjs.org/use-sync-external-store set size:4877685 disposed:false
+468 silly fetch manifest graphql@^16.0.0 || ^17.0.0
+469 silly packumentCache full:https://registry.npmjs.org/graphql cache-hit
+470 silly placeDep ROOT @graphql-typed-document-node/core@3.2.0 OK for: @apollo/client@4.2.8 want: ^3.1.1
+471 silly placeDep ROOT @wry/caches@1.0.1 OK for: @apollo/client@4.2.8 want: ^1.0.0
+472 silly placeDep ROOT @wry/equality@0.5.7 OK for: @apollo/client@4.2.8 want: ^0.5.6
+473 silly placeDep ROOT @wry/trie@0.5.0 OK for: @apollo/client@4.2.8 want: ^0.5.0
+474 silly placeDep ROOT graphql-tag@2.12.7 OK for: @apollo/client@4.2.8 want: ^2.12.6
+475 silly placeDep ROOT optimism@0.18.1 OK for: @apollo/client@4.2.8 want: ^0.18.0
+476 silly fetch manifest @wry/context@^0.7.0
+477 silly packumentCache full:https://registry.npmjs.org/@wry%2fcontext cache-miss
+478 http cache https://registry.npmjs.org/@wry%2fcontext 2ms (cache hit)
+479 silly packumentCache full:https://registry.npmjs.org/@wry%2fcontext set size:82210 disposed:false
+480 silly placeDep ROOT @standard-schema/utils@0.3.0 OK for: @hookform/resolvers@5.5.7 want: ^0.3.0
+481 silly fetch manifest expo@*
+482 silly packumentCache full:https://registry.npmjs.org/expo cache-miss
+483 http cache https://registry.npmjs.org/expo 4ms (cache hit)
+484 silly packumentCache full:https://registry.npmjs.org/expo set size:3978069 disposed:false
+485 silly fetch manifest react@*
+486 silly packumentCache full:https://registry.npmjs.org/react cache-miss
+487 http cache https://registry.npmjs.org/react 8ms (cache hit)
+488 silly packumentCache full:https://registry.npmjs.org/react set size:6844555 disposed:false
+489 silly fetch manifest react-dom@*
+490 silly packumentCache full:https://registry.npmjs.org/react-dom cache-miss
+491 http cache https://registry.npmjs.org/react-dom 15ms (cache hit)
+492 silly packumentCache full:https://registry.npmjs.org/react-dom set size:9183359 disposed:false
+493 silly fetch manifest react-native@*
+494 silly packumentCache full:https://registry.npmjs.org/react-native cache-miss
+495 http cache https://registry.npmjs.org/react-native 19ms (cache hit)
+496 silly packumentCache full:https://registry.npmjs.org/react-native set size:15588295 disposed:false
+497 silly fetch manifest @types/react@^19.1.1
+498 silly packumentCache full:https://registry.npmjs.org/@types%2freact cache-miss
+499 http cache https://registry.npmjs.org/@types%2freact 4ms (cache hit)
+500 silly packumentCache full:https://registry.npmjs.org/@types%2freact set size:2632776 disposed:false
+501 silly fetch manifest react-native-web@*
+502 silly packumentCache full:https://registry.npmjs.org/react-native-web cache-miss
+503 http cache https://registry.npmjs.org/react-native-web 1ms (cache hit)
+504 silly packumentCache full:https://registry.npmjs.org/react-native-web set size:1090416 disposed:false
+505 silly placeDep ROOT expo-image-loader@57.0.1 OK for: expo-image-picker@57.0.7 want: ~57.0.1
+506 silly placeDep ROOT rtl-detect@1.1.2 OK for: expo-localization@57.0.1 want: ^1.0.2
+507 silly placeDep ROOT badgin@1.2.3 OK for: expo-notifications@57.0.8 want: ^1.1.5
+508 silly placeDep ROOT expo-application@57.0.2 OK for: expo-notifications@57.0.8 want: ~57.0.2
+509 silly placeDep ROOT @wry/context@0.7.4 OK for: optimism@0.18.1 want: ^0.7.0
+510 silly fetch manifest react@>= 16.8.0
+511 silly packumentCache full:https://registry.npmjs.org/react cache-miss
+512 http cache https://registry.npmjs.org/react 7ms (cache hit)
+513 silly packumentCache full:https://registry.npmjs.org/react set size:6844555 disposed:false
+514 silly placeDep ROOT html-parse-stringify@4.0.1 OK for: react-i18next@17.0.11 want: ^4.0.1
+515 silly placeDep ROOT use-sync-external-store@1.6.0 OK for: react-i18next@17.0.11 want: ^1.6.0
+516 silly fetch manifest zod@^3.25.76
+517 silly packumentCache full:https://registry.npmjs.org/zod cache-miss
+518 http cache https://registry.npmjs.org/zod 4ms (cache hit)
+519 silly packumentCache full:https://registry.npmjs.org/zod set size:3552562 disposed:false
+520 silly placeDep node_modules/expo zod@3.25.76 OK for: @expo/cli@57.0.11 want: ^3.25.76
+521 silly reify mark retired [
+521 silly reify   '/Users/museryeung/Documents/dev/crew-up-project/crew-up-app/node_modules/zod'
+521 silly reify ]
+522 silly reify moves {
+522 silly reify   '/Users/museryeung/Documents/dev/crew-up-project/crew-up-app/node_modules/zod': '/Users/museryeung/Documents/dev/crew-up-project/crew-up-app/node_modules/.zod-G8LoqjE3'
+522 silly reify }
+523 silly audit bulk request {
+523 silly audit   '@adobe/css-tools': [ '4.5.0' ],
+523 silly audit   '@babel/code-frame': [ '7.29.7' ],
+523 silly audit   '@babel/compat-data': [ '7.29.7' ],
+523 silly audit   '@babel/core': [ '7.29.7' ],
+523 silly audit   semver: [ '6.3.1', '7.8.5' ],
+523 silly audit   '@babel/generator': [ '7.29.7' ],
+523 silly audit   '@babel/helper-annotate-as-pure': [ '7.29.7' ],
+523 silly audit   '@babel/helper-compilation-targets': [ '7.29.7' ],
+523 silly audit   '@babel/helper-create-class-features-plugin': [ '7.29.7' ],
+523 silly audit   '@babel/helper-create-regexp-features-plugin': [ '7.29.7' ],
+523 silly audit   '@babel/helper-define-polyfill-provider': [ '0.6.8' ],
+523 silly audit   '@babel/helper-globals': [ '7.29.7' ],
+523 silly audit   '@babel/helper-member-expression-to-functions': [ '7.29.7' ],
+523 silly audit   '@babel/helper-module-imports': [ '7.29.7' ],
+523 silly audit   '@babel/helper-module-transforms': [ '7.29.7' ],
+523 silly audit   '@babel/helper-optimise-call-expression': [ '7.29.7' ],
+523 silly audit   '@babel/helper-plugin-utils': [ '7.29.7' ],
+523 silly audit   '@babel/helper-remap-async-to-generator': [ '7.29.7' ],
+523 silly audit   '@babel/helper-replace-supers': [ '7.29.7' ],
+523 silly audit   '@babel/helper-skip-transparent-expression-wrappers': [ '7.29.7' ],
+523 silly audit   '@babel/helper-string-parser': [ '7.29.7' ],
+523 silly audit   '@babel/helper-validator-identifier': [ '7.29.7' ],
+523 silly audit   '@babel/helper-validator-option': [ '7.29.7' ],
+523 silly audit   '@babel/helper-wrap-function': [ '7.29.7' ],
+523 silly audit   '@babel/helpers': [ '7.29.7' ],
+523 silly audit   '@babel/parser': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-proposal-decorators': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-proposal-export-default-from': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-syntax-decorators': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-syntax-dynamic-import': [ '7.8.3' ],
+523 silly audit   '@babel/plugin-syntax-export-default-from': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-syntax-flow': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-syntax-jsx': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-syntax-nullish-coalescing-operator': [ '7.8.3' ],
+523 silly audit   '@babel/plugin-syntax-optional-chaining': [ '7.8.3' ],
+523 silly audit   '@babel/plugin-syntax-typescript': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-arrow-functions': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-async-generator-functions': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-async-to-generator': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-block-scoping': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-class-properties': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-class-static-block': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-classes': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-destructuring': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-export-namespace-from': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-flow-strip-types': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-for-of': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-logical-assignment-operators': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-modules-commonjs': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-named-capturing-groups-regex': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-nullish-coalescing-operator': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-object-rest-spread': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-optional-catch-binding': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-optional-chaining': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-parameters': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-private-methods': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-private-property-in-object': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-react-display-name': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-react-jsx': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-react-jsx-development': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-react-jsx-self': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-react-jsx-source': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-react-pure-annotations': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-regenerator': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-runtime': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-shorthand-properties': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-template-literals': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-typescript': [ '7.29.7' ],
+523 silly audit   '@babel/plugin-transform-unicode-regex': [ '7.29.7' ],
+523 silly audit   '@babel/preset-typescript': [ '7.29.7' ],
+523 silly audit   '@babel/runtime': [ '7.29.7' ],
+523 silly audit   '@babel/template': [ '7.29.7' ],
+523 silly audit   '@babel/traverse': [ '7.29.7' ],
+523 silly audit   '@babel/types': [ '7.29.7' ],
+523 silly audit   '@expo-google-fonts/material-symbols': [ '0.4.42' ],
+523 silly audit   '@expo/code-signing-certificates': [ '0.0.6' ],
+523 silly audit   '@expo/config': [ '57.0.6' ],
+523 silly audit   '@expo/config-plugins': [ '57.0.6' ],
+523 silly audit   '@expo/config-types': [ '57.0.2' ],
+523 silly audit   '@expo/devcert': [ '1.2.1' ],
+523 silly audit   debug: [ '3.2.7', '2.6.9', '4.4.3' ],
+523 silly audit   '@expo/devtools': [ '57.0.1' ],
+523 silly audit   '@expo/dom-webview': [ '57.0.1' ],
+523 silly audit   '@expo/env': [ '2.4.2' ],
+523 silly audit   '@expo/expo-modules-macros-plugin': [ '0.6.1' ],
+523 silly audit   '@expo/fingerprint': [ '0.20.6' ],
+523 silly audit   '@expo/image-utils': [ '0.11.4' ],
+523 silly audit   '@expo/inline-modules': [ '0.1.4' ],
+523 silly audit   '@expo/json-file': [ '11.0.1' ],
+523 silly audit   '@expo/local-build-cache-provider': [ '57.0.5' ],
+523 silly audit   '@expo/log-box': [ '57.0.2' ],
+523 silly audit   '@expo/metro': [ '56.0.0' ],
+523 silly audit   '@expo/metro-config': [ '57.0.7' ],
+523 silly audit   '@expo/metro-file-map': [ '57.0.1' ],
+523 silly audit   '@expo/metro-runtime': [ '57.0.8' ],
+523 silly audit   '@expo/osascript': [ '2.7.1' ],
+523 silly audit   '@expo/package-manager': [ '1.13.1' ],
+523 silly audit   '@expo/plist': [ '0.8.1' ],
+523 silly audit   '@expo/prebuild-config': [ '57.0.10' ],
+523 silly audit   '@expo/require-utils': [ '57.0.4' ],
+523 silly audit   '@expo/schema-utils': [ '57.0.2' ],
+523 silly audit   '@expo/sdk-runtime-versions': [ '1.0.0' ],
+523 silly audit   '@expo/spawn-async': [ '1.8.0' ],
+523 silly audit   '@expo/sudo-prompt': [ '9.3.2' ],
+523 silly audit   '@expo/ui': [ '57.0.8' ],
+523 silly audit   '@expo/xcpretty': [ '4.4.4' ],
+523 silly audit   '@isaacs/ttlcache': [ '1.4.1' ],
+523 silly audit   '@jest/schemas': [ '29.6.3' ],
+523 silly audit   '@jest/types': [ '29.6.3' ],
+523 silly audit   '@jridgewell/gen-mapping': [ '0.3.13' ],
+523 silly audit   '@jridgewell/remapping': [ '2.3.5' ],
+523 silly audit   '@jridgewell/resolve-uri': [ '3.1.2' ],
+523 silly audit   '@jridgewell/source-map': [ '0.3.11' ],
+523 silly audit   '@jridgewell/sourcemap-codec': [ '1.5.5' ],
+523 silly audit   '@jridgewell/trace-mapping': [ '0.3.31' ],
+523 silly audit   '@radix-ui/primitive': [ '1.1.7' ],
+523 silly audit   '@radix-ui/react-collection': [ '1.1.15' ],
+523 silly audit   '@radix-ui/react-compose-refs': [ '1.1.5' ],
+523 silly audit   '@radix-ui/react-context': [ '1.2.2' ],
+523 silly audit   '@radix-ui/react-dialog': [ '1.1.23' ],
+523 silly audit   '@radix-ui/react-direction': [ '1.1.4' ],
+523 silly audit   '@radix-ui/react-dismissable-layer': [ '1.1.19' ],
+523 silly audit   '@radix-ui/react-focus-guards': [ '1.1.6' ],
+523 silly audit   '@radix-ui/react-focus-scope': [ '1.1.16' ],
+523 silly audit   '@radix-ui/react-id': [ '1.1.4' ],
+523 silly audit   '@radix-ui/react-portal': [ '1.1.17' ],
+523 silly audit   '@radix-ui/react-presence': [ '1.1.10' ],
+523 silly audit   '@radix-ui/react-primitive': [ '2.1.10' ],
+523 silly audit   '@radix-ui/react-roving-focus': [ '1.1.19' ],
+523 silly audit   '@radix-ui/react-slot': [ '1.3.3' ],
+523 silly audit   '@radix-ui/react-tabs': [ '1.1.21' ],
+523 silly audit   '@radix-ui/react-use-callback-ref': [ '1.1.4' ],
+523 silly audit   '@radix-ui/react-use-controllable-state': [ '1.2.6' ],
+523 silly audit   '@radix-ui/react-use-effect-event': [ '0.0.5' ],
+523 silly audit   '@radix-ui/react-use-is-hydrated': [ '0.1.3' ],
+523 silly audit   '@radix-ui/react-use-layout-effect': [ '1.1.4' ],
+523 silly audit   '@react-native-masked-view/masked-view': [ '0.3.2' ],
+523 silly audit   '@react-native/assets-registry': [ '0.86.2' ],
+523 silly audit   '@react-native/babel-plugin-codegen': [ '0.86.2' ],
+523 silly audit   '@react-native/babel-preset': [ '0.86.2' ],
+523 silly audit   '@react-native/codegen': [ '0.86.2' ],
+523 silly audit   '@react-native/community-cli-plugin': [ '0.86.2' ],
+523 silly audit   '@react-native/debugger-frontend': [ '0.86.2' ],
+523 silly audit   '@react-native/debugger-shell': [ '0.86.2' ],
+523 silly audit   '@react-native/dev-middleware': [ '0.86.2' ],
+523 silly audit   '@react-native/gradle-plugin': [ '0.86.2' ],
+523 silly audit   '@react-native/js-polyfills': [ '0.86.2' ],
+523 silly audit   '@react-native/metro-babel-transformer': [ '0.86.2' ],
+523 silly audit   '@react-native/metro-config': [ '0.86.2' ],
+523 silly audit   '@react-native/normalize-colors': [ '0.86.2', '0.74.89' ],
+523 silly audit   '@react-native/virtualized-lists': [ '0.86.2' ],
+523 silly audit   '@sinclair/typebox': [ '0.27.12' ],
+523 silly audit   '@testing-library/dom': [ '10.4.1' ],
+523 silly audit   'ansi-styles': [ '5.2.0', '4.3.0', '3.2.1' ],
+523 silly audit   'pretty-format': [ '27.5.1', '29.7.0' ],
+523 silly audit   'react-is': [ '17.0.2', '18.3.1', '19.2.8' ],
+523 silly audit   '@testing-library/jest-dom': [ '6.9.1' ],
+523 silly audit   'dom-accessibility-api': [ '0.6.3', '0.5.16' ],
+523 silly audit   '@testing-library/user-event': [ '14.6.1' ],
+523 silly audit   '@types/aria-query': [ '5.0.4' ],
+523 silly audit   '@types/istanbul-lib-coverage': [ '2.0.6' ],
+523 silly audit   '@types/istanbul-lib-report': [ '3.0.3' ],
+523 silly audit   '@types/istanbul-reports': [ '3.0.4' ],
+523 silly audit   '@types/node': [ '26.1.2' ],
+523 silly audit   '@types/react': [ '19.2.17' ],
+523 silly audit   '@types/react-test-renderer': [ '19.1.0' ],
+523 silly audit   '@types/yargs': [ '17.0.35' ],
+523 silly audit   '@types/yargs-parser': [ '21.0.3' ],
+523 silly audit   '@ungap/structured-clone': [ '1.3.3' ],
+523 silly audit   '@xmldom/xmldom': [ '0.8.13', '0.9.10' ],
+523 silly audit   'abort-controller': [ '3.0.0' ],
+523 silly audit   accepts: [ '2.0.0', '1.3.8' ],
+523 silly audit   acorn: [ '8.18.0' ],
+523 silly audit   'agent-base': [ '7.1.4' ],
+523 silly audit   'agent-cli-detector': [ '0.1.4' ],
+523 silly audit   anser: [ '1.4.10' ],
+523 silly audit   'ansi-escapes': [ '4.3.2' ],
+523 silly audit   'type-fest': [ '0.21.3', '0.7.1' ],
+523 silly audit   'ansi-regex': [ '5.0.1', '4.1.1' ],
+523 silly audit   arg: [ '5.0.2' ],
+523 silly audit   argparse: [ '2.0.1' ],
+523 silly audit   'aria-hidden': [ '1.2.6' ],
+523 silly audit   'aria-query': [ '5.3.0' ],
+523 silly audit   asap: [ '2.0.6' ],
+523 silly audit   'babel-plugin-polyfill-corejs2': [ '0.4.17' ],
+523 silly audit   'babel-plugin-polyfill-corejs3': [ '0.13.0' ],
+523 silly audit   'babel-plugin-polyfill-regenerator': [ '0.6.8' ],
+523 silly audit   'babel-plugin-react-compiler': [ '1.0.0' ],
+523 silly audit   'babel-plugin-react-native-web': [ '0.21.2' ],
+523 silly audit   'babel-plugin-syntax-hermes-parser': [ '0.36.0' ],
+523 silly audit   'babel-plugin-transform-flow-enums': [ '0.0.2' ],
+523 silly audit   'babel-preset-expo': [ '57.0.5' ],
+523 silly audit   'balanced-match': [ '4.0.4' ],
+523 silly audit   'base64-js': [ '1.5.1' ],
+523 silly audit   'baseline-browser-mapping': [ '2.11.7' ],
+523 silly audit   'big-integer': [ '1.6.52' ],
+523 silly audit   'bplist-creator': [ '0.1.0' ],
+523 silly audit   'bplist-parser': [ '0.3.1' ],
+523 silly audit   'brace-expansion': [ '5.0.8' ],
+523 silly audit   braces: [ '3.0.3' ],
+523 silly audit   browserslist: [ '4.28.7' ],
+523 silly audit   bser: [ '2.1.1' ],
+523 silly audit   'buffer-from': [ '1.1.2' ],
+523 silly audit   bytes: [ '3.1.2' ],
+523 silly audit   camelcase: [ '6.3.0' ],
+523 silly audit   'caniuse-lite': [ '1.0.30001806' ],
+523 silly audit   chalk: [ '4.1.2', '2.4.2' ],
+523 silly audit   'chrome-launcher': [ '0.15.2' ],
+523 silly audit   'chromium-edge-launcher': [ '0.3.0' ],
+523 silly audit   'ci-info': [ '2.0.0', '3.9.0' ],
+523 silly audit   'cli-cursor': [ '2.1.0' ],
+523 silly audit   'cli-spinners': [ '2.9.2' ],
+523 silly audit   'client-only': [ '0.0.1' ],
+523 silly audit   cliui: [ '8.0.1' ],
+523 silly audit   clone: [ '1.0.4' ],
+523 silly audit   color: [ '4.2.3' ],
+523 silly audit   'color-convert': [ '2.0.1', '1.9.3' ],
+523 silly audit   'color-name': [ '1.1.4', '1.1.3' ],
+523 silly audit   'color-string': [ '1.9.1' ],
+523 silly audit   commander: [ '7.2.0', '12.1.0', '2.20.3' ],
+523 silly audit   compressible: [ '2.0.18' ],
+523 silly audit   compression: [ '1.8.1' ],
+523 silly audit   ms: [ '2.0.0', '2.1.3' ],
+523 silly audit   negotiator: [ '0.6.4', '0.6.3', '1.0.0' ],
+523 silly audit   connect: [ '3.7.0' ],
+523 silly audit   'convert-source-map': [ '2.0.0' ],
+523 silly audit   'core-js-compat': [ '3.49.0' ],
+523 silly audit   'cross-fetch': [ '3.2.0' ],
+523 silly audit   'cross-spawn': [ '7.0.6' ],
+523 silly audit   'css-in-js-utils': [ '3.1.0' ],
+523 silly audit   'css.escape': [ '1.5.1' ],
+523 silly audit   csstype: [ '3.2.3' ],
+523 silly audit   'decode-uri-component': [ '0.2.2' ],
+523 silly audit   deepmerge: [ '4.3.1' ],
+523 silly audit   defaults: [ '1.0.4' ],
+523 silly audit   depd: [ '2.0.0' ],
+523 silly audit   dequal: [ '2.0.3' ],
+523 silly audit   destroy: [ '1.2.0' ],
+523 silly audit   'detect-libc': [ '2.1.2' ],
+523 silly audit   'detect-node-es': [ '1.1.0' ],
+523 silly audit   'dnssd-advertise': [ '1.1.6' ],
+523 silly audit   'ee-first': [ '1.1.1' ],
+523 silly audit   'electron-to-chromium': [ '1.5.398' ],
+523 silly audit   'emoji-regex': [ '8.0.0' ],
+523 silly audit   encodeurl: [ '1.0.2', '2.0.0' ],
+523 silly audit   'error-stack-parser': [ '2.1.4' ],
+523 silly audit   'es-errors': [ '1.3.0' ],
+523 silly audit   escalade: [ '3.2.0' ],
+523 silly audit   'escape-html': [ '1.0.3' ],
+523 silly audit   'escape-string-regexp': [ '4.0.0', '1.0.5' ],
+523 silly audit   etag: [ '1.8.1' ],
+523 silly audit   'event-target-shim': [ '5.0.1' ],
+523 silly audit   expo: [ '57.0.9' ],
+523 silly audit   'expo-asset': [ '57.0.8' ],
+523 silly audit   'expo-constants': [ '57.0.8' ],
+523 silly audit   'expo-file-system': [ '57.0.1' ],
+523 silly audit   'expo-font': [ '57.0.1' ],
+523 silly audit   'expo-glass-effect': [ '57.0.1' ],
+523 silly audit   'expo-keep-awake': [ '57.0.1' ],
+523 silly audit   'expo-linking': [ '57.0.4' ],
+523 silly audit   'expo-modules-autolinking': [ '57.0.9' ],
+523 silly audit   'expo-modules-core': [ '57.0.8' ],
+523 silly audit   'expo-modules-jsi': [ '57.0.4' ],
+523 silly audit   'expo-router': [ '57.0.9' ],
+523 silly audit   'expo-server': [ '57.0.1' ],
+523 silly audit   'expo-splash-screen': [ '57.0.5' ],
+523 silly audit   'expo-status-bar': [ '57.0.1' ],
+523 silly audit   'expo-symbols': [ '57.0.1' ],
+523 silly audit   'expo-web-browser': [ '57.0.2' ],
+523 silly audit   '@expo/cli': [ '57.0.11' ],
+523 silly audit   '@expo/router-server': [ '57.0.4' ],
+523 silly audit   '@expo/ws-tunnel': [ '2.0.0' ],
+523 silly audit   'mime-db': [ '1.52.0', '1.54.0' ],
+523 silly audit   'mime-types': [ '2.1.35', '3.0.2' ],
+523 silly audit   ws: [ '8.21.1', '7.5.13' ],
+523 silly audit   'exponential-backoff': [ '3.1.3' ],
+523 silly audit   'fast-deep-equal': [ '3.1.3' ],
+523 silly audit   'fb-dotslash': [ '0.5.8' ],
+523 silly audit   'fb-watchman': [ '2.0.2' ],
+523 silly audit   fbjs: [ '3.0.5' ],
+523 silly audit   'fbjs-css-vars': [ '1.0.2' ],
+523 silly audit   promise: [ '7.3.1', '8.3.0' ],
+523 silly audit   fdir: [ '6.5.0' ],
+523 silly audit   'fetch-nodeshim': [ '0.4.10' ],
+523 silly audit   'fill-range': [ '7.1.1' ],
+523 silly audit   'filter-obj': [ '1.1.0' ],
+523 silly audit   finalhandler: [ '1.1.2' ],
+523 silly audit   'flow-enums-runtime': [ '0.0.6' ],
+523 silly audit   fontfaceobserver: [ '2.3.0' ],
+523 silly audit   fresh: [ '0.5.2' ],
+523 silly audit   'function-bind': [ '1.1.2' ],
+523 silly audit   gensync: [ '1.0.0-beta.2' ],
+523 silly audit   'get-caller-file': [ '2.0.5' ],
+523 silly audit   'get-nonce': [ '1.0.1' ],
+523 silly audit   getenv: [ '2.0.0' ],
+523 silly audit   glob: [ '13.0.6' ],
+523 silly audit   'graceful-fs': [ '4.2.11' ],
+523 silly audit   'has-flag': [ '4.0.0', '3.0.0' ],
+523 silly audit   hasown: [ '2.0.4' ],
+523 silly audit   'hermes-compiler': [ '250829098.0.16' ],
+523 silly audit   'hermes-estree': [ '0.36.0', '0.35.0' ],
+523 silly audit   'hermes-parser': [ '0.36.0', '0.35.0' ],
+523 silly audit   'hosted-git-info': [ '7.0.2' ],
+523 silly audit   'lru-cache': [ '10.4.3', '5.1.1', '11.5.2' ],
+523 silly audit   'http-errors': [ '2.0.1' ],
+523 silly audit   statuses: [ '2.0.2', '1.5.0' ],
+523 silly audit   'https-proxy-agent': [ '7.0.6' ],
+523 silly audit   'hyphenate-style-name': [ '1.1.0' ],
+523 silly audit   ignore: [ '5.3.2' ],
+523 silly audit   'image-size': [ '1.2.1' ],
+523 silly audit   'indent-string': [ '4.0.0' ],
+523 silly audit   inherits: [ '2.0.4' ],
+523 silly audit   'inline-style-prefixer': [ '7.0.1' ],
+523 silly audit   invariant: [ '2.2.4' ],
+523 silly audit   'is-arrayish': [ '0.3.4' ],
+523 silly audit   'is-core-module': [ '2.16.2' ],
+523 silly audit   'is-docker': [ '2.2.1' ],
+523 silly audit   'is-fullwidth-code-point': [ '3.0.0' ],
+523 silly audit   'is-number': [ '7.0.0' ],
+523 silly audit   'is-wsl': [ '2.2.0' ],
+523 silly audit   isexe: [ '2.0.0' ],
+523 silly audit   'jest-get-type': [ '29.6.3' ],
+523 silly audit   'jest-util': [ '29.7.0' ],
+523 silly audit   picomatch: [ '2.3.2', '4.0.5' ],
+523 silly audit   'jest-validate': [ '29.7.0' ],
+523 silly audit   'jest-worker': [ '29.7.0' ],
+523 silly audit   'supports-color': [ '8.1.1', '5.5.0', '7.2.0' ],
+523 silly audit   'jimp-compact': [ '0.16.1' ],
+523 silly audit   'js-tokens': [ '4.0.0' ],
+523 silly audit   'js-yaml': [ '4.3.0' ],
+523 silly audit   'jsc-safe-url': [ '0.2.4' ],
+523 silly audit   jsesc: [ '3.1.0' ],
+523 silly audit   json5: [ '2.2.3' ],
+523 silly audit   kleur: [ '3.0.3' ],
+523 silly audit   'lan-network': [ '0.2.1' ],
+523 silly audit   leven: [ '3.1.0' ],
+523 silly audit   'lighthouse-logger': [ '1.4.2' ],
+523 silly audit   lightningcss: [ '1.33.0' ],
+523 silly audit   'lightningcss-android-arm64': [ '1.33.0' ],
+523 silly audit   'lightningcss-darwin-arm64': [ '1.33.0' ],
+523 silly audit   'lightningcss-darwin-x64': [ '1.33.0' ],
+523 silly audit   'lightningcss-freebsd-x64': [ '1.33.0' ],
+523 silly audit   'lightningcss-linux-arm-gnueabihf': [ '1.33.0' ],
+523 silly audit   'lightningcss-linux-arm64-gnu': [ '1.33.0' ],
+523 silly audit   'lightningcss-linux-arm64-musl': [ '1.33.0' ],
+523 silly audit   'lightningcss-linux-x64-gnu': [ '1.33.0' ],
+523 silly audit   'lightningcss-linux-x64-musl': [ '1.33.0' ],
+523 silly audit   'lightningcss-win32-arm64-msvc': [ '1.33.0' ],
+523 silly audit   'lightningcss-win32-x64-msvc': [ '1.33.0' ],
+523 silly audit   'lodash.debounce': [ '4.0.8' ],
+523 silly audit   'lodash.throttle': [ '4.1.1' ],
+523 silly audit   'log-symbols': [ '2.2.0' ],
+523 silly audit   'loose-envify': [ '1.4.0' ],
+523 silly audit   'lz-string': [ '1.5.0' ],
+523 silly audit   makeerror: [ '1.0.12' ],
+523 silly audit   marky: [ '1.3.0' ],
+523 silly audit   'memoize-one': [ '5.2.1', '6.0.0' ],
+523 silly audit   'merge-stream': [ '2.0.0' ],
+523 silly audit   metro: [ '0.84.4' ],
+523 silly audit   'metro-babel-transformer': [ '0.84.4' ],
+523 silly audit   'metro-cache': [ '0.84.4' ],
+523 silly audit   'metro-cache-key': [ '0.84.4' ],
+523 silly audit   'metro-config': [ '0.84.4' ],
+523 silly audit   'metro-core': [ '0.84.4' ],
+523 silly audit   'metro-file-map': [ '0.84.4' ],
+523 silly audit   'metro-minify-terser': [ '0.84.4' ],
+523 silly audit   'metro-resolver': [ '0.84.4' ],
+523 silly audit   'metro-runtime': [ '0.84.4' ],
+523 silly audit   'metro-source-map': [ '0.84.4' ],
+523 silly audit   'metro-symbolicate': [ '0.84.4' ],
+523 silly audit   'metro-transform-plugins': [ '0.84.4' ],
+523 silly audit   'metro-transform-worker': [ '0.84.4' ],
+523 silly audit   micromatch: [ '4.0.8' ],
+523 silly audit   mime: [ '1.6.0' ],
+523 silly audit   'mimic-fn': [ '1.2.0' ],
+523 silly audit   'min-indent': [ '1.0.1' ],
+523 silly audit   minimatch: [ '10.2.6' ],
+523 silly audit   minipass: [ '7.1.3' ],
+523 silly audit   mkdirp: [ '1.0.4' ],
+523 silly audit   multitars: [ '1.0.0' ],
+523 silly audit   nanoid: [ '3.3.16' ],
+523 silly audit   'node-fetch': [ '2.7.0' ],
+523 silly audit   'node-forge': [ '1.4.0' ],
+523 silly audit   'node-int64': [ '0.4.0' ],
+523 silly audit   'node-releases': [ '2.0.51' ],
+523 silly audit   'npm-package-arg': [ '11.0.3' ],
+523 silly audit   nullthrows: [ '1.1.1' ],
+523 silly audit   ob1: [ '0.84.4' ],
+523 silly audit   'object-assign': [ '4.1.1' ],
+523 silly audit   'on-finished': [ '2.3.0', '2.4.1' ],
+523 silly audit   'on-headers': [ '1.1.0' ],
+523 silly audit   onetime: [ '2.0.1' ],
+523 silly audit   open: [ '7.4.2' ],
+523 silly audit   ora: [ '3.4.0' ],
+523 silly audit   'strip-ansi': [ '5.2.0', '6.0.1' ],
+523 silly audit   'parse-png': [ '2.1.0' ],
+523 silly audit   parseurl: [ '1.3.3' ],
+523 silly audit   'path-key': [ '3.1.1' ],
+523 silly audit   'path-parse': [ '1.0.7' ],
+523 silly audit   'path-scurry': [ '2.0.2' ],
+523 silly audit   picocolors: [ '1.1.1' ],
+523 silly audit   plist: [ '3.1.1' ],
+523 silly audit   pngjs: [ '3.4.0' ],
+523 silly audit   postcss: [ '8.5.25' ],
+523 silly audit   'postcss-value-parser': [ '4.2.0' ],
+523 silly audit   'proc-log': [ '4.2.0' ],
+523 silly audit   progress: [ '2.0.3' ],
+523 silly audit   prompts: [ '2.4.2' ],
+523 silly audit   'query-string': [ '7.1.3' ],
+523 silly audit   queue: [ '6.0.2' ],
+523 silly audit   'range-parser': [ '1.2.1' ],
+523 silly audit   react: [ '19.2.3' ],
+523 silly audit   'react-devtools-core': [ '6.1.5' ],
+523 silly audit   'react-dom': [ '19.2.3' ],
+523 silly audit   'react-fast-compare': [ '3.2.2' ],
+523 silly audit   'react-freeze': [ '1.0.4' ],
+523 silly audit   'react-native': [ '0.86.2' ],
+523 silly audit   'react-native-drawer-layout': [ '4.2.9' ],
+523 silly audit   'react-native-is-edge-to-edge': [ '1.3.1' ],
+523 silly audit   'react-native-reanimated': [ '4.5.1' ],
+523 silly audit   'react-native-safe-area-context': [ '5.7.0' ],
+523 silly audit   'react-native-screens': [ '4.26.2' ],
+523 silly audit   'react-native-web': [ '0.21.2' ],
+523 silly audit   'react-native-worklets': [ '0.10.1' ],
+523 silly audit   'react-refresh': [ '0.14.2' ],
+523 silly audit   'react-remove-scroll': [ '2.7.2' ],
+523 silly audit   'react-remove-scroll-bar': [ '2.3.8' ],
+523 silly audit   'react-style-singleton': [ '2.2.3' ],
+523 silly audit   redent: [ '3.0.0' ],
+523 silly audit   regenerate: [ '1.4.2' ],
+523 silly audit   'regenerate-unicode-properties': [ '10.2.2' ],
+523 silly audit   'regenerator-runtime': [ '0.13.11' ],
+523 silly audit   'regexpu-core': [ '6.4.0' ],
+523 silly audit   regjsgen: [ '0.8.0' ],
+523 silly audit   regjsparser: [ '0.13.2' ],
+523 silly audit   'require-directory': [ '2.1.1' ],
+523 silly audit   resolve: [ '1.22.12' ],
+523 silly audit   'resolve-from': [ '5.0.0' ],
+523 silly audit   'resolve-workspace-root': [ '2.0.1' ],
+523 silly audit   'restore-cursor': [ '2.0.0' ],
+523 silly audit   'safe-buffer': [ '5.2.1' ],
+523 silly audit   sax: [ '1.6.1' ],
+523 silly audit   scheduler: [ '0.27.0' ],
+523 silly audit   send: [ '0.19.2' ],
+523 silly audit   'serialize-error': [ '2.1.0' ],
+523 silly audit   'serve-static': [ '1.16.3' ],
+523 silly audit   'server-only': [ '0.0.1' ],
+523 silly audit   setimmediate: [ '1.0.5' ],
+523 silly audit   setprototypeof: [ '1.2.0' ],
+523 silly audit   'sf-symbols-typescript': [ '2.2.0' ],
+523 silly audit   shallowequal: [ '1.1.0' ],
+523 silly audit   'shebang-command': [ '2.0.0' ],
+523 silly audit   'shebang-regex': [ '3.0.0' ],
+523 silly audit   'shell-quote': [ '1.10.0' ],
+523 silly audit   'signal-exit': [ '3.0.7' ],
+523 silly audit   'simple-plist': [ '1.3.1' ],
+523 silly audit   'simple-swizzle': [ '0.2.4' ],
+523 silly audit   sisteransi: [ '1.0.5' ],
+523 silly audit   slugify: [ '1.6.9' ],
+523 silly audit   'source-map': [ '0.5.7', '0.6.1' ],
+523 silly audit   'source-map-js': [ '1.2.1' ],
+523 silly audit   'source-map-support': [ '0.5.21' ],
+523 silly audit   'split-on-first': [ '1.1.0' ],
+523 silly audit   stackframe: [ '1.3.4' ],
+523 silly audit   'stacktrace-parser': [ '0.1.11' ],
+523 silly audit   'standard-navigation': [ '0.0.5' ],
+523 silly audit   'stream-buffers': [ '2.2.0' ],
+523 silly audit   'strict-uri-encode': [ '2.0.0' ],
+523 silly audit   'string-width': [ '4.2.3' ],
+523 silly audit   'strip-indent': [ '3.0.0' ],
+523 silly audit   'structured-headers': [ '0.4.1' ],
+523 silly audit   styleq: [ '0.1.3' ],
+523 silly audit   'supports-hyperlinks': [ '2.3.0' ],
+523 silly audit   'supports-preserve-symlinks-flag': [ '1.0.0' ],
+523 silly audit   'terminal-link': [ '2.1.1' ],
+523 silly audit   terser: [ '5.49.0' ],
+523 silly audit   throat: [ '5.0.0' ],
+523 silly audit   tinyglobby: [ '0.2.17' ],
+523 silly audit   tmpl: [ '1.0.5' ],
+523 silly audit   'to-regex-range': [ '5.0.1' ],
+523 silly audit   toidentifier: [ '1.0.1' ],
+523 silly audit   toqr: [ '0.1.1' ],
+523 silly audit   tr46: [ '0.0.3' ],
+523 silly audit   tslib: [ '2.8.1' ],
+523 silly audit   typescript: [ '6.0.3' ],
+523 silly audit   'ua-parser-js': [ '1.0.41' ],
+523 silly audit   'undici-types': [ '8.3.0' ],
+523 silly audit   'unicode-canonical-property-names-ecmascript': [ '2.0.1' ],
+523 silly audit   'unicode-match-property-ecmascript': [ '2.0.0' ],
+523 silly audit   'unicode-match-property-value-ecmascript': [ '2.2.1' ],
+523 silly audit   'unicode-property-aliases-ecmascript': [ '2.2.0' ],
+523 silly audit   unpipe: [ '1.0.0' ],
+523 silly audit   'update-browserslist-db': [ '1.2.3' ],
+523 silly audit   'use-callback-ref': [ '1.3.3' ],
+523 silly audit   'use-latest-callback': [ '0.2.6' ],
+523 silly audit   'use-sidecar': [ '1.1.3' ],
+523 silly audit   'utils-merge': [ '1.0.1' ],
+523 silly audit   uuid: [ '7.0.3' ],
+523 silly audit   'validate-npm-package-name': [ '5.0.1' ],
+523 silly audit   vary: [ '1.1.2' ],
+523 silly audit   vaul: [ '1.1.2' ],
+523 silly audit   vlq: [ '1.0.1' ],
+523 silly audit   walker: [ '1.0.8' ],
+523 silly audit   'warn-once': [ '0.1.1' ],
+523 silly audit   wcwidth: [ '1.0.1' ],
+523 silly audit   'webidl-conversions': [ '3.0.1' ],
+523 silly audit   'whatwg-fetch': [ '3.6.20' ],
+523 silly audit   'whatwg-url': [ '5.0.0' ],
+523 silly audit   'whatwg-url-minimum': [ '0.1.2' ],
+523 silly audit   which: [ '2.0.2' ],
+523 silly audit   'wrap-ansi': [ '7.0.0' ],
+523 silly audit   xcode: [ '3.0.1' ],
+523 silly audit   xml2js: [ '0.6.0' ],
+523 silly audit   xmlbuilder: [ '11.0.1', '15.1.1' ],
+523 silly audit   y18n: [ '5.0.8' ],
+523 silly audit   yallist: [ '3.1.1' ],
+523 silly audit   yaml: [ '2.9.0' ],
+523 silly audit   yargs: [ '17.7.3' ],
+523 silly audit   'yargs-parser': [ '21.1.1' ],
+523 silly audit   '@apollo/client': [ '4.2.8' ],
+523 silly audit   rxjs: [ '7.8.2' ],
+523 silly audit   '@hookform/resolvers': [ '5.5.7' ],
+523 silly audit   '@nhost/nhost-js': [ '4.7.3' ],
+523 silly audit   '@shopify/flash-list': [ '2.3.2' ],
+523 silly audit   clsx: [ '2.1.1' ],
+523 silly audit   'expo-document-picker': [ '57.0.1' ],
+523 silly audit   'expo-image-picker': [ '57.0.7' ],
+523 silly audit   'expo-localization': [ '57.0.1' ],
+523 silly audit   'expo-notifications': [ '57.0.8' ],
+523 silly audit   'expo-secure-store': [ '57.0.1' ],
+523 silly audit   graphql: [ '16.14.2' ],
+523 silly audit   i18next: [ '26.3.6' ],
+523 silly audit   'react-hook-form': [ '7.83.0' ],
+523 silly audit   'react-i18next': [ '17.0.11' ],
+523 silly audit   'react-native-gesture-handler': [ '3.1.0' ],
+523 silly audit   zod: [ '4.4.3', '3.25.76' ],
+523 silly audit   zustand: [ '5.0.14' ],
+523 silly audit   '@graphql-typed-document-node/core': [ '3.2.0' ],
+523 silly audit   '@wry/caches': [ '1.0.1' ],
+523 silly audit   '@wry/equality': [ '0.5.7' ],
+523 silly audit   '@wry/trie': [ '0.5.0' ],
+523 silly audit   'graphql-tag': [ '2.12.7' ],
+523 silly audit   optimism: [ '0.18.1' ],
+523 silly audit   '@standard-schema/utils': [ '0.3.0' ],
+523 silly audit   'expo-image-loader': [ '57.0.1' ],
+523 silly audit   'rtl-detect': [ '1.1.2' ],
+523 silly audit   badgin: [ '1.2.3' ],
+523 silly audit   'expo-application': [ '57.0.2' ],
+523 silly audit   '@wry/context': [ '0.7.4' ],
+523 silly audit   'html-parse-stringify': [ '4.0.1' ],
+523 silly audit   'use-sync-external-store': [ '1.6.0' ]
+523 silly audit }
+524 http cache use-sync-external-store@https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.6.0.tgz 0ms (cache hit)
+525 http cache expo-application@https://registry.npmjs.org/expo-application/-/expo-application-57.0.2.tgz 0ms (cache hit)
+526 http cache html-parse-stringify@https://registry.npmjs.org/html-parse-stringify/-/html-parse-stringify-4.0.1.tgz 0ms (cache hit)
+527 http cache badgin@https://registry.npmjs.org/badgin/-/badgin-1.2.3.tgz 0ms (cache hit)
+528 http cache rtl-detect@https://registry.npmjs.org/rtl-detect/-/rtl-detect-1.1.2.tgz 0ms (cache hit)
+529 http cache expo-image-loader@https://registry.npmjs.org/expo-image-loader/-/expo-image-loader-57.0.1.tgz 0ms (cache hit)
+530 http cache @wry/context@https://registry.npmjs.org/@wry/context/-/context-0.7.4.tgz 0ms (cache hit)
+531 http cache @standard-schema/utils@https://registry.npmjs.org/@standard-schema/utils/-/utils-0.3.0.tgz 0ms (cache hit)
+532 http cache optimism@https://registry.npmjs.org/optimism/-/optimism-0.18.1.tgz 0ms (cache hit)
+533 http cache graphql-tag@https://registry.npmjs.org/graphql-tag/-/graphql-tag-2.12.7.tgz 0ms (cache hit)
+534 http cache @wry/equality@https://registry.npmjs.org/@wry/equality/-/equality-0.5.7.tgz 0ms (cache hit)
+535 http cache @wry/caches@https://registry.npmjs.org/@wry/caches/-/caches-1.0.1.tgz 0ms (cache hit)
+536 http cache @graphql-typed-document-node/core@https://registry.npmjs.org/@graphql-typed-document-node/core/-/core-3.2.0.tgz 0ms (cache hit)
+537 http cache zustand@https://registry.npmjs.org/zustand/-/zustand-5.0.14.tgz 0ms (cache hit)
+538 http cache @wry/trie@https://registry.npmjs.org/@wry/trie/-/trie-0.5.0.tgz 0ms (cache hit)
+539 http cache react-hook-form@https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.83.0.tgz 0ms (cache hit)
+540 http cache graphql@https://registry.npmjs.org/graphql/-/graphql-16.14.2.tgz 0ms (cache hit)
+541 http cache i18next@https://registry.npmjs.org/i18next/-/i18next-26.3.6.tgz 0ms (cache hit)
+542 http cache expo-notifications@https://registry.npmjs.org/expo-notifications/-/expo-notifications-57.0.8.tgz 0ms (cache hit)
+543 http cache expo-secure-store@https://registry.npmjs.org/expo-secure-store/-/expo-secure-store-57.0.1.tgz 0ms (cache hit)
+544 http cache expo-localization@https://registry.npmjs.org/expo-localization/-/expo-localization-57.0.1.tgz 0ms (cache hit)
+545 http cache react-i18next@https://registry.npmjs.org/react-i18next/-/react-i18next-17.0.11.tgz 0ms (cache hit)
+546 http cache expo-image-picker@https://registry.npmjs.org/expo-image-picker/-/expo-image-picker-57.0.7.tgz 0ms (cache hit)
+547 http cache expo-document-picker@https://registry.npmjs.org/expo-document-picker/-/expo-document-picker-57.0.1.tgz 0ms (cache hit)
+548 http cache clsx@https://registry.npmjs.org/clsx/-/clsx-2.1.1.tgz 0ms (cache hit)
+549 http cache @nhost/nhost-js@https://registry.npmjs.org/@nhost/nhost-js/-/nhost-js-4.7.3.tgz 0ms (cache hit)
+550 http cache @hookform/resolvers@https://registry.npmjs.org/@hookform/resolvers/-/resolvers-5.5.7.tgz 0ms (cache hit)
+551 http cache @apollo/client@https://registry.npmjs.org/@apollo/client/-/client-4.2.8.tgz 0ms (cache hit)
+552 http cache zod@https://registry.npmjs.org/zod/-/zod-4.4.3.tgz 0ms (cache hit)
+553 http cache @shopify/flash-list@https://registry.npmjs.org/@shopify/flash-list/-/flash-list-2.3.2.tgz 0ms (cache hit)
+554 http cache zod@https://registry.npmjs.org/zod/-/zod-3.25.76.tgz 0ms (cache hit)
+555 http cache rxjs@https://registry.npmjs.org/rxjs/-/rxjs-7.8.2.tgz 0ms (cache hit)
+556 silly tarball no local data for use-sync-external-store@https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.6.0.tgz. Extracting by manifest.
+557 silly tarball no local data for expo-application@https://registry.npmjs.org/expo-application/-/expo-application-57.0.2.tgz. Extracting by manifest.
+558 silly tarball no local data for html-parse-stringify@https://registry.npmjs.org/html-parse-stringify/-/html-parse-stringify-4.0.1.tgz. Extracting by manifest.
+559 silly tarball no local data for badgin@https://registry.npmjs.org/badgin/-/badgin-1.2.3.tgz. Extracting by manifest.
+560 silly tarball no local data for rtl-detect@https://registry.npmjs.org/rtl-detect/-/rtl-detect-1.1.2.tgz. Extracting by manifest.
+561 silly tarball no local data for expo-image-loader@https://registry.npmjs.org/expo-image-loader/-/expo-image-loader-57.0.1.tgz. Extracting by manifest.
+562 silly tarball no local data for @wry/context@https://registry.npmjs.org/@wry/context/-/context-0.7.4.tgz. Extracting by manifest.
+563 silly tarball no local data for @standard-schema/utils@https://registry.npmjs.org/@standard-schema/utils/-/utils-0.3.0.tgz. Extracting by manifest.
+564 silly tarball no local data for optimism@https://registry.npmjs.org/optimism/-/optimism-0.18.1.tgz. Extracting by manifest.
+565 silly tarball no local data for graphql-tag@https://registry.npmjs.org/graphql-tag/-/graphql-tag-2.12.7.tgz. Extracting by manifest.
+566 silly tarball no local data for @wry/equality@https://registry.npmjs.org/@wry/equality/-/equality-0.5.7.tgz. Extracting by manifest.
+567 silly tarball no local data for @wry/caches@https://registry.npmjs.org/@wry/caches/-/caches-1.0.1.tgz. Extracting by manifest.
+568 silly tarball no local data for @graphql-typed-document-node/core@https://registry.npmjs.org/@graphql-typed-document-node/core/-/core-3.2.0.tgz. Extracting by manifest.
+569 silly tarball no local data for zustand@https://registry.npmjs.org/zustand/-/zustand-5.0.14.tgz. Extracting by manifest.
+570 silly tarball no local data for @wry/trie@https://registry.npmjs.org/@wry/trie/-/trie-0.5.0.tgz. Extracting by manifest.
+571 silly tarball no local data for react-hook-form@https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.83.0.tgz. Extracting by manifest.
+572 silly tarball no local data for graphql@https://registry.npmjs.org/graphql/-/graphql-16.14.2.tgz. Extracting by manifest.
+573 silly tarball no local data for i18next@https://registry.npmjs.org/i18next/-/i18next-26.3.6.tgz. Extracting by manifest.
+574 silly tarball no local data for expo-notifications@https://registry.npmjs.org/expo-notifications/-/expo-notifications-57.0.8.tgz. Extracting by manifest.
+575 silly tarball no local data for expo-secure-store@https://registry.npmjs.org/expo-secure-store/-/expo-secure-store-57.0.1.tgz. Extracting by manifest.
+576 silly tarball no local data for expo-localization@https://registry.npmjs.org/expo-localization/-/expo-localization-57.0.1.tgz. Extracting by manifest.
+577 silly tarball no local data for react-i18next@https://registry.npmjs.org/react-i18next/-/react-i18next-17.0.11.tgz. Extracting by manifest.
+578 silly tarball no local data for expo-image-picker@https://registry.npmjs.org/expo-image-picker/-/expo-image-picker-57.0.7.tgz. Extracting by manifest.
+579 silly tarball no local data for expo-document-picker@https://registry.npmjs.org/expo-document-picker/-/expo-document-picker-57.0.1.tgz. Extracting by manifest.
+580 silly tarball no local data for clsx@https://registry.npmjs.org/clsx/-/clsx-2.1.1.tgz. Extracting by manifest.
+581 silly tarball no local data for @nhost/nhost-js@https://registry.npmjs.org/@nhost/nhost-js/-/nhost-js-4.7.3.tgz. Extracting by manifest.
+582 silly tarball no local data for @hookform/resolvers@https://registry.npmjs.org/@hookform/resolvers/-/resolvers-5.5.7.tgz. Extracting by manifest.
+583 silly tarball no local data for @apollo/client@https://registry.npmjs.org/@apollo/client/-/client-4.2.8.tgz. Extracting by manifest.
+584 silly tarball no local data for zod@https://registry.npmjs.org/zod/-/zod-4.4.3.tgz. Extracting by manifest.
+585 silly tarball no local data for @shopify/flash-list@https://registry.npmjs.org/@shopify/flash-list/-/flash-list-2.3.2.tgz. Extracting by manifest.
+586 silly tarball no local data for rxjs@https://registry.npmjs.org/rxjs/-/rxjs-7.8.2.tgz. Extracting by manifest.
+587 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 259ms
+588 silly audit report {
+588 silly audit report   uuid: [
+588 silly audit report     {
+588 silly audit report       id: 1119441,
+588 silly audit report       url: 'https://github.com/advisories/GHSA-w5hq-g745-h8pq',
+588 silly audit report       title: 'uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided',
+588 silly audit report       severity: 'moderate',
+588 silly audit report       vulnerable_versions: '<11.1.1',
+588 silly audit report       cwe: [Array],
+588 silly audit report       cvss: [Object]
+588 silly audit report     }
+588 silly audit report   ]
+588 silly audit report }
+589 silly packumentCache corgi:https://registry.npmjs.org/uuid cache-miss
+590 http cache https://registry.npmjs.org/uuid 2ms (cache hit)
+591 silly packumentCache corgi:https://registry.npmjs.org/uuid set size:82973 disposed:false
+592 silly packumentCache corgi:https://registry.npmjs.org/xcode cache-miss
+593 http cache https://registry.npmjs.org/xcode 5ms (cache hit)
+594 silly packumentCache corgi:https://registry.npmjs.org/xcode set size:1850340 disposed:false
+595 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fconfig-plugins cache-miss
+596 http fetch GET 200 https://registry.npmjs.org/@standard-schema/utils/-/utils-0.3.0.tgz 333ms (cache miss)
+597 http cache https://registry.npmjs.org/@expo%2fconfig-plugins 39ms (cache hit)
+598 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fconfig-plugins set size:436600 disposed:false
+599 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fconfig cache-miss
+600 silly packumentCache corgi:https://registry.npmjs.org/@expo%2finline-modules cache-miss
+601 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fprebuild-config cache-miss
+602 silly packumentCache corgi:https://registry.npmjs.org/expo cache-miss
+603 silly packumentCache corgi:https://registry.npmjs.org/expo-splash-screen cache-miss
+604 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fcli cache-miss
+605 http cache https://registry.npmjs.org/@expo%2fconfig 15ms (cache hit)
+606 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fconfig set size:563473 disposed:false
+607 http cache https://registry.npmjs.org/@expo%2finline-modules 16ms (cache hit)
+608 silly packumentCache corgi:https://registry.npmjs.org/@expo%2finline-modules set size:32892 disposed:false
+609 http fetch GET 200 https://registry.npmjs.org/rtl-detect/-/rtl-detect-1.1.2.tgz 354ms (cache miss)
+610 http cache https://registry.npmjs.org/expo 18ms (cache hit)
+611 silly packumentCache corgi:https://registry.npmjs.org/expo set size:1829712 disposed:false
+612 http cache https://registry.npmjs.org/@expo%2fprebuild-config 28ms (cache hit)
+613 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fprebuild-config set size:411599 disposed:false
+614 http cache https://registry.npmjs.org/expo-splash-screen 31ms (cache hit)
+615 silly packumentCache corgi:https://registry.npmjs.org/expo-splash-screen set size:297968 disposed:false
+616 http cache https://registry.npmjs.org/@expo%2fcli 34ms (cache hit)
+617 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fcli set size:1742561 disposed:false
+618 silly packumentCache corgi:https://registry.npmjs.org/@expo%2flocal-build-cache-provider cache-miss
+619 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fmetro-config cache-miss
+620 http fetch GET 200 https://registry.npmjs.org/html-parse-stringify/-/html-parse-stringify-4.0.1.tgz 400ms (cache miss)
+621 http fetch GET 200 https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.6.0.tgz 407ms (cache miss)
+622 http fetch GET 200 https://registry.npmjs.org/badgin/-/badgin-1.2.3.tgz 407ms (cache miss)
+623 http fetch GET 200 https://registry.npmjs.org/@wry/context/-/context-0.7.4.tgz 409ms (cache miss)
+624 http cache https://registry.npmjs.org/@expo%2flocal-build-cache-provider 27ms (cache hit)
+625 silly packumentCache corgi:https://registry.npmjs.org/@expo%2flocal-build-cache-provider set size:64785 disposed:false
+626 http cache https://registry.npmjs.org/@expo%2fmetro-config 28ms (cache hit)
+627 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fmetro-config set size:617440 disposed:false
+628 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fdom-webview cache-miss
+629 silly packumentCache corgi:https://registry.npmjs.org/@expo%2flog-box cache-miss
+630 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fmetro-runtime cache-miss
+631 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fui cache-miss
+632 silly packumentCache corgi:https://registry.npmjs.org/babel-preset-expo cache-miss
+633 silly packumentCache corgi:https://registry.npmjs.org/expo-asset cache-miss
+634 silly packumentCache corgi:https://registry.npmjs.org/expo-constants cache-miss
+635 silly packumentCache corgi:https://registry.npmjs.org/expo-file-system cache-miss
+636 silly packumentCache corgi:https://registry.npmjs.org/expo-font cache-miss
+637 silly packumentCache corgi:https://registry.npmjs.org/expo-glass-effect cache-miss
+638 silly packumentCache corgi:https://registry.npmjs.org/expo-keep-awake cache-miss
+639 silly packumentCache corgi:https://registry.npmjs.org/expo-router cache-miss
+640 silly packumentCache corgi:https://registry.npmjs.org/expo-status-bar cache-miss
+641 silly packumentCache corgi:https://registry.npmjs.org/expo-symbols cache-miss
+642 silly packumentCache corgi:https://registry.npmjs.org/expo-web-browser cache-miss
+643 silly packumentCache corgi:https://registry.npmjs.org/@expo%2frouter-server cache-miss
+644 silly packumentCache corgi:https://registry.npmjs.org/expo-document-picker cache-miss
+645 silly packumentCache corgi:https://registry.npmjs.org/expo-image-picker cache-miss
+646 silly packumentCache corgi:https://registry.npmjs.org/expo-localization cache-miss
+647 silly packumentCache corgi:https://registry.npmjs.org/expo-notifications cache-miss
+648 silly packumentCache corgi:https://registry.npmjs.org/expo-secure-store cache-miss
+649 silly packumentCache corgi:https://registry.npmjs.org/expo-image-loader cache-miss
+650 silly packumentCache corgi:https://registry.npmjs.org/expo-application cache-miss
+651 http fetch GET 200 https://registry.npmjs.org/@graphql-typed-document-node/core/-/core-3.2.0.tgz 532ms (cache miss)
+652 http fetch GET 200 https://registry.npmjs.org/graphql-tag/-/graphql-tag-2.12.7.tgz 533ms (cache miss)
+653 http cache https://registry.npmjs.org/@expo%2fmetro-runtime 114ms (cache hit)
+654 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fmetro-runtime set size:216564 disposed:false
+655 http cache https://registry.npmjs.org/@expo%2fdom-webview 114ms (cache hit)
+656 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fdom-webview set size:104773 disposed:false
+657 http cache https://registry.npmjs.org/expo-asset 115ms (cache hit)
+658 silly packumentCache corgi:https://registry.npmjs.org/expo-asset set size:325094 disposed:false
+659 http cache https://registry.npmjs.org/expo-glass-effect 115ms (cache hit)
+660 silly packumentCache corgi:https://registry.npmjs.org/expo-glass-effect set size:91722 disposed:false
+661 http cache https://registry.npmjs.org/expo-constants 117ms (cache hit)
+662 silly packumentCache corgi:https://registry.npmjs.org/expo-constants set size:308522 disposed:false
+663 http cache https://registry.npmjs.org/babel-preset-expo 118ms (cache hit)
+664 silly packumentCache corgi:https://registry.npmjs.org/babel-preset-expo set size:606543 disposed:false
+665 http cache https://registry.npmjs.org/@expo%2flog-box 119ms (cache hit)
+666 silly packumentCache corgi:https://registry.npmjs.org/@expo%2flog-box set size:101479 disposed:false
+667 http cache https://registry.npmjs.org/expo-file-system 119ms (cache hit)
+668 silly packumentCache corgi:https://registry.npmjs.org/expo-file-system set size:303050 disposed:false
+669 http cache https://registry.npmjs.org/expo-font 120ms (cache hit)
+670 silly packumentCache corgi:https://registry.npmjs.org/expo-font set size:253684 disposed:false
+671 http cache https://registry.npmjs.org/expo-symbols 121ms (cache hit)
+672 silly packumentCache corgi:https://registry.npmjs.org/expo-symbols set size:157116 disposed:false
+673 http cache https://registry.npmjs.org/expo-router 122ms (cache hit)
+674 silly packumentCache corgi:https://registry.npmjs.org/expo-router set size:1005088 disposed:false
+675 http cache https://registry.npmjs.org/@expo%2frouter-server 125ms (cache hit)
+676 silly packumentCache corgi:https://registry.npmjs.org/@expo%2frouter-server set size:125485 disposed:false
+677 http cache https://registry.npmjs.org/expo-status-bar 125ms (cache hit)
+678 silly packumentCache corgi:https://registry.npmjs.org/expo-status-bar set size:204478 disposed:false
+679 http cache https://registry.npmjs.org/@expo%2fui 127ms (cache hit)
+680 silly packumentCache corgi:https://registry.npmjs.org/@expo%2fui set size:177232 disposed:false
+681 http cache https://registry.npmjs.org/expo-keep-awake 127ms (cache hit)
+682 silly packumentCache corgi:https://registry.npmjs.org/expo-keep-awake set size:199375 disposed:false
+683 http cache https://registry.npmjs.org/expo-web-browser 128ms (cache hit)
+684 silly packumentCache corgi:https://registry.npmjs.org/expo-web-browser set size:219405 disposed:false
+685 http fetch GET 200 https://registry.npmjs.org/clsx/-/clsx-2.1.1.tgz 550ms (cache miss)
+686 http fetch GET 200 https://registry.npmjs.org/optimism/-/optimism-0.18.1.tgz 566ms (cache miss)
+687 http fetch GET 200 https://registry.npmjs.org/zustand/-/zustand-5.0.14.tgz 573ms (cache miss)
+688 http fetch GET 200 https://registry.npmjs.org/@wry/caches/-/caches-1.0.1.tgz 573ms (cache miss)
+689 http fetch GET 200 https://registry.npmjs.org/i18next/-/i18next-26.3.6.tgz 578ms (cache miss)
+690 http fetch GET 200 https://registry.npmjs.org/expo-image-loader/-/expo-image-loader-57.0.1.tgz 614ms (cache miss)
+691 http fetch GET 200 https://registry.npmjs.org/@wry/equality/-/equality-0.5.7.tgz 657ms (cache miss)
+692 http fetch GET 200 https://registry.npmjs.org/expo-application/-/expo-application-57.0.2.tgz 662ms (cache miss)
+693 http fetch GET 200 https://registry.npmjs.org/@wry/trie/-/trie-0.5.0.tgz 661ms (cache miss)
+694 http fetch GET 200 https://registry.npmjs.org/react-i18next/-/react-i18next-17.0.11.tgz 693ms (cache miss)
+695 http fetch GET 200 https://registry.npmjs.org/expo-localization/-/expo-localization-57.0.1.tgz 695ms (cache miss)
+696 http fetch GET 200 https://registry.npmjs.org/expo-secure-store 238ms (cache miss)
+697 silly packumentCache corgi:https://registry.npmjs.org/expo-secure-store set size:undefined disposed:false
+698 http fetch GET 200 https://registry.npmjs.org/expo-document-picker/-/expo-document-picker-57.0.1.tgz 1428ms (cache miss)
+699 http fetch GET 200 https://registry.npmjs.org/expo-image-loader 980ms (cache miss)
+700 silly packumentCache corgi:https://registry.npmjs.org/expo-image-loader set size:undefined disposed:false
+701 http fetch GET 200 https://registry.npmjs.org/expo-document-picker 1168ms (cache miss)
+702 silly packumentCache corgi:https://registry.npmjs.org/expo-document-picker set size:undefined disposed:false
+703 http fetch GET 200 https://registry.npmjs.org/expo-localization 1242ms (cache miss)
+704 silly packumentCache corgi:https://registry.npmjs.org/expo-localization set size:undefined disposed:false
+705 http fetch GET 200 https://registry.npmjs.org/expo-notifications 1284ms (cache miss)
+706 silly packumentCache corgi:https://registry.npmjs.org/expo-notifications set size:undefined disposed:false
+707 http fetch GET 200 https://registry.npmjs.org/expo-image-picker 1317ms (cache miss)
+708 silly packumentCache corgi:https://registry.npmjs.org/expo-image-picker set size:undefined disposed:false
+709 http fetch GET 200 https://registry.npmjs.org/expo-application 1360ms (cache miss)
+710 silly packumentCache corgi:https://registry.npmjs.org/expo-application set size:undefined disposed:false
+711 http fetch GET 200 https://registry.npmjs.org/expo-secure-store/-/expo-secure-store-57.0.1.tgz 1871ms (cache miss)
+712 http fetch GET 200 https://registry.npmjs.org/expo-image-picker/-/expo-image-picker-57.0.7.tgz 1947ms (cache miss)
+713 http fetch GET 200 https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.83.0.tgz 1961ms (cache miss)
+714 http fetch GET 200 https://registry.npmjs.org/@nhost/nhost-js/-/nhost-js-4.7.3.tgz 2010ms (cache miss)
+715 http fetch GET 200 https://registry.npmjs.org/graphql/-/graphql-16.14.2.tgz 2036ms (cache miss)
+716 http fetch GET 200 https://registry.npmjs.org/@shopify/flash-list/-/flash-list-2.3.2.tgz 2103ms (cache miss)
+717 http fetch GET 200 https://registry.npmjs.org/@hookform/resolvers/-/resolvers-5.5.7.tgz 2161ms (cache miss)
+718 http fetch GET 200 https://registry.npmjs.org/expo-notifications/-/expo-notifications-57.0.8.tgz 2256ms (cache miss)
+719 http fetch GET 200 https://registry.npmjs.org/zod/-/zod-4.4.3.tgz 2289ms (cache miss)
+720 http fetch GET 200 https://registry.npmjs.org/@apollo/client/-/client-4.2.8.tgz 2572ms (cache miss)
+721 http fetch GET 200 https://registry.npmjs.org/rxjs/-/rxjs-7.8.2.tgz 2689ms (cache miss)
+722 silly ADD node_modules/use-sync-external-store
+723 silly ADD node_modules/html-parse-stringify
+724 silly ADD node_modules/@wry/context
+725 silly ADD node_modules/expo-application
+726 silly ADD node_modules/badgin
+727 silly ADD node_modules/rtl-detect
+728 silly ADD node_modules/expo-image-loader
+729 silly ADD node_modules/@standard-schema/utils
+730 silly ADD node_modules/optimism
+731 silly ADD node_modules/graphql-tag
+732 silly ADD node_modules/@wry/trie
+733 silly ADD node_modules/@wry/equality
+734 silly ADD node_modules/@wry/caches
+735 silly ADD node_modules/@graphql-typed-document-node/core
+736 silly ADD node_modules/zustand
+737 silly ADD node_modules/react-i18next
+738 silly ADD node_modules/react-hook-form
+739 silly ADD node_modules/i18next
+740 silly ADD node_modules/graphql
+741 silly ADD node_modules/expo-secure-store
+742 silly ADD node_modules/expo-notifications
+743 silly ADD node_modules/expo-localization
+744 silly ADD node_modules/expo-image-picker
+745 silly ADD node_modules/expo-document-picker
+746 silly ADD node_modules/clsx
+747 silly ADD node_modules/@shopify/flash-list
+748 silly ADD node_modules/@nhost/nhost-js
+749 silly ADD node_modules/@hookform/resolvers
+750 silly ADD node_modules/rxjs
+751 silly ADD node_modules/@apollo/client
+752 silly CHANGE node_modules/zod
+753 silly ADD node_modules/expo/node_modules/zod
+754 verbose cwd /Users/museryeung/Documents/dev/crew-up-project/crew-up-app
+755 verbose os Darwin 25.5.0
+756 verbose node v24.13.0
+757 verbose npm  v11.10.0
+758 verbose exit 0
+759 info ok
