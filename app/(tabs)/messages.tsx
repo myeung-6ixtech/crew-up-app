@@ -6,7 +6,6 @@ import { useApolloClient } from '@/lib/apolloHooks';
 import { Screen, Card, Title, EmptyState } from '@/components/ui';
 import { useAuth } from '@/hooks/useSession';
 import { fetchThreads } from '@/services/messagingService';
-import { registerForPushNotifications } from '@/services/notificationService';
 import { SCREENS } from '@/constants/screens';
 import { SafetyNudgeModal } from '@/components/SafetyNudgeModal';
 import { useSafetyStore } from '@/stores/safetyStore';
@@ -15,7 +14,7 @@ export default function MessagesTab() {
   const { t } = useTranslation();
   const router = useRouter();
   const client = useApolloClient();
-  const { userId, isVerified } = useAuth();
+  const { userId } = useAuth();
   const { nudgeVisible, checkNudge, dismissNudge } = useSafetyStore();
   const [threads, setThreads] = useState<
     { id: string; thread_id: string; thread: { type: string; event?: { title?: string }; messages?: { body?: string }[]; participants?: { user?: { profile?: { display_name?: string } } }[] } }[]
@@ -24,21 +23,12 @@ export default function MessagesTab() {
   const load = useCallback(async () => {
     if (!userId) return;
     setThreads(await fetchThreads(client, userId));
-    void registerForPushNotifications();
     void checkNudge();
   }, [client, userId, checkNudge]);
 
   useEffect(() => {
     void load();
   }, [load]);
-
-  if (!isVerified) {
-    return (
-      <Screen>
-        <EmptyState title={t('verification.pending')} body={t('verification.pendingBody')} />
-      </Screen>
-    );
-  }
 
   const threadTitle = (item: (typeof threads)[0]) => {
     if (item.thread.type === 'event_group') return item.thread.event?.title ?? 'Event chat';

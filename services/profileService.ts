@@ -70,6 +70,7 @@ export async function submitVerification(
 export async function fetchAirlines(client: ApolloClient) {
   const { data } = await client.query({
     query: GET_AIRLINES,
+    fetchPolicy: 'network-only',
   });
   return (data as any)?.airlines ?? [];
 }

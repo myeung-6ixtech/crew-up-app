@@ -2,16 +2,20 @@ import '@/lib/i18n';
 import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { Stack } from 'expo-router';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
+import { useFonts } from 'expo-font';
 import { AppProviders } from '@/contexts/AppProviders';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useSession } from '@/hooks/useSession';
-import { colors } from '@/components/ui';
+import { fontAssets } from '@/theme';
+import { useTheme } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
 
 function RootNavigator() {
   const { loading } = useSession();
+  const theme = useTheme();
   useAuthGuard();
 
   useEffect(() => {
@@ -22,17 +26,35 @@ function RootNavigator() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={colors.primary} />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: theme.colors.bgCanvas,
+        }}>
+        <ActivityIndicator size="large" color={theme.colors.accent} />
       </View>
     );
   }
 
   return (
-    <Stack screenOptions={{ headerBackTitle: 'Back' }}>
+    <Stack
+      screenOptions={{
+        headerBackTitle: 'Back',
+        headerStyle: { backgroundColor: theme.colors.bgCanvas },
+        headerTitleStyle: {
+          ...theme.typography.headline,
+          color: theme.colors.textPrimary,
+        },
+        headerTintColor: theme.colors.accent,
+        contentStyle: { backgroundColor: theme.colors.bgCanvas },
+      }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="auth/login" options={{ title: 'Sign in', headerShown: false }} />
-      <Stack.Screen name="auth/register" options={{ title: 'Register', headerShown: false }} />
+      <Stack.Screen name="auth/welcome" options={{ headerShown: false }} />
+      <Stack.Screen name="auth/email" options={{ headerShown: false }} />
+      <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+      <Stack.Screen name="auth/register" options={{ headerShown: false }} />
       <Stack.Screen name="auth/forgot-password" options={{ title: 'Forgot password' }} />
       <Stack.Screen name="auth/reset-password" options={{ title: 'Reset password' }} />
       <Stack.Screen name="onboarding/index" options={{ title: 'Profile setup' }} />
@@ -49,20 +71,40 @@ function RootNavigator() {
       <Stack.Screen name="events/create" options={{ title: 'Create meetup' }} />
       <Stack.Screen name="events/edit/[id]" options={{ title: 'Edit event' }} />
       <Stack.Screen name="messages/[threadId]" options={{ title: 'Chat' }} />
-      <Stack.Screen name="profile/edit" options={{ title: 'Edit profile' }} />
+      <Stack.Screen
+        name="profile/edit"
+        options={{ title: 'Edit profile', presentation: 'modal' }}
+      />
       <Stack.Screen name="profile/privacy" options={{ title: 'Privacy' }} />
       <Stack.Screen name="profile/safety-center" options={{ title: 'Safety Center' }} />
       <Stack.Screen name="profile/verification-status" options={{ title: 'Verification' }} />
       <Stack.Screen name="profile/settings/language" options={{ title: 'Language' }} />
       <Stack.Screen name="profile/settings/account-security" options={{ title: 'Account security' }} />
+      <Stack.Screen name="dev/ui-kit" options={{ title: 'UI Kit' }} />
     </Stack>
   );
 }
 
+function RootWithFonts() {
+  const [fontsLoaded] = useFonts(fontAssets);
+
+  if (!fontsLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  return <RootNavigator />;
+}
+
 export default function RootLayout() {
   return (
-    <AppProviders>
-      <RootNavigator />
-    </AppProviders>
+    <SafeAreaProvider>
+      <AppProviders>
+        <RootWithFonts />
+      </AppProviders>
+    </SafeAreaProvider>
   );
 }

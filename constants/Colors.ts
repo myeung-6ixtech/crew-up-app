@@ -1,19 +1,22 @@
-const tintColorLight = '#2f95dc';
-const tintColorDark = '#fff';
+/**
+ * @deprecated Use `@/theme` and `useTheme()` instead.
+ * Kept temporarily for Expo template components not yet removed.
+ */
+import { lightColors, darkColors } from '@/theme/tokens';
 
 export default {
   light: {
-    text: '#000',
-    background: '#fff',
-    tint: tintColorLight,
-    tabIconDefault: '#ccc',
-    tabIconSelected: tintColorLight,
+    text: lightColors.textPrimary,
+    background: lightColors.bgCanvas,
+    tint: lightColors.accent,
+    tabIconDefault: lightColors.textTertiary,
+    tabIconSelected: lightColors.accent,
   },
   dark: {
-    text: '#fff',
-    background: '#000',
-    tint: tintColorDark,
-    tabIconDefault: '#ccc',
-    tabIconSelected: tintColorDark,
+    text: darkColors.textPrimary,
+    background: darkColors.bgCanvas,
+    tint: darkColors.accent,
+    tabIconDefault: darkColors.textTertiary,
+    tabIconSelected: darkColors.accent,
   },
 };

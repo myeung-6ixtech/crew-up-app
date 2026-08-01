@@ -6,20 +6,22 @@ const SESSION_KEY = 'nhostSession';
 export class SecureStoreSession implements SessionStorageBackend {
   private cache: StoredSession | null = null;
   private loaded = false;
+  private loadPromise: Promise<void> | null = null;
 
   private async ensureLoaded() {
     if (this.loaded) return;
-    const raw = await SecureStore.getItemAsync(SESSION_KEY);
-    this.cache = raw ? (JSON.parse(raw) as StoredSession) : null;
-    this.loaded = true;
-  }
-
-  get(): StoredSession | null {
-    if (!this.loaded) {
-      SecureStore.getItemAsync(SESSION_KEY).then((raw) => {
+    if (!this.loadPromise) {
+      this.loadPromise = SecureStore.getItemAsync(SESSION_KEY).then((raw) => {
         this.cache = raw ? (JSON.parse(raw) as StoredSession) : null;
         this.loaded = true;
       });
+    }
+    await this.loadPromise;
+  }
+
+  get(): StoredSession | null {
+    if (!this.loaded && !this.loadPromise) {
+      void this.ensureLoaded();
     }
     return this.cache;
   }
@@ -32,12 +34,14 @@ export class SecureStoreSession implements SessionStorageBackend {
   set(value: StoredSession): void {
     this.cache = value;
     this.loaded = true;
+    this.loadPromise = null;
     void SecureStore.setItemAsync(SESSION_KEY, JSON.stringify(value));
   }
 
   remove(): void {
     this.cache = null;
     this.loaded = true;
+    this.loadPromise = null;
     void SecureStore.deleteItemAsync(SESSION_KEY);
   }
 }

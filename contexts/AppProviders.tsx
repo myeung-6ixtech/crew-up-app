@@ -1,11 +1,13 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { StoredSession } from '@nhost/nhost-js';
 import { ApolloProvider } from '@/lib/apolloHooks';
 import { nhost } from '@/lib/nhost';
 import { apolloClient, createApolloClient } from '@/lib/apollo';
 import { secureStoreSession } from '@/lib/secureStoreSession';
+import { getHasuraClaim } from '@/lib/sessionAuth';
 import type { Profile } from '@/types/domain';
 import { GET_MY_PROFILE } from '@/graphql/mutations/profile';
+import { ThemeProvider } from '@/theme';
 
 interface SessionContextValue {
   session: StoredSession | null;
@@ -24,6 +26,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [client] = useState(() => createApolloClient());
+  const claimRefreshAttempted = useRef(false);
 
   const refreshProfile = useCallback(async () => {
     const current = nhost.getUserSession();
@@ -37,7 +40,19 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         variables: { userId: current.user.id },
         fetchPolicy: 'network-only',
       });
-      setProfile(data?.profiles_by_pk ?? null);
+      const nextProfile = data?.profiles_by_pk ?? null;
+      setProfile(nextProfile);
+
+      const token = nhost.getUserSession()?.accessToken;
+      const airlineClaim = token ? getHasuraClaim(token, 'x-hasura-airline-id') : null;
+      const expectedAirline = nextProfile?.airline_id ?? null;
+      const claimMissing = airlineClaim === null;
+      const claimStale = expectedAirline !== null && airlineClaim !== expectedAirline;
+      if (token && (claimStale || (claimMissing && !claimRefreshAttempted.current))) {
+        if (claimMissing) claimRefreshAttempted.current = true;
+        await nhost.refreshSession(0);
+        setSession(nhost.getUserSession());
+      }
     } catch {
       setProfile(null);
     }
@@ -106,9 +121,11 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <SessionContext.Provider value={value}>
-      <ApolloProvider client={client}>{children}</ApolloProvider>
-    </SessionContext.Provider>
+    <ThemeProvider>
+      <SessionContext.Provider value={value}>
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </SessionContext.Provider>
+    </ThemeProvider>
   );
 }
 

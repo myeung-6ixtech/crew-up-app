@@ -9,7 +9,8 @@ import { setContext } from '@apollo/client/link/context';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { createClient as createWsClient } from 'graphql-ws';
-import { nhost, nhostUrls } from './nhost';
+import { ensureAccessToken } from './sessionAuth';
+import { nhostUrls } from './nhost';
 
 function wsUrlFromHttp(httpUrl: string): string {
   return httpUrl.replace(/^http/, 'ws');
@@ -19,9 +20,7 @@ export function createApolloClient() {
   const httpLink = new HttpLink({ uri: nhostUrls.graphql });
 
   const authLink = setContext(async (_, prev) => {
-    await nhost.refreshSession(60);
-    const session = nhost.getUserSession();
-    const token = session?.accessToken;
+    const token = await ensureAccessToken();
     return {
       headers: {
         ...(prev.headers as Record<string, string>),
@@ -34,11 +33,8 @@ export function createApolloClient() {
     createWsClient({
       url: wsUrlFromHttp(nhostUrls.graphql),
       connectionParams: async () => {
-        await nhost.refreshSession(60);
-        const session = nhost.getUserSession();
-        return session?.accessToken
-          ? { headers: { Authorization: `Bearer ${session.accessToken}` } }
-          : {};
+        const token = await ensureAccessToken();
+        return token ? { headers: { Authorization: `Bearer ${token}` } } : {};
       },
     }),
   );

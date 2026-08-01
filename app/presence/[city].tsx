@@ -32,7 +32,7 @@ export default function PresenceCityScreen() {
             <Card key={p.id}>
               <Text style={{ fontWeight: '600' }}>{p.user?.profile?.display_name ?? 'Crew'}</Text>
               <Text>{[p.user?.profile?.role_type, p.user?.profile?.base_airport].filter(Boolean).join(' · ')}</Text>
-              {p.user?.profile?.is_verified ? <Badge label="Verified" tone="success" /> : null}
+              {p.user?.profile?.is_verified ? <Badge label="Verified" tone="verified" /> : null}
             </Card>
           ))
         )}

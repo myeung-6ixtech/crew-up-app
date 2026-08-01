@@ -1,6 +1,7 @@
-import { Modal, View, Text, StyleSheet } from 'react-native';
+import { Modal, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Button, colors } from '@/components/ui';
+import { Button, HeadlineText, BodyText } from '@/components/ui';
+import { useThemedStyles } from '@/theme';
 
 export function SafetyNudgeModal({
   visible,
@@ -10,32 +11,32 @@ export function SafetyNudgeModal({
   onDismiss: () => void;
 }) {
   const { t } = useTranslation();
+  const styles = useThemedStyles((t) => ({
+    backdrop: {
+      flex: 1,
+      backgroundColor: t.colors.scrim,
+      justifyContent: 'center',
+      padding: t.spacing.xl,
+    },
+    card: {
+      backgroundColor: t.colors.bgSurfaceRaised,
+      borderRadius: t.radius.card,
+      padding: t.spacing.xl,
+      ...t.shadow.raised,
+    },
+    title: { marginBottom: t.spacing.sm },
+    body: { marginBottom: t.spacing.lg },
+  }));
 
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.backdrop}>
         <View style={styles.card}>
-          <Text style={styles.title}>{t('safety.nudgeTitle')}</Text>
-          <Text style={styles.body}>{t('safety.nudgeBody')}</Text>
-          <Button label={t('common.save')} onPress={onDismiss} />
+          <HeadlineText style={styles.title}>{t('safety.nudgeTitle')}</HeadlineText>
+          <BodyText muted style={styles.body}>{t('safety.nudgeBody')}</BodyText>
+          <Button label="Got it" onPress={onDismiss} />
         </View>
       </View>
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    padding: 24,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
-  },
-  title: { fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 8 },
-  body: { fontSize: 15, color: colors.muted, marginBottom: 16, lineHeight: 22 },
-});

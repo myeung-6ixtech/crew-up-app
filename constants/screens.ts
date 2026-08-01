@@ -4,9 +4,12 @@ export const SCREENS = {
     network: '/(tabs)/network',
     events: '/(tabs)/events',
     messages: '/(tabs)/messages',
-    profile: '/(tabs)/profile',
+    friends: '/(tabs)/friends',
   },
   auth: {
+    welcome: '/auth/welcome',
+    email: (mode: 'signup' | 'signin' = 'signup') =>
+      `/auth/email?mode=${mode}` as const,
     login: '/auth/login',
     register: '/auth/register',
     forgotPassword: '/auth/forgot-password',

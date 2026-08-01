@@ -27,11 +27,18 @@
         "simulator": false
       },
       "env": {
+        "EXPO_PUBLIC_NHOST_SUBDOMAIN": "tvxoufuvglucgbdftsns",
+        "EXPO_PUBLIC_NHOST_REGION": "ap-southeast-1",
         "EXPO_PUBLIC_APP_SCHEME": "crewup"
       }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_NHOST_SUBDOMAIN": "tvxoufuvglucgbdftsns",
+        "EXPO_PUBLIC_NHOST_REGION": "ap-southeast-1",
+        "EXPO_PUBLIC_APP_SCHEME": "crewup"
+      }
     }
   },
   "submit": {

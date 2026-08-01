@@ -44,7 +44,7 @@ export default function PublicProfileScreen() {
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         <Title>{profile.display_name}</Title>
         <Text>{[profile.role_type, profile.base_airport].filter(Boolean).join(' · ')}</Text>
-        {profile.is_verified ? <Badge label="Verified" tone="success" /> : null}
+        {profile.is_verified ? <Badge label="Verified" tone="verified" /> : null}
         {profile.show_rank && profile.rank ? <Text>Rank: {profile.rank}</Text> : null}
         <Button label={t('network.connect')} onPress={() => requestConnection(client, profile.user_id)} />
         <Button
@@ -59,7 +59,7 @@ export default function PublicProfileScreen() {
         <Button label={t('safety.report')} variant="secondary" onPress={() => setReportOpen(true)} />
         <Button
           label={t('safety.block')}
-          variant="danger"
+          variant="destructive"
           onPress={async () => {
             await reportAndBlock(client, profile.user_id, 'blocked_from_profile');
             router.back();

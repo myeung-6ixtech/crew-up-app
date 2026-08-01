@@ -4,7 +4,6 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { Screen, Card, Title, Button, EmptyState } from '@/components/ui';
-import { useAuth } from '@/hooks/useSession';
 import { fetchEvents } from '@/services/eventService';
 import { SCREENS } from '@/constants/screens';
 import { formatDateTime } from '@/lib/utils';
@@ -13,7 +12,6 @@ export default function EventsTab() {
   const { t } = useTranslation();
   const router = useRouter();
   const client = useApolloClient();
-  const { isVerified } = useAuth();
   const [events, setEvents] = useState<{ id: string; title: string; city: string; starts_at: string }[]>([]);
 
   const load = useCallback(async () => {
@@ -23,14 +21,6 @@ export default function EventsTab() {
   useEffect(() => {
     void load();
   }, [load]);
-
-  if (!isVerified) {
-    return (
-      <Screen>
-        <EmptyState title={t('verification.pending')} body={t('verification.pendingBody')} />
-      </Screen>
-    );
-  }
 
   return (
     <Screen style={{ padding: 0 }}>

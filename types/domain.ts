@@ -24,6 +24,7 @@ export interface RosterEntry {
   layover_start?: string | null;
   layover_end?: string | null;
   source?: string;
+  notes?: string | null;
 }
 
 export interface ParsedRosterEntry {

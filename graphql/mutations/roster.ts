@@ -14,6 +14,7 @@ export const GET_MY_ROSTERS = gql`
       layover_start
       layover_end
       source
+      notes
     }
   }
 `;

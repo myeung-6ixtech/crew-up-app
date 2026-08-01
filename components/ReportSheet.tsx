@@ -1,7 +1,8 @@
-import { Modal, View, Text, StyleSheet, ScrollView } from 'react-native';
+import { Modal, ScrollView } from 'react-native';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Input, colors } from '@/components/ui';
+import { Button, Input, HeadlineText } from '@/components/ui';
+import { useThemedStyles } from '@/theme';
 
 export function ReportSheet({
   visible,
@@ -18,6 +19,11 @@ export function ReportSheet({
   const [reason, setReason] = useState('');
   const [details, setDetails] = useState('');
   const [loading, setLoading] = useState(false);
+  const styles = useThemedStyles((t) => ({
+    container: { flex: 1, backgroundColor: t.colors.bgCanvas },
+    content: { padding: t.spacing.lg },
+    title: { marginBottom: t.spacing.lg },
+  }));
 
   const handleSubmit = async () => {
     if (!reason.trim()) return;
@@ -35,7 +41,7 @@ export function ReportSheet({
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-        <Text style={styles.title}>{title ?? t('safety.report')}</Text>
+        <HeadlineText style={styles.title}>{title ?? t('safety.report')}</HeadlineText>
         <Input label="Reason" value={reason} onChangeText={setReason} placeholder="Harassment, spam…" />
         <Input
           label="Details (optional)"
@@ -50,9 +56,3 @@ export function ReportSheet({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: 16 },
-  title: { fontSize: 22, fontWeight: '700', marginBottom: 16, color: colors.text },
-});

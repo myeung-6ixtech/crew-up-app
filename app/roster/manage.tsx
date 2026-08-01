@@ -41,7 +41,7 @@ export default function RosterManageScreen() {
               {r.id ? (
                 <Button
                   label="Delete"
-                  variant="danger"
+                  variant="destructive"
                   onPress={async () => {
                     await deleteRoster(client, r.id!);
                     await load();

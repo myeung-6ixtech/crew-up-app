@@ -33,14 +33,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ],
-      "expo-notifications"
+      ]
     ],
-    "extra": {
-      "eas": {
-        "projectId": "crew-up-app-local"
-      }
-    },
     "experiments": {
       "typedRoutes": true
     }

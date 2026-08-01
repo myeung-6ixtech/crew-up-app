@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, Text } from 'react-native';
+import { ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { Screen, Title, Card, Button } from '@/components/ui';
+import { Screen, Title, Card, BodyText } from '@/components/ui';
 import { useAuth } from '@/hooks/useSession';
-import { blockUser, fetchBlocks } from '@/services/safetyService';
+import { fetchBlocks } from '@/services/safetyService';
+import { useThemedStyles } from '@/theme';
 
 export default function SafetyCenterScreen() {
   const { t } = useTranslation();
   const client = useApolloClient();
   const { userId } = useAuth();
+  const styles = useThemedStyles((t) => ({ content: { padding: t.spacing.lg } }));
   const [blocks, setBlocks] = useState<
     { id: string; blocked_id: string; blocked?: { profile?: { display_name?: string } } }[]
   >([]);
@@ -25,15 +27,15 @@ export default function SafetyCenterScreen() {
 
   return (
     <Screen style={{ padding: 0 }}>
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <ScrollView contentContainerStyle={styles.content}>
         <Title>{t('safety.safetyCenter')}</Title>
-        <Text style={{ marginBottom: 16, color: '#64748B' }}>
+        <BodyText muted style={{ marginBottom: 16 }}>
           Report harassment or spam from profiles, chats, or events. Blocked users are hidden from discover.
-        </Text>
+        </BodyText>
         <Title>Blocked users</Title>
         {blocks.map((b) => (
           <Card key={b.id}>
-            <Text>{b.blocked?.profile?.display_name ?? b.blocked_id}</Text>
+            <BodyText strong>{b.blocked?.profile?.display_name ?? b.blocked_id}</BodyText>
           </Card>
         ))}
       </ScrollView>
