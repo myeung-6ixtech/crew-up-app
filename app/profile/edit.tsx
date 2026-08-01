@@ -5,20 +5,26 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApolloClient } from '@/lib/apolloHooks';
+import { AirlinePickerField } from '@/components/profile/AirlinePickerField';
 import {
   Screen,
   Avatar,
   Input,
   Button,
-  LabelText,
   Subtitle,
   BodyText,
   Badge,
   SelectionOption,
   SectionLabel,
   AppIcon,
+  PillSelectorGroup,
 } from '@/components/ui';
-import { ROLE_TYPES, VISIBILITY_LEVELS, type VisibilityLevel } from '@/constants/screens';
+import { ROLE_TYPES, type VisibilityLevel } from '@/constants/screens';
+import { formatOptionLabel } from '@/lib/formatOptionLabel';
+import {
+  normalizeVisibilityForAffiliation,
+  visibilityLevelsForAffiliation,
+} from '@/lib/visibilityOptions';
 import { formatApolloError } from '@/lib/graphqlError';
 import { useAuth, useSession } from '@/hooks/useSession';
 import { fetchAirlines, submitVerification, updateProfile } from '@/services/profileService';
@@ -34,7 +40,7 @@ export default function EditProfileScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { profile, userId, isVerified } = useAuth();
-  const { refreshProfile } = useSession();
+  const { refreshProfile, refreshSession } = useSession();
   const styles = useThemedStyles((t) => ({
     scroll: { padding: t.spacing.lg, paddingBottom: t.spacing.xxxl + 80 },
     avatarSection: { alignItems: 'center', marginBottom: t.spacing.xl, gap: t.spacing.sm },
@@ -96,6 +102,12 @@ export default function EditProfileScreen() {
     setNotificationMode(profile.notification_mode ?? 'realtime');
   }, [profile]);
 
+  useEffect(() => {
+    if (!airlineId && visibility === 'same_airline') {
+      setVisibility('friends');
+    }
+  }, [airlineId, visibility]);
+
   const onAvatar = async () => {
     if (!userId) return;
     const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.8 });
@@ -130,7 +142,9 @@ export default function EditProfileScreen() {
     setLoading(true);
     setError('');
     try {
-      const resolvedVisibility: VisibilityLevel = statusDefaultHidden ? 'off' : visibility;
+      const resolvedVisibility: VisibilityLevel = statusDefaultHidden
+        ? 'off'
+        : normalizeVisibilityForAffiliation(visibility, airlineId);
       await updateProfile(client, userId, {
         display_name: displayName.trim(),
         role_type: roleType,
@@ -139,6 +153,7 @@ export default function EditProfileScreen() {
         default_visibility: resolvedVisibility,
         notification_mode: notificationMode,
       });
+      await refreshSession();
       await refreshProfile();
       router.back();
     } catch (e) {
@@ -167,24 +182,22 @@ export default function EditProfileScreen() {
           <View style={styles.section}>
             <SectionLabel>{t('home.editIdentity')}</SectionLabel>
             <Input label={t('onboarding.title')} value={displayName} onChangeText={setDisplayName} />
-            <LabelText>{t('onboarding.role')}</LabelText>
-            {ROLE_TYPES.map((role) => (
-              <SelectionOption
-                key={role}
-                label={role.replace(/_/g, ' ')}
-                selected={roleType === role}
-                onPress={() => setRoleType(role)}
-              />
-            ))}
-            <LabelText>{t('home.airline')}</LabelText>
-            {airlines.map((a) => (
-              <SelectionOption
-                key={a.id}
-                label={`${a.name} (${a.code})`}
-                selected={airlineId === a.id}
-                onPress={() => setAirlineId(a.id)}
-              />
-            ))}
+            <PillSelectorGroup
+              label={t('onboarding.role')}
+              options={ROLE_TYPES.map((role) => ({
+                value: role,
+                label: formatOptionLabel(role),
+              }))}
+              value={roleType}
+              onChange={setRoleType}
+            />
+            <AirlinePickerField
+              label={t('home.airline')}
+              airlines={airlines}
+              value={airlineId}
+              onChange={setAirlineId}
+              optional
+            />
             <Input label={t('onboarding.base')} value={base} onChangeText={setBase} placeholder="HKG" />
           </View>
 
@@ -219,17 +232,18 @@ export default function EditProfileScreen() {
           <View style={styles.section}>
             <SectionLabel>{t('home.editPrivacy')}</SectionLabel>
             <Subtitle>{t('home.presencePrivacyHint')}</Subtitle>
-            {VISIBILITY_LEVELS.filter((v) => v !== 'off').map((v) => (
-              <SelectionOption
-                key={v}
-                label={v.replace(/_/g, ' ')}
-                selected={!statusDefaultHidden && visibility === v}
-                onPress={() => {
-                  setStatusDefaultHidden(false);
-                  setVisibility(v);
-                }}
-              />
-            ))}
+            <PillSelectorGroup
+              label={t('onboarding.visibility')}
+              options={visibilityLevelsForAffiliation(airlineId).map((v) => ({
+                value: v,
+                label: formatOptionLabel(v),
+              }))}
+              value={statusDefaultHidden ? undefined : visibility}
+              onChange={(v) => {
+                setStatusDefaultHidden(false);
+                setVisibility(v);
+              }}
+            />
             <Subtitle>{t('home.notifications')}</Subtitle>
             {(['realtime', 'digest'] as const).map((mode) => (
               <SelectionOption

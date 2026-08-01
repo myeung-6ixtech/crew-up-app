@@ -4,17 +4,19 @@ import { useTranslation } from 'react-i18next';
 import { Screen, Title, Subtitle, Button, Card, BodyText } from '@/components/ui';
 import { SCREENS } from '@/constants/screens';
 import { useThemedStyles } from '@/theme';
+import { useTabBarScroll } from '@/hooks/useTabBarScroll';
 
 export default function NetworkTab() {
   const { t } = useTranslation();
   const router = useRouter();
   const styles = useThemedStyles((t) => ({
-    content: { padding: t.spacing.lg, paddingBottom: t.spacing.xxxl },
+    content: { padding: t.spacing.lg },
   }));
+  const tabScroll = useTabBarScroll({ contentContainerStyle: styles.content });
 
   return (
     <Screen style={{ padding: 0 }}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView {...tabScroll}>
         <Title>{t('tabs.network')}</Title>
         <Subtitle>{t('network.discoverSubtitle')}</Subtitle>
 

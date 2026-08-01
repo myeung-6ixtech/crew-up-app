@@ -11,6 +11,7 @@ import {
   ListRow,
   SectionLabel,
   SelectionOption,
+  PillSelectorGroup,
   Input,
   EmptyState,
   DisplayText,
@@ -75,6 +76,18 @@ export default function UiKitScreen() {
         <SectionLabel>Selection</SectionLabel>
         <SelectionOption label="Selected option" selected onPress={() => {}} />
         <SelectionOption label="Unselected option" selected={false} onPress={() => {}} />
+
+        <SectionLabel>Pill selectors</SectionLabel>
+        <PillSelectorGroup
+          label="Role"
+          options={[
+            { value: 'cabin_crew', label: 'cabin crew' },
+            { value: 'pilot', label: 'pilot' },
+            { value: 'ground_ops', label: 'ground ops' },
+          ]}
+          value="pilot"
+          onChange={() => {}}
+        />
 
         <SectionLabel>Input</SectionLabel>
         <Input label="Sample" value="" onChangeText={() => {}} placeholder="Placeholder" />

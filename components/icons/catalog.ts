@@ -17,6 +17,8 @@ export const AppIcons = {
   verified: 'shield-check',
   pending: 'clock',
   chevronRight: 'arrow-right',
+  chevronDown: 'angle-down',
+  menu: 'bars',
   add: 'plus-circle',
   mapPoint: 'map-marker',
   globe: 'globe',

@@ -17,6 +17,7 @@ import { useAuth } from '@/hooks/useSession';
 import { fetchConnections, updateConnectionStatus, blockUser } from '@/services/connectionService';
 import { SCREENS } from '@/constants/screens';
 import { useThemedStyles } from '@/theme';
+import { useTabBarScroll } from '@/hooks/useTabBarScroll';
 
 type Connection = {
   id: string;
@@ -33,8 +34,9 @@ export default function FriendsTab() {
   const client = useApolloClient();
   const { userId } = useAuth();
   const styles = useThemedStyles((t) => ({
-    content: { padding: t.spacing.lg, paddingBottom: t.spacing.xxxl },
+    content: { padding: t.spacing.lg },
   }));
+  const tabScroll = useTabBarScroll({ contentContainerStyle: styles.content });
   const [connections, setConnections] = useState<Connection[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -80,7 +82,7 @@ export default function FriendsTab() {
   return (
     <Screen style={{ padding: 0 }}>
       <ScrollView
-        contentContainerStyle={styles.content}
+        {...tabScroll}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         <Title>{t('tabs.friends')}</Title>
         <Subtitle>{t('friends.subtitle')}</Subtitle>

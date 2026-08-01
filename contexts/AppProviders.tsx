@@ -4,7 +4,6 @@ import { ApolloProvider } from '@/lib/apolloHooks';
 import { nhost } from '@/lib/nhost';
 import { apolloClient, createApolloClient } from '@/lib/apollo';
 import { secureStoreSession } from '@/lib/secureStoreSession';
-import { getHasuraClaim } from '@/lib/sessionAuth';
 import type { Profile } from '@/types/domain';
 import { GET_MY_PROFILE } from '@/graphql/mutations/profile';
 import { ThemeProvider } from '@/theme';
@@ -14,8 +13,8 @@ interface SessionContextValue {
   userId: string | null;
   profile: Profile | null;
   loading: boolean;
-  refreshSession: () => Promise<void>;
-  refreshProfile: () => Promise<void>;
+  refreshSession: () => Promise<Profile | null>;
+  refreshProfile: () => Promise<Profile | null>;
   signOut: () => Promise<void>;
 }
 
@@ -26,13 +25,14 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [client] = useState(() => createApolloClient());
-  const claimRefreshAttempted = useRef(false);
+  const profileRef = useRef<Profile | null>(null);
 
-  const refreshProfile = useCallback(async () => {
+  const refreshProfile = useCallback(async (): Promise<Profile | null> => {
     const current = nhost.getUserSession();
     if (!current?.user?.id) {
+      profileRef.current = null;
       setProfile(null);
-      return;
+      return null;
     }
     try {
       const { data } = await client.query<{ profiles_by_pk: Profile | null }>({
@@ -41,33 +41,26 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         fetchPolicy: 'network-only',
       });
       const nextProfile = data?.profiles_by_pk ?? null;
+      profileRef.current = nextProfile;
       setProfile(nextProfile);
-
-      const token = nhost.getUserSession()?.accessToken;
-      const airlineClaim = token ? getHasuraClaim(token, 'x-hasura-airline-id') : null;
-      const expectedAirline = nextProfile?.airline_id ?? null;
-      const claimMissing = airlineClaim === null;
-      const claimStale = expectedAirline !== null && airlineClaim !== expectedAirline;
-      if (token && (claimStale || (claimMissing && !claimRefreshAttempted.current))) {
-        if (claimMissing) claimRefreshAttempted.current = true;
-        await nhost.refreshSession(0);
-        setSession(nhost.getUserSession());
-      }
+      return nextProfile;
     } catch {
-      setProfile(null);
+      // Keep cached profile — fetch errors must not falsely send users to onboarding.
+      return profileRef.current;
     }
   }, [client]);
 
-  const refreshSession = useCallback(async () => {
+  const refreshSession = useCallback(async (): Promise<Profile | null> => {
     await secureStoreSession.getAsync();
     await nhost.refreshSession(60);
     const next = nhost.getUserSession();
     setSession(next);
     if (next?.user?.id) {
-      await refreshProfile();
-    } else {
-      setProfile(null);
+      return refreshProfile();
     }
+    setProfile(null);
+    profileRef.current = null;
+    return null;
   }, [refreshProfile]);
 
   useEffect(() => {
@@ -87,6 +80,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         void refreshProfile();
       } else {
         setProfile(null);
+        profileRef.current = null;
       }
     });
     return unsubscribe;
@@ -104,6 +98,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     nhost.clearSession();
     setSession(null);
     setProfile(null);
+    profileRef.current = null;
     await client.clearStore();
   }, [client]);
 

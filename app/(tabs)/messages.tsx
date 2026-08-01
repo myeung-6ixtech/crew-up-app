@@ -9,6 +9,7 @@ import { fetchThreads } from '@/services/messagingService';
 import { SCREENS } from '@/constants/screens';
 import { SafetyNudgeModal } from '@/components/SafetyNudgeModal';
 import { useSafetyStore } from '@/stores/safetyStore';
+import { useTabBarScroll } from '@/hooks/useTabBarScroll';
 
 export default function MessagesTab() {
   const { t } = useTranslation();
@@ -37,9 +38,11 @@ export default function MessagesTab() {
     return other ?? 'Direct message';
   };
 
+  const tabScroll = useTabBarScroll({ contentContainerStyle: { padding: 16 } });
+
   return (
     <Screen style={{ padding: 0 }}>
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <ScrollView {...tabScroll}>
         <Title>{t('messages.title')}</Title>
         {threads.length === 0 ? (
           <EmptyState title="No conversations yet" body="Connect with crew or join an event to start chatting." />

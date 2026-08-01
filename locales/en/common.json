@@ -29,6 +29,7 @@
     "title": "Set up your profile",
     "role": "Role",
     "base": "Base airport",
+    "airline": "Airline (optional)",
     "language": "Preferred language",
     "visibility": "Default visibility",
     "continue": "Continue"
@@ -149,6 +150,24 @@
     "error": "Something went wrong",
     "retry": "Retry",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "dismiss": "Dismiss"
+  },
+  "menu": {
+    "open": "Open menu",
+    "privacy": "Privacy",
+    "safety": "Safety Center",
+    "language": "Language",
+    "accountSecurity": "Account security",
+    "signOutTitle": "Sign out?",
+    "signOutMessage": "You will need to sign in again to access your account."
+  },
+  "airline": {
+    "select": "Select airline",
+    "loading": "Loading airlines…",
+    "searchLabel": "Search",
+    "searchPlaceholder": "Search by name or code",
+    "noResults": "No airlines match your search",
+    "clear": "No airline"
   }
 }

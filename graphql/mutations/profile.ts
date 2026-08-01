@@ -27,6 +27,27 @@ export const INSERT_PROFILE = gql`
   }
 `;
 
+export const UPSERT_PROFILE = gql`
+  mutation UpsertProfile($object: profiles_insert_input!) {
+    insert_profiles_one(
+      object: $object
+      on_conflict: {
+        constraint: profiles_pkey
+        update_columns: [
+          display_name
+          airline_id
+          base_airport
+          role_type
+          preferred_language
+          default_visibility
+        ]
+      }
+    ) {
+      user_id
+    }
+  }
+`;
+
 export const UPDATE_PROFILE = gql`
   mutation UpdateProfile($userId: uuid!, $set: profiles_set_input!) {
     update_profiles_by_pk(pk_columns: { user_id: $userId }, _set: $set) {

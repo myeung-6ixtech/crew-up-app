@@ -24,6 +24,7 @@ export const SCREENS = {
     upload: '/roster/upload',
     confirm: '/roster/confirm',
     manage: '/roster/manage',
+    addTrip: '/roster/add-trip',
   },
   presence: (city: string) => `/presence/${encodeURIComponent(city)}` as const,
   network: {

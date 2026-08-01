@@ -1,20 +1,21 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ScrollView, RefreshControl, View } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { ScrollView, RefreshControl } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { Screen, Button, AppIcon, Toast, BodyText } from '@/components/ui';
+import { Screen, Toast } from '@/components/ui';
 import { ProfileHeader } from '@/components/home/ProfileHeader';
-import { AddTripSheet } from '@/components/home/AddTripSheet';
 import { UpcomingTripsCarousel } from '@/components/home/UpcomingTripsCarousel';
 import { CrewCrossingPaths } from '@/components/home/CrewCrossingPaths';
 import { ActivityFeed } from '@/components/home/ActivityFeed';
-import { useAuth, useSession } from '@/hooks/useSession';
+import { useAuth } from '@/hooks/useSession';
+import { useTabBarScroll } from '@/hooks/useTabBarScroll';
 import { fetchHomeData } from '@/services/presenceService';
 import { fetchAirlines } from '@/services/profileService';
 import { resolveCurrentStatus } from '@/lib/dutyStatus';
 import { countUniqueCities, findCrewCrossingPaths } from '@/lib/rosterMatching';
 import { SCREENS } from '@/constants/screens';
-import { useThemedStyles, useTheme } from '@/theme';
+import { useThemedStyles } from '@/theme';
 import type { RosterEntry } from '@/types/domain';
 
 type HomeData = {
@@ -42,26 +43,16 @@ type HomeData = {
 export default function HomeScreen() {
   const { t } = useTranslation();
   const client = useApolloClient();
-  const theme = useTheme();
   const { userId, profile } = useAuth();
-  const { refreshProfile } = useSession();
-  const styles = useThemedStyles((t) => ({
-    ctaWrap: {
-      paddingHorizontal: t.spacing.lg,
-      paddingTop: t.spacing.lg,
-      paddingBottom: t.spacing.lg,
-      backgroundColor: t.colors.bgCanvas,
-    },
-    feed: { paddingBottom: t.spacing.xxxl },
+  const styles = useThemedStyles(() => ({
+    feed: {},
   }));
 
   const [data, setData] = useState<HomeData | null>(null);
   const [airlineName, setAirlineName] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [sheetOpen, setSheetOpen] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  const [statusPulseKey, setStatusPulseKey] = useState(0);
 
   const load = useCallback(async () => {
     if (!userId) return;
@@ -83,9 +74,11 @@ export default function HomeScreen() {
     }
   }, [load]);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useFocusEffect(
+    useCallback(() => {
+      void load();
+    }, [load]),
+  );
 
   const allRosters = data?.allRosters ?? [];
   const upcoming = data?.upcomingRosters ?? [];
@@ -125,17 +118,12 @@ export default function HomeScreen() {
     return items.sort((a, b) => (a.subtitle < b.subtitle ? 1 : -1)).slice(0, 8);
   }, [connections, data?.events, userId, t]);
 
-  const onTripSaved = () => {
-    setStatusPulseKey((k) => k + 1);
-    setToastMessage(t('home.tripAdded'));
-    setToastVisible(true);
-    void load();
-  };
-
   const onWaveSent = () => {
     setToastMessage(t('home.waveSent'));
     setToastVisible(true);
   };
+
+  const tabScroll = useTabBarScroll({ contentContainerStyle: styles.feed });
 
   return (
     <Screen style={{ padding: 0 }}>
@@ -146,49 +134,22 @@ export default function HomeScreen() {
       />
 
       <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        stickyHeaderIndices={[0, 1]}
-        contentContainerStyle={styles.feed}>
+        {...tabScroll}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         <ProfileHeader
           profile={profile}
           status={status}
-          statusPulseKey={statusPulseKey}
+          statusPulseKey={0}
           tripCount={tripCount}
           cityCount={cityCount}
           connectionCount={connectionCount}
           airlineName={airlineName}
         />
 
-        <View style={styles.ctaWrap}>
-          <Button
-            label={t('home.addTrip')}
-            noTopMargin
-            onPress={() => setSheetOpen(true)}
-            icon={<AppIcon name="add" size={20} color={theme.colors.textInverse} />}
-          />
-          {tripCount === 0 ? (
-            <BodyText muted style={{ textAlign: 'center', marginTop: 8 }}>
-              {t('home.addTripEmptyHint')}
-            </BodyText>
-          ) : null}
-        </View>
-
         <UpcomingTripsCarousel trips={upcoming} />
         <CrewCrossingPaths paths={crossingPaths} client={client} onWave={onWaveSent} />
         <ActivityFeed items={activityItems} />
       </ScrollView>
-
-      {userId ? (
-        <AddTripSheet
-          visible={sheetOpen}
-          onClose={() => setSheetOpen(false)}
-          client={client}
-          userId={userId}
-          profile={profile}
-          refreshProfile={refreshProfile}
-          onSaved={onTripSaved}
-        />
-      ) : null}
     </Screen>
   );
 }

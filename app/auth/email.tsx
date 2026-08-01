@@ -38,12 +38,11 @@ export default function EmailAuthScreen() {
     try {
       if (isSignIn) {
         await signIn(email.trim(), password);
-        await refreshSession();
       } else {
         await signUp(email.trim(), password);
-        await refreshSession();
-        router.replace(SCREENS.onboarding.index);
       }
+      const profile = await refreshSession();
+      router.replace(profile ? SCREENS.tabs.home : SCREENS.onboarding.index);
     } catch (e) {
       setError(e instanceof Error ? e.message : t('common.error'));
     } finally {

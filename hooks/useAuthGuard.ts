@@ -26,6 +26,11 @@ export function useAuthGuard() {
 
     if (isAuthenticated && !hasProfile && !inOnboarding) {
       router.replace(SCREENS.onboarding.index);
+      return;
+    }
+
+    if (isAuthenticated && hasProfile && inOnboarding) {
+      router.replace(SCREENS.tabs.home);
     }
   }, [isAuthenticated, hasProfile, loading, segments, router]);
 }

@@ -3,10 +3,11 @@ import { ScrollView, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { Screen, Card, Title, Button, EmptyState } from '@/components/ui';
+import { Screen, Card, Title, EmptyState } from '@/components/ui';
 import { fetchEvents } from '@/services/eventService';
 import { SCREENS } from '@/constants/screens';
 import { formatDateTime } from '@/lib/utils';
+import { useTabBarScroll } from '@/hooks/useTabBarScroll';
 
 export default function EventsTab() {
   const { t } = useTranslation();
@@ -22,10 +23,11 @@ export default function EventsTab() {
     void load();
   }, [load]);
 
+  const tabScroll = useTabBarScroll({ contentContainerStyle: { padding: 16 } });
+
   return (
     <Screen style={{ padding: 0 }}>
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <Button label={t('events.create')} onPress={() => router.push(SCREENS.events.create)} />
+      <ScrollView {...tabScroll}>
         <Title>{t('tabs.events')}</Title>
         {events.length === 0 ? (
           <EmptyState title="No upcoming meetups" />

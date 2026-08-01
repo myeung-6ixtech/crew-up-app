@@ -6,9 +6,6 @@ const DEPLOY_HINT =
 const AUTH_HINT =
   'Sign out and sign in again. If the problem continues, confirm crew-up-nhost is deployed to your Nhost project.';
 
-const SESSION_CLAIMS_HINT =
-  'Redeploy auth config (crew-up-nhost custom JWT claims), then sign out and sign in again so your token includes x-hasura-airline-id.';
-
 function graphQLErrorMessage(error: unknown): string | null {
   if (CombinedGraphQLErrors.is(error)) {
     return error.errors.map((entry) => entry.message).join('; ');
@@ -29,6 +26,13 @@ export function isBackendSchemaError(error: unknown): boolean {
   );
 }
 
+export function isUniquenessViolation(error: unknown): boolean {
+  const message = graphQLErrorMessage(error);
+  if (!message) return false;
+  const lower = message.toLowerCase();
+  return lower.includes('uniqueness violation') || lower.includes('duplicate key');
+}
+
 export function formatApolloError(error: unknown): string {
   const message = graphQLErrorMessage(error);
 
@@ -38,9 +42,6 @@ export function formatApolloError(error: unknown): string {
     }
     if (message.includes('no mutations exist')) {
       return `Could not save — the server rejected the request (${message}). ${AUTH_HINT}`;
-    }
-    if (message.includes('missing session variable')) {
-      return `${message}. ${SESSION_CLAIMS_HINT}`;
     }
     return message;
   }

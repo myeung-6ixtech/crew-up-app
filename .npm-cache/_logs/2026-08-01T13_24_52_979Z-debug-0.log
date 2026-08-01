@@ -1,0 +1,19 @@
+0 verbose cli /usr/local/bin/node /usr/local/lib/node_modules/npm/bin/npm-cli.js
+1 info using npm@11.10.0
+2 info using node@v24.13.0
+3 silly config load:file:/usr/local/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/museryeung/Documents/dev/crew-up-project/crew-up-app/.npmrc
+5 silly config load:file:/Users/museryeung/.npmrc
+6 silly config load:file:/usr/local/etc/npmrc
+7 verbose title npm exec expo install expo-blur @iconify-json/uis
+8 verbose argv "exec" "--" "expo" "install" "expo-blur" "@iconify-json/uis"
+9 verbose logfile logs-max:10 dir:/Users/museryeung/Documents/dev/crew-up-project/crew-up-app/.npm-cache/_logs/2026-08-01T13_24_52_979Z-
+10 verbose logfile /Users/museryeung/Documents/dev/crew-up-project/crew-up-app/.npm-cache/_logs/2026-08-01T13_24_52_979Z-debug-0.log
+11 silly logfile start cleaning logs, removing 1 files
+12 silly logfile done cleaning log files
+13 verbose cwd /Users/museryeung/Documents/dev/crew-up-project/crew-up-app
+14 verbose os Darwin 25.5.0
+15 verbose node v24.13.0
+16 verbose npm  v11.10.0
+17 verbose exit 0
+18 info ok

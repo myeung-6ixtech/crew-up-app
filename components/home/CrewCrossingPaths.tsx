@@ -1,9 +1,9 @@
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import type { ApolloClient } from '@apollo/client';
-import { Pressable } from 'react-native';
 import { AppIcon, ListRow, SectionLabel, EmptyState } from '@/components/ui';
+import { HOME_SECTION_PADDING, HOME_SECTION_SPACING } from '@/constants/homeLayout';
 import { useThemedStyles, useTheme } from '@/theme';
 import { SCREENS } from '@/constants/screens';
 import { formatDateRange } from '@/lib/utils';
@@ -36,7 +36,10 @@ export function CrewCrossingPaths({
   const router = useRouter();
   const theme = useTheme();
   const styles = useThemedStyles((t) => ({
-    section: { marginBottom: t.spacing.xl },
+    section: {
+      paddingHorizontal: HOME_SECTION_PADDING,
+      marginBottom: HOME_SECTION_SPACING,
+    },
     wave: {
       minWidth: 44,
       minHeight: 44,
@@ -57,6 +60,7 @@ export function CrewCrossingPaths({
         paths.slice(0, 12).map((p) => (
           <ListRow
             key={p.id}
+            inset={false}
             avatarName={p.user?.profile?.display_name}
             title={p.user?.profile?.display_name ?? t('home.crewMember')}
             subtitle={`${p.city} · ${formatDateRange(p.date_start, p.date_end)}`}

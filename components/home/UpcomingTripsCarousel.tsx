@@ -8,6 +8,7 @@ import {
   SectionLabel,
   EmptyState,
 } from '@/components/ui';
+import { HOME_SECTION_PADDING, HOME_SECTION_SPACING } from '@/constants/homeLayout';
 import { useThemedStyles } from '@/theme';
 import { formatDateRange } from '@/lib/utils';
 import { rosterRouteLabel, rosterToDisplayStatus } from '@/lib/dutyStatus';
@@ -16,19 +17,22 @@ import type { RosterEntry } from '@/types/domain';
 export function UpcomingTripsCarousel({ trips }: { trips: RosterEntry[] }) {
   const { t } = useTranslation();
   const styles = useThemedStyles((t) => ({
-    scroll: { paddingHorizontal: t.spacing.lg, gap: t.spacing.md },
-    card: {
-      width: 168,
-      marginRight: t.spacing.md,
+    section: {
+      paddingHorizontal: HOME_SECTION_PADDING,
+      marginBottom: HOME_SECTION_SPACING,
     },
+    scroll: {
+      gap: t.spacing.md,
+    },
+    card: { width: 168, marginRight: t.spacing.md },
     cardInner: { gap: t.spacing.xs },
     headerRow: { flexDirection: 'row', alignItems: 'center', gap: t.spacing.sm },
-    section: { marginBottom: t.spacing.xl },
   }));
 
   return (
     <View style={styles.section}>
       <SectionLabel>{t('home.upcomingTrips')}</SectionLabel>
+
       {trips.length ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scroll}>
           {trips.map((trip) => (

@@ -9,6 +9,7 @@ export { StatusDot, type CrewStatus } from './StatusDot';
 export { ListRow } from './ListRow';
 export { SectionLabel } from './SectionLabel';
 export { SelectionOption } from './SelectionOption';
+export { PillSelectorGroup, type PillSelectorOption } from './PillSelectorGroup';
 export { BottomSheet } from './BottomSheet';
 export { Toast } from './Toast';
 export {

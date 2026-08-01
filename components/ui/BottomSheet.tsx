@@ -16,17 +16,21 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useThemedStyles, useTheme } from '@/theme';
 
 const SHEET_OFFSCREEN_Y = Dimensions.get('window').height;
+const SHEET_FLEX_HEIGHT = Dimensions.get('window').height * 0.75;
 
 export function BottomSheet({
   visible,
   onClose,
   children,
   title,
+  scrollable = true,
 }: {
   visible: boolean;
   onClose: () => void;
   children: React.ReactNode;
   title?: string;
+  /** When false, children manage their own scroll (e.g. FlatList). */
+  scrollable?: boolean;
 }) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
@@ -70,7 +74,7 @@ export function BottomSheet({
   const styles = useThemedStyles((t) => ({
     root: { flex: 1, justifyContent: 'flex-end' },
     scrim: {
-      ...StyleSheet.absoluteFillObject,
+      ...StyleSheet.absoluteFill,
       backgroundColor: t.colors.scrim,
     },
     sheet: {
@@ -78,6 +82,14 @@ export function BottomSheet({
       borderTopLeftRadius: t.radius.sheet,
       borderTopRightRadius: t.radius.sheet,
       maxHeight: '90%',
+      ...t.shadow.raised,
+    } as ViewStyle,
+    sheetFlex: {
+      backgroundColor: t.colors.bgSurfaceRaised,
+      borderTopLeftRadius: t.radius.sheet,
+      borderTopRightRadius: t.radius.sheet,
+      height: SHEET_FLEX_HEIGHT,
+      maxHeight: '75%',
       ...t.shadow.raised,
     } as ViewStyle,
     handle: {
@@ -89,6 +101,12 @@ export function BottomSheet({
       marginTop: t.spacing.sm,
     },
     content: {
+      paddingHorizontal: t.spacing.lg,
+      paddingTop: t.spacing.md,
+      paddingBottom: Math.max(insets.bottom, t.spacing.lg),
+    },
+    contentFlex: {
+      flex: 1,
       paddingHorizontal: t.spacing.lg,
       paddingTop: t.spacing.md,
       paddingBottom: Math.max(insets.bottom, t.spacing.lg),
@@ -114,15 +132,25 @@ export function BottomSheet({
             />
           </Animated.View>
           <Animated.View
-            style={[styles.sheet, { transform: [{ translateY: sheetTranslateY }] }]}>
+            style={[
+              scrollable ? styles.sheet : styles.sheetFlex,
+              { transform: [{ translateY: sheetTranslateY }] },
+            ]}>
             <View style={styles.handle} accessibilityElementsHidden />
-            <ScrollView
-              keyboardShouldPersistTaps="handled"
-              bounces={false}
-              contentContainerStyle={styles.content}>
-              {title ? <Text style={styles.title}>{title}</Text> : null}
-              {children}
-            </ScrollView>
+            {scrollable ? (
+              <ScrollView
+                keyboardShouldPersistTaps="handled"
+                bounces={false}
+                contentContainerStyle={styles.content}>
+                {title ? <Text style={styles.title}>{title}</Text> : null}
+                {children}
+              </ScrollView>
+            ) : (
+              <View style={styles.contentFlex}>
+                {title ? <Text style={styles.title}>{title}</Text> : null}
+                {children}
+              </View>
+            )}
           </Animated.View>
         </View>
       </KeyboardAvoidingView>

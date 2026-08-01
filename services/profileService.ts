@@ -6,7 +6,9 @@ import {
   INSERT_PROFILE,
   INSERT_VERIFICATION,
   UPDATE_PROFILE,
+  UPSERT_PROFILE,
 } from '@/graphql/mutations/profile';
+import { refreshSessionClaims } from '@/lib/sessionAuth';
 import type { Profile } from '@/types/domain';
 
 export async function fetchMyProfile(
@@ -36,6 +38,26 @@ export async function createProfile(
     mutation: INSERT_PROFILE,
     variables: { object: input },
   });
+  await refreshSessionClaims();
+  return (data as any)?.insert_profiles_one;
+}
+
+type ProfileInput = {
+  display_name: string;
+  airline_id?: string;
+  base_airport?: string;
+  role_type?: string;
+  preferred_language?: string;
+  default_visibility?: VisibilityLevel;
+};
+
+/** Create profile on first onboarding, or update if one already exists. */
+export async function saveProfile(client: ApolloClient, input: ProfileInput) {
+  const { data } = await client.mutate({
+    mutation: UPSERT_PROFILE,
+    variables: { object: input },
+  });
+  await refreshSessionClaims();
   return (data as any)?.insert_profiles_one;
 }
 

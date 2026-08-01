@@ -8,12 +8,15 @@ export function ListRow({
   right,
   onPress,
   avatarName,
+  inset = true,
 }: {
   title: string;
   subtitle?: string;
   right?: React.ReactNode;
   onPress?: () => void;
   avatarName?: string;
+  /** When false, omits horizontal padding (for use inside pre-padded containers). */
+  inset?: boolean;
 }) {
   const styles = useThemedStyles((t) => ({
     row: {
@@ -21,7 +24,7 @@ export function ListRow({
       flexDirection: 'row',
       alignItems: 'center',
       paddingVertical: t.spacing.sm,
-      paddingHorizontal: t.spacing.lg,
+      paddingHorizontal: inset ? t.spacing.lg : 0,
       gap: t.spacing.md,
     },
     content: { flex: 1 },
@@ -31,7 +34,7 @@ export function ListRow({
     divider: {
       height: 1,
       backgroundColor: t.colors.hairline,
-      marginLeft: t.spacing.lg + 32 + t.spacing.md,
+      marginLeft: inset ? t.spacing.lg + 32 + t.spacing.md : 32 + t.spacing.md,
     },
   }));
 
