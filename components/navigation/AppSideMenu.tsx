@@ -6,6 +6,7 @@ import {
   Modal,
   Pressable,
   ScrollView,
+  StyleSheet,
   Text,
   useWindowDimensions,
   View,
@@ -46,7 +47,7 @@ export function AppSideMenu() {
 
   const [modalVisible, setModalVisible] = useState(isOpen);
   const scrimOpacity = useRef(new Animated.Value(0)).current;
-  const panelTranslateX = useRef(new Animated.Value(-screenWidth)).current;
+  const panelTranslateX = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (isOpen) {
@@ -95,18 +96,17 @@ export function AppSideMenu() {
   ]);
 
   const styles = useThemedStyles((t) => ({
-    root: { flex: 1, flexDirection: 'row' },
-    scrimWrap: {
-      flex: 1,
-    },
+    root: { flex: 1 },
     scrim: {
-      flex: 1,
+      ...StyleSheet.absoluteFill,
       backgroundColor: t.colors.scrim,
     },
     panel: {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      bottom: 0,
       width: panelWidth,
-      flex: 1,
-      maxWidth: panelWidth,
       flexDirection: 'column',
       backgroundColor: t.colors.bgSurfaceRaised,
       borderTopRightRadius: t.radius.card,
@@ -193,6 +193,14 @@ export function AppSideMenu() {
   return (
     <Modal visible={modalVisible} transparent animationType="none" onRequestClose={close}>
       <View style={styles.root}>
+        <Animated.View style={[styles.scrim, { opacity: scrimOpacity }]}>
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={close}
+            accessibilityLabel={t('common.dismiss')}
+          />
+        </Animated.View>
+
         <Animated.View style={[styles.panel, { transform: [{ translateX: panelTranslateX }] }]}>
           <View style={styles.profileBlock}>
             <Avatar name={profile?.display_name} size="lg" />
@@ -231,14 +239,6 @@ export function AppSideMenu() {
               </Text>
             </Pressable>
           </View>
-        </Animated.View>
-
-        <Animated.View style={[styles.scrimWrap, { opacity: scrimOpacity }]}>
-          <Pressable
-            style={styles.scrim}
-            onPress={close}
-            accessibilityLabel={t('common.dismiss')}
-          />
         </Animated.View>
       </View>
     </Modal>
