@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, Text, Pressable } from 'react-native';
+import { ScrollView, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { Screen, Card, Title, EmptyState } from '@/components/ui';
+import { Screen, Card, Title, EmptyState, BodyText } from '@/components/ui';
 import { useAuth } from '@/hooks/useSession';
 import { fetchThreads } from '@/services/messagingService';
 import { SCREENS } from '@/constants/screens';
@@ -50,8 +50,8 @@ export default function MessagesTab() {
           threads.map((item) => (
             <Pressable key={item.id} onPress={() => router.push(SCREENS.messages.thread(item.thread_id))}>
               <Card>
-                <Text style={{ fontWeight: '600' }}>{threadTitle(item)}</Text>
-                <Text numberOfLines={1}>{item.thread.messages?.[0]?.body ?? 'No messages yet'}</Text>
+                <BodyText strong>{threadTitle(item)}</BodyText>
+                <BodyText muted numberOfLines={1}>{item.thread.messages?.[0]?.body ?? 'No messages yet'}</BodyText>
               </Card>
             </Pressable>
           ))

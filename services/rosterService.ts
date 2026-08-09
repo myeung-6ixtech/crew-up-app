@@ -1,5 +1,6 @@
 import type { ApolloClient } from '@apollo/client';
 import { parseRoster } from '@/services/actionService';
+import { STORAGE_BUCKETS } from '@/constants/storage';
 import { uploadFile } from '@/services/uploadService';
 import {
   DELETE_ROSTER,
@@ -17,7 +18,7 @@ export async function uploadAndParseRoster(
     uri: params.uri,
     name: params.name,
     mimeType: params.mimeType,
-    bucketId: 'rosters',
+    bucketId: STORAGE_BUCKETS.rosters,
   });
   const parsed = await parseRoster(client, fileId);
   return { fileId, parsed };

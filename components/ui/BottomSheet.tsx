@@ -16,7 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useThemedStyles, useTheme } from '@/theme';
 
 const SHEET_OFFSCREEN_Y = Dimensions.get('window').height;
-const SHEET_FLEX_HEIGHT = Dimensions.get('window').height * 0.75;
+const DEFAULT_SHEET_HEIGHT_RATIO = 0.75;
 
 export function BottomSheet({
   visible,
@@ -24,6 +24,7 @@ export function BottomSheet({
   children,
   title,
   scrollable = true,
+  heightRatio = DEFAULT_SHEET_HEIGHT_RATIO,
 }: {
   visible: boolean;
   onClose: () => void;
@@ -31,9 +32,13 @@ export function BottomSheet({
   title?: string;
   /** When false, children manage their own scroll (e.g. FlatList). */
   scrollable?: boolean;
+  /** Fraction of screen height for non-scrollable sheets (0–1). */
+  heightRatio?: number;
 }) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+  const sheetHeight = Dimensions.get('window').height * heightRatio;
+  const sheetMaxHeight = `${Math.round(heightRatio * 100)}%`;
   const [modalVisible, setModalVisible] = useState(visible);
   const scrimOpacity = useRef(new Animated.Value(0)).current;
   const sheetTranslateY = useRef(new Animated.Value(SHEET_OFFSCREEN_Y)).current;
@@ -88,8 +93,8 @@ export function BottomSheet({
       backgroundColor: t.colors.bgSurfaceRaised,
       borderTopLeftRadius: t.radius.sheet,
       borderTopRightRadius: t.radius.sheet,
-      height: SHEET_FLEX_HEIGHT,
-      maxHeight: '75%',
+      height: sheetHeight,
+      maxHeight: sheetMaxHeight,
       ...t.shadow.raised,
     } as ViewStyle,
     handle: {
@@ -112,7 +117,7 @@ export function BottomSheet({
       paddingBottom: Math.max(insets.bottom, t.spacing.lg),
     },
     title: {
-      ...t.typography.headline,
+      ...t.typography.displaySm,
       color: t.colors.textPrimary,
       marginBottom: t.spacing.md,
     },

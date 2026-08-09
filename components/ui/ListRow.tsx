@@ -29,7 +29,7 @@ export function ListRow({
     },
     content: { flex: 1 },
     title: { ...t.typography.bodyStrong, color: t.colors.textPrimary },
-    subtitle: { ...t.typography.caption, color: t.colors.textSecondary, marginTop: 2 },
+    subtitle: { ...t.typography.bodySm, color: t.colors.textSecondary, marginTop: 2 },
     right: { alignItems: 'flex-end' },
     divider: {
       height: 1,

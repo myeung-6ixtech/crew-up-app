@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, Text, Pressable } from 'react-native';
+import { ScrollView, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { Screen, Title, Card, Input, Button, EmptyState } from '@/components/ui';
+import { Screen, Title, Card, Input, Button, EmptyState, BodyText } from '@/components/ui';
 import { useAuth } from '@/hooks/useSession';
 import { discoverProfiles, fetchBlocks, requestConnection } from '@/services/connectionService';
 import { SCREENS } from '@/constants/screens';
@@ -48,8 +48,8 @@ export default function DiscoverScreen() {
           profiles.map((p) => (
             <Card key={p.user_id}>
               <Pressable onPress={() => router.push(SCREENS.network.user(p.user_id))}>
-                <Text style={{ fontWeight: '600' }}>{p.display_name}</Text>
-                <Text>{[p.role_type, p.base_airport].filter(Boolean).join(' · ')}</Text>
+                <BodyText strong>{p.display_name}</BodyText>
+                <BodyText muted>{[p.role_type, p.base_airport].filter(Boolean).join(' · ')}</BodyText>
               </Pressable>
               <Button
                 label={t('network.connect')}

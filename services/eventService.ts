@@ -10,6 +10,18 @@ import {
   UPDATE_EVENT,
 } from '@/graphql/queries/events';
 import { GET_EVENT_THREAD, INSERT_THREAD_PARTICIPANT } from '@/graphql/mutations/messaging';
+import { normalizeEventVisibilityScope } from '@/lib/visibilityOptions';
+
+function withNormalizedVisibilityScope(
+  object: Record<string, unknown>,
+  airlineId?: string | null,
+): Record<string, unknown> {
+  if (typeof object.visibility_scope !== 'string') return object;
+  return {
+    ...object,
+    visibility_scope: normalizeEventVisibilityScope(object.visibility_scope, airlineId),
+  };
+}
 
 export async function fetchEvents(client: ApolloClient, city?: string) {
   const now = new Date().toISOString();
@@ -39,10 +51,11 @@ export async function fetchEvent(client: ApolloClient, id: string) {
 export async function createEvent(
   client: ApolloClient,
   object: Record<string, unknown>,
+  airlineId?: string | null,
 ) {
   const { data } = await client.mutate({
     mutation: INSERT_EVENT,
-    variables: { object },
+    variables: { object: withNormalizedVisibilityScope(object, airlineId) },
   });
   return (data as any)?.insert_events_one;
 }
@@ -51,8 +64,12 @@ export async function updateEvent(
   client: ApolloClient,
   id: string,
   set: Record<string, unknown>,
+  airlineId?: string | null,
 ) {
-  await client.mutate({ mutation: UPDATE_EVENT, variables: { id, set } });
+  await client.mutate({
+    mutation: UPDATE_EVENT,
+    variables: { id, set: withNormalizedVisibilityScope(set, airlineId) },
+  });
 }
 
 export async function rsvpEvent(
@@ -114,8 +131,9 @@ export async function createEventWithThread(
   client: ApolloClient,
   eventObject: Record<string, unknown>,
   creatorId: string,
+  airlineId?: string | null,
 ) {
-  const event = await createEvent(client, eventObject);
+  const event = await createEvent(client, eventObject, airlineId);
   if (event?.id) {
     await ensureEventThreadMembership(client, event.id, creatorId);
   }

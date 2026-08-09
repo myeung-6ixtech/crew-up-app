@@ -44,10 +44,10 @@ export function Button({
     disabled: { opacity: 0.4 },
     content: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
     icon: { marginRight: t.spacing.sm },
-    labelPrimary: { ...t.typography.bodyStrong, color: t.colors.textInverse },
-    labelSecondary: { ...t.typography.bodyStrong, color: t.colors.textPrimary },
-    labelGhost: { ...t.typography.bodyStrong, color: t.colors.accent },
-    labelDestructive: { ...t.typography.bodyStrong, color: t.colors.textInverse },
+    labelPrimary: { ...t.typography.button, color: t.colors.textInverse },
+    labelSecondary: { ...t.typography.button, color: t.colors.textPrimary },
+    labelGhost: { ...t.typography.button, color: t.colors.accent },
+    labelDestructive: { ...t.typography.button, color: t.colors.textInverse },
   }));
 
   const labelStyle =

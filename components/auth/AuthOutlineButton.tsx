@@ -28,7 +28,7 @@ export function AuthOutlineButton({
       ...t.shadow.card,
     },
     icon: { marginRight: 10 },
-    label: { ...t.typography.bodyStrong, color: t.colors.textPrimary },
+    label: { ...t.typography.button, color: t.colors.textPrimary },
   }));
 
   return (

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { ScrollView, Text } from 'react-native';
+import { ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { Screen, Title, Input, Button, Card } from '@/components/ui';
+import { Screen, Title, Input, Button, Card, BodyText } from '@/components/ui';
 import { useRosterDraftStore } from '@/stores/rosterDraftStore';
 import { insertRosters, mapParsedToRosterInsert } from '@/services/rosterService';
 import { SCREENS } from '@/constants/screens';
@@ -44,7 +44,7 @@ export default function RosterConfirmScreen() {
         <Title>{t('roster.confirm')}</Title>
         {entries.map((entry, index) => (
           <Card key={index}>
-            <Text style={{ fontWeight: '600' }}>{entry.layoverCity ?? 'City TBD'}</Text>
+            <BodyText strong>{entry.layoverCity ?? 'City TBD'}</BodyText>
             <Input
               label="City"
               value={entry.layoverCity ?? ''}

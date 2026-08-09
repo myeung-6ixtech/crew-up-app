@@ -85,7 +85,7 @@ export function AirlinePickerField({
     placeholder: {
       color: t.colors.textTertiary,
     },
-    error: { ...t.typography.caption, color: t.colors.statusOnDuty, marginTop: t.spacing.xs },
+    error: { ...t.typography.bodySm, color: t.colors.statusOnDuty, marginTop: t.spacing.xs },
     list: { flex: 1, marginTop: t.spacing.sm },
     empty: { paddingVertical: t.spacing.lg },
   }));

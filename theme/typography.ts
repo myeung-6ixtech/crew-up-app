@@ -1,63 +1,93 @@
+import type { TextStyle } from 'react-native';
 import {
   Inter_400Regular,
   Inter_500Medium,
-  Inter_600SemiBold,
-  Inter_700Bold,
 } from '@expo-google-fonts/inter';
+import {
+  PlusJakartaSans_500Medium,
+  PlusJakartaSans_600SemiBold,
+} from '@expo-google-fonts/plus-jakarta-sans';
+
+const tabularNums = ['tabular-nums'] as TextStyle['fontVariant'];
 
 export const fontAssets = {
   Inter_400Regular,
   Inter_500Medium,
-  Inter_600SemiBold,
-  Inter_700Bold,
+  PlusJakartaSans_500Medium,
+  PlusJakartaSans_600SemiBold,
 };
 
 export const fontFamily = {
-  regular: 'Inter_400Regular',
-  medium: 'Inter_500Medium',
-  semiBold: 'Inter_600SemiBold',
-  bold: 'Inter_700Bold',
+  interRegular: 'Inter_400Regular',
+  interMedium: 'Inter_500Medium',
+  jakartaMedium: 'PlusJakartaSans_500Medium',
+  jakartaSemiBold: 'PlusJakartaSans_600SemiBold',
 } as const;
 
+/** Type scale — see documentation/font-system.md */
 export const typography = {
   display: {
-    fontFamily: fontFamily.bold,
-    fontSize: 32,
-    lineHeight: 34,
-    letterSpacing: -0.4,
-  },
-  headline: {
-    fontFamily: fontFamily.semiBold,
-    fontSize: 22,
-    lineHeight: 26,
+    fontFamily: fontFamily.jakartaSemiBold,
+    fontSize: 26,
+    lineHeight: 30,
     letterSpacing: -0.2,
   },
-  body: {
-    fontFamily: fontFamily.regular,
-    fontSize: 15,
-    lineHeight: 21,
+  displaySm: {
+    fontFamily: fontFamily.jakartaSemiBold,
+    fontSize: 20,
+    lineHeight: 25,
+    letterSpacing: -0.1,
+  },
+  headline: {
+    fontFamily: fontFamily.jakartaMedium,
+    fontSize: 18,
+    lineHeight: 23,
+    letterSpacing: -0.1,
   },
   bodyStrong: {
-    fontFamily: fontFamily.medium,
+    fontFamily: fontFamily.interMedium,
     fontSize: 15,
     lineHeight: 21,
   },
-  label: {
-    fontFamily: fontFamily.medium,
+  body: {
+    fontFamily: fontFamily.interRegular,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  bodySm: {
+    fontFamily: fontFamily.interRegular,
     fontSize: 12,
-    lineHeight: 16,
+    lineHeight: 17,
+  },
+  label: {
+    fontFamily: fontFamily.interMedium,
+    fontSize: 11,
+    lineHeight: 15,
     letterSpacing: 0.2,
     textTransform: 'uppercase' as const,
   },
   numeric: {
-    fontFamily: fontFamily.medium,
-    fontSize: 15,
-    lineHeight: 21,
-    fontVariant: ['tabular-nums' as const],
+    fontFamily: fontFamily.interMedium,
+    fontSize: 14,
+    lineHeight: 20,
+    fontVariant: tabularNums,
   },
+  numericLg: {
+    fontFamily: fontFamily.jakartaSemiBold,
+    fontSize: 18,
+    lineHeight: 22,
+    letterSpacing: -0.1,
+    fontVariant: tabularNums,
+  },
+  button: {
+    fontFamily: fontFamily.interMedium,
+    fontSize: 14,
+    lineHeight: 19,
+  },
+  /** @deprecated Use bodySm */
   caption: {
-    fontFamily: fontFamily.regular,
-    fontSize: 13,
-    lineHeight: 18,
+    fontFamily: fontFamily.interRegular,
+    fontSize: 12,
+    lineHeight: 17,
   },
 };

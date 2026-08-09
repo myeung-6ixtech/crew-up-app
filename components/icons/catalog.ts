@@ -22,6 +22,7 @@ export const AppIcons = {
   add: 'plus-circle',
   mapPoint: 'map-marker',
   globe: 'globe',
+  lock: 'lock',
 } as const;
 
 export type AppIconName = keyof typeof AppIcons;

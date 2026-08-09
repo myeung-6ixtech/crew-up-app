@@ -27,7 +27,7 @@ export function HomeProfileHeaderButton() {
       accessibilityRole="button"
       accessibilityLabel={t('home.editProfile')}
       style={({ pressed }) => [styles.hit, { opacity: pressed ? 0.72 : 1 }]}>
-      <Avatar name={profile?.display_name} size="sm" />
+      <Avatar name={profile?.display_name} fileId={profile?.avatar_file_id} size="sm" />
     </Pressable>
   );
 }

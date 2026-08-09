@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
   Avatar,
-  HeadlineText,
+  DisplaySmText,
   BodyText,
   LabelText,
   NumericText,
@@ -77,16 +77,16 @@ export function ProfileHeader({
   return (
     <View style={styles.section}>
       <View style={styles.avatarWrap}>
-        <Avatar name={profile?.display_name} size="xl" />
+        <Avatar name={profile?.display_name} fileId={profile?.avatar_file_id} size="xl" />
         <View style={styles.statusOverlay}>
           <StatusDot status={status} size={12} compact pulseKey={statusPulseKey} />
         </View>
       </View>
 
       <View style={styles.identity}>
-        <HeadlineText style={styles.name}>
+        <DisplaySmText style={styles.name}>
           {profile?.display_name ?? t('home.yourProfile')}
-        </HeadlineText>
+        </DisplaySmText>
         <BodyText muted style={styles.caption}>
           {formatProfileCaption(profile, airlineName)}
         </BodyText>
@@ -95,7 +95,7 @@ export function ProfileHeader({
       <View style={styles.statsRow}>
         {stats.map((s) => (
           <View key={s.label} style={styles.stat}>
-            <NumericText>{s.value}</NumericText>
+            <NumericText large>{s.value}</NumericText>
             <LabelText>{s.label}</LabelText>
           </View>
         ))}

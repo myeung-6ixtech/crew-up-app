@@ -27,18 +27,22 @@ export function CrewCrossingPaths({
   paths,
   client,
   onWave,
+  embedded = false,
 }: {
   paths: CrossingPath[];
   client: ApolloClient;
   onWave?: () => void;
+  embedded?: boolean;
 }) {
   const { t } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
   const styles = useThemedStyles((t) => ({
     section: {
-      paddingHorizontal: HOME_SECTION_PADDING,
-      marginBottom: HOME_SECTION_SPACING,
+      paddingHorizontal: embedded ? 0 : HOME_SECTION_PADDING,
+      marginBottom: embedded ? 0 : HOME_SECTION_SPACING,
+      width: '100%',
+      alignItems: 'center',
     },
     wave: {
       minWidth: 44,
@@ -55,9 +59,10 @@ export function CrewCrossingPaths({
 
   return (
     <View style={styles.section}>
-      <SectionLabel>{t('home.crossingPaths')}</SectionLabel>
+      {!embedded ? <SectionLabel>{t('home.crossingPaths')}</SectionLabel> : null}
       {paths.length ? (
-        paths.slice(0, 12).map((p) => (
+        <View style={{ width: '100%' }}>
+          {paths.slice(0, 12).map((p) => (
           <ListRow
             key={p.id}
             inset={false}
@@ -74,7 +79,8 @@ export function CrewCrossingPaths({
               </Pressable>
             }
           />
-        ))
+          ))}
+        </View>
       ) : (
         <EmptyState title={t('home.emptyCrossing')} body={t('home.emptyCrossingBody')} />
       )}

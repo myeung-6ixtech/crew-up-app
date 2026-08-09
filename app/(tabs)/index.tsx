@@ -5,11 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { Screen, Toast } from '@/components/ui';
 import { ProfileHeader } from '@/components/home/ProfileHeader';
+import { HomeContentTabs, type HomeTabId } from '@/components/home/HomeContentTabs';
 import { UpcomingTripsCarousel } from '@/components/home/UpcomingTripsCarousel';
 import { CrewCrossingPaths } from '@/components/home/CrewCrossingPaths';
 import { ActivityFeed } from '@/components/home/ActivityFeed';
 import { useAuth } from '@/hooks/useSession';
 import { useTabBarScroll } from '@/hooks/useTabBarScroll';
+import { useCreateEventFlow } from '@/hooks/useCreateEventFlow';
 import { fetchHomeData } from '@/services/presenceService';
 import { fetchAirlines } from '@/services/profileService';
 import { resolveCurrentStatus } from '@/lib/dutyStatus';
@@ -53,6 +55,7 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [activeTab, setActiveTab] = useState<HomeTabId>('trips');
 
   const load = useCallback(async () => {
     if (!userId) return;
@@ -124,9 +127,11 @@ export default function HomeScreen() {
   };
 
   const tabScroll = useTabBarScroll({ contentContainerStyle: styles.feed });
+  const { openCreateEvent, meetTypeOverlay } = useCreateEventFlow();
 
   return (
     <Screen style={{ padding: 0 }}>
+      {meetTypeOverlay}
       <Toast
         message={toastMessage}
         visible={toastVisible}
@@ -146,9 +151,29 @@ export default function HomeScreen() {
           airlineName={airlineName}
         />
 
-        <UpcomingTripsCarousel trips={upcoming} />
-        <CrewCrossingPaths paths={crossingPaths} client={client} onWave={onWaveSent} />
-        <ActivityFeed items={activityItems} />
+        <HomeContentTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          tabs={[
+            { id: 'trips', label: t('home.upcomingTrips') },
+            { id: 'paths', label: t('home.paths') },
+            { id: 'activity', label: t('home.activity') },
+          ]}>
+          {activeTab === 'trips' ? (
+            <UpcomingTripsCarousel trips={upcoming} embedded />
+          ) : null}
+          {activeTab === 'paths' ? (
+            <CrewCrossingPaths
+              paths={crossingPaths}
+              client={client}
+              onWave={onWaveSent}
+              embedded
+            />
+          ) : null}
+          {activeTab === 'activity' ? (
+            <ActivityFeed items={activityItems} embedded onCreateEvent={openCreateEvent} />
+          ) : null}
+        </HomeContentTabs>
       </ScrollView>
     </Screen>
   );

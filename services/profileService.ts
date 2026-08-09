@@ -70,6 +70,9 @@ export async function updateProfile(
     mutation: UPDATE_PROFILE,
     variables: { userId, set },
   });
+  if ('airline_id' in set || 'default_visibility' in set) {
+    await refreshSessionClaims();
+  }
   return (data as any)?.update_profiles_by_pk;
 }
 

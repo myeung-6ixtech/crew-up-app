@@ -1,7 +1,7 @@
 import { Pressable, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { AppIcon, Avatar, Badge, BodyText, Card, HeadlineText } from '@/components/ui';
+import { AppIcon, Avatar, Badge, BodyText, Card, DisplaySmText } from '@/components/ui';
 import { useThemedStyles, useTheme } from '@/theme';
 import { SCREENS } from '@/constants/screens';
 import type { Profile } from '@/types/domain';
@@ -40,9 +40,9 @@ export function ProfileSummaryCard({
   return (
     <Card>
       <View style={styles.headerRow}>
-        <Avatar name={profile?.display_name} size="md" />
+        <Avatar name={profile?.display_name} fileId={profile?.avatar_file_id} size="md" />
         <View style={styles.headerCopy}>
-          <HeadlineText style={{ fontSize: 20 }}>{profile?.display_name ?? 'Your profile'}</HeadlineText>
+          <DisplaySmText>{profile?.display_name ?? 'Your profile'}</DisplaySmText>
           <BodyText muted>{subtitle}</BodyText>
           <View style={styles.badgeRow}>
             <AppIcon

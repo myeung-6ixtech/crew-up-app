@@ -1,7 +1,19 @@
 import { Text as RNText, type TextProps as RNTextProps, type TextStyle } from 'react-native';
 import { useTheme } from '@/theme';
+import { labelTypographyStyle } from '@/theme/labelTypography';
 
-type Variant = 'display' | 'headline' | 'body' | 'bodyStrong' | 'label' | 'numeric' | 'caption';
+type Variant =
+  | 'display'
+  | 'displaySm'
+  | 'headline'
+  | 'body'
+  | 'bodyStrong'
+  | 'bodySm'
+  | 'label'
+  | 'numeric'
+  | 'numericLg'
+  | 'button'
+  | 'caption';
 
 type VariantProps = RNTextProps & {
   variant?: Variant;
@@ -10,8 +22,8 @@ type VariantProps = RNTextProps & {
 
 function ThemedText({ variant = 'body', muted, style, ...props }: VariantProps) {
   const theme = useTheme();
-  const variantStyle =
-    variant === 'caption' ? theme.typography.caption : theme.typography[variant];
+  const resolvedVariant = variant === 'caption' ? 'bodySm' : variant;
+  const variantStyle = theme.typography[resolvedVariant];
   const color = muted ? theme.colors.textSecondary : theme.colors.textPrimary;
 
   return <RNText style={[variantStyle, { color }, style]} {...props} />;
@@ -19,6 +31,10 @@ function ThemedText({ variant = 'body', muted, style, ...props }: VariantProps) 
 
 export function DisplayText(props: RNTextProps) {
   return <ThemedText variant="display" {...props} />;
+}
+
+export function DisplaySmText(props: RNTextProps) {
+  return <ThemedText variant="displaySm" {...props} />;
 }
 
 export function HeadlineText(props: RNTextProps) {
@@ -30,19 +46,24 @@ export function BodyText(props: RNTextProps & { strong?: boolean; muted?: boolea
   return <ThemedText variant={strong ? 'bodyStrong' : 'body'} muted={muted} {...rest} />;
 }
 
+export function BodySmText(props: RNTextProps & { muted?: boolean }) {
+  const { muted, ...rest } = props;
+  return <ThemedText variant="bodySm" muted={muted} {...rest} />;
+}
+
 export function LabelText(props: RNTextProps) {
   const theme = useTheme();
   return (
     <RNText
-      style={[theme.typography.label, { color: theme.colors.textTertiary }, props.style]}
+      style={[labelTypographyStyle(theme), { color: theme.colors.textTertiary }, props.style]}
       {...props}
     />
   );
 }
 
-export function NumericText(props: RNTextProps & { muted?: boolean }) {
-  const { muted, ...rest } = props;
-  return <ThemedText variant="numeric" muted={muted} {...rest} />;
+export function NumericText(props: RNTextProps & { muted?: boolean; large?: boolean }) {
+  const { muted, large, ...rest } = props;
+  return <ThemedText variant={large ? 'numericLg' : 'numeric'} muted={muted} {...rest} />;
 }
 
 export function Title({ children, style }: { children: React.ReactNode; style?: TextStyle }) {

@@ -203,7 +203,7 @@ export function AppSideMenu() {
 
         <Animated.View style={[styles.panel, { transform: [{ translateX: panelTranslateX }] }]}>
           <View style={styles.profileBlock}>
-            <Avatar name={profile?.display_name} size="lg" />
+            <Avatar name={profile?.display_name} fileId={profile?.avatar_file_id} size="lg" />
             <Text style={styles.profileName}>
               {profile?.display_name ?? t('home.yourProfile')}
             </Text>

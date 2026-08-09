@@ -9,7 +9,8 @@ export async function ensureAccessToken(): Promise<string | null> {
 }
 
 /**
- * Refresh the session so JWT custom claims (e.g. x-hasura-is-verified) match the database.
+ * Refresh the session so JWT custom claims match the database
+ * (x-hasura-is-verified, x-hasura-airline-id).
  * Call after profile changes that affect Hasura session variables.
  */
 export async function refreshSessionClaims(): Promise<void> {

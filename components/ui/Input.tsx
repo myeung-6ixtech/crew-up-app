@@ -38,7 +38,7 @@ export function Input({
     },
     inputFocused: { borderColor: t.colors.textPrimary },
     inputError: { borderColor: t.colors.statusOnDuty },
-    error: { ...t.typography.caption, color: t.colors.statusOnDuty, marginTop: t.spacing.xs },
+    error: { ...t.typography.bodySm, color: t.colors.statusOnDuty, marginTop: t.spacing.xs },
   }));
 
   return (

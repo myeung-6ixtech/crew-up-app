@@ -2,6 +2,8 @@ export { Screen } from './Screen';
 export { Card } from './Card';
 export { Button } from './Button';
 export { Input } from './Input';
+export { DateTimeField } from './DateTimeField';
+export { TagInputField } from './TagInputField';
 export { Badge } from './Badge';
 export { EmptyState } from './EmptyState';
 export { Avatar } from './Avatar';
@@ -14,8 +16,10 @@ export { BottomSheet } from './BottomSheet';
 export { Toast } from './Toast';
 export {
   DisplayText,
+  DisplaySmText,
   HeadlineText,
   BodyText,
+  BodySmText,
   LabelText,
   NumericText,
   Title,

@@ -12,22 +12,33 @@ type ActivityItem = {
   route?: string;
 };
 
-export function ActivityFeed({ items }: { items: ActivityItem[] }) {
+export function ActivityFeed({
+  items,
+  embedded = false,
+  onCreateEvent,
+}: {
+  items: ActivityItem[];
+  embedded?: boolean;
+  onCreateEvent?: () => void;
+}) {
   const { t } = useTranslation();
   const router = useRouter();
   const styles = useThemedStyles((t) => ({
     section: {
-      paddingHorizontal: HOME_SECTION_PADDING,
-      marginBottom: HOME_SECTION_SPACING,
+      paddingHorizontal: embedded ? 0 : HOME_SECTION_PADDING,
+      marginBottom: embedded ? 0 : HOME_SECTION_SPACING,
+      width: '100%',
+      alignItems: 'center',
     },
     cardGap: { marginBottom: t.spacing.md },
   }));
 
   return (
     <View style={styles.section}>
-      <SectionLabel>{t('home.activity')}</SectionLabel>
+      {!embedded ? <SectionLabel>{t('home.activity')}</SectionLabel> : null}
       {items.length ? (
-        items.map((item) => (
+        <View style={{ width: '100%' }}>
+          {items.map((item) => (
           <Pressable
             key={item.id}
             style={styles.cardGap}
@@ -37,9 +48,14 @@ export function ActivityFeed({ items }: { items: ActivityItem[] }) {
               <NumericText muted>{item.subtitle}</NumericText>
             </Card>
           </Pressable>
-        ))
+          ))}
+        </View>
       ) : (
-        <EmptyState title={t('home.emptyActivity')} />
+        <EmptyState
+          title={t('home.emptyActivity')}
+          actionLabel={onCreateEvent ? t('events.createEvent') : undefined}
+          onAction={onCreateEvent}
+        />
       )}
     </View>
   );

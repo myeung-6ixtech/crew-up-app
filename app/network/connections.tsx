@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, Text } from 'react-native';
+import { ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { Screen, Title, Card, Button } from '@/components/ui';
+import { Screen, Title, Card, Button, BodyText } from '@/components/ui';
 import { useAuth } from '@/hooks/useSession';
 import { fetchConnections, updateConnectionStatus, blockUser } from '@/services/connectionService';
 import { SCREENS } from '@/constants/screens';
@@ -44,8 +44,8 @@ export default function ConnectionsScreen() {
         <Title>{t('network.connections')}</Title>
         {connections.map((c) => (
           <Card key={c.id}>
-            <Text style={{ fontWeight: '600' }}>{nameFor(c)}</Text>
-            <Text>{c.status}</Text>
+            <BodyText strong>{nameFor(c)}</BodyText>
+            <BodyText muted>{c.status}</BodyText>
             {c.status === 'pending' && c.addressee_id === userId ? (
               <>
                 <Button label={t('network.accept')} onPress={async () => { await updateConnectionStatus(client, c.id, 'accepted'); await load(); }} />

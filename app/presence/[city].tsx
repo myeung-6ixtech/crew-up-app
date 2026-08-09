@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, Text } from 'react-native';
+import { ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { Screen, Title, Card, EmptyState, Badge } from '@/components/ui';
+import { Screen, Title, Card, EmptyState, Badge, BodyText } from '@/components/ui';
 import { fetchPresenceByCity } from '@/services/presenceService';
 
 export default function PresenceCityScreen() {
@@ -30,8 +30,8 @@ export default function PresenceCityScreen() {
         ) : (
           crew.map((p) => (
             <Card key={p.id}>
-              <Text style={{ fontWeight: '600' }}>{p.user?.profile?.display_name ?? 'Crew'}</Text>
-              <Text>{[p.user?.profile?.role_type, p.user?.profile?.base_airport].filter(Boolean).join(' · ')}</Text>
+              <BodyText strong>{p.user?.profile?.display_name ?? 'Crew'}</BodyText>
+              <BodyText muted>{[p.user?.profile?.role_type, p.user?.profile?.base_airport].filter(Boolean).join(' · ')}</BodyText>
               {p.user?.profile?.is_verified ? <Badge label="Verified" tone="verified" /> : null}
             </Card>
           ))

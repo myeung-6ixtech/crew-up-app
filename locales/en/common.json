@@ -58,7 +58,8 @@
     "statsTrips": "Trips",
     "statsCities": "Cities",
     "statsConnections": "Connections",
-    "upcomingTrips": "Upcoming trips",
+    "upcomingTrips": "Upcoming Trips",
+    "paths": "Paths",
     "emptyTrips": "No upcoming trips",
     "emptyTripsBody": "Add a trip to start matching with crew on your route.",
     "crossingPaths": "Crew crossing paths",
@@ -129,6 +130,17 @@
   },
   "events": {
     "create": "Create meetup",
+    "createEvent": "Create Event",
+    "meetTypeTitle": "What kind of meet?",
+    "publicMeet": "Public Meet",
+    "publicMeetBody": "Create a meet for everyone in the community to join.",
+    "privateMeet": "Private Meeting",
+    "privateMeetBody": "Create a meet for your invited friends only.",
+    "selectDateTime": "Select date and time",
+    "selectDateTimeError": "Choose when your meet starts.",
+    "tags": "Tags",
+    "tagsPlaceholder": "Type a tag and press enter",
+    "quickTags": "Quick tags",
     "rsvp": "RSVP",
     "going": "Going",
     "waitlisted": "Waitlisted"
@@ -151,6 +163,7 @@
     "retry": "Retry",
     "save": "Save",
     "cancel": "Cancel",
+    "back": "Back",
     "dismiss": "Dismiss"
   },
   "menu": {
@@ -169,5 +182,22 @@
     "searchPlaceholder": "Search by name or code",
     "noResults": "No airlines match your search",
     "clear": "No airline"
+  },
+  "airport": {
+    "searchLabel": "Search",
+    "searchPlaceholder": "City, airport, or IATA code",
+    "noResults": "No airports match your search"
+  },
+  "addTrip": {
+    "searchByRoute": "Search by route",
+    "selectOrigin": "Select departure",
+    "selectDestination": "Select arrival",
+    "from": "Departure",
+    "to": "Arrival",
+    "routeHint": "Tap an airport to change it. Use ⇄ to swap.",
+    "swapRoute": "Swap departure and arrival",
+    "whenFlying": "When are you flying?",
+    "selectRouteFirst": "Choose departure and arrival above to pick a date.",
+    "scheduleComingSoon": "Flight date picker and live schedules arrive in the next update."
   }
 }

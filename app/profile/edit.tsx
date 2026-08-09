@@ -28,6 +28,7 @@ import {
 import { formatApolloError } from '@/lib/graphqlError';
 import { useAuth, useSession } from '@/hooks/useSession';
 import { fetchAirlines, submitVerification, updateProfile } from '@/services/profileService';
+import { STORAGE_BUCKETS } from '@/constants/storage';
 import { uploadFile } from '@/services/uploadService';
 import { useThemedStyles, useTheme } from '@/theme';
 
@@ -86,6 +87,7 @@ export default function EditProfileScreen() {
   const [airlines, setAirlines] = useState<{ id: string; name: string; code: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [avatarPreviewUri, setAvatarPreviewUri] = useState<string | null>(null);
 
   useEffect(() => {
     void fetchAirlines(client).then(setAirlines);
@@ -113,14 +115,20 @@ export default function EditProfileScreen() {
     const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.8 });
     if (picked.canceled || !picked.assets[0]) return;
     const asset = picked.assets[0];
-    const fileId = await uploadFile({
-      uri: asset.uri,
-      name: 'avatar.jpg',
-      mimeType: asset.mimeType ?? 'image/jpeg',
-      bucketId: 'avatars',
-    });
-    await updateProfile(client, userId, { avatar_file_id: fileId });
-    await refreshProfile();
+    setAvatarPreviewUri(asset.uri);
+    try {
+      const fileId = await uploadFile({
+        uri: asset.uri,
+        name: 'avatar.jpg',
+        mimeType: asset.mimeType ?? 'image/jpeg',
+        bucketId: STORAGE_BUCKETS.avatars,
+      });
+      await updateProfile(client, userId, { avatar_file_id: fileId });
+      await refreshProfile();
+    } catch (e) {
+      setError(formatApolloError(e));
+      setAvatarPreviewUri(null);
+    }
   };
 
   const onVerificationUpload = async () => {
@@ -132,7 +140,7 @@ export default function EditProfileScreen() {
       uri: asset.uri,
       name: 'crew-id.jpg',
       mimeType: asset.mimeType ?? 'image/jpeg',
-      bucketId: 'verifications',
+      bucketId: STORAGE_BUCKETS.verificationDocs,
     });
     await submitVerification(client, fileId);
   };
@@ -171,7 +179,12 @@ export default function EditProfileScreen() {
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.avatarSection}>
             <Pressable onPress={onAvatar} style={styles.avatarPress} accessibilityLabel="Change photo">
-              <Avatar name={displayName} size="xl" />
+              <Avatar
+                name={displayName}
+                fileId={profile?.avatar_file_id}
+                localUri={avatarPreviewUri}
+                size="xl"
+              />
               <View style={styles.editBadge}>
                 <AppIcon name="edit" size={18} color={theme.colors.accent} />
               </View>

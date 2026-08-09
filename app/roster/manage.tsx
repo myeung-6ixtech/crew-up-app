@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, Text } from 'react-native';
+import { ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { Screen, Title, Card, Button, EmptyState } from '@/components/ui';
+import { Screen, Title, Card, Button, EmptyState, BodyText, NumericText } from '@/components/ui';
 import { useAuth } from '@/hooks/useSession';
 import { deleteRoster, fetchMyRosters } from '@/services/rosterService';
 import type { RosterEntry } from '@/types/domain';
@@ -36,8 +36,8 @@ export default function RosterManageScreen() {
         ) : (
           rosters.map((r) => (
             <Card key={r.id}>
-              <Text style={{ fontWeight: '600' }}>{r.layover_city}</Text>
-              <Text>{formatDateRange(r.layover_start ?? '', r.layover_end)}</Text>
+              <BodyText strong>{r.layover_city}</BodyText>
+              <NumericText muted>{formatDateRange(r.layover_start ?? '', r.layover_end)}</NumericText>
               {r.id ? (
                 <Button
                   label="Delete"
