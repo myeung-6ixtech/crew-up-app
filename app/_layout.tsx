@@ -63,7 +63,7 @@ function RootNavigator() {
       <Stack.Screen name="roster/upload" options={{ title: 'Upload roster' }} />
       <Stack.Screen name="roster/confirm" options={{ title: 'Confirm layovers' }} />
       <Stack.Screen name="roster/manage" options={{ title: 'My schedule' }} />
-      <Stack.Screen name="roster/add-trip" options={{ title: 'Add trip' }} />
+      <Stack.Screen name="roster/add-trip" options={{ headerShown: false }} />
       <Stack.Screen name="presence/[city]" options={{ title: 'Who is around' }} />
       <Stack.Screen name="network/connections" options={{ title: 'Connections' }} />
       <Stack.Screen name="network/discover" options={{ title: 'Discover' }} />

@@ -90,8 +90,8 @@ export const TabBarIconButton = memo(function TabBarIconButton({
           style={{
             backgroundColor: theme.colors.accentSubtle,
             borderRadius: theme.radius.pill,
-            paddingHorizontal: theme.spacing.md,
-            paddingVertical: theme.spacing.sm,
+            paddingHorizontal: theme.spacing.lg,
+            paddingVertical: theme.spacing.sm + 2,
             alignItems: 'center',
             justifyContent: 'center',
           }}>

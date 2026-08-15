@@ -51,8 +51,16 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   }, [client]);
 
   const refreshSession = useCallback(async (): Promise<Profile | null> => {
-    await secureStoreSession.getAsync();
-    await nhost.refreshSession(60);
+    try {
+      await secureStoreSession.getAsync();
+      await nhost.refreshSession(60);
+    } catch {
+      nhost.clearSession();
+      setSession(null);
+      setProfile(null);
+      profileRef.current = null;
+      return null;
+    }
     const next = nhost.getUserSession();
     setSession(next);
     if (next?.user?.id) {

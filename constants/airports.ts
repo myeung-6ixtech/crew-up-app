@@ -1,4 +1,4 @@
-import type { Airport } from '@/types/airport';
+import type { Airport, EventCity } from '@/types/airport';
 
 /** Major airports for route search (MVP static list — expand or move to DB later). */
 export const AIRPORTS: Airport[] = [
@@ -125,4 +125,38 @@ export function searchAirports(
   }
 
   return results;
+}
+
+const EVENT_CITIES: EventCity[] = (() => {
+  const seen = new Map<string, EventCity>();
+  for (const airport of AIRPORTS) {
+    const key = `${airport.city.toLowerCase()}|${airport.country.toLowerCase()}`;
+    if (!seen.has(key)) {
+      seen.set(key, { city: airport.city, country: airport.country });
+    }
+  }
+  return [...seen.values()].sort((a, b) => a.city.localeCompare(b.city));
+})();
+
+export function formatEventCityLabel(entry: EventCity): string {
+  return `${entry.city}, ${entry.country}`;
+}
+
+export function getEventCities(): EventCity[] {
+  return EVENT_CITIES;
+}
+
+export function searchEventCities(query: string): EventCity[] {
+  const normalized = query.trim().toLowerCase();
+  if (!normalized) return EVENT_CITIES;
+  return EVENT_CITIES.filter((entry) => {
+    const haystack = `${entry.city} ${entry.country}`.toLowerCase();
+    return haystack.includes(normalized);
+  });
+}
+
+export function findEventCity(city: string | null | undefined): EventCity | undefined {
+  if (!city?.trim()) return undefined;
+  const normalized = city.trim().toLowerCase();
+  return EVENT_CITIES.find((entry) => entry.city.toLowerCase() === normalized);
 }

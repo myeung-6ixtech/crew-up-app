@@ -13,7 +13,6 @@ import {
   Button,
   Subtitle,
   BodyText,
-  Badge,
   SelectionOption,
   SectionLabel,
   AppIcon,
@@ -27,7 +26,7 @@ import {
 } from '@/lib/visibilityOptions';
 import { formatApolloError } from '@/lib/graphqlError';
 import { useAuth, useSession } from '@/hooks/useSession';
-import { fetchAirlines, submitVerification, updateProfile } from '@/services/profileService';
+import { fetchAirlines, updateProfile } from '@/services/profileService';
 import { STORAGE_BUCKETS } from '@/constants/storage';
 import { uploadFile } from '@/services/uploadService';
 import { useThemedStyles, useTheme } from '@/theme';
@@ -40,7 +39,7 @@ export default function EditProfileScreen() {
   const client = useApolloClient();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const { profile, userId, isVerified } = useAuth();
+  const { profile, userId } = useAuth();
   const { refreshProfile, refreshSession } = useSession();
   const styles = useThemedStyles((t) => ({
     scroll: { padding: t.spacing.lg, paddingBottom: t.spacing.xxxl + 80 },
@@ -73,7 +72,6 @@ export default function EditProfileScreen() {
       borderTopColor: t.colors.hairline,
       gap: t.spacing.xs,
     },
-    verifiedRow: { flexDirection: 'row', alignItems: 'center', gap: t.spacing.sm, marginBottom: t.spacing.sm },
   }));
 
   const [displayName, setDisplayName] = useState(profile?.display_name ?? '');
@@ -129,20 +127,6 @@ export default function EditProfileScreen() {
       setError(formatApolloError(e));
       setAvatarPreviewUri(null);
     }
-  };
-
-  const onVerificationUpload = async () => {
-    if (!userId) return;
-    const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.8 });
-    if (picked.canceled || !picked.assets[0]) return;
-    const asset = picked.assets[0];
-    const fileId = await uploadFile({
-      uri: asset.uri,
-      name: 'crew-id.jpg',
-      mimeType: asset.mimeType ?? 'image/jpeg',
-      bucketId: STORAGE_BUCKETS.verificationDocs,
-    });
-    await submitVerification(client, fileId);
   };
 
   const onSave = async () => {
@@ -266,25 +250,6 @@ export default function EditProfileScreen() {
                 onPress={() => setNotificationMode(mode)}
               />
             ))}
-          </View>
-
-          <View style={styles.section}>
-            <SectionLabel>{t('home.verification')}</SectionLabel>
-            <View style={styles.verifiedRow}>
-              {isVerified ? (
-                <Badge label={t('verification.verified')} tone="verified" />
-              ) : (
-                <Badge label={t('verification.pending')} tone="status" />
-              )}
-            </View>
-            {!isVerified ? (
-              <>
-                <Subtitle>{t('verification.pendingBody')}</Subtitle>
-                <Button label={t('verification.uploadId')} onPress={onVerificationUpload} variant="secondary" />
-              </>
-            ) : (
-              <BodyText muted>{t('home.verificationComplete')}</BodyText>
-            )}
           </View>
 
           {error ? <BodyText style={{ color: theme.colors.statusOnDuty }}>{error}</BodyText> : null}

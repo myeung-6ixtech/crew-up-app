@@ -1,15 +1,20 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { RouteSelector } from '@/components/roster/RouteSelector';
-import { BodyText, Button, HeadlineText } from '@/components/ui';
+import { TripScheduleSection } from '@/components/roster/TripScheduleSection';
+import { Button } from '@/components/ui';
 import { findAirportByIata } from '@/constants/airports';
+import { SCREENS } from '@/constants/screens';
+import { toFlightDateKey } from '@/lib/flightDateKey';
 import type { Airport } from '@/types/airport';
 import { useThemedStyles } from '@/theme';
 
 export type AddTripDraft = {
   origin?: Airport;
   destination?: Airport;
+  flightDate?: Date;
 };
 
 type AddTripWizardProps = {
@@ -19,6 +24,7 @@ type AddTripWizardProps = {
 
 export function AddTripWizard({ defaultOriginIata, onCancel }: AddTripWizardProps) {
   const { t } = useTranslation();
+  const router = useRouter();
   const [draft, setDraft] = useState<AddTripDraft>({});
 
   useEffect(() => {
@@ -29,6 +35,7 @@ export function AddTripWizard({ defaultOriginIata, onCancel }: AddTripWizardProp
   }, [defaultOriginIata]);
 
   const routeReady = Boolean(draft.origin && draft.destination);
+  const canSearch = Boolean(routeReady && draft.flightDate);
 
   const styles = useThemedStyles((t) => ({
     scroll: {
@@ -43,16 +50,26 @@ export function AddTripWizard({ defaultOriginIata, onCancel }: AddTripWizardProp
     },
     scheduleSection: {
       paddingHorizontal: t.spacing.lg,
-      alignItems: 'center',
-      gap: t.spacing.md,
-      minHeight: 200,
-      justifyContent: 'center',
     },
     footer: {
       paddingHorizontal: t.spacing.lg,
       paddingTop: t.spacing.xl,
+      gap: t.spacing.sm,
     },
   }));
+
+  const onSearchFlights = () => {
+    if (!draft.origin || !draft.destination || !draft.flightDate) return;
+
+    router.push({
+      pathname: SCREENS.roster.addTripFlights,
+      params: {
+        depIata: draft.origin.iata,
+        arrIata: draft.destination.iata,
+        date: toFlightDateKey(draft.flightDate),
+      },
+    });
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
@@ -60,22 +77,44 @@ export function AddTripWizard({ defaultOriginIata, onCancel }: AddTripWizardProp
         origin={draft.origin}
         destination={draft.destination}
         defaultOriginIata={defaultOriginIata}
-        onChangeOrigin={(origin) => setDraft((prev) => ({ ...prev, origin }))}
-        onChangeDestination={(destination) => setDraft((prev) => ({ ...prev, destination }))}
+        onChangeOrigin={(origin) =>
+          setDraft((prev) => ({
+            ...prev,
+            origin,
+          }))
+        }
+        onChangeDestination={(destination) =>
+          setDraft((prev) => ({
+            ...prev,
+            destination,
+          }))
+        }
       />
 
       <View style={styles.divider} />
 
-      <View style={[styles.scheduleSection, { opacity: routeReady ? 1 : 0.45 }]}>
-        <HeadlineText style={{ textAlign: 'center' }}>{t('addTrip.whenFlying')}</HeadlineText>
-        <BodyText muted style={{ textAlign: 'center', maxWidth: 320 }}>
-          {routeReady
-            ? t('addTrip.scheduleComingSoon')
-            : t('addTrip.selectRouteFirst')}
-        </BodyText>
+      <View style={styles.scheduleSection}>
+        <TripScheduleSection
+          origin={draft.origin}
+          destination={draft.destination}
+          flightDate={draft.flightDate ?? null}
+          onDateChange={(flightDate) =>
+            setDraft((prev) => ({
+              ...prev,
+              flightDate,
+            }))
+          }
+          disabled={!routeReady}
+        />
       </View>
 
       <View style={styles.footer}>
+        <Button
+          label={t('addTrip.searchFlights')}
+          onPress={onSearchFlights}
+          disabled={!canSearch}
+          noTopMargin
+        />
         <Button label={t('common.cancel')} onPress={onCancel} variant="ghost" noTopMargin />
       </View>
     </ScrollView>

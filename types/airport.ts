@@ -5,4 +5,9 @@ export type Airport = {
   country: string;
 };
 
+export type EventCity = {
+  city: string;
+  country: string;
+};
+
 export type RouteEndpoint = 'origin' | 'destination';

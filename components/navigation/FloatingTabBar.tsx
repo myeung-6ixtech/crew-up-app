@@ -12,10 +12,9 @@ import {
   TAB_BAR_FLOAT_OFFSET,
   TAB_BAR_ICON_COMPACT,
   TAB_BAR_ICON_EXPANDED,
-  TAB_BAR_ICON_GAP_COMPACT,
-  TAB_BAR_ICON_GAP_EXPANDED,
   TAB_BAR_PADDING_H_COMPACT,
   TAB_BAR_PADDING_H_EXPANDED,
+  TAB_BAR_WIDTH_RATIO,
 } from '@/constants/tabBar';
 import { useTheme } from '@/theme';
 
@@ -71,11 +70,6 @@ export const FloatingTabBar = memo(function FloatingTabBar({
     outputRange: [TAB_BAR_PADDING_H_EXPANDED, TAB_BAR_PADDING_H_COMPACT],
   });
 
-  const iconGap = progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [TAB_BAR_ICON_GAP_EXPANDED, TAB_BAR_ICON_GAP_COMPACT],
-  });
-
   const iconScale = progress.interpolate({
     inputRange: [0, 1],
     outputRange: [1, TAB_BAR_ICON_COMPACT / TAB_BAR_ICON_EXPANDED],
@@ -105,13 +99,15 @@ export const FloatingTabBar = memo(function FloatingTabBar({
         style={[
           theme.shadow.raised,
           {
+            width: `${TAB_BAR_WIDTH_RATIO * 100}%`,
+            maxWidth: 520,
             height: containerHeight,
             borderRadius: theme.radius.pill,
             overflow: 'hidden',
             flexDirection: 'row',
             alignItems: 'center',
+            justifyContent: 'space-evenly',
             paddingHorizontal,
-            gap: iconGap,
           },
         ]}>
         {useBlur ? (
@@ -159,7 +155,11 @@ export const FloatingTabBar = memo(function FloatingTabBar({
           return (
             <Animated.View
               key={route.key}
-              style={{ transform: [{ scale: iconScale }] }}>
+              style={{
+                flex: 1,
+                alignItems: 'center',
+                transform: [{ scale: iconScale }],
+              }}>
               <TabBarIconButton
                 name={iconName}
                 active={isFocused}
