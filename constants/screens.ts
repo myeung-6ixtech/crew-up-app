@@ -44,7 +44,6 @@ export const SCREENS = {
   profile: {
     edit: '/profile/edit',
     privacy: '/profile/privacy',
-    safety: '/profile/safety-center',
     verification: '/profile/verification-status',
     language: '/profile/settings/language',
     security: '/profile/settings/account-security',

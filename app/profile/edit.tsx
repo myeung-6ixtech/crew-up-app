@@ -11,19 +11,13 @@ import {
   Avatar,
   Input,
   Button,
-  Subtitle,
   BodyText,
-  SelectionOption,
   SectionLabel,
   AppIcon,
   PillSelectorGroup,
 } from '@/components/ui';
-import { ROLE_TYPES, type VisibilityLevel } from '@/constants/screens';
+import { ROLE_TYPES } from '@/constants/screens';
 import { formatOptionLabel } from '@/lib/formatOptionLabel';
-import {
-  normalizeVisibilityForAffiliation,
-  visibilityLevelsForAffiliation,
-} from '@/lib/visibilityOptions';
 import { formatApolloError } from '@/lib/graphqlError';
 import { useAuth, useSession } from '@/hooks/useSession';
 import { fetchAirlines, updateProfile } from '@/services/profileService';
@@ -79,9 +73,6 @@ export default function EditProfileScreen() {
   const [base, setBase] = useState(profile?.base_airport ?? '');
   const [bio, setBio] = useState('');
   const [airlineId, setAirlineId] = useState<string | undefined>(profile?.airline_id ?? undefined);
-  const [visibility, setVisibility] = useState<VisibilityLevel>(profile?.default_visibility ?? 'friends');
-  const [statusDefaultHidden, setStatusDefaultHidden] = useState(profile?.default_visibility === 'off');
-  const [notificationMode, setNotificationMode] = useState(profile?.notification_mode ?? 'realtime');
   const [airlines, setAirlines] = useState<{ id: string; name: string; code: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -97,16 +88,7 @@ export default function EditProfileScreen() {
     setRoleType(profile.role_type ?? ROLE_TYPES[0]);
     setBase(profile.base_airport ?? '');
     setAirlineId(profile.airline_id ?? undefined);
-    setVisibility(profile.default_visibility ?? 'friends');
-    setStatusDefaultHidden(profile.default_visibility === 'off');
-    setNotificationMode(profile.notification_mode ?? 'realtime');
   }, [profile]);
-
-  useEffect(() => {
-    if (!airlineId && visibility === 'same_airline') {
-      setVisibility('friends');
-    }
-  }, [airlineId, visibility]);
 
   const onAvatar = async () => {
     if (!userId) return;
@@ -134,16 +116,11 @@ export default function EditProfileScreen() {
     setLoading(true);
     setError('');
     try {
-      const resolvedVisibility: VisibilityLevel = statusDefaultHidden
-        ? 'off'
-        : normalizeVisibilityForAffiliation(visibility, airlineId);
       await updateProfile(client, userId, {
         display_name: displayName.trim(),
         role_type: roleType,
         base_airport: base.trim().toUpperCase(),
         airline_id: airlineId ?? null,
-        default_visibility: resolvedVisibility,
-        notification_mode: notificationMode,
       });
       await refreshSession();
       await refreshProfile();
@@ -210,46 +187,6 @@ export default function EditProfileScreen() {
             <BodyText muted>
               {bio.length}/{BIO_MAX} · {t('home.bioComingSoon')}
             </BodyText>
-          </View>
-
-          <View style={styles.section}>
-            <SectionLabel>{t('home.statusDefault')}</SectionLabel>
-            <SelectionOption
-              label={t('home.statusAvailableDefault')}
-              selected={!statusDefaultHidden}
-              onPress={() => setStatusDefaultHidden(false)}
-            />
-            <SelectionOption
-              label={t('home.statusHiddenDefault')}
-              selected={statusDefaultHidden}
-              onPress={() => setStatusDefaultHidden(true)}
-            />
-          </View>
-
-          <View style={styles.section}>
-            <SectionLabel>{t('home.editPrivacy')}</SectionLabel>
-            <Subtitle>{t('home.presencePrivacyHint')}</Subtitle>
-            <PillSelectorGroup
-              label={t('onboarding.visibility')}
-              options={visibilityLevelsForAffiliation(airlineId).map((v) => ({
-                value: v,
-                label: formatOptionLabel(v),
-              }))}
-              value={statusDefaultHidden ? undefined : visibility}
-              onChange={(v) => {
-                setStatusDefaultHidden(false);
-                setVisibility(v);
-              }}
-            />
-            <Subtitle>{t('home.notifications')}</Subtitle>
-            {(['realtime', 'digest'] as const).map((mode) => (
-              <SelectionOption
-                key={mode}
-                label={mode}
-                selected={notificationMode === mode}
-                onPress={() => setNotificationMode(mode)}
-              />
-            ))}
           </View>
 
           {error ? <BodyText style={{ color: theme.colors.statusOnDuty }}>{error}</BodyText> : null}

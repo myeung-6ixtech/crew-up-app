@@ -30,7 +30,6 @@ export function ProfileSummaryCard({
       justifyContent: 'center',
       backgroundColor: t.colors.bgSurfaceRaised,
     },
-    metaRow: { marginTop: t.spacing.md, gap: t.spacing.xs },
   }));
 
   const subtitle =
@@ -63,11 +62,6 @@ export function ProfileSummaryCard({
           accessibilityLabel="Edit profile">
           <AppIcon name="edit" size={20} color={theme.colors.accent} />
         </Pressable>
-      </View>
-
-      <View style={styles.metaRow}>
-        <BodyText muted>Visibility: {profile?.default_visibility ?? 'friends'}</BodyText>
-        <BodyText muted>Notifications: {profile?.notification_mode ?? 'realtime'}</BodyText>
       </View>
     </Card>
   );

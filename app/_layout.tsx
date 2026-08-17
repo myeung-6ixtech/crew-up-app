@@ -73,8 +73,7 @@ function RootNavigator() {
       <Stack.Screen name="events/edit/[id]" options={{ title: 'Edit event' }} />
       <Stack.Screen name="messages/[threadId]" options={{ title: 'Chat' }} />
       <Stack.Screen name="profile/edit" options={{ title: 'Edit profile' }} />
-      <Stack.Screen name="profile/privacy" options={{ title: 'Privacy' }} />
-      <Stack.Screen name="profile/safety-center" options={{ title: 'Safety Center' }} />
+      <Stack.Screen name="profile/privacy" options={{ title: 'Privacy Settings' }} />
       <Stack.Screen name="profile/verification-status" options={{ title: 'Verification' }} />
       <Stack.Screen name="profile/settings/language" options={{ title: 'Language' }} />
       <Stack.Screen name="profile/settings/account-security" options={{ title: 'Account security' }} />

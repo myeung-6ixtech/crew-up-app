@@ -30,7 +30,7 @@ const slideEasing = {
 type MenuItem = {
   id: string;
   label: string;
-  icon: 'edit' | 'privacy' | 'shield' | 'globe' | 'settings';
+  icon: 'edit' | 'privacy' | 'globe' | 'settings';
   route: Href;
 };
 
@@ -159,7 +159,6 @@ export function AppSideMenu() {
   const menuItems: MenuItem[] = [
     { id: 'edit', label: t('home.editProfile'), icon: 'edit', route: SCREENS.profile.edit },
     { id: 'privacy', label: t('menu.privacy'), icon: 'privacy', route: SCREENS.profile.privacy },
-    { id: 'safety', label: t('menu.safety'), icon: 'shield', route: SCREENS.profile.safety },
     { id: 'language', label: t('menu.language'), icon: 'globe', route: SCREENS.profile.language },
     {
       id: 'security',

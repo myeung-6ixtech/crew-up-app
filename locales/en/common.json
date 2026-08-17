@@ -182,7 +182,6 @@
   "safety": {
     "report": "Report",
     "block": "Block",
-    "safetyCenter": "Safety Center",
     "nudgeTitle": "Meeting someone new?",
     "nudgeBody": "Prefer a public place or a group meetup. You can share plans with a friend outside the app."
   },
@@ -197,8 +196,7 @@
   },
   "menu": {
     "open": "Open menu",
-    "privacy": "Privacy",
-    "safety": "Safety Center",
+    "privacy": "Privacy Settings",
     "language": "Language",
     "accountSecurity": "Account security",
     "signOutTitle": "Sign out?",
