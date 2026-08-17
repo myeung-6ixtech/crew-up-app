@@ -36,6 +36,16 @@ export interface ParsedRosterEntry {
   layoverEnd?: string | null;
 }
 
+export interface Activity {
+  id: string;
+  slug: string;
+  name: string;
+  description?: string | null;
+  category: string;
+  icon?: string | null;
+  sort_order: number;
+}
+
 export interface EventItem {
   id: string;
   title: string;
@@ -47,6 +57,12 @@ export interface EventItem {
   tags: string[];
   languages: string[];
   creator_id: string;
+  host_type?: 'user' | 'platform';
+  is_published?: boolean;
+  featured_until?: string | null;
+  eventActivities?: Array<{
+    activity: { id?: string; slug: string; name: string; icon?: string | null };
+  }>;
 }
 
 export interface ThreadItem {

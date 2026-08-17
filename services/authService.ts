@@ -56,7 +56,11 @@ export async function signIn(email: string, password: string) {
 }
 
 export async function signUp(email: string, password: string) {
-  const result = await nhost.auth.signUpEmailPassword({ email, password });
+  const result = await nhost.auth.signUpEmailPassword({
+    email,
+    password,
+    options: { allowedRoles: ['user', 'me'] },
+  });
   await nhost.refreshSession(0);
   return result.body;
 }

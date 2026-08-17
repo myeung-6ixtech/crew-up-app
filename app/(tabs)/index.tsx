@@ -39,7 +39,13 @@ type HomeData = {
     date_end: string;
     user?: { profile?: { display_name?: string; role_type?: string } };
   }[];
-  events?: { id: string; title: string; city: string; starts_at: string }[];
+  events?: {
+    id: string;
+    title: string;
+    city: string;
+    starts_at: string;
+    host_type?: 'user' | 'platform';
+  }[];
 };
 
 export default function HomeScreen() {
@@ -111,9 +117,10 @@ export default function HomeScreen() {
       });
     }
     for (const e of data?.events ?? []) {
+      const isPlatform = e.host_type === 'platform';
       items.push({
         id: `event-${e.id}`,
-        title: e.title,
+        title: isPlatform ? `${t('events.platformBadge')}: ${e.title}` : e.title,
         subtitle: `${e.city} · ${new Date(e.starts_at).toLocaleDateString()}`,
         route: SCREENS.events.detail(e.id),
       });

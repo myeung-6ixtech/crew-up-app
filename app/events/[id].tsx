@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, Text } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
@@ -24,6 +24,8 @@ export default function EventDetailScreen() {
     city: string;
     starts_at: string;
     creator_id: string;
+    host_type?: 'user' | 'platform';
+    eventActivities?: Array<{ activity: { name: string; icon?: string | null } }>;
     attendees?: { id: string; user_id: string; status: string }[];
   } | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
@@ -38,6 +40,7 @@ export default function EventDetailScreen() {
   }, [load]);
 
   const myRsvp = event?.attendees?.find((a) => a.user_id === userId);
+  const isPlatformEvent = event?.host_type === 'platform';
 
   return (
     <Screen style={{ padding: 0 }}>
@@ -45,8 +48,36 @@ export default function EventDetailScreen() {
         <Title>{event?.title ?? t('common.loading')}</Title>
         {event ? (
           <>
+            {isPlatformEvent ? (
+              <View style={{ marginBottom: 8 }}>
+                <Text
+                  style={{
+                    alignSelf: 'flex-start',
+                    fontSize: 12,
+                    fontWeight: '600',
+                    color: '#1d4ed8',
+                    backgroundColor: '#dbeafe',
+                    paddingHorizontal: 10,
+                    paddingVertical: 4,
+                    borderRadius: 999,
+                  }}
+                >
+                  {t('events.platformBadge')}
+                </Text>
+                <Subtitle>{t('events.hostedByCrewUp')}</Subtitle>
+              </View>
+            ) : null}
             <Subtitle>{event.city} · {formatDateTime(event.starts_at)}</Subtitle>
             <Card><Text>{event.description ?? 'No description'}</Text></Card>
+            {event.eventActivities?.length ? (
+              <Card>
+                <Text>
+                  {event.eventActivities
+                    .map(({ activity }) => `${activity.icon ? `${activity.icon} ` : ''}${activity.name}`)
+                    .join(' · ')}
+                </Text>
+              </Card>
+            ) : null}
             <Text>{event.attendees?.length ?? 0} attending</Text>
             {!myRsvp ? (
               <Button

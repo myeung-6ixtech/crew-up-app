@@ -62,7 +62,7 @@ export const GET_HOME_DATA = gql`
     }
     events(
       where: { starts_at: { _gte: $now } }
-      order_by: { starts_at: asc }
+      order_by: [{ featured_until: desc_nulls_last }, { starts_at: asc }]
       limit: 5
     ) {
       id
@@ -70,6 +70,16 @@ export const GET_HOME_DATA = gql`
       city
       starts_at
       tags
+      host_type
+      is_published
+      featured_until
+      eventActivities {
+        activity {
+          slug
+          name
+          icon
+        }
+      }
     }
   }
 `;

@@ -9,6 +9,7 @@ import {
   UPDATE_ATTENDEE,
   UPDATE_EVENT,
 } from '@/graphql/queries/events';
+import { INSERT_EVENT_ACTIVITIES } from '@/graphql/queries/activities';
 import { GET_EVENT_THREAD, INSERT_THREAD_PARTICIPANT } from '@/graphql/mutations/messaging';
 import { normalizeEventVisibilityScope } from '@/lib/visibilityOptions';
 
@@ -125,6 +126,20 @@ async function ensureEventThreadMembership(
       // Participant may already exist.
     });
   }
+}
+
+export async function insertEventActivities(
+  client: ApolloClient,
+  eventId: string,
+  activityIds: string[],
+) {
+  if (activityIds.length === 0) return;
+  await client.mutate({
+    mutation: INSERT_EVENT_ACTIVITIES,
+    variables: {
+      objects: activityIds.map((activity_id) => ({ event_id: eventId, activity_id })),
+    },
+  });
 }
 
 export async function createEventWithThread(

@@ -20,12 +20,16 @@ export default function EditEventScreen() {
   const load = useCallback(async () => {
     if (!id) return;
     const event = await fetchEvent(client, id);
+    if (event?.host_type === 'platform') {
+      router.replace(SCREENS.events.detail(id));
+      return;
+    }
     if (event) {
       setTitle(event.title);
       setCity(event.city);
       setDescription(event.description ?? '');
     }
-  }, [client, id]);
+  }, [client, id, router]);
 
   useEffect(() => {
     void load();

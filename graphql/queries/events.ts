@@ -1,19 +1,34 @@
 import { gql } from '@apollo/client';
 
+const EVENT_FIELDS = `
+  id
+  title
+  description
+  city
+  starts_at
+  ends_at
+  capacity
+  visibility_scope
+  tags
+  languages
+  creator_id
+  host_type
+  is_published
+  featured_until
+  eventActivities {
+    activity {
+      id
+      slug
+      name
+      icon
+    }
+  }
+`;
+
 export const GET_EVENTS = gql`
   query GetEvents($now: timestamptz!) {
     events(where: { starts_at: { _gte: $now } }, order_by: { starts_at: asc }) {
-      id
-      title
-      description
-      city
-      starts_at
-      ends_at
-      capacity
-      visibility_scope
-      tags
-      languages
-      creator_id
+      ${EVENT_FIELDS}
     }
   }
 `;
@@ -24,17 +39,7 @@ export const GET_EVENTS_BY_CITY = gql`
       where: { starts_at: { _gte: $now }, city: { _eq: $city } }
       order_by: { starts_at: asc }
     ) {
-      id
-      title
-      description
-      city
-      starts_at
-      ends_at
-      capacity
-      visibility_scope
-      tags
-      languages
-      creator_id
+      ${EVENT_FIELDS}
     }
   }
 `;
@@ -55,6 +60,17 @@ export const GET_EVENT = gql`
       tags
       languages
       creator_id
+      host_type
+      is_published
+      featured_until
+      eventActivities {
+        activity {
+          id
+          slug
+          name
+          icon
+        }
+      }
       attendees {
         id
         user_id

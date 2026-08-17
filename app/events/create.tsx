@@ -4,9 +4,9 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { CityPickerField } from '@/components/events/CityPickerField';
+import { ActivityPickerField } from '@/components/events/ActivityPickerField';
 import {
   Screen,
-  Title,
   Input,
   Button,
   DateTimeField,
@@ -19,7 +19,9 @@ import {
 import { EVENT_TAGS } from '@/constants/screens';
 import { EVENT_MEET_VISIBILITY } from '@/constants/events';
 import { useAuth } from '@/hooks/useSession';
-import { createEventWithThread } from '@/services/eventService';
+import { createEventWithThread, insertEventActivities } from '@/services/eventService';
+import { fetchActivities } from '@/services/activityService';
+import type { Activity } from '@/types/domain';
 import { SCREENS } from '@/constants/screens';
 import { useThemedStyles } from '@/theme';
 
@@ -46,6 +48,9 @@ export default function CreateEventScreen() {
   const [capacity, setCapacity] = useState(20);
   const [capacityError, setCapacityError] = useState('');
   const [tags, setTags] = useState<string[]>([]);
+  const [activityIds, setActivityIds] = useState<string[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [visibilityScope, setVisibilityScope] = useState<'all_verified' | 'friends'>(
     EVENT_MEET_VISIBILITY.public,
@@ -56,6 +61,22 @@ export default function CreateEventScreen() {
       setVisibilityScope(visibilityScopeParam);
     }
   }, [visibilityScopeParam]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      setActivitiesLoading(true);
+      try {
+        const list = await fetchActivities(client);
+        if (!cancelled) setActivities(list);
+      } finally {
+        if (!cancelled) setActivitiesLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [client]);
 
   const onSubmit = async () => {
     if (!userId) return;
@@ -98,7 +119,10 @@ export default function CreateEventScreen() {
         userId,
         profile?.airline_id,
       );
-      if (event?.id) router.replace(SCREENS.events.detail(event.id));
+      if (event?.id) {
+        await insertEventActivities(client, event.id, activityIds);
+        router.replace(SCREENS.events.detail(event.id));
+      }
     } finally {
       setLoading(false);
     }
@@ -107,9 +131,17 @@ export default function CreateEventScreen() {
   return (
     <Screen style={{ padding: 0 }}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Title>{t('events.create')}</Title>
-
         <FormSection isFirst>
+          <ActivityPickerField
+            label={t('events.selectActivity')}
+            activities={activities}
+            value={activityIds}
+            onChange={setActivityIds}
+            loading={activitiesLoading}
+          />
+        </FormSection>
+
+        <FormSection>
           <DateTimeField
             dateLabel={t('events.selectDate')}
             timeLabel={t('events.selectTime')}

@@ -159,9 +159,20 @@
     "tags": "Tags",
     "tagsPlaceholder": "Type a tag and press enter",
     "quickTags": "Quick tags",
+    "activity": "Activity",
+    "selectActivity": "Select activity",
+    "noActivities": "No activities available",
+    "doneSelectingActivities": "Done ({{count}} selected)",
     "rsvp": "RSVP",
     "going": "Going",
-    "waitlisted": "Waitlisted"
+    "waitlisted": "Waitlisted",
+    "platformBadge": "CrewUp Event",
+    "hostedByCrewUp": "Hosted by CrewUp",
+    "filter": {
+      "all": "All",
+      "platform": "CrewUp Events",
+      "community": "Community"
+    }
   },
   "messages": {
     "title": "Messages",
