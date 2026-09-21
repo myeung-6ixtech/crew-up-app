@@ -1,9 +1,11 @@
 /** Semantic icon names → Unicons ids (Iconify `uil:*`). */
 export const AppIcons = {
   home: 'home',
+  airplane: 'plane',
   network: 'users-alt',
   events: 'calendar',
   messages: 'comment-alt-dots',
+  send: 'location-arrow',
   friends: 'heart',
   profile: 'user-circle',
   email: 'envelope',
@@ -20,6 +22,9 @@ export const AppIcons = {
   chevronDown: 'angle-down',
   menu: 'bars',
   add: 'plus-circle',
+  copy: 'copy',
+  search: 'search',
+  userPlus: 'user-plus',
   mapPoint: 'map-marker',
   globe: 'globe',
   lock: 'lock',

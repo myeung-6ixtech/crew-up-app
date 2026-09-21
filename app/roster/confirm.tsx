@@ -6,6 +6,7 @@ import { useApolloClient } from '@/lib/apolloHooks';
 import { Screen, Title, Input, Button, Card, BodyText } from '@/components/ui';
 import { useRosterDraftStore } from '@/stores/rosterDraftStore';
 import { insertRosters, mapParsedToRosterInsert } from '@/services/rosterService';
+import { createTripsFromRosterLayovers } from '@/services/tripService';
 import { SCREENS } from '@/constants/screens';
 
 export default function RosterConfirmScreen() {
@@ -31,6 +32,15 @@ export default function RosterConfirmScreen() {
         });
       }
       await insertRosters(client, objects);
+      await createTripsFromRosterLayovers(
+        entries.map((entry) => ({
+          layoverCity: entry.layoverCity,
+          layoverStart: entry.layoverStart,
+          layoverEnd: entry.layoverEnd,
+          flightNumber: entry.flightNumber,
+          departureAirport: entry.departureAirport,
+        })),
+      );
       clear();
       router.replace(SCREENS.tabs.home);
     } finally {

@@ -61,6 +61,18 @@ export async function saveProfile(client: ApolloClient, input: ProfileInput) {
   return (data as any)?.insert_profiles_one;
 }
 
+export async function saveOrUpdateProfile(
+  client: ApolloClient,
+  userId: string,
+  input: ProfileInput,
+  existing: Profile | null,
+) {
+  if (existing?.user_id) {
+    return updateProfile(client, userId, input);
+  }
+  return saveProfile(client, input);
+}
+
 export async function updateProfile(
   client: ApolloClient,
   userId: string,

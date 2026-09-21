@@ -13,8 +13,13 @@ import {
   SectionLabel,
   BodyText,
 } from '@/components/ui';
+import { FriendsTabSkeleton } from '@/components/friends/FriendsTabSkeleton';
 import { useAuth } from '@/hooks/useSession';
-import { fetchConnections, updateConnectionStatus, blockUser } from '@/services/connectionService';
+import {
+  fetchConnections,
+  updateConnectionStatus,
+  blockUser,
+} from '@/services/connectionService';
 import { SCREENS } from '@/constants/screens';
 import { useThemedStyles } from '@/theme';
 import { useTabBarScroll } from '@/hooks/useTabBarScroll';
@@ -38,6 +43,7 @@ export default function FriendsTab() {
   }));
   const tabScroll = useTabBarScroll({ contentContainerStyle: styles.content });
   const [connections, setConnections] = useState<Connection[]>([]);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
@@ -55,7 +61,17 @@ export default function FriendsTab() {
   }, [load]);
 
   useEffect(() => {
-    void load();
+    let cancelled = false;
+    void (async () => {
+      try {
+        await load();
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [load]);
 
   const nameFor = (c: Connection) => {
@@ -79,6 +95,18 @@ export default function FriendsTab() {
     [connections],
   );
 
+  const openAddFriend = useCallback(() => {
+    router.push(SCREENS.friends.add);
+  }, [router]);
+
+  if (loading) {
+    return (
+      <Screen style={{ padding: 0 }}>
+        <FriendsTabSkeleton />
+      </Screen>
+    );
+  }
+
   return (
     <Screen style={{ padding: 0 }}>
       <ScrollView
@@ -86,13 +114,6 @@ export default function FriendsTab() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         <Title>{t('tabs.friends')}</Title>
         <Subtitle>{t('friends.subtitle')}</Subtitle>
-
-        <Button label={t('network.discover')} onPress={() => router.push(SCREENS.network.discover)} />
-        <Button
-          label={t('network.connections')}
-          onPress={() => router.push(SCREENS.network.connections)}
-          variant="secondary"
-        />
 
         {pending.length > 0 ? (
           <>
@@ -125,7 +146,12 @@ export default function FriendsTab() {
 
         <SectionLabel>{t('friends.yourFriends')}</SectionLabel>
         {friends.length === 0 ? (
-          <EmptyState title={t('friends.emptyTitle')} body={t('friends.emptyBody')} />
+          <EmptyState
+            title={t('friends.emptyTitle')}
+            body={t('friends.emptyBody')}
+            actionLabel={t('friends.addNewFriend')}
+            onAction={openAddFriend}
+          />
         ) : (
           friends.map((c) => (
             <Pressable key={c.id} onPress={() => router.push(SCREENS.network.user(userIdFor(c)))}>

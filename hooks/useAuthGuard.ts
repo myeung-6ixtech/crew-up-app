@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useSession';
 import { SCREENS } from '@/constants/screens';
 
 export function useAuthGuard() {
-  const { isAuthenticated, hasProfile, loading } = useAuth();
+  const { isAuthenticated, hasCompletedOnboarding, loading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
@@ -13,6 +13,7 @@ export function useAuthGuard() {
 
     const inAuth = segments[0] === 'auth';
     const inOnboarding = segments[0] === 'onboarding';
+    const onProfileSetup = inOnboarding && segments.length === 1;
 
     if (!isAuthenticated && !inAuth) {
       router.replace(SCREENS.auth.welcome);
@@ -20,17 +21,19 @@ export function useAuthGuard() {
     }
 
     if (isAuthenticated && inAuth) {
-      router.replace(hasProfile ? SCREENS.tabs.home : SCREENS.onboarding.index);
+      router.replace(
+        hasCompletedOnboarding ? SCREENS.tabs.home : SCREENS.onboarding.index,
+      );
       return;
     }
 
-    if (isAuthenticated && !hasProfile && !inOnboarding) {
+    if (isAuthenticated && !hasCompletedOnboarding && !inOnboarding) {
       router.replace(SCREENS.onboarding.index);
       return;
     }
 
-    if (isAuthenticated && hasProfile && inOnboarding) {
+    if (isAuthenticated && hasCompletedOnboarding && onProfileSetup) {
       router.replace(SCREENS.tabs.home);
     }
-  }, [isAuthenticated, hasProfile, loading, segments, router]);
+  }, [isAuthenticated, hasCompletedOnboarding, loading, segments, router]);
 }

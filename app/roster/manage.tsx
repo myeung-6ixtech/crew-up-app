@@ -5,21 +5,28 @@ import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { Screen, Title, Card, Button, EmptyState, BodyText, NumericText } from '@/components/ui';
 import { useAuth } from '@/hooks/useSession';
-import { deleteRoster, fetchMyRosters } from '@/services/rosterService';
-import type { RosterEntry } from '@/types/domain';
-import { formatDateRange } from '@/lib/utils';
+import { deactivateTrip, fetchMyTrips } from '@/services/tripService';
+import type { TripEntry } from '@/types/trip';
+import { formatAirportTimeWithZone } from '@/lib/airportTime';
+import {
+  tripDepartureDateLabel,
+  tripFlightLabel,
+  tripRouteLabel,
+  tripScheduleLabel,
+} from '@/types/trip';
 import { SCREENS } from '@/constants/screens';
 
-export default function RosterManageScreen() {
+export default function TripManageScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const client = useApolloClient();
   const { userId } = useAuth();
-  const [rosters, setRosters] = useState<RosterEntry[]>([]);
+  const [trips, setTrips] = useState<TripEntry[]>([]);
 
   const load = useCallback(async () => {
     if (!userId) return;
-    setRosters(await fetchMyRosters(client, userId));
+    const result = await fetchMyTrips(client, userId);
+    setTrips(result.all);
   }, [client, userId]);
 
   useEffect(() => {
@@ -29,25 +36,45 @@ export default function RosterManageScreen() {
   return (
     <Screen style={{ padding: 0 }}>
       <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <Title>{t('roster.manage')}</Title>
-        <Button label={t('roster.upload')} onPress={() => router.push(SCREENS.roster.upload)} />
-        {rosters.length === 0 ? (
-          <EmptyState title="No layovers saved" />
+        <Title>{t('trips.yourTrips')}</Title>
+        <Button label={t('home.addTrip')} onPress={() => router.push(SCREENS.roster.addTrip)} />
+        <Button
+          label={t('roster.upload')}
+          variant="secondary"
+          onPress={() => router.push(SCREENS.roster.upload)}
+        />
+        {trips.length === 0 ? (
+          <EmptyState title={t('home.emptyTrips')} body={t('home.emptyTripsBody')} />
         ) : (
-          rosters.map((r) => (
-            <Card key={r.id}>
-              <BodyText strong>{r.layover_city}</BodyText>
-              <NumericText muted>{formatDateRange(r.layover_start ?? '', r.layover_end)}</NumericText>
-              {r.id ? (
-                <Button
-                  label="Delete"
-                  variant="destructive"
-                  onPress={async () => {
-                    await deleteRoster(client, r.id!);
-                    await load();
-                  }}
-                />
+          trips.map((trip) => (
+            <Card key={trip.id}>
+              <BodyText strong>
+                {tripFlightLabel(trip, { withRoute: true }) ?? tripRouteLabel(trip)}
+              </BodyText>
+              {tripDepartureDateLabel(trip) ? (
+                <BodyText muted>{tripDepartureDateLabel(trip)}</BodyText>
               ) : null}
+              {tripScheduleLabel(trip) ? (
+                <NumericText muted>{tripScheduleLabel(trip)}</NumericText>
+              ) : null}
+              {trip.stays?.[0] ? (
+                <BodyText muted>
+                  {t('trips.freeUntil', {
+                    time: formatAirportTimeWithZone(
+                      trip.stays[0].ends_at,
+                      trip.stays[0].airport_iata ?? null,
+                    ),
+                  })}
+                </BodyText>
+              ) : null}
+              <Button
+                label={t('trips.removeTrip')}
+                variant="destructive"
+                onPress={async () => {
+                  await deactivateTrip(client, trip.id);
+                  await load();
+                }}
+              />
             </Card>
           ))
         )}

@@ -2,6 +2,67 @@ import { gql } from '@apollo/client';
 
 export const GET_HOME_DATA = gql`
   query GetHomeData($userId: uuid!, $now: timestamptz!) {
+    upcomingTrips: user_trips(
+      where: {
+        user_id: { _eq: $userId }
+        is_active: { _eq: true }
+        starts_at: { _gte: $now }
+      }
+      order_by: { starts_at: asc }
+      limit: 10
+    ) {
+      id
+      title
+      starts_at
+      ends_at
+      flightLegs(order_by: { sequence_number: asc }, limit: 1) {
+        flight {
+          flight_number
+          departure_airport
+          arrival_airport
+          scheduled_departure
+          scheduled_arrival
+        }
+      }
+      stays(order_by: { starts_at: asc }, limit: 1) {
+        city
+        starts_at
+        ends_at
+      }
+    }
+    allTrips: user_trips(
+      where: { user_id: { _eq: $userId }, is_active: { _eq: true } }
+      order_by: { starts_at: asc_nulls_last }
+    ) {
+      id
+      starts_at
+      ends_at
+      stays {
+        city
+      }
+    }
+    tripMatches: trip_matches(
+      order_by: [{ score: desc }, { created_at: desc }]
+      limit: 40
+    ) {
+      id
+      matched_user_id
+      match_type
+      score
+      city
+      flight_number
+      departure_airport
+      arrival_airport
+      overlap_start
+      overlap_end
+      matchedUser {
+        profile {
+          display_name
+          role_type
+          base_airport
+        }
+      }
+    }
     upcomingRosters: rosters(
       where: { user_id: { _eq: $userId }, layover_start: { _gte: $now } }
       order_by: { layover_start: asc }

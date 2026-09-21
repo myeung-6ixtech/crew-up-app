@@ -4,6 +4,7 @@ import { AppSideMenu } from '@/components/navigation/AppSideMenu';
 import { FloatingTabBar } from '@/components/navigation/FloatingTabBar';
 import { HomeProfileHeaderButton } from '@/components/navigation/HomeProfileHeaderButton';
 import { EventsCreateHeaderButton } from '@/components/navigation/EventsCreateHeaderButton';
+import { FriendsAddHeaderButton } from '@/components/navigation/FriendsAddHeaderButton';
 import { TabHeaderMenuButton } from '@/components/navigation/TabHeaderMenuButton';
 import { AppMenuProvider } from '@/contexts/AppMenuContext';
 import { TabBarScrollProvider } from '@/contexts/TabBarScrollContext';
@@ -69,6 +70,7 @@ export default function TabLayout() {
             name="friends"
             options={{
               tabBarAccessibilityLabel: t('tabs.friends'),
+              headerRight: () => <FriendsAddHeaderButton />,
             }}
           />
         </Tabs>

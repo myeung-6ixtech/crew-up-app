@@ -10,17 +10,17 @@ import type { FlightOption, FlightSearchErrorCode } from '@/types/flight';
 import { toFlightSearchErrorCode } from '@/types/flight';
 import { useThemedStyles } from '@/theme';
 
+// Provider and cache specifics stay in Nhost logs; crew only see whether
+// schedules are available and what they can do next.
 const ERROR_MESSAGE_KEYS: Record<FlightSearchErrorCode, string> = {
-  FLIGHT_API_NOT_CONFIGURED: 'addTrip.flightApiNotConfigured',
-  FLIGHT_API_RATE_LIMIT: 'addTrip.flightApiRateLimit',
-  FLIGHT_API_QUOTA_EXCEEDED: 'addTrip.flightApiQuotaExceeded',
-  FLIGHT_API_PLAN_LIMIT: 'addTrip.flightApiPlanLimit',
-  FLIGHT_API_REQUEST_FAILED: 'addTrip.flightSearchError',
+  FLIGHT_SCHEDULE_UNAVAILABLE: 'addTrip.flightScheduleUnavailable',
+  FLIGHT_SEARCH_UNAUTHENTICATED: 'addTrip.flightSearchSignedOut',
+  FLIGHT_SEARCH_FAILED: 'addTrip.flightSearchError',
 };
 
 const RETRYABLE_ERRORS: readonly FlightSearchErrorCode[] = [
-  'FLIGHT_API_RATE_LIMIT',
-  'FLIGHT_API_REQUEST_FAILED',
+  'FLIGHT_SCHEDULE_UNAVAILABLE',
+  'FLIGHT_SEARCH_FAILED',
 ];
 
 type TripFlightSearchViewProps = {
@@ -29,6 +29,7 @@ type TripFlightSearchViewProps = {
   flightDate: Date;
   selectedFlight: FlightOption | null;
   onSelectFlight: (flight: FlightOption) => void;
+  onManualEntry?: () => void;
 };
 
 export function TripFlightSearchView({
@@ -37,6 +38,7 @@ export function TripFlightSearchView({
   flightDate,
   selectedFlight,
   onSelectFlight,
+  onManualEntry,
 }: TripFlightSearchViewProps) {
   const { t } = useTranslation();
   const [flights, setFlights] = useState<FlightOption[]>([]);
@@ -60,6 +62,10 @@ export function TripFlightSearchView({
       color: t.colors.statusOnDuty,
       textAlign: 'center',
     },
+    hint: {
+      textAlign: 'center',
+      maxWidth: 320,
+    },
   }));
 
   useEffect(() => {
@@ -75,7 +81,7 @@ export function TripFlightSearchView({
           flightDate: fromFlightDateKey(dateKey),
         });
         if (cancelled) return;
-        setFlights(results);
+        setFlights(results.flights);
       } catch (e) {
         if (cancelled) return;
         setFlights([]);
@@ -110,6 +116,14 @@ export function TripFlightSearchView({
             noTopMargin
           />
         ) : null}
+        {onManualEntry ? (
+          <Button
+            label={t('addTrip.enterFlightManually')}
+            onPress={onManualEntry}
+            variant="ghost"
+            noTopMargin
+          />
+        ) : null}
       </View>
     );
   }
@@ -121,6 +135,19 @@ export function TripFlightSearchView({
         selectedFlightId={selectedFlight?.id}
         onSelect={onSelectFlight}
       />
+      {flights.length === 0 && onManualEntry ? (
+        <View style={styles.errorWrap}>
+          <BodyText muted style={styles.hint}>
+            {t('addTrip.noFlightsFoundHint')}
+          </BodyText>
+          <Button
+            label={t('addTrip.enterFlightManually')}
+            onPress={onManualEntry}
+            variant="ghost"
+            noTopMargin
+          />
+        </View>
+      ) : null}
     </View>
   );
 }

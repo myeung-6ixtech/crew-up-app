@@ -1,8 +1,8 @@
-import { Pressable, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { BodyText, NumericText } from '@/components/ui';
+import { airportDayOffset, formatAirportDate, formatAirportTimeWithZone } from '@/lib/airportTime';
 import type { FlightOption } from '@/types/flight';
-import { formatDateTime } from '@/lib/utils';
 import { useThemedStyles } from '@/theme';
 
 type FlightSearchResultsProps = {
@@ -35,7 +35,7 @@ export function FlightSearchResults({
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: t.spacing.sm,
-      marginBottom: t.spacing.xs,
+      marginBottom: t.spacing.sm,
     },
     flightNumber: {
       color: t.colors.textPrimary,
@@ -43,8 +43,34 @@ export function FlightSearchResults({
     flightNumberSelected: {
       color: t.colors.accent,
     },
-    route: {
-      marginBottom: t.spacing.xs,
+    timeline: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: t.spacing.sm,
+    },
+    endpoint: {
+      flex: 1,
+      gap: 2,
+      minWidth: 0,
+    },
+    endpointEnd: {
+      alignItems: 'flex-end',
+    },
+    airport: {
+      color: t.colors.textPrimary,
+    },
+    time: {
+      ...t.typography.bodyStrong,
+      color: t.colors.textPrimary,
+    },
+    arrow: {
+      ...t.typography.body,
+      color: t.colors.textSecondary,
+      marginTop: 2,
+    },
+    rollover: {
+      ...t.typography.caption,
+      color: t.colors.accent,
     },
   }));
 
@@ -60,6 +86,15 @@ export function FlightSearchResults({
     <View style={styles.wrap}>
       {flights.map((flight) => {
         const selected = selectedFlightId === flight.id;
+        // Times are rendered in each endpoint's own timezone, so an overnight or
+        // date-line crossing needs an explicit day marker.
+        const dayOffset = airportDayOffset(
+          flight.departureTime,
+          flight.departureAirport,
+          flight.arrivalTime,
+          flight.arrivalAirport,
+        );
+
         return (
           <Pressable
             key={flight.id}
@@ -80,12 +115,39 @@ export function FlightSearchResults({
                 {flight.airline}
               </BodyText>
             </View>
-            <NumericText style={styles.route}>
-              {flight.departureAirport} → {flight.arrivalAirport}
-            </NumericText>
-            <BodyText muted>
-              {formatDateTime(flight.departureTime)} → {formatDateTime(flight.arrivalTime)}
-            </BodyText>
+
+            <View style={styles.timeline}>
+              <View style={styles.endpoint}>
+                <NumericText style={styles.airport}>{flight.departureAirport}</NumericText>
+                <Text style={styles.time}>
+                  {formatAirportTimeWithZone(flight.departureTime, flight.departureAirport)}
+                </Text>
+                <BodyText muted numberOfLines={1}>
+                  {formatAirportDate(flight.departureTime, flight.departureAirport)}
+                </BodyText>
+              </View>
+
+              <Text style={styles.arrow}>→</Text>
+
+              <View style={[styles.endpoint, styles.endpointEnd]}>
+                <NumericText style={styles.airport}>{flight.arrivalAirport}</NumericText>
+                <Text style={styles.time}>
+                  {formatAirportTimeWithZone(flight.arrivalTime, flight.arrivalAirport)}
+                </Text>
+                <BodyText muted numberOfLines={1}>
+                  {formatAirportDate(flight.arrivalTime, flight.arrivalAirport)}
+                </BodyText>
+                {dayOffset !== 0 ? (
+                  <Text style={styles.rollover}>
+                    {dayOffset > 0
+                      ? t('addTrip.arrivesDaysLater', { count: dayOffset })
+                      : t('addTrip.arrivesDaysEarlier', {
+                          count: Math.abs(dayOffset),
+                        })}
+                  </Text>
+                ) : null}
+              </View>
+            </View>
           </Pressable>
         );
       })}

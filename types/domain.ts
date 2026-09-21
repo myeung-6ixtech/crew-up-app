@@ -13,6 +13,7 @@ export interface Profile {
   notification_mode: string;
   is_verified: boolean;
   avatar_file_id?: string | null;
+  friend_id?: string | null;
 }
 
 export interface RosterEntry {

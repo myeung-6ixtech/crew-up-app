@@ -6,6 +6,7 @@ import { useApolloClient } from '@/lib/apolloHooks';
 import { Screen, Title, Card, Button, Badge } from '@/components/ui';
 import { useAuth } from '@/hooks/useSession';
 import { fetchPublicProfile, requestConnection } from '@/services/connectionService';
+import { formatFriendId } from '@/lib/friendId';
 import { ensureDirectThread } from '@/services/messagingService';
 import { ReportSheet } from '@/components/ReportSheet';
 import { reportAndBlock, reportUser } from '@/services/safetyService';
@@ -25,6 +26,7 @@ export default function PublicProfileScreen() {
     is_verified?: boolean;
     rank?: string;
     show_rank?: boolean;
+    friend_id?: string | null;
   } | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
 
@@ -44,6 +46,9 @@ export default function PublicProfileScreen() {
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         <Title>{profile.display_name}</Title>
         <Text>{[profile.role_type, profile.base_airport].filter(Boolean).join(' · ')}</Text>
+        {profile.friend_id ? (
+          <Text>{t('friends.crewId')}: {formatFriendId(profile.friend_id)}</Text>
+        ) : null}
         {profile.is_verified ? <Badge label="Verified" tone="verified" /> : null}
         {profile.show_rank && profile.rank ? <Text>Rank: {profile.rank}</Text> : null}
         <Button label={t('network.connect')} onPress={() => requestConnection(client, profile.user_id)} />

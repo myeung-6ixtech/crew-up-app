@@ -72,6 +72,7 @@ function RootNavigator() {
       <Stack.Screen name="events/create" options={{ title: 'Create meetup' }} />
       <Stack.Screen name="events/edit/[id]" options={{ title: 'Edit event' }} />
       <Stack.Screen name="messages/[threadId]" options={{ title: 'Chat' }} />
+      <Stack.Screen name="friends/add" options={{ title: '' }} />
       <Stack.Screen name="profile/edit" options={{ title: 'Edit profile' }} />
       <Stack.Screen name="profile/privacy" options={{ title: 'Privacy Settings' }} />
       <Stack.Screen name="profile/verification-status" options={{ title: 'Verification' }} />

@@ -1,14 +1,12 @@
 import { useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { AppIcon } from '@/components/icons';
+import { AirlineLogo, AirlineLogoInline } from '@/components/profile/AirlineLogo';
 import {
-  BodyText,
-  BottomSheet,
-  Input,
-  SelectionOption,
-} from '@/components/ui';
-import { useThemedStyles, useTheme } from '@/theme';
+  PickerFieldShell,
+  usePickerFieldStyles,
+} from '@/components/profile/pickerFieldShared';
+import { BodyText, BottomSheet, SearchInputField } from '@/components/ui';
 
 export type AirlineOption = {
   id: string;
@@ -27,10 +25,6 @@ type AirlinePickerFieldProps = {
   optional?: boolean;
 };
 
-function formatAirlineLabel(airline: AirlineOption) {
-  return `${airline.name} (${airline.code})`;
-}
-
 export function AirlinePickerField({
   label,
   airlines,
@@ -41,9 +35,9 @@ export function AirlinePickerField({
   optional = false,
 }: AirlinePickerFieldProps) {
   const { t } = useTranslation();
-  const theme = useTheme();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const styles = usePickerFieldStyles();
 
   const selected = useMemo(
     () => airlines.find((airline) => airline.id === value),
@@ -60,44 +54,9 @@ export function AirlinePickerField({
     );
   }, [airlines, query]);
 
-  const styles = useThemedStyles((t) => ({
-    wrap: { marginBottom: t.spacing.md },
-    label: { ...t.typography.bodyStrong, color: t.colors.textPrimary, marginBottom: 6 },
-    field: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      borderWidth: 1,
-      borderColor: t.colors.hairline,
-      borderRadius: t.radius.input,
-      paddingHorizontal: t.spacing.md,
-      paddingVertical: t.spacing.md,
-      backgroundColor: t.colors.bgSurface,
-      minHeight: 48,
-      gap: t.spacing.sm,
-    },
-    fieldError: { borderColor: t.colors.statusOnDuty },
-    fieldDisabled: { opacity: 0.6 },
-    fieldText: {
-      ...t.typography.body,
-      color: t.colors.textPrimary,
-      flex: 1,
-    },
-    placeholder: {
-      color: t.colors.textTertiary,
-    },
-    error: { ...t.typography.bodySm, color: t.colors.statusOnDuty, marginTop: t.spacing.xs },
-    list: { flex: 1, marginTop: t.spacing.sm },
-    empty: { paddingVertical: t.spacing.lg },
-  }));
-
   const closeSheet = () => {
     setSheetOpen(false);
     setQuery('');
-  };
-
-  const openSheet = () => {
-    if (loading) return;
-    setSheetOpen(true);
   };
 
   const selectAirline = (airlineId: string | undefined) => {
@@ -105,42 +64,36 @@ export function AirlinePickerField({
     closeSheet();
   };
 
-  const displayText = loading
+  const title = loading
     ? t('airline.loading')
     : selected
-      ? formatAirlineLabel(selected)
+      ? selected.name
       : t('airline.select');
 
   return (
     <>
-      <View style={styles.wrap}>
-        <Text style={styles.label}>{label}</Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={label}
-          accessibilityHint={t('airline.select')}
-          onPress={openSheet}
-          disabled={loading}
-          style={({ pressed }) => [
-            styles.field,
-            error ? styles.fieldError : null,
-            loading ? styles.fieldDisabled : null,
-            { opacity: pressed && !loading ? 0.72 : 1 },
-          ]}>
-          <Text style={[styles.fieldText, !selected && !loading ? styles.placeholder : null]}>
-            {displayText}
-          </Text>
-          <AppIcon name="chevronDown" size={20} color={theme.colors.textTertiary} />
-        </Pressable>
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-      </View>
+      <PickerFieldShell
+        label={label}
+        error={error}
+        disabled={loading}
+        onPress={() => {
+          if (!loading) setSheetOpen(true);
+        }}
+        accessibilityHint={t('airline.select')}
+        placeholder={!selected && !loading}
+        title={title}
+        subtitle={selected ? selected.code : null}
+        leading={
+          selected ? (
+            <AirlineLogo code={selected.code} />
+          ) : (
+            <AirlineLogo code="" muted />
+          )
+        }
+      />
 
-      <BottomSheet
-        visible={sheetOpen}
-        onClose={closeSheet}
-        title={label}
-        scrollable={false}>
-        <Input
+      <BottomSheet visible={sheetOpen} onClose={closeSheet} title={label} scrollable={false}>
+        <SearchInputField
           label={t('airline.searchLabel')}
           value={query}
           onChangeText={setQuery}
@@ -155,11 +108,18 @@ export function AirlinePickerField({
           showsVerticalScrollIndicator
           ListHeaderComponent={
             optional ? (
-              <SelectionOption
-                label={t('airline.clear')}
-                selected={!value}
+              <Pressable
                 onPress={() => selectAirline(undefined)}
-              />
+                style={({ pressed }) => [
+                  styles.listRow,
+                  !value ? styles.listRowSelected : null,
+                  { opacity: pressed ? 0.82 : 1 },
+                ]}>
+                <AirlineLogoInline code="" />
+                <View style={styles.listContent}>
+                  <Text style={styles.title}>{t('airline.clear')}</Text>
+                </View>
+              </Pressable>
             ) : null
           }
           ListEmptyComponent={
@@ -169,13 +129,26 @@ export function AirlinePickerField({
               </BodyText>
             </View>
           }
-          renderItem={({ item }) => (
-            <SelectionOption
-              label={formatAirlineLabel(item)}
-              selected={value === item.id}
-              onPress={() => selectAirline(item.id)}
-            />
-          )}
+          renderItem={({ item }) => {
+            const isSelected = value === item.id;
+            return (
+              <Pressable
+                onPress={() => selectAirline(item.id)}
+                style={({ pressed }) => [
+                  styles.listRow,
+                  isSelected ? styles.listRowSelected : null,
+                  { opacity: pressed ? 0.82 : 1 },
+                ]}>
+                <AirlineLogoInline code={item.code} />
+                <View style={styles.listContent}>
+                  <Text style={styles.title} numberOfLines={1}>
+                    {item.name}
+                  </Text>
+                  <Text style={styles.subtitle}>{item.code}</Text>
+                </View>
+              </Pressable>
+            );
+          }}
         />
       </BottomSheet>
     </>

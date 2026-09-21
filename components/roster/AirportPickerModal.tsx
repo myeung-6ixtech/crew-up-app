@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
-import { FlatList, Pressable, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { searchAirports } from '@/constants/airports';
-import { BodyText, BottomSheet, Input, NumericText } from '@/components/ui';
+import { SelectionSquircle, usePickerFieldStyles } from '@/components/profile/pickerFieldShared';
+import { BodyText, BottomSheet, SearchInputField } from '@/components/ui';
 import type { Airport } from '@/types/airport';
-import { useThemedStyles } from '@/theme';
 
 type AirportPickerModalProps = {
   visible: boolean;
@@ -27,40 +27,12 @@ export function AirportPickerModal({
 }: AirportPickerModalProps) {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
+  const styles = usePickerFieldStyles();
 
   const filtered = useMemo(
     () => searchAirports(query, { excludeIata, preferIata }),
     [query, excludeIata, preferIata],
   );
-
-  const styles = useThemedStyles((t) => ({
-    list: { flex: 1, marginTop: t.spacing.sm },
-    row: {
-      paddingVertical: t.spacing.sm + 2,
-      paddingHorizontal: t.spacing.md,
-      borderRadius: t.radius.input,
-      marginBottom: t.spacing.xs,
-    },
-    rowSelected: {
-      backgroundColor: t.colors.accentSubtle,
-    },
-    rowCode: {
-      fontFamily: t.typography.bodyStrong.fontFamily,
-    },
-    rowCodeSelected: {
-      color: t.colors.accent,
-    },
-    rowCodeDefault: {
-      color: t.colors.textPrimary,
-    },
-    rowMeta: {
-      marginTop: 2,
-    },
-    empty: {
-      paddingVertical: t.spacing.xl,
-      alignItems: 'center',
-    },
-  }));
 
   const close = () => {
     setQuery('');
@@ -74,7 +46,7 @@ export function AirportPickerModal({
 
   return (
     <BottomSheet visible={visible} onClose={close} title={title} scrollable={false} heightRatio={0.9}>
-      <Input
+      <SearchInputField
         label={t('airport.searchLabel')}
         value={query}
         onChangeText={setQuery}
@@ -101,20 +73,21 @@ export function AirportPickerModal({
             <Pressable
               onPress={() => pick(item)}
               style={({ pressed }) => [
-                styles.row,
-                selected ? styles.rowSelected : null,
+                styles.listRow,
+                selected ? styles.listRowSelected : null,
                 { opacity: pressed ? 0.82 : 1 },
               ]}>
-              <NumericText
-                style={[styles.rowCode, selected ? styles.rowCodeSelected : styles.rowCodeDefault]}>
-                {item.iata}
-              </NumericText>
-              <BodyText muted numberOfLines={1} style={styles.rowMeta}>
-                {item.name}
-              </BodyText>
-              <NumericText muted>
-                {item.city}, {item.country}
-              </NumericText>
+              <SelectionSquircle>
+                <Text style={styles.squircleCode}>{item.iata}</Text>
+              </SelectionSquircle>
+              <View style={styles.listContent}>
+                <Text style={styles.title} numberOfLines={1}>
+                  {item.city}
+                </Text>
+                <Text style={styles.subtitle} numberOfLines={1}>
+                  {item.name} · {item.country}
+                </Text>
+              </View>
             </Pressable>
           );
         }}

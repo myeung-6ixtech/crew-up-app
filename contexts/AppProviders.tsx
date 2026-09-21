@@ -6,6 +6,7 @@ import { apolloClient, createApolloClient } from '@/lib/apollo';
 import { secureStoreSession } from '@/lib/secureStoreSession';
 import type { Profile } from '@/types/domain';
 import { GET_MY_PROFILE } from '@/graphql/mutations/profile';
+import { isBackendSchemaError } from '@/lib/graphqlError';
 import { ThemeProvider } from '@/theme';
 
 interface SessionContextValue {
@@ -44,7 +45,12 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       profileRef.current = nextProfile;
       setProfile(nextProfile);
       return nextProfile;
-    } catch {
+    } catch (error) {
+      if (isBackendSchemaError(error)) {
+        console.error('Profile fetch failed — backend schema may be out of date:', error);
+      } else {
+        console.error('Profile fetch failed:', error);
+      }
       // Keep cached profile — fetch errors must not falsely send users to onboarding.
       return profileRef.current;
     }

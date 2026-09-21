@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { AirlinePickerField } from '@/components/profile/AirlinePickerField';
+import { AirportPickerField } from '@/components/profile/AirportPickerField';
+import { CrewIdCard } from '@/components/friends/CrewIdCard';
 import {
   Screen,
   Avatar,
@@ -53,6 +55,9 @@ export default function EditProfileScreen() {
       justifyContent: 'center',
     },
     section: { marginBottom: t.spacing.xl },
+    sectionHint: {
+      marginBottom: t.spacing.md,
+    },
     footer: {
       position: 'absolute',
       left: 0,
@@ -154,8 +159,29 @@ export default function EditProfileScreen() {
           </View>
 
           <View style={styles.section}>
-            <SectionLabel>{t('home.editIdentity')}</SectionLabel>
+            <SectionLabel>{t('home.editPersonalDetails')}</SectionLabel>
+            <BodyText muted style={styles.sectionHint}>
+              {t('home.editPersonalDetailsHint')}
+            </BodyText>
+            <CrewIdCard friendId={profile?.friend_id} />
             <Input label={t('onboarding.title')} value={displayName} onChangeText={setDisplayName} />
+            <Input
+              label={t('home.bioLabel')}
+              value={bio}
+              onChangeText={(v) => setBio(v.slice(0, BIO_MAX))}
+              multiline
+              placeholder={t('home.bioPlaceholder')}
+            />
+            <BodyText muted>
+              {bio.length}/{BIO_MAX} · {t('home.bioComingSoon')}
+            </BodyText>
+          </View>
+
+          <View style={styles.section}>
+            <SectionLabel>{t('home.editTravelPreferences')}</SectionLabel>
+            <BodyText muted style={styles.sectionHint}>
+              {t('home.editTravelPreferencesHint')}
+            </BodyText>
             <PillSelectorGroup
               label={t('onboarding.role')}
               options={ROLE_TYPES.map((role) => ({
@@ -172,21 +198,13 @@ export default function EditProfileScreen() {
               onChange={setAirlineId}
               optional
             />
-            <Input label={t('onboarding.base')} value={base} onChangeText={setBase} placeholder="HKG" />
-          </View>
-
-          <View style={styles.section}>
-            <SectionLabel>{t('home.editBio')}</SectionLabel>
-            <Input
-              label={t('home.bioLabel')}
-              value={bio}
-              onChangeText={(v) => setBio(v.slice(0, BIO_MAX))}
-              multiline
-              placeholder={t('home.bioPlaceholder')}
+            <AirportPickerField
+              label={t('onboarding.base')}
+              value={base}
+              onChange={setBase}
+              placeholder={t('home.selectBaseAirport')}
+              preferIata={profile?.base_airport}
             />
-            <BodyText muted>
-              {bio.length}/{BIO_MAX} · {t('home.bioComingSoon')}
-            </BodyText>
           </View>
 
           {error ? <BodyText style={{ color: theme.colors.statusOnDuty }}>{error}</BodyText> : null}

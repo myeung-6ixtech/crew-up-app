@@ -18,6 +18,8 @@ export default function AddTripLayout() {
       }}>
       <Stack.Screen name="index" options={{ title: 'Add trip' }} />
       <Stack.Screen name="flights" options={{ title: 'Select flight' }} />
+      <Stack.Screen name="manual" options={{ title: 'Add flight' }} />
+      <Stack.Screen name="availability" options={{ title: 'Your availability' }} />
     </Stack>
   );
 }

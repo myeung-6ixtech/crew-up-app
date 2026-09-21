@@ -6,30 +6,17 @@ import { AppIcon, ListRow, SectionLabel, EmptyState } from '@/components/ui';
 import { HOME_SECTION_PADDING, HOME_SECTION_SPACING } from '@/constants/homeLayout';
 import { useThemedStyles, useTheme } from '@/theme';
 import { SCREENS } from '@/constants/screens';
-import { formatDateRange } from '@/lib/utils';
 import { requestConnection } from '@/services/connectionService';
-
-type CrossingPath = {
-  id: string;
-  user_id: string;
-  city: string;
-  date_start: string;
-  date_end: string;
-  user?: {
-    profile?: {
-      display_name?: string;
-      role_type?: string;
-    };
-  };
-};
+import type { TripMatchEntry } from '@/types/trip';
+import { matchReasonLabel } from '@/types/trip';
 
 export function CrewCrossingPaths({
-  paths,
+  matches,
   client,
   onWave,
   embedded = false,
 }: {
-  paths: CrossingPath[];
+  matches: TripMatchEntry[];
   client: ApolloClient;
   onWave?: () => void;
   embedded?: boolean;
@@ -37,7 +24,7 @@ export function CrewCrossingPaths({
   const { t } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
-  const styles = useThemedStyles((t) => ({
+  const styles = useThemedStyles((themeTokens) => ({
     section: {
       paddingHorizontal: embedded ? 0 : HOME_SECTION_PADDING,
       marginBottom: embedded ? 0 : HOME_SECTION_SPACING,
@@ -59,26 +46,26 @@ export function CrewCrossingPaths({
 
   return (
     <View style={styles.section}>
-      {!embedded ? <SectionLabel>{t('home.crossingPaths')}</SectionLabel> : null}
-      {paths.length ? (
+      {!embedded ? <SectionLabel>{t('home.crewMatches')}</SectionLabel> : null}
+      {matches.length ? (
         <View style={{ width: '100%' }}>
-          {paths.slice(0, 12).map((p) => (
-          <ListRow
-            key={p.id}
-            inset={false}
-            avatarName={p.user?.profile?.display_name}
-            title={p.user?.profile?.display_name ?? t('home.crewMember')}
-            subtitle={`${p.city} · ${formatDateRange(p.date_start, p.date_end)}`}
-            onPress={() => router.push(SCREENS.network.user(p.user_id))}
-            right={
-              <Pressable
-                style={styles.wave}
-                accessibilityLabel={t('home.wave')}
-                onPress={() => void onWavePress(p.user_id)}>
-                <AppIcon name="friends" size={22} color={theme.colors.accent} />
-              </Pressable>
-            }
-          />
+          {matches.slice(0, 12).map((match) => (
+            <ListRow
+              key={match.id}
+              inset={false}
+              avatarName={match.matchedUser?.profile?.display_name ?? undefined}
+              title={match.matchedUser?.profile?.display_name ?? t('home.crewMember')}
+              subtitle={matchReasonLabel(match, t)}
+              onPress={() => router.push(SCREENS.network.user(match.matched_user_id))}
+              right={
+                <Pressable
+                  style={styles.wave}
+                  accessibilityLabel={t('home.wave')}
+                  onPress={() => void onWavePress(match.matched_user_id)}>
+                  <AppIcon name="friends" size={22} color={theme.colors.accent} />
+                </Pressable>
+              }
+            />
           ))}
         </View>
       ) : (

@@ -7,7 +7,7 @@ import {
   findEventCity,
   searchEventCities,
 } from '@/constants/airports';
-import { BodyText, BottomSheet, Input } from '@/components/ui';
+import { BodyText, BottomSheet, SearchInputField } from '@/components/ui';
 import type { EventCity } from '@/types/airport';
 import { useThemedStyles, useTheme } from '@/theme';
 
@@ -122,7 +122,7 @@ export function CityPickerField({ label, value, onChange, error }: CityPickerFie
         title={label}
         scrollable={false}
         heightRatio={0.9}>
-        <Input
+        <SearchInputField
           label={t('airport.searchLabel')}
           value={query}
           onChangeText={setQuery}

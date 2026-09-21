@@ -26,6 +26,8 @@ export const SCREENS = {
     manage: '/roster/manage',
     addTrip: '/roster/add-trip',
     addTripFlights: '/roster/add-trip/flights',
+    addTripManual: '/roster/add-trip/manual',
+    addTripAvailability: '/roster/add-trip/availability',
   },
   presence: (city: string) => `/presence/${encodeURIComponent(city)}` as const,
   network: {
@@ -40,6 +42,9 @@ export const SCREENS = {
   },
   messages: {
     thread: (threadId: string) => `/messages/${threadId}` as const,
+  },
+  friends: {
+    add: '/friends/add',
   },
   profile: {
     edit: '/profile/edit',

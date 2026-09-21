@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { AuthScreenLayout } from '@/components/auth/AuthScreenLayout';
 import { Title, Input, Button, BodyText } from '@/components/ui';
 import { signIn, signUp } from '@/services/authService';
+import { hasCompletedOnboarding } from '@/lib/profileCompletion';
 import { useSession } from '@/hooks/useSession';
 import { SCREENS } from '@/constants/screens';
 import { useThemedStyles, useTheme } from '@/theme';
@@ -42,7 +43,9 @@ export default function EmailAuthScreen() {
         await signUp(email.trim(), password);
       }
       const profile = await refreshSession();
-      router.replace(profile ? SCREENS.tabs.home : SCREENS.onboarding.index);
+      router.replace(
+        hasCompletedOnboarding(profile) ? SCREENS.tabs.home : SCREENS.onboarding.index,
+      );
     } catch (e) {
       setError(e instanceof Error ? e.message : t('common.error'));
     } finally {

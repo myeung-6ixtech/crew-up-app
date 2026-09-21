@@ -3,6 +3,8 @@ export type Airport = {
   name: string;
   city: string;
   country: string;
+  /** IANA timezone used to render scheduled times in airport-local time. */
+  timeZone: string;
 };
 
 export type EventCity = {

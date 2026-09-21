@@ -20,10 +20,10 @@ import { useTheme } from '@/theme';
 
 /** Maps expo-router tab route names to semantic icon names. */
 const TAB_ICONS: Record<string, AppIconName> = {
-  index: 'home',
+  index: 'airplane',
   network: 'network',
   events: 'events',
-  messages: 'messages',
+  messages: 'send',
   friends: 'friends',
 };
 

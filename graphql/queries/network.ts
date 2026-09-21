@@ -1,5 +1,13 @@
 import { gql } from '@apollo/client';
 
+export const GET_MY_FRIEND_ID = gql`
+  query GetMyFriendId($userId: uuid!) {
+    profiles_by_pk(user_id: $userId) {
+      friend_id
+    }
+  }
+`;
+
 export const GET_CONNECTIONS = gql`
   query GetConnections($userId: uuid!) {
     connections(
@@ -58,6 +66,7 @@ export const DISCOVER_PROFILES = gql`
       base_airport
       airline_id
       is_verified
+      avatar_file_id
     }
   }
 `;
@@ -73,6 +82,7 @@ export const GET_PUBLIC_PROFILE = gql`
       is_verified
       show_rank
       rank
+      friend_id
     }
   }
 `;

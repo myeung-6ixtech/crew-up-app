@@ -15,6 +15,7 @@ import { useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar, AppIcon } from '@/components/ui';
+import { CrewIdCopyRow } from '@/components/profile/CrewIdCopyRow';
 import { useAppMenu } from '@/contexts/AppMenuContext';
 import { SCREENS } from '@/constants/screens';
 import { useAuth, useSession } from '@/hooks/useSession';
@@ -129,13 +130,28 @@ export function AppSideMenu() {
       marginTop: t.spacing.sm,
       textAlign: 'center',
     },
+    menuScroll: {
+      flex: 1,
+    },
+    menuList: {
+      paddingHorizontal: t.spacing.lg,
+      paddingVertical: t.spacing.sm,
+      gap: t.spacing.sm,
+    },
     menuItem: {
       minHeight: 48,
       flexDirection: 'row',
       alignItems: 'center',
       gap: t.spacing.md,
-      paddingHorizontal: t.spacing.lg,
+      paddingHorizontal: t.spacing.md,
       paddingVertical: t.spacing.sm,
+      borderRadius: t.radius.cta,
+      borderWidth: 1,
+      borderColor: t.colors.hairline,
+      backgroundColor: t.colors.bgSurfaceRaised,
+    },
+    menuItemPressed: {
+      backgroundColor: t.colors.bgSurface,
     },
     menuLabel: {
       ...t.typography.body,
@@ -145,14 +161,13 @@ export function AppSideMenu() {
     menuLabelDestructive: {
       color: t.colors.statusOnDuty,
     },
-    menuScroll: {
-      flex: 1,
-    },
     footer: {
       marginTop: 'auto' as const,
       borderTopWidth: 1,
       borderTopColor: t.colors.hairline,
       paddingTop: t.spacing.sm,
+      paddingHorizontal: t.spacing.lg,
+      paddingBottom: t.spacing.xs,
     },
   }));
 
@@ -206,10 +221,12 @@ export function AppSideMenu() {
             <Text style={styles.profileName}>
               {profile?.display_name ?? t('home.yourProfile')}
             </Text>
+            <CrewIdCopyRow friendId={profile?.friend_id} compact />
           </View>
 
           <ScrollView
             style={styles.menuScroll}
+            contentContainerStyle={styles.menuList}
             bounces={false}
             showsVerticalScrollIndicator={false}>
             {menuItems.map((item) => (
@@ -218,10 +235,12 @@ export function AppSideMenu() {
                 accessibilityRole="button"
                 accessibilityLabel={item.label}
                 onPress={() => navigate(item.route)}
-                style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.72 : 1 }]}>
+                style={({ pressed }) => [
+                  styles.menuItem,
+                  pressed && styles.menuItemPressed,
+                ]}>
                 <AppIcon name={item.icon} size={22} color={theme.colors.textSecondary} />
                 <Text style={styles.menuLabel}>{item.label}</Text>
-                <AppIcon name="chevronRight" size={18} color={theme.colors.textTertiary} />
               </Pressable>
             ))}
           </ScrollView>
@@ -231,7 +250,10 @@ export function AppSideMenu() {
               accessibilityRole="button"
               accessibilityLabel={t('auth.signOut')}
               onPress={confirmSignOut}
-              style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.72 : 1 }]}>
+              style={({ pressed }) => [
+                styles.menuItem,
+                pressed && styles.menuItemPressed,
+              ]}>
               <AppIcon name="signOut" size={22} color={theme.colors.statusOnDuty} />
               <Text style={[styles.menuLabel, styles.menuLabelDestructive]}>
                 {t('auth.signOut')}

@@ -12,5 +12,5 @@ export const apiEndpoints = {
     submitReport: 'mutation submitReport',
   },
   /** Webhook-only — never call from the mobile app. */
-  internalFunctions: ['presence-compute', 'notification-dispatch'],
+  internalFunctions: ['presence-compute', 'notification-dispatch', 'trip-matches-compute'],
 } as const;

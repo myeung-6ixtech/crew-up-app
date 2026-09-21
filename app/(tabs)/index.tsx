@@ -15,14 +15,20 @@ import { useCreateEventFlow } from '@/hooks/useCreateEventFlow';
 import { fetchHomeData } from '@/services/presenceService';
 import { fetchAirlines } from '@/services/profileService';
 import { resolveCurrentStatus } from '@/lib/dutyStatus';
-import { countUniqueCities, findCrewCrossingPaths } from '@/lib/rosterMatching';
+import { dedupeTripMatches } from '@/services/tripService';
 import { SCREENS } from '@/constants/screens';
 import { useThemedStyles } from '@/theme';
-import type { RosterEntry } from '@/types/domain';
+import type { TripEntry, TripMatchEntry } from '@/types/trip';
 
 type HomeData = {
-  upcomingRosters?: RosterEntry[];
-  allRosters?: RosterEntry[];
+  upcomingTrips?: TripEntry[];
+  allTrips?: TripEntry[];
+  tripMatches?: TripMatchEntry[];
+  allRosters?: {
+    layover_start?: string | null;
+    layover_end?: string | null;
+    notes?: string | null;
+  }[];
   connections?: {
     id: string;
     created_at: string;
@@ -89,17 +95,26 @@ export default function HomeScreen() {
     }, [load]),
   );
 
-  const allRosters = data?.allRosters ?? [];
-  const upcoming = data?.upcomingRosters ?? [];
+  const allTrips = data?.allTrips ?? [];
+  const upcoming = data?.upcomingTrips ?? [];
   const connections = data?.connections ?? [];
-  const tripCount = allRosters.length;
-  const cityCount = countUniqueCities(allRosters);
+  const tripCount = allTrips.length;
+  const cityCount = new Set(
+    allTrips.flatMap((trip) => trip.stays?.map((stay) => stay.city.toUpperCase()) ?? []),
+  ).size;
   const connectionCount = connections.length;
-  const status = resolveCurrentStatus(allRosters, profile);
+  const status = resolveCurrentStatus(
+    allTrips.map((trip) => ({
+      layover_start: trip.starts_at,
+      layover_end: trip.ends_at,
+      notes: trip.stays?.length ? 'duty:layover' : 'duty:flight',
+    })),
+    profile,
+  );
 
-  const crossingPaths = useMemo(
-    () => findCrewCrossingPaths(allRosters, data?.presence ?? [], userId ?? ''),
-    [allRosters, data?.presence, userId],
+  const crewMatches = useMemo(
+    () => dedupeTripMatches(data?.tripMatches ?? []),
+    [data?.tripMatches],
   );
 
   const activityItems = useMemo(() => {
@@ -171,7 +186,7 @@ export default function HomeScreen() {
           ) : null}
           {activeTab === 'paths' ? (
             <CrewCrossingPaths
-              paths={crossingPaths}
+              matches={crewMatches}
               client={client}
               onWave={onWaveSent}
               embedded

@@ -15,6 +15,7 @@ export const GET_MY_PROFILE = gql`
       notification_mode
       is_verified
       avatar_file_id
+      friend_id
     }
   }
 `;
