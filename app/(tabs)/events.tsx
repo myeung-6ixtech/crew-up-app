@@ -10,6 +10,7 @@ import { SCREENS } from '@/constants/screens';
 import { formatDateTime } from '@/lib/utils';
 import { useTabBarScroll } from '@/hooks/useTabBarScroll';
 import { useCreateEventFlow } from '@/hooks/useCreateEventFlow';
+import { useTheme } from '@/theme';
 
 type EventFilter = 'all' | 'platform' | 'community';
 
@@ -22,6 +23,7 @@ export default function EventsTab() {
   const router = useRouter();
   const client = useApolloClient();
   const { openCreateEvent, meetTypeOverlay } = useCreateEventFlow();
+  const theme = useTheme();
   const [events, setEvents] = useState<EventItem[]>([]);
   const [filter, setFilter] = useState<EventFilter>('all');
 
@@ -59,10 +61,12 @@ export default function EventsTab() {
                 borderRadius: 999,
                 paddingHorizontal: 12,
                 paddingVertical: 6,
-                backgroundColor: filter === value ? '#18181b' : '#f4f4f5',
+                backgroundColor: filter === value ? theme.colors.fill : theme.colors.card,
+                borderWidth: 1,
+                borderColor: filter === value ? theme.colors.fill : theme.colors.hairline,
               }}
             >
-              <Text style={{ color: filter === value ? '#fff' : '#3f3f46', fontSize: 13 }}>
+              <Text style={{ color: filter === value ? theme.colors.onFill : theme.colors.ink, fontSize: 13 }}>
                 {t(`events.filter.${value}`)}
               </Text>
             </Pressable>
@@ -86,8 +90,8 @@ export default function EventsTab() {
                       style={{
                         fontSize: 11,
                         fontWeight: '600',
-                        color: '#1d4ed8',
-                        backgroundColor: '#dbeafe',
+                        color: theme.colors.accentText,
+                        backgroundColor: theme.colors.accentSubtle,
                         paddingHorizontal: 8,
                         paddingVertical: 2,
                         borderRadius: 999,

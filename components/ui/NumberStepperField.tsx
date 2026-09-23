@@ -40,7 +40,7 @@ export function NumberStepperField({
     buttonDisabled: { opacity: 0.35 },
     buttonText: {
       ...t.typography.headline,
-      color: t.colors.accent,
+      color: t.colors.accentText,
       lineHeight: 28,
     },
     valueWrap: {

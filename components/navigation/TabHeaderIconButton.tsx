@@ -34,7 +34,7 @@ export function TabHeaderIconButton({
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       style={({ pressed }) => [styles.hit, { opacity: pressed ? 0.72 : 1 }]}>
-      <AppIcon name={icon} size={24} color={theme.colors.accent} />
+      <AppIcon name={icon} size={24} color={theme.colors.accentText} />
     </Pressable>
   );
 }

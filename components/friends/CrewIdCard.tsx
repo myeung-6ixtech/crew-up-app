@@ -51,7 +51,7 @@ export function CrewIdCard({ friendId }: CrewIdCardProps) {
       fontFamily: theme.typography.bodyStrong.fontFamily,
     },
     actionLabelPrimary: {
-      color: theme.colors.textInverse,
+      color: theme.colors.onFill,
     },
   }));
 

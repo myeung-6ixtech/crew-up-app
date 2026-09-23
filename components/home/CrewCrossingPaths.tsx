@@ -62,7 +62,7 @@ export function CrewCrossingPaths({
                   style={styles.wave}
                   accessibilityLabel={t('home.wave')}
                   onPress={() => void onWavePress(match.matched_user_id)}>
-                  <AppIcon name="friends" size={22} color={theme.colors.accent} />
+                  <AppIcon name="friends" size={22} color={theme.colors.accentText} />
                 </Pressable>
               }
             />

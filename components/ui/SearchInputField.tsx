@@ -97,7 +97,7 @@ export function SearchInputField({
           onPress={submit}
           style={({ pressed }) => [styles.action, { opacity: pressed ? 0.72 : 1 }]}>
           {loading ? (
-            <ActivityIndicator size="small" color={theme.colors.accent} />
+            <ActivityIndicator size="small" color={theme.colors.accentText} />
           ) : (
             <AppIcon name="search" size={20} color={theme.colors.textSecondary} />
           )}

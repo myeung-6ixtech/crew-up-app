@@ -1,44 +1,69 @@
-/** Design tokens — see documentation/design-system.md §2 */
+/**
+ * Color tokens — documentation/design-system.md §2.
+ *
+ * `fill` / `accent` is lime and is fill-only in light mode.
+ * Text and icons use `accentText`. Labels on a lime fill use `onFill` (ink).
+ * Legacy names (`bgCanvas`, `textPrimary`, …) alias the semantic tokens so
+ * existing screens pick up the palette without a rename.
+ */
 
 export const lightColors = {
-  bgCanvas: '#FFFFFF',
-  bgSurface: '#F6F5F9',
+  ground: '#F7F8F4',
+  card: '#FFFFFF',
+  fill: '#A8E05F',
+  accentText: '#4F6E19',
+  ink: '#0E1113',
+  /** Text and icons that sit on `fill`. Always ink — AAA on lime. */
+  onFill: '#0E1113',
+
+  bgCanvas: '#F7F8F4',
+  bgSurface: '#FFFFFF',
   bgSurfaceRaised: '#FFFFFF',
 
-  textPrimary: '#101114',
-  textSecondary: '#5B5D6B',
-  textTertiary: '#9294A3',
-  textInverse: '#FFFFFF',
+  textPrimary: '#0E1113',
+  textSecondary: '#526056',
+  textTertiary: '#6B7368',
+  /** Text on an ink surface (toasts), not text on lime. */
+  textInverse: '#EDF1F2',
 
-  accent: '#7132F5',
-  accentPressed: '#5B27C4',
-  accentSubtle: '#F1EBFE',
+  accent: '#A8E05F',
+  accentPressed: '#8FCB45',
+  accentSubtle: '#E7F6C9',
 
-  hairline: '#E7E6EE',
+  hairline: '#DDE2D6',
 
   statusAvailable: '#1AAE6F',
   statusOnDuty: '#E5484D',
   statusLayover: '#F5A623',
   statusVerified: '#2F80ED',
 
-  scrim: 'rgba(16,17,20,0.48)',
+  scrim: 'rgba(14,17,19,0.48)',
 } as const;
 
 export const darkColors = {
-  bgCanvas: '#0E0D12',
-  bgSurface: '#17151D',
-  bgSurfaceRaised: '#1F1C27',
+  ground: '#0E1113',
+  card: '#1C2124',
+  fill: '#A8E05F',
+  accentText: '#A8E05F',
+  ink: '#EDF1F2',
+  onFill: '#0E1113',
+  /** Dark-mode only brand accent. Do not use in light mode. */
+  secondary: '#E8C25A',
 
-  textPrimary: '#F5F4F8',
-  textSecondary: '#A6A4B3',
-  textTertiary: '#6E6C7C',
-  textInverse: '#101114',
+  bgCanvas: '#0E1113',
+  bgSurface: '#1C2124',
+  bgSurfaceRaised: '#1C2124',
 
-  accent: '#9D6BFF',
-  accentPressed: '#B389FF',
-  accentSubtle: '#241A3D',
+  textPrimary: '#EDF1F2',
+  textSecondary: '#B7C0C2',
+  textTertiary: '#8B9496',
+  textInverse: '#0E1113',
 
-  hairline: '#2A2733',
+  accent: '#A8E05F',
+  accentPressed: '#C3F07A',
+  accentSubtle: '#243016',
+
+  hairline: '#2A3134',
 
   statusAvailable: '#2ED18C',
   statusOnDuty: '#FF5B60',

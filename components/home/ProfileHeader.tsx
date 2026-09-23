@@ -1,5 +1,4 @@
 import { View } from 'react-native';
-import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
   Avatar,
@@ -13,7 +12,7 @@ import {
   type CrewStatus,
 } from '@/components/ui';
 import { HOME_SECTION_PADDING } from '@/constants/homeLayout';
-import { SCREENS } from '@/constants/screens';
+import { useAddTripFlow } from '@/hooks/useAddTripFlow';
 import { useThemedStyles, useTheme } from '@/theme';
 import { formatProfileCaption } from '@/lib/dutyStatus';
 import type { Profile } from '@/types/domain';
@@ -36,7 +35,6 @@ export function ProfileHeader({
   airlineName?: string | null;
 }) {
   const { t } = useTranslation();
-  const router = useRouter();
   const theme = useTheme();
   const styles = useThemedStyles((t) => ({
     section: {
@@ -72,7 +70,7 @@ export function ProfileHeader({
     { value: connectionCount, label: t('home.statsConnections') },
   ];
 
-  const openAddTrip = () => router.push(SCREENS.roster.addTrip);
+  const { openAddTrip, addTripMethodOverlay } = useAddTripFlow();
 
   return (
     <View style={styles.section}>
@@ -106,7 +104,7 @@ export function ProfileHeader({
           label={t('home.addTrip')}
           onPress={openAddTrip}
           noTopMargin
-          icon={<AppIcon name="add" size={20} color={theme.colors.textInverse} />}
+          icon={<AppIcon name="add" size={20} color={theme.colors.onFill} />}
         />
         {tripCount === 0 ? (
           <BodyText muted style={{ textAlign: 'center', marginTop: theme.spacing.sm }}>
@@ -114,6 +112,7 @@ export function ProfileHeader({
           </BodyText>
         ) : null}
       </View>
+      {addTripMethodOverlay}
     </View>
   );
 }

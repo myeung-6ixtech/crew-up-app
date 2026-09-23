@@ -8,14 +8,14 @@ export default {
   light: {
     text: lightColors.textPrimary,
     background: lightColors.bgCanvas,
-    tint: lightColors.accent,
+    tint: lightColors.accentText,
     tabIconDefault: lightColors.textTertiary,
     tabIconSelected: lightColors.accent,
   },
   dark: {
     text: darkColors.textPrimary,
     background: darkColors.bgCanvas,
-    tint: darkColors.accent,
+    tint: darkColors.accentText,
     tabIconDefault: darkColors.textTertiary,
     tabIconSelected: darkColors.accent,
   },

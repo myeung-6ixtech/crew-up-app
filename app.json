@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "crew-up-app",
+    "name": "CrewUp",
     "slug": "crew-up-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,9 +8,14 @@
     "scheme": "crewup",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.banamedia.crewup",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "package": "com.banamedia.crewup",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -38,6 +43,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "db038f44-b6c1-47d4-857a-63c376fec720"
+      }
+    },
+    "owner": "myeung-bana"
   }
 }

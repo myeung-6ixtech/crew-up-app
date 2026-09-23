@@ -40,7 +40,7 @@ export function Avatar({
     },
     text: {
       ...t.typography[initialVariant],
-      color: t.colors.accent,
+      color: t.colors.accentText,
     },
   }));
 

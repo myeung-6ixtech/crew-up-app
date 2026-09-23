@@ -35,15 +35,15 @@ function SelectedTagPill({
       borderRadius: t.radius.pill,
       backgroundColor: t.colors.accentSubtle,
       borderWidth: 1,
-      borderColor: t.colors.accent,
+      borderColor: t.colors.accentText,
     },
     text: {
       ...t.typography.bodySm,
-      color: t.colors.accent,
+      color: t.colors.accentText,
     },
     remove: {
       ...t.typography.bodySm,
-      color: t.colors.accent,
+      color: t.colors.accentText,
       lineHeight: 16,
     },
   }));
@@ -75,12 +75,12 @@ function SuggestionPill({
       paddingVertical: t.spacing.sm,
       borderRadius: t.radius.pill,
       borderWidth: 1,
-      borderColor: selected ? t.colors.accent : t.colors.hairline,
+      borderColor: selected ? t.colors.accentText : t.colors.hairline,
       backgroundColor: selected ? t.colors.accentSubtle : t.colors.bgSurface,
     },
     text: {
       ...t.typography.bodyStrong,
-      color: selected ? t.colors.accent : t.colors.textSecondary,
+      color: selected ? t.colors.accentText : t.colors.textSecondary,
     },
   }));
 

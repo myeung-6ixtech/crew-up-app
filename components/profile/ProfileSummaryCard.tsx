@@ -60,7 +60,7 @@ export function ProfileSummaryCard({
           onPress={() => router.push(SCREENS.profile.edit)}
           style={styles.editButton}
           accessibilityLabel="Edit profile">
-          <AppIcon name="edit" size={20} color={theme.colors.accent} />
+          <AppIcon name="edit" size={20} color={theme.colors.accentText} />
         </Pressable>
       </View>
     </Card>

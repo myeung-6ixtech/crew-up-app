@@ -1,4 +1,4 @@
-export { ThemeProvider, useTheme } from './ThemeProvider';
+export { ThemeProvider, useTheme, useThemeControls } from './ThemeProvider';
 export { useThemedStyles } from './useThemedStyles';
 export { lightColors, darkColors, spacing, radius, shadow, motion } from './tokens';
 export { fontAssets, fontFamily, typography } from './typography';

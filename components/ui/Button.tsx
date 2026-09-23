@@ -44,23 +44,27 @@ export function Button({
     disabled: { opacity: 0.4 },
     content: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
     icon: { marginRight: t.spacing.sm },
-    labelPrimary: { ...t.typography.button, color: t.colors.textInverse },
+    labelPrimary: { ...t.typography.button, color: t.colors.onFill },
     labelSecondary: { ...t.typography.button, color: t.colors.textPrimary },
-    labelGhost: { ...t.typography.button, color: t.colors.accent },
-    labelDestructive: { ...t.typography.button, color: t.colors.textInverse },
+    labelGhost: { ...t.typography.button, color: t.colors.accentText },
+    labelDestructive: { ...t.typography.button, color: '#FFFFFF' },
   }));
 
   const labelStyle =
-    variant === 'primary' || variant === 'destructive'
+    variant === 'primary'
       ? styles.labelPrimary
-      : variant === 'ghost'
-        ? styles.labelGhost
-        : styles.labelSecondary;
+      : variant === 'destructive'
+        ? styles.labelDestructive
+        : variant === 'ghost'
+          ? styles.labelGhost
+          : styles.labelSecondary;
 
   const spinnerColor =
     variant === 'secondary' || variant === 'ghost'
-      ? theme.colors.accent
-      : theme.colors.textInverse;
+      ? theme.colors.accentText
+      : variant === 'destructive'
+        ? '#FFFFFF'
+        : theme.colors.onFill;
 
   return (
     <Pressable

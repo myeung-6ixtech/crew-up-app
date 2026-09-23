@@ -27,7 +27,7 @@ export function FlightSearchResults({
       backgroundColor: t.colors.bgSurfaceRaised,
     },
     rowSelected: {
-      borderColor: t.colors.accent,
+      borderColor: t.colors.accentText,
       backgroundColor: t.colors.accentSubtle,
     },
     topLine: {
@@ -41,7 +41,7 @@ export function FlightSearchResults({
       color: t.colors.textPrimary,
     },
     flightNumberSelected: {
-      color: t.colors.accent,
+      color: t.colors.accentText,
     },
     timeline: {
       flexDirection: 'row',
@@ -70,7 +70,7 @@ export function FlightSearchResults({
     },
     rollover: {
       ...t.typography.caption,
-      color: t.colors.accent,
+      color: t.colors.accentText,
     },
   }));
 

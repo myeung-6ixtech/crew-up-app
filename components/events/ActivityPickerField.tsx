@@ -82,7 +82,7 @@ export function ActivityPickerField({
       color: t.colors.textPrimary,
     },
     rowTitleSelected: {
-      color: t.colors.accent,
+      color: t.colors.accentText,
     },
     rowMeta: {
       marginTop: 2,

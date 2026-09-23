@@ -23,11 +23,14 @@ export const AppIcons = {
   menu: 'bars',
   add: 'plus-circle',
   copy: 'copy',
+  share: 'share',
   search: 'search',
   userPlus: 'user-plus',
   mapPoint: 'map-marker',
   globe: 'globe',
   lock: 'lock',
+  sun: 'sun',
+  moon: 'moon',
 } as const;
 
 export type AppIconName = keyof typeof AppIcons;

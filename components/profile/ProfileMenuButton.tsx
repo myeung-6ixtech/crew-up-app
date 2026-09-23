@@ -23,7 +23,7 @@ export function ProfileMenuButton({
         <AppIcon
           name={icon}
           size={18}
-          color={variant === 'destructive' ? theme.colors.textInverse : theme.colors.accent}
+          color={variant === 'destructive' ? '#FFFFFF' : theme.colors.accentText}
         />
       }
     />

@@ -70,13 +70,32 @@ With `crew-up-nhost` up:
 2. Storage buckets: `avatars`, `rosters`, `verification-docs`
 3. Upload roster → `parseRoster` → insert rosters → `presence` rows appear (via `presence-compute` trigger)
 
-## EAS preview builds (M8)
+## EAS builds
+
+### Internal preview (ad hoc / EAS install link — not TestFlight)
 
 ```bash
 npx eas-cli login
 npx eas build --platform android --profile preview
 npx eas build --platform ios --profile preview
 ```
+
+### TestFlight / App Store
+
+Prerequisites: Apple Developer Program membership, `eas login`, and `eas init` (links the Expo project).
+
+`app.json` uses bundle ID `com.banamedia.crewup` — create the same App ID in Apple Developer / App Store Connect before the first submit.
+
+```bash
+cd crew-up-app
+eas init --account myeung-bana --non-interactive   # once
+eas build --platform ios --profile testflight
+eas submit --platform ios --profile testflight --latest
+# or one step:
+eas build --platform ios --profile testflight --auto-submit
+```
+
+After upload, open App Store Connect → TestFlight, wait for processing, answer export compliance, then add internal or external testers.
 
 Set Nhost cloud env vars in the EAS project dashboard or `eas.json` profile `env` before cloud builds.
 

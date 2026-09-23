@@ -67,7 +67,7 @@ export function SuggestedFriendsCarousel({
     },
     actionLabel: {
       ...theme.typography.bodySm,
-      color: theme.colors.textInverse,
+      color: theme.colors.onFill,
       fontFamily: theme.typography.bodyStrong.fontFamily,
     },
     actionLabelSecondary: {

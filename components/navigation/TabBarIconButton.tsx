@@ -50,7 +50,7 @@ export const TabBarIconButton = memo(function TabBarIconButton({
 }: TabBarIconButtonProps) {
   const theme = useTheme();
   const iconId = AppIcons[name];
-  const color = active ? theme.colors.accent : theme.colors.textTertiary;
+  const color = active ? theme.colors.accentText : theme.colors.textTertiary;
   const xml = useMemo(
     () => buildSvg(iconId, iconSize, color, active),
     [iconId, iconSize, color, active],
@@ -112,7 +112,7 @@ export const TabBarIconButton = memo(function TabBarIconButton({
             width: badgeSize,
             height: badgeSize,
             borderRadius: theme.radius.pill,
-            backgroundColor: theme.colors.accent,
+            backgroundColor: theme.colors.accentText,
             borderWidth: 2,
             borderColor: theme.colors.bgSurfaceRaised,
           }}

@@ -10,6 +10,7 @@ import { ReportSheet } from '@/components/ReportSheet';
 import { reportUser } from '@/services/safetyService';
 import { formatDateTime } from '@/lib/utils';
 import { SCREENS } from '@/constants/screens';
+import { useTheme } from '@/theme';
 
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -17,6 +18,7 @@ export default function EventDetailScreen() {
   const router = useRouter();
   const client = useApolloClient();
   const { userId } = useAuth();
+  const theme = useTheme();
   const [event, setEvent] = useState<{
     id: string;
     title: string;
@@ -55,8 +57,8 @@ export default function EventDetailScreen() {
                     alignSelf: 'flex-start',
                     fontSize: 12,
                     fontWeight: '600',
-                    color: '#1d4ed8',
-                    backgroundColor: '#dbeafe',
+                    color: theme.colors.accentText,
+                    backgroundColor: theme.colors.accentSubtle,
                     paddingHorizontal: 10,
                     paddingVertical: 4,
                     borderRadius: 999,

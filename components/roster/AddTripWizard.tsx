@@ -58,17 +58,25 @@ export function AddTripWizard({ defaultOriginIata, onCancel }: AddTripWizardProp
     },
   }));
 
-  const onSearchFlights = () => {
-    if (!draft.origin || !draft.destination || !draft.flightDate) return;
+  const tripParams = () => {
+    if (!draft.origin || !draft.destination || !draft.flightDate) return null;
+    return {
+      depIata: draft.origin.iata,
+      arrIata: draft.destination.iata,
+      date: toFlightDateKey(draft.flightDate),
+    };
+  };
 
-    router.push({
-      pathname: SCREENS.roster.addTripFlights,
-      params: {
-        depIata: draft.origin.iata,
-        arrIata: draft.destination.iata,
-        date: toFlightDateKey(draft.flightDate),
-      },
-    });
+  const onSearchFlights = () => {
+    const params = tripParams();
+    if (!params) return;
+    router.push({ pathname: SCREENS.roster.addTripFlights, params });
+  };
+
+  const onManualEntry = () => {
+    const params = tripParams();
+    if (!params) return;
+    router.push({ pathname: SCREENS.roster.addTripManual, params });
   };
 
   return (
@@ -113,6 +121,13 @@ export function AddTripWizard({ defaultOriginIata, onCancel }: AddTripWizardProp
           label={t('addTrip.searchFlights')}
           onPress={onSearchFlights}
           disabled={!canSearch}
+          noTopMargin
+        />
+        <Button
+          label={t('addTrip.addFlightManually')}
+          onPress={onManualEntry}
+          disabled={!canSearch}
+          variant="secondary"
           noTopMargin
         />
         <Button label={t('common.cancel')} onPress={onCancel} variant="ghost" noTopMargin />

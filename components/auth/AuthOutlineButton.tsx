@@ -34,7 +34,7 @@ export function AuthOutlineButton({
   return (
     <Pressable onPress={onPress} disabled={loading} style={styles.button}>
       {loading ? (
-        <ActivityIndicator color={theme.colors.accent} />
+        <ActivityIndicator color={theme.colors.accentText} />
       ) : (
         <>
           {icon ? <View style={styles.icon}>{icon}</View> : null}

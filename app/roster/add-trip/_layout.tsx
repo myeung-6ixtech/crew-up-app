@@ -13,7 +13,7 @@ export default function AddTripLayout() {
           ...theme.typography.headline,
           color: theme.colors.textPrimary,
         },
-        headerTintColor: theme.colors.accent,
+        headerTintColor: theme.colors.accentText,
         contentStyle: { backgroundColor: theme.colors.bgCanvas },
       }}>
       <Stack.Screen name="index" options={{ title: 'Add trip' }} />

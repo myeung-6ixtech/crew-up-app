@@ -102,7 +102,7 @@ export function CrewIdCopyRow({ friendId, compact = false }: CrewIdCopyRowProps)
             <AppIcon
               name="copy"
               size={15}
-              color={copied ? theme.colors.accent : theme.colors.textSecondary}
+              color={copied ? theme.colors.accentText : theme.colors.textSecondary}
             />
           </Pressable>
         </View>
@@ -120,7 +120,7 @@ export function CrewIdCopyRow({ friendId, compact = false }: CrewIdCopyRowProps)
             <AppIcon
               name="copy"
               size={18}
-              color={copied ? theme.colors.accent : theme.colors.textSecondary}
+              color={copied ? theme.colors.accentText : theme.colors.textSecondary}
             />
           </Pressable>
         </>

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { Screen, Title, Card, Button, EmptyState, BodyText, NumericText } from '@/components/ui';
@@ -14,12 +13,12 @@ import {
   tripRouteLabel,
   tripScheduleLabel,
 } from '@/types/trip';
-import { SCREENS } from '@/constants/screens';
+import { useAddTripFlow } from '@/hooks/useAddTripFlow';
 
 export default function TripManageScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
   const client = useApolloClient();
+  const { openAddTrip, addTripMethodOverlay } = useAddTripFlow();
   const { userId } = useAuth();
   const [trips, setTrips] = useState<TripEntry[]>([]);
 
@@ -37,12 +36,7 @@ export default function TripManageScreen() {
     <Screen style={{ padding: 0 }}>
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         <Title>{t('trips.yourTrips')}</Title>
-        <Button label={t('home.addTrip')} onPress={() => router.push(SCREENS.roster.addTrip)} />
-        <Button
-          label={t('roster.upload')}
-          variant="secondary"
-          onPress={() => router.push(SCREENS.roster.upload)}
-        />
+        <Button label={t('home.addTrip')} onPress={openAddTrip} />
         {trips.length === 0 ? (
           <EmptyState title={t('home.emptyTrips')} body={t('home.emptyTripsBody')} />
         ) : (
@@ -79,6 +73,7 @@ export default function TripManageScreen() {
           ))
         )}
       </ScrollView>
+      {addTripMethodOverlay}
     </Screen>
   );
 }

@@ -31,7 +31,7 @@ function RouteEndpointCard({
       minHeight: 112,
       borderRadius: t.radius.card,
       borderWidth: 1,
-      borderColor: active ? t.colors.accent : t.colors.hairline,
+      borderColor: active ? t.colors.accentText : t.colors.hairline,
       backgroundColor: active ? t.colors.accentSubtle : t.colors.bgSurfaceRaised,
       paddingVertical: t.spacing.lg,
       paddingHorizontal: t.spacing.md,
@@ -155,7 +155,7 @@ export function RouteSelector({
             ]}
             accessibilityRole="button"
             accessibilityLabel={t('addTrip.swapRoute')}>
-            <BodySmText style={{ color: theme.colors.accent, fontFamily: theme.typography.headline.fontFamily }}>
+            <BodySmText style={{ color: theme.colors.accentText, fontFamily: theme.typography.headline.fontFamily }}>
               ⇄
             </BodySmText>
           </Pressable>

@@ -59,7 +59,7 @@ export default function EmailAuthScreen() {
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <Pressable onPress={() => router.back()} style={styles.back}>
-          <BodyText style={{ color: theme.colors.accent, fontFamily: theme.typography.bodyStrong.fontFamily }}>
+          <BodyText style={{ color: theme.colors.accentText, fontFamily: theme.typography.bodyStrong.fontFamily }}>
             ← Back
           </BodyText>
         </Pressable>
@@ -84,7 +84,7 @@ export default function EmailAuthScreen() {
         {isSignIn ? (
           <Link href={SCREENS.auth.forgotPassword} asChild>
             <Pressable style={styles.linkWrap}>
-              <BodyText style={{ color: theme.colors.accent, fontFamily: theme.typography.bodyStrong.fontFamily }}>
+              <BodyText style={{ color: theme.colors.accentText, fontFamily: theme.typography.bodyStrong.fontFamily }}>
                 {t('auth.forgotPassword')}
               </BodyText>
             </Pressable>
@@ -97,7 +97,7 @@ export default function EmailAuthScreen() {
           </BodyText>
           <Pressable
             onPress={() => router.replace(SCREENS.auth.email(isSignIn ? 'signup' : 'signin'))}>
-            <BodyText style={{ color: theme.colors.accent, fontFamily: theme.typography.bodyStrong.fontFamily }}>
+            <BodyText style={{ color: theme.colors.accentText, fontFamily: theme.typography.bodyStrong.fontFamily }}>
               {isSignIn ? t('auth.signUpFree') : t('auth.login')}
             </BodyText>
           </Pressable>

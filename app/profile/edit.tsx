@@ -152,17 +152,13 @@ export default function EditProfileScreen() {
                 size="xl"
               />
               <View style={styles.editBadge}>
-                <AppIcon name="edit" size={18} color={theme.colors.accent} />
+                <AppIcon name="edit" size={18} color={theme.colors.accentText} />
               </View>
             </Pressable>
             <BodyText muted>{t('home.editProfilePhotoHint')}</BodyText>
           </View>
 
           <View style={styles.section}>
-            <SectionLabel>{t('home.editPersonalDetails')}</SectionLabel>
-            <BodyText muted style={styles.sectionHint}>
-              {t('home.editPersonalDetailsHint')}
-            </BodyText>
             <CrewIdCard friendId={profile?.friend_id} />
             <Input label={t('onboarding.title')} value={displayName} onChangeText={setDisplayName} />
             <Input

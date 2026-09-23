@@ -1,6 +1,7 @@
 import '@/lib/i18n';
 import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
@@ -33,12 +34,15 @@ function RootNavigator() {
           alignItems: 'center',
           backgroundColor: theme.colors.bgCanvas,
         }}>
-        <ActivityIndicator size="large" color={theme.colors.accent} />
+        <StatusBar style={theme.mode === 'dark' ? 'light' : 'dark'} />
+        <ActivityIndicator size="large" color={theme.colors.accentText} />
       </View>
     );
   }
 
   return (
+    <>
+    <StatusBar style={theme.mode === 'dark' ? 'light' : 'dark'} />
     <Stack
       screenOptions={{
         headerBackTitle: 'Back',
@@ -47,7 +51,7 @@ function RootNavigator() {
           ...theme.typography.headline,
           color: theme.colors.textPrimary,
         },
-        headerTintColor: theme.colors.accent,
+        headerTintColor: theme.colors.accentText,
         contentStyle: { backgroundColor: theme.colors.bgCanvas },
       }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -80,6 +84,7 @@ function RootNavigator() {
       <Stack.Screen name="profile/settings/account-security" options={{ title: 'Account security' }} />
       <Stack.Screen name="dev/ui-kit" options={{ title: 'UI Kit' }} />
     </Stack>
+    </>
   );
 }
 

@@ -19,7 +19,7 @@ import { CrewIdCopyRow } from '@/components/profile/CrewIdCopyRow';
 import { useAppMenu } from '@/contexts/AppMenuContext';
 import { SCREENS } from '@/constants/screens';
 import { useAuth, useSession } from '@/hooks/useSession';
-import { useThemedStyles, useTheme } from '@/theme';
+import { useThemedStyles, useTheme, useThemeControls } from '@/theme';
 
 const PANEL_WIDTH_RATIO = 0.75;
 
@@ -39,6 +39,7 @@ export function AppSideMenu() {
   const { t } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
+  const { setColorScheme } = useThemeControls();
   const insets = useSafeAreaInsets();
   const { width: screenWidth } = useWindowDimensions();
   const panelWidth = Math.round(screenWidth * PANEL_WIDTH_RATIO);
@@ -151,7 +152,32 @@ export function AppSideMenu() {
       backgroundColor: t.colors.bgSurfaceRaised,
     },
     menuItemPressed: {
-      backgroundColor: t.colors.bgSurface,
+      backgroundColor: t.colors.ground,
+    },
+    themeToggle: {
+      flexDirection: 'row',
+      borderRadius: t.radius.cta,
+      borderWidth: 1,
+      borderColor: t.colors.hairline,
+      overflow: 'hidden',
+    },
+    themeOption: {
+      minWidth: 64,
+      minHeight: 32,
+      paddingHorizontal: t.spacing.sm,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    themeOptionActive: {
+      backgroundColor: t.colors.fill,
+    },
+    themeOptionLabel: {
+      ...t.typography.bodySm,
+      color: t.colors.textSecondary,
+    },
+    themeOptionLabelActive: {
+      color: t.colors.onFill,
+      fontFamily: t.typography.bodyStrong.fontFamily,
     },
     menuLabel: {
       ...t.typography.body,
@@ -168,6 +194,7 @@ export function AppSideMenu() {
       paddingTop: t.spacing.sm,
       paddingHorizontal: t.spacing.lg,
       paddingBottom: t.spacing.xs,
+      gap: t.spacing.sm,
     },
   }));
 
@@ -246,6 +273,41 @@ export function AppSideMenu() {
           </ScrollView>
 
           <View style={styles.footer}>
+            <View
+              style={styles.menuItem}
+              accessibilityRole="adjustable"
+              accessibilityLabel={t('menu.appearance')}>
+              <AppIcon
+                name={theme.mode === 'dark' ? 'moon' : 'sun'}
+                size={22}
+                color={theme.colors.textSecondary}
+              />
+              <Text style={styles.menuLabel}>{t('menu.appearance')}</Text>
+              <View style={styles.themeToggle}>
+                {(['light', 'dark'] as const).map((mode) => {
+                  const selected = theme.mode === mode;
+                  return (
+                    <Pressable
+                      key={mode}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected }}
+                      accessibilityLabel={
+                        mode === 'light' ? t('menu.themeLight') : t('menu.themeDark')
+                      }
+                      onPress={() => setColorScheme(mode)}
+                      style={[styles.themeOption, selected && styles.themeOptionActive]}>
+                      <Text
+                        style={[
+                          styles.themeOptionLabel,
+                          selected && styles.themeOptionLabelActive,
+                        ]}>
+                        {mode === 'light' ? t('menu.themeLight') : t('menu.themeDark')}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={t('auth.signOut')}

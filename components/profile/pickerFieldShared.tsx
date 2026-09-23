@@ -53,7 +53,7 @@ export function usePickerFieldStyles() {
     },
     squircleCode: {
       ...t.typography.bodyStrong,
-      color: t.colors.accent,
+      color: t.colors.accentText,
       letterSpacing: 0.5,
     },
     squirclePlaceholder: {

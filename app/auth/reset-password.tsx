@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Screen, Title, Input, Button } from '@/components/ui';
 import { resetPassword } from '@/services/authService';
 import { SCREENS } from '@/constants/screens';
+import { useTheme } from '@/theme';
 
 export default function ResetPasswordScreen() {
   const { t } = useTranslation();
@@ -13,6 +14,7 @@ export default function ResetPasswordScreen() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const theme = useTheme();
 
   const onSubmit = async () => {
     if (!params.ticket) {
@@ -34,7 +36,7 @@ export default function ResetPasswordScreen() {
     <Screen>
       <Title>Reset password</Title>
       <Input label="New password" value={password} onChangeText={setPassword} secureTextEntry />
-      {error ? <Text style={{ color: '#DC2626' }}>{error}</Text> : null}
+      {error ? <Text style={{ color: theme.colors.statusOnDuty }}>{error}</Text> : null}
       <Button label="Update password" onPress={onSubmit} loading={loading} />
     </Screen>
   );

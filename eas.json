@@ -39,9 +39,17 @@
         "EXPO_PUBLIC_NHOST_REGION": "ap-southeast-1",
         "EXPO_PUBLIC_APP_SCHEME": "crewup"
       }
+    },
+    "testflight": {
+      "extends": "production",
+      "distribution": "store",
+      "ios": {
+        "simulator": false
+      }
     }
   },
   "submit": {
-    "production": {}
+    "production": {},
+    "testflight": {}
   }
 }

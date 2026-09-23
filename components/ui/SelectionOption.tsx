@@ -20,7 +20,7 @@ export function SelectionOption({
     },
     text: {
       ...t.typography.body,
-      color: selected ? t.colors.accent : t.colors.textPrimary,
+      color: selected ? t.colors.accentText : t.colors.textPrimary,
     },
   }));
 

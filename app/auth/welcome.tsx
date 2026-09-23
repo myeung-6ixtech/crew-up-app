@@ -35,7 +35,7 @@ export default function WelcomeScreen() {
       justifyContent: 'center',
       marginBottom: t.spacing.xl,
     },
-    logoText: { ...t.typography.bodyStrong, color: t.colors.textInverse, letterSpacing: 0.5 },
+    logoText: { ...t.typography.bodyStrong, color: t.colors.onFill, letterSpacing: 0.5 },
     actions: { paddingBottom: t.spacing.sm },
     dividerRow: { flexDirection: 'row', alignItems: 'center', marginVertical: t.spacing.xl },
     dividerLine: { flex: 1, height: 1, backgroundColor: t.colors.hairline },
@@ -103,7 +103,7 @@ export default function WelcomeScreen() {
 
           <Pressable onPress={() => router.push(SCREENS.auth.email('signin'))} style={styles.signInRow}>
             <BodyText muted>{t('auth.alreadyHaveAccount')} </BodyText>
-            <BodyText style={{ color: theme.colors.accent, fontFamily: theme.typography.bodyStrong.fontFamily }}>
+            <BodyText style={{ color: theme.colors.accentText, fontFamily: theme.typography.bodyStrong.fontFamily }}>
               {t('auth.login')}
             </BodyText>
           </Pressable>

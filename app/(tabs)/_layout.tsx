@@ -37,7 +37,7 @@ export default function TabLayout() {
               ...theme.typography.headline,
               color: theme.colors.textPrimary,
             },
-            headerTintColor: theme.colors.accent,
+            headerTintColor: theme.colors.accentText,
             sceneStyle: { backgroundColor: theme.colors.bgCanvas },
           }}>
           <Tabs.Screen

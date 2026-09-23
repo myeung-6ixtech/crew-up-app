@@ -16,7 +16,7 @@ export function Badge({
       paddingVertical: t.spacing.xs,
       borderRadius: t.radius.pill,
     },
-    textDefault: { ...t.typography.label, color: t.colors.accent, textTransform: 'none' as const },
+    textDefault: { ...t.typography.label, color: t.colors.accentText, textTransform: 'none' as const },
     textVerified: { ...t.typography.label, color: t.colors.statusVerified, textTransform: 'none' as const },
     textStatus: { ...t.typography.label, color: t.colors.textSecondary, textTransform: 'none' as const },
   }));

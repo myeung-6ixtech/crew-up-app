@@ -126,7 +126,29 @@
     "upload": "Update schedule",
     "confirm": "Confirm layovers",
     "manage": "My schedule",
-    "manual": "Enter manually"
+    "manual": "Enter manually",
+    "uploadTitle": "Upload your roster",
+    "uploadBody": "Choose the roster PDF or screenshot from your airline. We read your flights and layovers so you can check them before anything is saved.",
+    "uploadPrivacy": "Names, staff numbers and hotels are removed before your roster is read.",
+    "chooseFile": "Choose file",
+    "reading": "Reading your roster…",
+    "errors": {
+      "noLayovers": "We didn't find any layovers in this roster. You can add them manually.",
+      "ROSTER_PARSER_UNAVAILABLE": "Roster import is unavailable right now. You can add your trip manually.",
+      "ROSTER_PARSER_TIMEOUT": "That took too long. Try again or add your trip manually.",
+      "ROSTER_PARSER_BUSY": "Too many imports right now. Try again in a few minutes.",
+      "ROSTER_PARSE_INVALID": "We couldn't read this roster. You can add your trip manually.",
+      "ROSTER_TEXT_UNAVAILABLE": "This file has no readable text. Try the PDF from your airline instead of a scan or screenshot.",
+      "ROSTER_FILE_TOO_LARGE": "This file is too large. Rosters up to 10 MB and 20 pages are supported.",
+      "ROSTER_FILE_UNSUPPORTED": "This file type isn't supported. Upload a PDF, PNG or JPEG."
+    }
+  },
+  "addTripMethod": {
+    "title": "Which method?",
+    "search": "Search by flight",
+    "searchBody": "Find one flight by number or route and add it as a trip.",
+    "roster": "Roster upload",
+    "rosterBody": "Upload your roster PDF and add a whole month of layovers at once."
   },
   "network": {
     "connections": "Connections",
@@ -239,11 +261,19 @@
     "continue": "Continue",
     "dismiss": "Dismiss"
   },
+  "settings": {
+    "languages": {
+      "en": "English"
+    }
+  },
   "menu": {
     "open": "Open menu",
     "privacy": "Privacy Settings",
     "language": "Language",
     "accountSecurity": "Account security",
+    "appearance": "Appearance",
+    "themeLight": "Light",
+    "themeDark": "Dark",
     "signOutTitle": "Sign out?",
     "signOutMessage": "You will need to sign in again to access your account."
   },
@@ -272,6 +302,7 @@
     "selectRouteFirst": "Choose departure and arrival above to pick a date.",
     "selectFlightDate": "Select flight date",
     "searchFlights": "Search flights",
+    "addFlightManually": "Add flight manually",
     "searchFlightsHint": "Tap Search flights to see scheduled departures for this route.",
     "selectFlight": "Select your flight",
     "invalidSearchParams": "This flight search is missing route or date details. Go back and try again.",

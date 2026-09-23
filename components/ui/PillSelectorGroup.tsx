@@ -21,12 +21,12 @@ function PillSelector<T extends string>({
       paddingVertical: t.spacing.sm,
       borderRadius: t.radius.pill,
       borderWidth: 1,
-      borderColor: selected ? t.colors.accent : t.colors.hairline,
+      borderColor: selected ? t.colors.accentText : t.colors.hairline,
       backgroundColor: selected ? t.colors.accentSubtle : t.colors.bgSurface,
     },
     text: {
       ...t.typography.bodyStrong,
-      color: selected ? t.colors.accent : t.colors.textSecondary,
+      color: selected ? t.colors.accentText : t.colors.textSecondary,
     },
   }));
 

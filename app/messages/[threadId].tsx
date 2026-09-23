@@ -16,12 +16,14 @@ import { INSERT_THREAD_PARTICIPANT } from '@/graphql/mutations/messaging';
 import { ReportSheet } from '@/components/ReportSheet';
 import { reportUser } from '@/services/safetyService';
 import type { MessageItem } from '@/types/domain';
+import { useTheme } from '@/theme';
 
 export default function ChatScreen() {
   const { threadId } = useLocalSearchParams<{ threadId: string }>();
   const { t } = useTranslation();
   const client = useApolloClient();
   const { userId } = useAuth();
+  const theme = useTheme();
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [body, setBody] = useState('');
   const [participantId, setParticipantId] = useState<string | null>(null);
@@ -79,19 +81,30 @@ export default function ChatScreen() {
             <View
               style={{
                 alignSelf: item.sender_id === userId ? 'flex-end' : 'flex-start',
-                backgroundColor: item.sender_id === userId ? '#DBEAFE' : '#F1F5F9',
+                backgroundColor:
+                  item.sender_id === userId ? theme.colors.accentSubtle : theme.colors.card,
+                borderWidth: 1,
+                borderColor: item.sender_id === userId ? theme.colors.accentSubtle : theme.colors.hairline,
                 padding: 10,
                 borderRadius: 12,
                 marginBottom: 8,
                 maxWidth: '80%',
               }}>
-              <Text>{item.body}</Text>
+              <Text style={{ color: theme.colors.ink }}>{item.body}</Text>
             </View>
           )}
         />
-        <View style={{ flexDirection: 'row', padding: 12, gap: 8, borderTopWidth: 1, borderColor: '#E2E8F0' }}>
+        <View style={{ flexDirection: 'row', padding: 12, gap: 8, borderTopWidth: 1, borderColor: theme.colors.hairline }}>
           <TextInput
-            style={{ flex: 1, borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 10, padding: 10 }}
+            style={{
+              flex: 1,
+              borderWidth: 1,
+              borderColor: theme.colors.hairline,
+              borderRadius: 10,
+              padding: 10,
+              color: theme.colors.ink,
+              backgroundColor: theme.colors.card,
+            }}
             value={body}
             onChangeText={setBody}
             placeholder={t('messages.placeholder')}

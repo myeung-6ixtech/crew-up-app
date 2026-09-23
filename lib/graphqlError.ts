@@ -16,6 +16,15 @@ function graphQLErrorMessage(error: unknown): string | null {
   return null;
 }
 
+/** `extensions.code` of the first GraphQL error, e.g. a code set by a Hasura Action handler. */
+export function graphQLErrorCode(error: unknown): string | null {
+  if (CombinedGraphQLErrors.is(error)) {
+    const code = error.errors[0]?.extensions?.code;
+    return typeof code === 'string' ? code : null;
+  }
+  return null;
+}
+
 export function isBackendSchemaError(error: unknown): boolean {
   const message = graphQLErrorMessage(error);
   if (!message) return false;
