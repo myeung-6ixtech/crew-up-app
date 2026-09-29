@@ -16,10 +16,17 @@ export const SCREENS = {
     resetPassword: '/auth/reset-password',
   },
   onboarding: {
-    index: '/onboarding',
-    verification: '/onboarding/verification',
+    /** Profile steps 1–7 and beta_notify use the dynamic route; launch steps have their own. */
+    step: (step: string) => `/onboarding/${step}` as const,
+    betaHolding: '/onboarding/beta-holding',
+    privacy: '/onboarding/privacy',
+    guidelines: '/onboarding/guidelines',
+    notifications: '/onboarding/notifications',
+    unavailable: '/onboarding/unavailable',
+    houseRules: '/onboarding/house-rules' as const,
     rosterIntro: '/onboarding/roster-intro',
   },
+  trips: '/trips',
   roster: {
     upload: '/roster/upload',
     confirm: '/roster/confirm',
@@ -48,6 +55,7 @@ export const SCREENS = {
   },
   profile: {
     edit: '/profile/edit',
+    editSection: (step: string) => `/profile/edit-section/${step}` as const,
     privacy: '/profile/privacy',
     verification: '/profile/verification-status',
     language: '/profile/settings/language',

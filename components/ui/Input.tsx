@@ -10,6 +10,11 @@ export function Input({
   placeholder,
   multiline,
   error,
+  hint,
+  onFocus,
+  onBlur,
+  style,
+  ...inputProps
 }: {
   label: string;
   value: string;
@@ -18,6 +23,7 @@ export function Input({
   placeholder?: string;
   multiline?: boolean;
   error?: string;
+  hint?: string;
 } & Omit<TextInputProps, 'value' | 'onChangeText'>) {
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
@@ -39,27 +45,36 @@ export function Input({
     inputFocused: { borderColor: t.colors.textPrimary },
     inputError: { borderColor: t.colors.statusOnDuty },
     error: { ...t.typography.bodySm, color: t.colors.statusOnDuty, marginTop: t.spacing.xs },
+    hint: { ...t.typography.bodySm, color: t.colors.textTertiary, marginTop: t.spacing.xs },
   }));
 
   return (
     <View style={styles.wrap}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
+        {...inputProps}
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
         placeholder={placeholder}
         multiline={multiline}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
+        onFocus={(event) => {
+          setFocused(true);
+          onFocus?.(event);
+        }}
+        onBlur={(event) => {
+          setFocused(false);
+          onBlur?.(event);
+        }}
         placeholderTextColor={theme.colors.textTertiary}
         style={[
           styles.input,
           focused && styles.inputFocused,
           error ? styles.inputError : null,
+          style,
         ]}
       />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {error ? <Text style={styles.error}>{error}</Text> : hint ? <Text style={styles.hint}>{hint}</Text> : null}
     </View>
   );
 }

@@ -4,16 +4,21 @@ import { useThemedStyles } from '@/theme';
 export type PillSelectorOption<T extends string> = {
   value: T;
   label: string;
+  accessibilityLabel?: string;
 };
 
 function PillSelector<T extends string>({
   label,
   selected,
   onPress,
+  tone,
+  accessibilityLabel,
 }: {
   label: string;
   selected: boolean;
   onPress: () => void;
+  tone: 'subtle' | 'fill';
+  accessibilityLabel?: string;
 }) {
   const styles = useThemedStyles((t) => ({
     pill: {
@@ -21,12 +26,16 @@ function PillSelector<T extends string>({
       paddingVertical: t.spacing.sm,
       borderRadius: t.radius.pill,
       borderWidth: 1,
-      borderColor: selected ? t.colors.accentText : t.colors.hairline,
-      backgroundColor: selected ? t.colors.accentSubtle : t.colors.bgSurface,
+      borderColor: selected ? (tone === 'fill' ? t.colors.fill : t.colors.accentText) : t.colors.hairline,
+      backgroundColor: selected
+        ? tone === 'fill'
+          ? t.colors.fill
+          : t.colors.accentSubtle
+        : t.colors.bgSurface,
     },
     text: {
       ...t.typography.bodyStrong,
-      color: selected ? t.colors.accentText : t.colors.textSecondary,
+      color: selected ? (tone === 'fill' ? t.colors.onFill : t.colors.accentText) : t.colors.textSecondary,
     },
   }));
 
@@ -34,6 +43,7 @@ function PillSelector<T extends string>({
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ selected }}
+      accessibilityLabel={accessibilityLabel ?? label}
       onPress={onPress}
       style={({ pressed }) => [styles.pill, { opacity: pressed ? 0.72 : 1 }]}>
       <Text style={styles.text}>{label}</Text>
@@ -45,12 +55,22 @@ export function PillSelectorGroup<T extends string>({
   label,
   options,
   value,
+  values,
   onChange,
+  onToggle,
+  tone = 'subtle',
+  multiple = false,
 }: {
   label?: string;
   options: PillSelectorOption<T>[];
   value?: T;
-  onChange: (value: T) => void;
+  values?: T[];
+  onChange?: (value: T) => void;
+  onToggle?: (value: T) => void;
+  /** Selected pill: tinted text, or a solid lime fill. */
+  tone?: 'subtle' | 'fill';
+  /** More than one pill can stay selected. */
+  multiple?: boolean;
 }) {
   const styles = useThemedStyles((t) => ({
     wrap: { marginBottom: t.spacing.md },
@@ -70,8 +90,10 @@ export function PillSelectorGroup<T extends string>({
           <PillSelector
             key={option.value}
             label={option.label}
-            selected={value === option.value}
-            onPress={() => onChange(option.value)}
+            accessibilityLabel={option.accessibilityLabel}
+            selected={multiple ? (values ?? []).includes(option.value) : value === option.value}
+            tone={tone}
+            onPress={() => (multiple ? onToggle?.(option.value) : onChange?.(option.value))}
           />
         ))}
       </View>

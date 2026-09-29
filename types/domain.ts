@@ -1,7 +1,9 @@
+import type { CrewRole, OnboardingStep } from '@crewup/shared';
 import type { VisibilityLevel } from '@/constants/screens';
 
 export interface Profile {
   user_id: string;
+  /** Legacy: kept in sync as preferred_name ?? full_name by the onboarding step Function. */
   display_name: string;
   airline_id?: string | null;
   base_airport?: string | null;
@@ -14,6 +16,35 @@ export interface Profile {
   is_verified: boolean;
   avatar_file_id?: string | null;
   friend_id?: string | null;
+  full_name?: string | null;
+  full_name_native?: string | null;
+  preferred_name?: string | null;
+  username?: string | null;
+  /** date_of_birth for the caller's own row only (Hasura computed field). */
+  own_date_of_birth?: string | null;
+  home_country_code?: string | null;
+  hometown_city?: string | null;
+  /** Owner-only. Null when another crew member's profile is loaded. */
+  own_hometown_latitude?: number | null;
+  own_hometown_longitude?: number | null;
+  languages?: string[] | null;
+  /** Owner always; other crew only when they chose to show it. */
+  visible_gender?: 'male' | 'female' | 'unspecified' | null;
+  /** Owner-only. Null on someone else's profile. */
+  own_show_gender?: boolean | null;
+  residence_country_code?: string | null;
+  residence_city?: string | null;
+  crew_role?: CrewRole | null;
+  base_airport_iata?: string | null;
+}
+
+export interface OnboardingStateRow {
+  user_id: string;
+  current_step: OnboardingStep | null;
+  flow_version: number;
+  beta_signup_completed_at: string | null;
+  onboarding_completed_at: string | null;
+  guidelines_accepted_version: string | null;
 }
 
 export interface RosterEntry {

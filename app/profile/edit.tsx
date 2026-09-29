@@ -1,44 +1,31 @@
 import { useEffect, useState } from 'react';
-import { View, ScrollView, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
+import { View, ScrollView, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LANGUAGES, countryName } from '@crewup/shared';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { AirlinePickerField } from '@/components/profile/AirlinePickerField';
-import { AirportPickerField } from '@/components/profile/AirportPickerField';
 import { CrewIdCard } from '@/components/friends/CrewIdCard';
-import {
-  Screen,
-  Avatar,
-  Input,
-  Button,
-  BodyText,
-  SectionLabel,
-  AppIcon,
-  PillSelectorGroup,
-} from '@/components/ui';
-import { ROLE_TYPES } from '@/constants/screens';
-import { formatOptionLabel } from '@/lib/formatOptionLabel';
-import { formatApolloError } from '@/lib/graphqlError';
+import { Screen, Avatar, BodyText, AppIcon, ListRow } from '@/components/ui';
+import { findAirportByIata } from '@/constants/airports';
+import { SCREENS } from '@/constants/screens';
+import { GET_MY_PRIVATE } from '@/graphql/queries/onboarding';
 import { useAuth, useSession } from '@/hooks/useSession';
-import { fetchAirlines, updateProfile } from '@/services/profileService';
-import { STORAGE_BUCKETS } from '@/constants/storage';
-import { uploadFile } from '@/services/uploadService';
+import { fetchAirlines } from '@/services/profileService';
+import { saveStep, OnboardingRequestError } from '@/features/onboarding/services/onboardingService';
+import { pickAndUploadAvatar, type EditableStep } from '@/features/onboarding/steps';
 import { useThemedStyles, useTheme } from '@/theme';
 
-const BIO_MAX = 160;
+const LANGUAGE_NAMES = new Map(LANGUAGES.map(([code, name]) => [code, name]));
 
 export default function EditProfileScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const client = useApolloClient();
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
   const { profile, userId } = useAuth();
-  const { refreshProfile, refreshSession } = useSession();
+  const { refreshProfile } = useSession();
   const styles = useThemedStyles((t) => ({
-    scroll: { padding: t.spacing.lg, paddingBottom: t.spacing.xxxl + 80 },
+    scroll: { padding: t.spacing.lg, paddingBottom: t.spacing.xxxl },
     avatarSection: { alignItems: 'center', marginBottom: t.spacing.xl, gap: t.spacing.sm },
     avatarPress: { position: 'relative' },
     editBadge: {
@@ -55,162 +42,128 @@ export default function EditProfileScreen() {
       justifyContent: 'center',
     },
     section: { marginBottom: t.spacing.xl },
-    sectionHint: {
-      marginBottom: t.spacing.md,
-    },
-    footer: {
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      bottom: 0,
-      paddingHorizontal: t.spacing.lg,
-      paddingTop: t.spacing.md,
-      paddingBottom: Math.max(insets.bottom, t.spacing.lg),
-      backgroundColor: t.colors.bgCanvas,
-      borderTopWidth: 1,
-      borderTopColor: t.colors.hairline,
-      gap: t.spacing.xs,
-    },
   }));
 
-  const [displayName, setDisplayName] = useState(profile?.display_name ?? '');
-  const [roleType, setRoleType] = useState(profile?.role_type ?? ROLE_TYPES[0]);
-  const [base, setBase] = useState(profile?.base_airport ?? '');
-  const [bio, setBio] = useState('');
-  const [airlineId, setAirlineId] = useState<string | undefined>(profile?.airline_id ?? undefined);
-  const [airlines, setAirlines] = useState<{ id: string; name: string; code: string }[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [airlineName, setAirlineName] = useState<string | null>(null);
+  const [phone, setPhone] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const [avatarPreviewUri, setAvatarPreviewUri] = useState<string | null>(null);
 
   useEffect(() => {
-    void fetchAirlines(client).then(setAirlines);
-  }, [client]);
+    if (!profile?.airline_id) {
+      setAirlineName(null);
+      return;
+    }
+    void fetchAirlines(client)
+      .then((rows: { id: string; name: string }[]) =>
+        setAirlineName(rows.find((row) => row.id === profile.airline_id)?.name ?? null),
+      )
+      .catch(() => setAirlineName(null));
+  }, [client, profile?.airline_id]);
 
   useEffect(() => {
-    if (!profile) return;
-    setDisplayName(profile.display_name ?? '');
-    setRoleType(profile.role_type ?? ROLE_TYPES[0]);
-    setBase(profile.base_airport ?? '');
-    setAirlineId(profile.airline_id ?? undefined);
-  }, [profile]);
+    if (!userId) return;
+    void client
+      .query<{ user_private_by_pk: { phone_e164: string | null } | null }>({
+        query: GET_MY_PRIVATE,
+        variables: { userId },
+        fetchPolicy: 'network-only',
+      })
+      .then(({ data }) => setPhone(data?.user_private_by_pk?.phone_e164 ?? null))
+      .catch(() => setPhone(null));
+  }, [client, userId, profile]);
 
   const onAvatar = async () => {
-    if (!userId) return;
-    const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.8 });
-    if (picked.canceled || !picked.assets[0]) return;
-    const asset = picked.assets[0];
-    setAvatarPreviewUri(asset.uri);
+    setError('');
+    setUploading(true);
     try {
-      const fileId = await uploadFile({
-        uri: asset.uri,
-        name: 'avatar.jpg',
-        mimeType: asset.mimeType ?? 'image/jpeg',
-        bucketId: STORAGE_BUCKETS.avatars,
-      });
-      await updateProfile(client, userId, { avatar_file_id: fileId });
+      const result = await pickAndUploadAvatar();
+      if (result.status === 'too_large') setError(t('onboarding.photo.tooLarge'));
+      if (result.status !== 'uploaded') return;
+      setAvatarPreviewUri(result.uri);
+      await saveStep('photo', { avatarFileId: result.fileId }, { advance: false });
       await refreshProfile();
     } catch (e) {
-      setError(formatApolloError(e));
       setAvatarPreviewUri(null);
+      setError(e instanceof OnboardingRequestError ? e.message : t('onboarding.genericError'));
+    } finally {
+      setUploading(false);
     }
   };
 
-  const onSave = async () => {
-    if (!userId) return;
-    setLoading(true);
-    setError('');
-    try {
-      await updateProfile(client, userId, {
-        display_name: displayName.trim(),
-        role_type: roleType,
-        base_airport: base.trim().toUpperCase(),
-        airline_id: airlineId ?? null,
-      });
-      await refreshSession();
-      await refreshProfile();
-      router.back();
-    } catch (e) {
-      setError(formatApolloError(e));
-    } finally {
-      setLoading(false);
-    }
-  };
+  const displayName = profile?.preferred_name || profile?.full_name || profile?.display_name || '';
+  const airport = findAirportByIata(profile?.base_airport_iata ?? profile?.base_airport);
+  const join = (...parts: (string | null | undefined)[]) => parts.filter(Boolean).join(' · ');
+  const notProvided = t('onboarding.review.notProvided');
+
+  const rows: { step: EditableStep; title: string; subtitle: string }[] = [
+    {
+      step: 'name_handle',
+      title: t('onboarding.review.sections.nameHandle'),
+      subtitle: join(profile?.full_name ?? profile?.display_name, profile?.username ? `@${profile.username}` : null),
+    },
+    {
+      step: 'about',
+      title: t('onboarding.review.sections.about'),
+      subtitle: join(
+        countryName(profile?.home_country_code),
+        (profile?.languages ?? []).map((code) => LANGUAGE_NAMES.get(code) ?? code).join(', '),
+      ),
+    },
+    {
+      step: 'residence',
+      title: t('onboarding.review.sections.residence'),
+      subtitle: join(profile?.residence_city, countryName(profile?.residence_country_code)),
+    },
+    {
+      step: 'crew',
+      title: t('onboarding.review.sections.crew'),
+      subtitle: join(
+        profile?.crew_role ? t(`onboarding.crewRoles.${profile.crew_role}`) : null,
+        airlineName,
+        airport?.iata ?? profile?.base_airport,
+      ),
+    },
+    { step: 'phone', title: t('onboarding.review.sections.phone'), subtitle: phone ?? '' },
+  ];
 
   return (
     <Screen style={{ padding: 0 }}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          <View style={styles.avatarSection}>
-            <Pressable onPress={onAvatar} style={styles.avatarPress} accessibilityLabel="Change photo">
-              <Avatar
-                name={displayName}
-                fileId={profile?.avatar_file_id}
-                localUri={avatarPreviewUri}
-                size="xl"
-              />
-              <View style={styles.editBadge}>
-                <AppIcon name="edit" size={18} color={theme.colors.accentText} />
-              </View>
-            </Pressable>
-            <BodyText muted>{t('home.editProfilePhotoHint')}</BodyText>
-          </View>
-
-          <View style={styles.section}>
-            <CrewIdCard friendId={profile?.friend_id} />
-            <Input label={t('onboarding.title')} value={displayName} onChangeText={setDisplayName} />
-            <Input
-              label={t('home.bioLabel')}
-              value={bio}
-              onChangeText={(v) => setBio(v.slice(0, BIO_MAX))}
-              multiline
-              placeholder={t('home.bioPlaceholder')}
-            />
-            <BodyText muted>
-              {bio.length}/{BIO_MAX} · {t('home.bioComingSoon')}
-            </BodyText>
-          </View>
-
-          <View style={styles.section}>
-            <SectionLabel>{t('home.editTravelPreferences')}</SectionLabel>
-            <BodyText muted style={styles.sectionHint}>
-              {t('home.editTravelPreferencesHint')}
-            </BodyText>
-            <PillSelectorGroup
-              label={t('onboarding.role')}
-              options={ROLE_TYPES.map((role) => ({
-                value: role,
-                label: formatOptionLabel(role),
-              }))}
-              value={roleType}
-              onChange={setRoleType}
-            />
-            <AirlinePickerField
-              label={t('home.airline')}
-              airlines={airlines}
-              value={airlineId}
-              onChange={setAirlineId}
-              optional
-            />
-            <AirportPickerField
-              label={t('onboarding.base')}
-              value={base}
-              onChange={setBase}
-              placeholder={t('home.selectBaseAirport')}
-              preferIata={profile?.base_airport}
-            />
-          </View>
-
-          {error ? <BodyText style={{ color: theme.colors.statusOnDuty }}>{error}</BodyText> : null}
-        </ScrollView>
-
-        <View style={styles.footer}>
-          <Button label={t('home.saveChanges')} onPress={onSave} loading={loading} noTopMargin />
-          <Button label={t('common.cancel')} onPress={() => router.back()} variant="ghost" noTopMargin />
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <View style={styles.avatarSection}>
+          <Pressable
+            onPress={() => void onAvatar()}
+            disabled={uploading}
+            style={styles.avatarPress}
+            accessibilityLabel={t('onboarding.photo.change')}>
+            <Avatar name={displayName} fileId={profile?.avatar_file_id} localUri={avatarPreviewUri} size="xl" />
+            <View style={styles.editBadge}>
+              <AppIcon name="edit" size={18} color={theme.colors.accentText} />
+            </View>
+          </Pressable>
+          <BodyText muted>{uploading ? t('onboarding.photo.uploading') : t('home.editProfilePhotoHint')}</BodyText>
         </View>
-      </KeyboardAvoidingView>
+
+        <View style={styles.section}>
+          <CrewIdCard friendId={profile?.friend_id} />
+        </View>
+
+        <View style={styles.section}>
+          {rows.map((row) => (
+            <ListRow
+              key={row.step}
+              inset={false}
+              title={row.title}
+              subtitle={row.subtitle || notProvided}
+              onPress={() => router.push(SCREENS.profile.editSection(row.step))}
+              right={<AppIcon name="chevronRight" size={20} color={theme.colors.textTertiary} />}
+            />
+          ))}
+        </View>
+
+        {error ? <BodyText style={{ color: theme.colors.statusOnDuty }}>{error}</BodyText> : null}
+      </ScrollView>
     </Screen>
   );
 }

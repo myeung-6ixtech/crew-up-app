@@ -61,12 +61,11 @@ function RootNavigator() {
       <Stack.Screen name="auth/register" options={{ headerShown: false }} />
       <Stack.Screen name="auth/forgot-password" options={{ title: 'Forgot password' }} />
       <Stack.Screen name="auth/reset-password" options={{ title: 'Reset password' }} />
-      <Stack.Screen name="onboarding/index" options={{ title: 'Profile setup' }} />
-      <Stack.Screen name="onboarding/verification" options={{ title: 'Verification' }} />
-      <Stack.Screen name="onboarding/roster-intro" options={{ title: 'Your schedule' }} />
+      <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="roster/upload" options={{ title: 'Upload roster' }} />
       <Stack.Screen name="roster/confirm" options={{ title: 'Confirm layovers' }} />
       <Stack.Screen name="roster/manage" options={{ title: 'My schedule' }} />
+      <Stack.Screen name="trips/index" options={{ title: 'Trips' }} />
       <Stack.Screen name="roster/add-trip" options={{ headerShown: false }} />
       <Stack.Screen name="presence/[city]" options={{ title: 'Who is around' }} />
       <Stack.Screen name="network/connections" options={{ title: 'Connections' }} />
@@ -78,6 +77,7 @@ function RootNavigator() {
       <Stack.Screen name="messages/[threadId]" options={{ title: 'Chat' }} />
       <Stack.Screen name="friends/add" options={{ title: '' }} />
       <Stack.Screen name="profile/edit" options={{ title: 'Edit profile' }} />
+      <Stack.Screen name="profile/edit-section/[step]" options={{ title: '' }} />
       <Stack.Screen name="profile/privacy" options={{ title: 'Privacy Settings' }} />
       <Stack.Screen name="profile/verification-status" options={{ title: 'Verification' }} />
       <Stack.Screen name="profile/settings/language" options={{ title: 'Language' }} />

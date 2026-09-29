@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { AuthScreenLayout } from '@/components/auth/AuthScreenLayout';
 import { Title, Input, Button, BodyText } from '@/components/ui';
 import { signIn, signUp } from '@/services/authService';
-import { hasCompletedOnboarding } from '@/lib/profileCompletion';
+import { passwordIssue } from '@/lib/password';
 import { useSession } from '@/hooks/useSession';
 import { SCREENS } from '@/constants/screens';
 import { useThemedStyles, useTheme } from '@/theme';
@@ -19,6 +19,9 @@ export default function EmailAuthScreen() {
   const { refreshSession } = useSession();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmError, setConfirmError] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const styles = useThemedStyles((t) => ({
@@ -34,18 +37,33 @@ export default function EmailAuthScreen() {
   }));
 
   const onSubmit = async () => {
-    setLoading(true);
     setError('');
+    setPasswordError('');
+    setConfirmError('');
+    if (!isSignIn) {
+      const issue = passwordIssue(password);
+      if (issue === 'short') {
+        setPasswordError(t('auth.passwordTooShort'));
+        return;
+      }
+      if (issue === 'weak') {
+        setPasswordError(t('auth.passwordWeak'));
+        return;
+      }
+      if (password !== confirmPassword) {
+        setConfirmError(t('auth.passwordMismatch'));
+        return;
+      }
+    }
+    setLoading(true);
     try {
       if (isSignIn) {
         await signIn(email.trim(), password);
       } else {
         await signUp(email.trim(), password);
       }
-      const profile = await refreshSession();
-      router.replace(
-        hasCompletedOnboarding(profile) ? SCREENS.tabs.home : SCREENS.onboarding.index,
-      );
+      // useAuthGuard routes to onboarding / beta holding / home once the session and mode resolve.
+      await refreshSession();
     } catch (e) {
       setError(e instanceof Error ? e.message : t('common.error'));
     } finally {
@@ -70,10 +88,33 @@ export default function EmailAuthScreen() {
         <Input
           label={t('auth.password')}
           value={password}
-          onChangeText={setPassword}
+          onChangeText={(value) => {
+            setPassword(value);
+            setPasswordError('');
+          }}
           secureTextEntry
-          error={error || undefined}
+          textContentType={isSignIn ? 'password' : 'newPassword'}
+          autoComplete={isSignIn ? 'password' : 'new-password'}
+          hint={isSignIn ? undefined : t('auth.passwordHint')}
+          error={passwordError || (isSignIn ? error : undefined) || undefined}
         />
+        {isSignIn ? null : (
+          <Input
+            label={t('auth.confirmPassword')}
+            value={confirmPassword}
+            onChangeText={(value) => {
+              setConfirmPassword(value);
+              setConfirmError('');
+            }}
+            secureTextEntry
+            textContentType="newPassword"
+            autoComplete="new-password"
+            error={confirmError || undefined}
+          />
+        )}
+        {!isSignIn && error ? (
+          <BodyText style={{ color: theme.colors.statusOnDuty, marginBottom: theme.spacing.md }}>{error}</BodyText>
+        ) : null}
 
         <Button
           label={isSignIn ? t('auth.login') : t('auth.register')}

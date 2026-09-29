@@ -11,6 +11,7 @@ export function Button({
   loading,
   icon,
   style,
+  labelStyle,
   noTopMargin,
 }: {
   label: string;
@@ -20,6 +21,7 @@ export function Button({
   loading?: boolean;
   icon?: React.ReactNode;
   style?: import('react-native').ViewStyle;
+  labelStyle?: import('react-native').TextStyle;
   noTopMargin?: boolean;
 }) {
   const theme = useTheme();
@@ -50,7 +52,7 @@ export function Button({
     labelDestructive: { ...t.typography.button, color: '#FFFFFF' },
   }));
 
-  const labelStyle =
+  const variantLabelStyle =
     variant === 'primary'
       ? styles.labelPrimary
       : variant === 'destructive'
@@ -85,7 +87,7 @@ export function Button({
       ) : (
         <View style={styles.content}>
           {icon ? <View style={styles.icon}>{icon}</View> : null}
-          <Text style={labelStyle}>{label}</Text>
+          <Text style={[variantLabelStyle, labelStyle]}>{label}</Text>
         </View>
       )}
     </Pressable>

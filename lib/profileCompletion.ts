@@ -1,11 +1,11 @@
-import type { Profile } from '@/types/domain';
+import type { OnboardingStateRow, Profile } from '@/types/domain';
 
 /** Profile row exists in the database (may still be empty / incomplete). */
 export function hasProfileRow(profile: Profile | null | undefined): boolean {
   return Boolean(profile?.user_id);
 }
 
-/** User finished profile setup — used to gate onboarding vs main app. */
-export function hasCompletedOnboarding(profile: Profile | null | undefined): boolean {
-  return Boolean(profile?.display_name?.trim());
+/** Launch onboarding finished (`onboarding_state.onboarding_completed_at` is write-once server-side). */
+export function hasCompletedOnboarding(onboarding: OnboardingStateRow | null | undefined): boolean {
+  return Boolean(onboarding?.onboarding_completed_at);
 }

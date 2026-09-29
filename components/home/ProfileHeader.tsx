@@ -1,4 +1,5 @@
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
   Avatar,
@@ -12,6 +13,7 @@ import {
   type CrewStatus,
 } from '@/components/ui';
 import { HOME_SECTION_PADDING } from '@/constants/homeLayout';
+import { SCREENS } from '@/constants/screens';
 import { useAddTripFlow } from '@/hooks/useAddTripFlow';
 import { useThemedStyles, useTheme } from '@/theme';
 import { formatProfileCaption } from '@/lib/dutyStatus';
@@ -35,6 +37,7 @@ export function ProfileHeader({
   airlineName?: string | null;
 }) {
   const { t } = useTranslation();
+  const router = useRouter();
   const theme = useTheme();
   const styles = useThemedStyles((t) => ({
     section: {
@@ -64,8 +67,12 @@ export function ProfileHeader({
     ctaWrap: { width: '100%' },
   }));
 
-  const stats = [
-    { value: tripCount, label: t('home.statsTrips') },
+  const stats: { value: number; label: string; onPress?: () => void }[] = [
+    {
+      value: tripCount,
+      label: t('home.statsTrips'),
+      onPress: () => router.push(SCREENS.trips),
+    },
     { value: cityCount, label: t('home.statsCities') },
     { value: connectionCount, label: t('home.statsConnections') },
   ];
@@ -91,12 +98,31 @@ export function ProfileHeader({
       </View>
 
       <View style={styles.statsRow}>
-        {stats.map((s) => (
-          <View key={s.label} style={styles.stat}>
-            <NumericText large>{s.value}</NumericText>
-            <LabelText>{s.label}</LabelText>
-          </View>
-        ))}
+        {stats.map((s) => {
+          const content = (
+            <>
+              <NumericText large>{s.value}</NumericText>
+              <LabelText>{s.label}</LabelText>
+            </>
+          );
+          if (!s.onPress) {
+            return (
+              <View key={s.label} style={styles.stat}>
+                {content}
+              </View>
+            );
+          }
+          return (
+            <Pressable
+              key={s.label}
+              accessibilityRole="button"
+              accessibilityLabel={s.label}
+              onPress={s.onPress}
+              style={({ pressed }) => [styles.stat, { opacity: pressed ? 0.72 : 1 }]}>
+              {content}
+            </Pressable>
+          );
+        })}
       </View>
 
       <View style={styles.ctaWrap}>

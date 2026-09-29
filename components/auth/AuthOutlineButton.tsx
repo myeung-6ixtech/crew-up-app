@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View, type TextStyle } from 'react-native';
 import { useThemedStyles, useTheme } from '@/theme';
 
 export function AuthOutlineButton({
@@ -6,11 +6,13 @@ export function AuthOutlineButton({
   onPress,
   loading,
   icon,
+  labelStyle,
 }: {
   label: string;
   onPress: () => void;
   loading?: boolean;
   icon?: React.ReactNode;
+  labelStyle?: TextStyle;
 }) {
   const theme = useTheme();
   const styles = useThemedStyles((t) => ({
@@ -23,7 +25,6 @@ export function AuthOutlineButton({
       borderWidth: 1,
       borderColor: t.colors.hairline,
       backgroundColor: t.colors.bgSurfaceRaised,
-      marginTop: t.spacing.sm,
       paddingHorizontal: t.spacing.lg,
       ...t.shadow.card,
     },
@@ -38,7 +39,7 @@ export function AuthOutlineButton({
       ) : (
         <>
           {icon ? <View style={styles.icon}>{icon}</View> : null}
-          <Text style={styles.label}>{label}</Text>
+          <Text style={[styles.label, labelStyle]}>{label}</Text>
         </>
       )}
     </Pressable>

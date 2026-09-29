@@ -48,8 +48,11 @@ export function AppSideMenu() {
   const { signOut } = useSession();
 
   const [modalVisible, setModalVisible] = useState(isOpen);
+  const [themeSegmentWidth, setThemeSegmentWidth] = useState(0);
   const scrimOpacity = useRef(new Animated.Value(0)).current;
   const panelTranslateX = useRef(new Animated.Value(0)).current;
+  const themeThumbX = useRef(new Animated.Value(0)).current;
+  const themeModeRef = useRef(theme.mode);
 
   useEffect(() => {
     if (isOpen) {
@@ -96,6 +99,23 @@ export function AppSideMenu() {
     theme.motion.base,
     theme.motion.slow,
   ]);
+
+  useEffect(() => {
+    if (!themeSegmentWidth) return;
+    const nextX = theme.mode === 'dark' ? themeSegmentWidth : 0;
+    const modeChanged = themeModeRef.current !== theme.mode;
+    themeModeRef.current = theme.mode;
+    if (!modeChanged) {
+      themeThumbX.setValue(nextX);
+      return;
+    }
+    Animated.timing(themeThumbX, {
+      toValue: nextX,
+      duration: theme.motion.base,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }, [theme.mode, theme.motion.base, themeSegmentWidth, themeThumbX]);
 
   const styles = useThemedStyles((t) => ({
     root: { flex: 1 },
@@ -161,23 +181,20 @@ export function AppSideMenu() {
       borderColor: t.colors.hairline,
       overflow: 'hidden',
     },
+    themeThumb: {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      bottom: 0,
+      backgroundColor: t.colors.fill,
+    },
     themeOption: {
-      minWidth: 64,
+      minWidth: 40,
       minHeight: 32,
       paddingHorizontal: t.spacing.sm,
       alignItems: 'center',
       justifyContent: 'center',
-    },
-    themeOptionActive: {
-      backgroundColor: t.colors.fill,
-    },
-    themeOptionLabel: {
-      ...t.typography.bodySm,
-      color: t.colors.textSecondary,
-    },
-    themeOptionLabelActive: {
-      color: t.colors.onFill,
-      fontFamily: t.typography.bodyStrong.fontFamily,
+      zIndex: 1,
     },
     menuLabel: {
       ...t.typography.body,
@@ -277,13 +294,23 @@ export function AppSideMenu() {
               style={styles.menuItem}
               accessibilityRole="adjustable"
               accessibilityLabel={t('menu.appearance')}>
-              <AppIcon
-                name={theme.mode === 'dark' ? 'moon' : 'sun'}
-                size={22}
-                color={theme.colors.textSecondary}
-              />
               <Text style={styles.menuLabel}>{t('menu.appearance')}</Text>
-              <View style={styles.themeToggle}>
+              <View
+                style={styles.themeToggle}
+                onLayout={(event) => {
+                  const next = Math.max(0, (event.nativeEvent.layout.width - 2) / 2);
+                  setThemeSegmentWidth((current) => (current === next ? current : next));
+                }}>
+                <Animated.View
+                  pointerEvents="none"
+                  style={[
+                    styles.themeThumb,
+                    {
+                      width: themeSegmentWidth,
+                      transform: [{ translateX: themeThumbX }],
+                    },
+                  ]}
+                />
                 {(['light', 'dark'] as const).map((mode) => {
                   const selected = theme.mode === mode;
                   return (
@@ -295,14 +322,12 @@ export function AppSideMenu() {
                         mode === 'light' ? t('menu.themeLight') : t('menu.themeDark')
                       }
                       onPress={() => setColorScheme(mode)}
-                      style={[styles.themeOption, selected && styles.themeOptionActive]}>
-                      <Text
-                        style={[
-                          styles.themeOptionLabel,
-                          selected && styles.themeOptionLabelActive,
-                        ]}>
-                        {mode === 'light' ? t('menu.themeLight') : t('menu.themeDark')}
-                      </Text>
+                      style={styles.themeOption}>
+                      <AppIcon
+                        name={mode === 'light' ? 'sun' : 'moon'}
+                        size={18}
+                        color={selected ? theme.colors.onFill : theme.colors.textSecondary}
+                      />
                     </Pressable>
                   );
                 })}

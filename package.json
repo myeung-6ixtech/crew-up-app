@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@apollo/client": "^4.2.8",
+    "@crewup/shared": "file:../packages/shared",
     "@expo-google-fonts/inter": "^0.4.2",
     "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
     "@hookform/resolvers": "^5.5.7",
@@ -32,6 +33,7 @@
     "graphql": "^16.14.2",
     "graphql-ws": "^6.2.0",
     "i18next": "^26.3.6",
+    "libphonenumber-js": "^1.13.14",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.83.0",

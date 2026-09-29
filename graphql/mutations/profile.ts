@@ -16,6 +16,22 @@ export const GET_MY_PROFILE = gql`
       is_verified
       avatar_file_id
       friend_id
+      full_name
+      full_name_native
+      preferred_name
+      username
+      own_date_of_birth
+      home_country_code
+      hometown_city
+      own_hometown_latitude
+      own_hometown_longitude
+      languages
+      visible_gender
+      own_show_gender
+      residence_country_code
+      residence_city
+      crew_role
+      base_airport_iata
     }
   }
 `;

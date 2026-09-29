@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { SelectionSquircle, usePickerFieldStyles } from '@/components/profile/pickerFieldShared';
 
 type AirlineLogoProps = {
   code: string;
-  size?: number;
   muted?: boolean;
 };
 
@@ -12,7 +11,7 @@ function airlineLogoUrl(code: string): string {
   return `https://images.kiwi.com/airlines/64/${encodeURIComponent(code.toUpperCase())}.png`;
 }
 
-export function AirlineLogo({ code, size = 44, muted = false }: AirlineLogoProps) {
+export function AirlineLogo({ code, muted = false }: AirlineLogoProps) {
   const styles = usePickerFieldStyles();
   const [failed, setFailed] = useState(false);
   const normalized = code.trim().toUpperCase();
@@ -31,8 +30,8 @@ export function AirlineLogo({ code, size = 44, muted = false }: AirlineLogoProps
     <SelectionSquircle muted={muted}>
       <Image
         source={{ uri: airlineLogoUrl(normalized) }}
-        style={{ width: size - 12, height: size - 12 }}
-        resizeMode="contain"
+        style={StyleSheet.absoluteFill}
+        resizeMode="cover"
         onError={() => setFailed(true)}
       />
     </SelectionSquircle>
@@ -56,8 +55,8 @@ export function AirlineLogoInline({ code }: { code: string }) {
     <View style={[styles.squircle, { width: 36, height: 36, borderRadius: 11, overflow: 'hidden' }]}>
       <Image
         source={{ uri: airlineLogoUrl(normalized) }}
-        style={{ width: 28, height: 28 }}
-        resizeMode="contain"
+        style={StyleSheet.absoluteFill}
+        resizeMode="cover"
         onError={() => setFailed(true)}
       />
     </View>

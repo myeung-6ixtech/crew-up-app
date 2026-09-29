@@ -71,6 +71,87 @@ export const GET_MY_TRIPS = gql`
   }
 `;
 
+export const GET_TRIP_HISTORY = gql`
+  query GetTripHistory($userId: uuid!, $now: timestamptz!, $limit: Int!) {
+    upcomingTrips: user_trips(
+      where: {
+        user_id: { _eq: $userId }
+        is_active: { _eq: true }
+        _or: [
+          { ends_at: { _gte: $now } }
+          { _and: [{ ends_at: { _is_null: true } }, { starts_at: { _gte: $now } }] }
+        ]
+      }
+      order_by: { starts_at: asc }
+      limit: $limit
+    ) {
+      id
+      title
+      source
+      starts_at
+      ends_at
+      flightLegs(order_by: { sequence_number: asc }, limit: 1) {
+        id
+        flight {
+          id
+          airline_iata
+          flight_number
+          service_date
+          departure_airport
+          arrival_airport
+          scheduled_departure
+          scheduled_arrival
+        }
+      }
+      stays(order_by: { starts_at: asc }, limit: 1) {
+        id
+        city
+        airport_iata
+        starts_at
+        ends_at
+      }
+    }
+    pastTrips: user_trips(
+      where: {
+        user_id: { _eq: $userId }
+        is_active: { _eq: true }
+        _or: [
+          { ends_at: { _lt: $now } }
+          { _and: [{ ends_at: { _is_null: true } }, { starts_at: { _lt: $now } }] }
+        ]
+      }
+      order_by: { starts_at: desc }
+      limit: $limit
+    ) {
+      id
+      title
+      source
+      starts_at
+      ends_at
+      flightLegs(order_by: { sequence_number: asc }, limit: 1) {
+        id
+        flight {
+          id
+          airline_iata
+          flight_number
+          service_date
+          departure_airport
+          arrival_airport
+          scheduled_departure
+          scheduled_arrival
+        }
+      }
+      stays(order_by: { starts_at: asc }, limit: 1) {
+        id
+        city
+        airport_iata
+        starts_at
+        ends_at
+      }
+    }
+  }
+`;
+
 export const GET_TRIP_MATCHES = gql`
   query GetTripMatches {
     trip_matches(

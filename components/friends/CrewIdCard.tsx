@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react';
-import { Platform, Pressable, Share, Text, View } from 'react-native';
+import { Pressable, Share, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { BodyText, Card, SectionLabel } from '@/components/ui';
+import { AppIcon, BodyText, Card, SectionLabel } from '@/components/ui';
 import { copyToClipboard } from '@/lib/clipboard';
 import { formatFriendId } from '@/lib/friendId';
-import { useThemedStyles } from '@/theme';
+import { useTheme, useThemedStyles } from '@/theme';
 
 type CrewIdCardProps = {
   friendId: string | null | undefined;
@@ -12,6 +12,7 @@ type CrewIdCardProps = {
 
 export function CrewIdCard({ friendId }: CrewIdCardProps) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const [copied, setCopied] = useState(false);
   const styles = useThemedStyles((theme) => ({
     card: { marginBottom: theme.spacing.lg, gap: theme.spacing.sm },
@@ -29,12 +30,12 @@ export function CrewIdCard({ friendId }: CrewIdCardProps) {
     },
     actions: {
       flexDirection: 'row',
-      gap: theme.spacing.sm,
+      gap: theme.spacing.xs,
     },
     action: {
-      minHeight: 36,
-      paddingHorizontal: theme.spacing.md,
-      borderRadius: theme.radius.cta,
+      width: 40,
+      height: 40,
+      borderRadius: theme.radius.pill,
       backgroundColor: theme.colors.bgSurfaceRaised,
       borderWidth: 1,
       borderColor: theme.colors.hairline,
@@ -44,14 +45,6 @@ export function CrewIdCard({ friendId }: CrewIdCardProps) {
     actionPrimary: {
       backgroundColor: theme.colors.accent,
       borderColor: theme.colors.accent,
-    },
-    actionLabel: {
-      ...theme.typography.bodySm,
-      color: theme.colors.textSecondary,
-      fontFamily: theme.typography.bodyStrong.fontFamily,
-    },
-    actionLabelPrimary: {
-      color: theme.colors.onFill,
     },
   }));
 
@@ -83,21 +76,27 @@ export function CrewIdCard({ friendId }: CrewIdCardProps) {
           <View style={styles.actions}>
             <Pressable
               accessibilityRole="button"
+              accessibilityLabel={copied ? t('friends.copiedCrewId') : t('friends.copyCrewId')}
               disabled={!friendId}
               onPress={() => void onCopy()}
-              style={styles.action}>
-              <Text style={styles.actionLabel}>
-                {copied ? t('friends.copiedCrewId') : t('friends.copyCrewId')}
-              </Text>
+              style={({ pressed }) => [styles.action, { opacity: pressed ? 0.72 : 1 }]}>
+              <AppIcon
+                name={copied ? 'check' : 'copy'}
+                size={18}
+                color={copied ? theme.colors.accentText : theme.colors.textSecondary}
+              />
             </Pressable>
             <Pressable
               accessibilityRole="button"
+              accessibilityLabel={t('friends.shareCrewId')}
               disabled={!friendId}
               onPress={() => void onShare()}
-              style={[styles.action, styles.actionPrimary]}>
-              <Text style={[styles.actionLabel, styles.actionLabelPrimary]}>
-                {t('friends.shareCrewId')}
-              </Text>
+              style={({ pressed }) => [
+                styles.action,
+                styles.actionPrimary,
+                { opacity: pressed ? 0.72 : 1 },
+              ]}>
+              <AppIcon name="share" size={18} color={theme.colors.onFill} />
             </Pressable>
           </View>
         </View>

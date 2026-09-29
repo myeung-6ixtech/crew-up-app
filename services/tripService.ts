@@ -1,7 +1,7 @@
 import type { ApolloClient } from '@apollo/client';
 import { apiEndpoints } from '@/lib/api/endpoints';
 import { nhost } from '@/lib/nhost';
-import { DELETE_TRIP, GET_MY_TRIPS, GET_TRIP_MATCHES } from '@/graphql/queries/trips';
+import { DELETE_TRIP, GET_MY_TRIPS, GET_TRIP_HISTORY, GET_TRIP_MATCHES } from '@/graphql/queries/trips';
 import type { TripEntry, TripMatchEntry } from '@/types/trip';
 
 async function authHeaders(): Promise<Record<string, string>> {
@@ -134,6 +134,24 @@ export async function fetchMyTrips(
   return {
     all: (data as { user_trips?: TripEntry[] }).user_trips ?? [],
     upcoming: (data as { upcomingTrips?: TripEntry[] }).upcomingTrips ?? [],
+  };
+}
+
+export const TRIP_HISTORY_LIMIT = 20;
+
+export async function fetchTripHistory(
+  client: ApolloClient,
+  userId: string,
+): Promise<{ upcoming: TripEntry[]; past: TripEntry[] }> {
+  const { data } = await client.query({
+    query: GET_TRIP_HISTORY,
+    variables: { userId, now: new Date().toISOString(), limit: TRIP_HISTORY_LIMIT },
+    fetchPolicy: 'network-only',
+  });
+  const result = data as { upcomingTrips?: TripEntry[]; pastTrips?: TripEntry[] };
+  return {
+    upcoming: result.upcomingTrips ?? [],
+    past: result.pastTrips ?? [],
   };
 }
 
