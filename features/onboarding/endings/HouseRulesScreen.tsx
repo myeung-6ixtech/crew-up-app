@@ -48,7 +48,7 @@ export function HouseRulesScreen() {
         resizeMode="contain"
         style={{ width: 176, height: 50, alignSelf: 'center', marginBottom: 20 }}
       />
-      <Title style={{ textAlign: 'center' }}>{t('onboarding.houseRules.title')}</Title>
+      <Title style={{ textAlign: 'center', marginBottom: 20 }}>{t('onboarding.houseRules.title')}</Title>
       <Subtitle style={{ textAlign: 'center', marginBottom: 50 }}>
         {t('onboarding.houseRules.subtitle')}
       </Subtitle>

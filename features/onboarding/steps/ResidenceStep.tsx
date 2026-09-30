@@ -127,10 +127,10 @@ export function ResidenceStep({ context }: { context: StepContext }) {
       onPrimary={() => void onNext()}
       primaryLoading={saving || savingPlace}
       error={formError || placeError}>
-      <Title>{t('onboarding.residence.title')}</Title>
+      <Title style={{ marginBottom: 20 }}>{t('onboarding.residence.title')}</Title>
       <Subtitle>{t('onboarding.residence.liveHint')}</Subtitle>
       <HometownPicker
-        label={t('onboarding.residence.city')}
+        label={t('onboarding.residence.residingCity')}
         allowClear={false}
         error={liveError}
         value={
@@ -144,10 +144,10 @@ export function ResidenceStep({ context }: { context: StepContext }) {
         }}
       />
       <View style={{ marginTop: theme.spacing.lg }}>
-        <Title>{t('onboarding.about.hometown')}</Title>
+        <Title style={{ marginBottom: 20 }}>{t('onboarding.about.hometown')}</Title>
         <Subtitle>{t('onboarding.residence.hometownHint')}</Subtitle>
         <HometownPicker
-          label={t('onboarding.residence.city')}
+          label={t('onboarding.residence.homeCity')}
           allowClear={false}
           error={homeError}
           value={hometown}

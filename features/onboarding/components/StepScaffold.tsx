@@ -142,10 +142,11 @@ export function StepScaffold({
   );
 
   const stepIndex = step && isProfileStep(step) ? PROFILE_STEPS.indexOf(step) : -1;
-  // Display name and languages are extra screens, so residence and later steps sit two slots further along.
+  // Display name, languages, and activities are extra screens. Photo is collected with display name, so it has no bar slot.
   const progressTotal = PROFILE_STEPS.length + 2;
   const progressNow =
-    progressCurrent ?? (stepIndex >= 2 ? stepIndex + 3 : stepIndex >= 0 ? stepIndex + 2 : -1);
+    progressCurrent ??
+    (stepIndex >= 5 ? stepIndex + 3 : stepIndex >= 2 ? stepIndex + 4 : stepIndex >= 0 ? stepIndex + 2 : -1);
 
   return (
     <Screen style={{ padding: 0 }}>
@@ -184,7 +185,7 @@ export function StepScaffold({
               <BodyText>{banner}</BodyText>
             </View>
           ) : null}
-          {title ? <Title style={titleStyle}>{title}</Title> : null}
+          {title ? <Title style={{ marginBottom: 20, ...titleStyle }}>{title}</Title> : null}
           {subtitle ? <Subtitle style={{ marginBottom: theme.spacing.lg }}>{subtitle}</Subtitle> : null}
           {children}
           {error ? (

@@ -21,7 +21,9 @@ import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticError } from '@/lib/haptics';
 import { useTheme } from '@/theme';
 import { getAboutDraft, setAboutDraft, type AboutDraft, type Gender } from '../aboutDraft';
+import { InterestsFields } from '../components/InterestsFields';
 import { StepScaffold } from '../components/StepScaffold';
+import { useActivitySelection } from '../hooks/useActivitySelection';
 import { useStepSave } from '../hooks/useStepForm';
 import { onboardingHref, type StepContext } from '../navigation';
 
@@ -81,9 +83,10 @@ export function AboutStep({ context }: { context: StepContext }) {
   const { save, saving, formError } = useStepSave('about', context);
   const inFlow = context === 'flow';
   const remembered = getAboutDraft();
-  const [phase, setPhase] = useState<'details' | 'languages'>(() =>
-    inFlow && remembered?.screen === 'languages' ? 'languages' : 'details',
+  const [phase, setPhase] = useState<'details' | 'languages' | 'into'>(() =>
+    inFlow && (remembered?.screen === 'languages' || remembered?.screen === 'into') ? remembered.screen : 'details',
   );
+  const interests = useActivitySelection(inFlow ? userId : null);
   const [phaseError, setPhaseError] = useState('');
   const [savingGender, setSavingGender] = useState(false);
   const deviceLanguage = useMemo(
@@ -155,7 +158,9 @@ export function AboutStep({ context }: { context: StepContext }) {
     const languages = LanguagesSchema.safeParse({ languages: values.languages });
     if (!languages.success) {
       hapticError();
-      setError('languages', { message: languages.error.issues[0]?.message ?? t('onboarding.genericError') });
+      const message = languages.error.issues[0]?.message ?? t('onboarding.genericError');
+      setError('languages', { message });
+      if (!inFlow) setPhaseError(message);
       return;
     }
     remember('languages', values, gender);
@@ -188,8 +193,36 @@ export function AboutStep({ context }: { context: StepContext }) {
       setPhase('details');
       return;
     }
+    const languages = LanguagesSchema.safeParse({ languages: values.languages });
+    if (!languages.success) {
+      hapticError();
+      setError('languages', { message: languages.error.issues[0]?.message ?? t('onboarding.genericError') });
+      return;
+    }
+    setPhaseError('');
+    remember('into', values, gender);
+    setPhase('into');
+  };
+
+  const finishAbout = async () => {
+    const values = getValues();
+    const gender = DetailsSchema.safeParse(values).data?.gender;
+    if (!gender) {
+      setPhase('details');
+      return;
+    }
     setPhaseError('');
     await saveLanguages(gender, values);
+  };
+
+  const onIntoNext = async () => {
+    try {
+      await interests.save();
+      await finishAbout();
+    } catch {
+      hapticError();
+      setPhaseError(t('onboarding.genericError'));
+    }
   };
 
   const genderField = (
@@ -277,6 +310,36 @@ export function AboutStep({ context }: { context: StepContext }) {
     />
   );
 
+  if (inFlow && phase === 'into') {
+    return (
+      <StepScaffold
+        step="about"
+        context={context}
+        progressCurrent={5}
+        onLeadingPress={() => {
+          setPhaseError('');
+          const values = getValues();
+          if (values.gender) remember('languages', values, values.gender);
+          setPhase('languages');
+        }}
+        title={t('onboarding.about.intoTitle')}
+        primaryLabel={t('onboarding.next')}
+        onPrimary={() => void onIntoNext()}
+        primaryLoading={interests.saving || saving}
+        primaryDisabled={interests.loading || interests.failed}
+        secondaryLabel={t('onboarding.skip')}
+        onSecondary={() => void finishAbout()}
+        error={formError || phaseError || (interests.failed ? t('onboarding.genericError') : '')}>
+        <InterestsFields
+          activities={interests.activities}
+          selectedIds={interests.selectedIds}
+          onToggle={interests.toggle}
+          loading={interests.loading}
+        />
+      </StepScaffold>
+    );
+  }
+
   if (inFlow && phase === 'languages') {
     return (
       <StepScaffold
@@ -326,7 +389,6 @@ export function AboutStep({ context }: { context: StepContext }) {
       />
       {genderField}
       {showGenderField}
-      {inFlow ? null : languagesField}
     </StepScaffold>
   );
 }

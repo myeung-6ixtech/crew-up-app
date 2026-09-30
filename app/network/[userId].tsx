@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, Text } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { Screen, Title, Card, Button, Badge } from '@/components/ui';
+import { ProfilePills } from '@/components/profile/ProfilePills';
+import { Screen, Title, Button, Badge, SectionLabel } from '@/components/ui';
 import { useAuth } from '@/hooks/useSession';
 import { fetchPublicProfile, requestConnection } from '@/services/connectionService';
+import { fetchActivityPreferences } from '@/services/activityService';
 import { formatFriendId } from '@/lib/friendId';
 import { ensureDirectThread } from '@/services/messagingService';
 import { ReportSheet } from '@/components/ReportSheet';
@@ -28,11 +30,19 @@ export default function PublicProfileScreen() {
     show_rank?: boolean;
     friend_id?: string | null;
   } | null>(null);
+  const [activityNames, setActivityNames] = useState<string[]>([]);
+  const [interestNames, setInterestNames] = useState<string[]>([]);
   const [reportOpen, setReportOpen] = useState(false);
 
   const load = useCallback(async () => {
     if (!paramUserId) return;
-    setProfile(await fetchPublicProfile(client, paramUserId));
+    const [nextProfile, preferences] = await Promise.all([
+      fetchPublicProfile(client, paramUserId),
+      fetchActivityPreferences(client, paramUserId).catch(() => []),
+    ]);
+    setProfile(nextProfile);
+    setActivityNames(preferences.filter((item) => item.kind === 'activity').map((item) => item.name));
+    setInterestNames(preferences.filter((item) => item.kind === 'interest').map((item) => item.name));
   }, [client, paramUserId]);
 
   useEffect(() => {
@@ -51,6 +61,18 @@ export default function PublicProfileScreen() {
         ) : null}
         {profile.is_verified ? <Badge label="Verified" tone="verified" /> : null}
         {profile.show_rank && profile.rank ? <Text>Rank: {profile.rank}</Text> : null}
+        {activityNames.length ? (
+          <View>
+            <SectionLabel>{t('onboarding.review.activitiesSection')}</SectionLabel>
+            <ProfilePills names={activityNames} />
+          </View>
+        ) : null}
+        {interestNames.length ? (
+          <View>
+            <SectionLabel>{t('onboarding.review.interestsSection')}</SectionLabel>
+            <ProfilePills names={interestNames} />
+          </View>
+        ) : null}
         <Button label={t('network.connect')} onPress={() => requestConnection(client, profile.user_id)} />
         <Button
           label="Message"

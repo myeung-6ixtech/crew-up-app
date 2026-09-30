@@ -36,6 +36,7 @@ export interface Profile {
   residence_city?: string | null;
   crew_role?: CrewRole | null;
   base_airport_iata?: string | null;
+  created_at?: string | null;
 }
 
 export interface OnboardingStateRow {
@@ -68,14 +69,23 @@ export interface ParsedRosterEntry {
   layoverEnd?: string | null;
 }
 
+export type ActivityKind = 'activity' | 'interest';
+
 export interface Activity {
   id: string;
   slug: string;
   name: string;
   description?: string | null;
   category: string;
+  kind?: ActivityKind | null;
   icon?: string | null;
   sort_order: number;
+}
+
+export interface ActivityPreference {
+  activityId: string;
+  name: string;
+  kind: ActivityKind;
 }
 
 export interface EventItem {

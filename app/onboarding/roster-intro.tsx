@@ -9,7 +9,7 @@ export default function RosterIntroScreen() {
 
   return (
     <Screen>
-      <Title>{t('onboarding.rosterIntro.title')}</Title>
+      <Title style={{ marginBottom: 20 }}>{t('onboarding.rosterIntro.title')}</Title>
       <Subtitle>{t('onboarding.rosterIntro.subtitle')}</Subtitle>
       <Button label={t('roster.upload')} onPress={() => router.push(SCREENS.roster.upload)} />
       <Button label={t('roster.manual')} onPress={() => router.push(SCREENS.roster.confirm)} variant="secondary" />

@@ -38,6 +38,8 @@ export const AppIcons = {
   lock: 'lock',
   sun: 'sun',
   moon: 'moon',
+  genderMale: 'mars',
+  genderFemale: 'venus',
 } as const;
 
 export type AppIconName = keyof typeof AppIcons;

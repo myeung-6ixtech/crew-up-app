@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
@@ -44,6 +44,13 @@ export function PhotoStep({ context }: { context: StepContext }) {
   const [fileId, setFileId] = useState<string | null>(profile?.avatar_file_id ?? null);
   const [previewUri, setPreviewUri] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const skipped = useRef(false);
+
+  useEffect(() => {
+    if (context !== 'flow' || skipped.current) return;
+    skipped.current = true;
+    void save({});
+  }, [context, save]);
 
   const onPick = async () => {
     setFormError('');
@@ -69,18 +76,32 @@ export function PhotoStep({ context }: { context: StepContext }) {
 
   const changed = fileId !== (profile?.avatar_file_id ?? null);
 
+  if (context === 'flow') {
+    if (!formError) return null;
+    return (
+      <StepScaffold
+        step="photo"
+        context={context}
+        title={t('onboarding.photo.title')}
+        primaryLabel={t('onboarding.next')}
+        onPrimary={() => void save({})}
+        primaryLoading={saving}
+        error={formError}>
+        <View />
+      </StepScaffold>
+    );
+  }
+
   return (
     <StepScaffold
       step="photo"
       context={context}
       title={t('onboarding.photo.title')}
       subtitle={t('onboarding.photo.subtitle')}
-      primaryLabel={context === 'flow' ? t('onboarding.next') : t('onboarding.save')}
+      primaryLabel={t('onboarding.save')}
       onPrimary={() => void save(changed ? { avatarFileId: fileId } : {})}
       primaryLoading={saving}
       primaryDisabled={uploading}
-      secondaryLabel={context === 'flow' && !fileId ? t('onboarding.skip') : undefined}
-      onSecondary={() => void save({})}
       error={formError}>
       <View style={{ alignItems: 'center', gap: theme.spacing.md, marginTop: theme.spacing.lg }}>
         <Avatar

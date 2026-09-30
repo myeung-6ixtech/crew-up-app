@@ -11,6 +11,8 @@ type ActivityPickerFieldProps = {
   activities: Activity[];
   value: string[];
   onChange: (activityIds: string[]) => void;
+  /** Shown first, under their own heading. */
+  pinnedIds?: string[];
   loading?: boolean;
   error?: string;
 };
@@ -27,6 +29,7 @@ export function ActivityPickerField({
   activities,
   value,
   onChange,
+  pinnedIds = [],
   loading = false,
   error,
 }: ActivityPickerFieldProps) {
@@ -91,7 +94,28 @@ export function ActivityPickerField({
       paddingVertical: t.spacing.xl,
       alignItems: 'center',
     },
+    sectionHeader: {
+      ...t.typography.label,
+      color: t.colors.textTertiary,
+      paddingHorizontal: t.spacing.md,
+      paddingTop: t.spacing.md,
+      paddingBottom: t.spacing.xs,
+    },
   }));
+
+  const rows = useMemo(() => {
+    const pinned = new Set(pinnedIds);
+    const mine = activities.filter((activity) => pinned.has(activity.id));
+    const rest = activities.filter((activity) => !pinned.has(activity.id));
+    const next: Array<{ key: string; type: 'header'; title: string } | { key: string; type: 'activity'; activity: Activity }> = [];
+    if (mine.length) {
+      next.push({ key: 'pinned', type: 'header', title: t('events.yourActivities') });
+      mine.forEach((activity) => next.push({ key: activity.id, type: 'activity', activity }));
+      if (rest.length) next.push({ key: 'all', type: 'header', title: t('events.allActivities') });
+    }
+    rest.forEach((activity) => next.push({ key: activity.id, type: 'activity', activity }));
+    return next;
+  }, [activities, pinnedIds, t]);
 
   const openSheet = () => {
     setDraftSelection(value);
@@ -154,8 +178,8 @@ export function ActivityPickerField({
         heightRatio={0.9}>
         <FlatList
           style={styles.list}
-          data={activities}
-          keyExtractor={(item) => item.id}
+          data={rows}
+          keyExtractor={(item) => item.key}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator
           ListEmptyComponent={
@@ -166,20 +190,21 @@ export function ActivityPickerField({
             </View>
           }
           renderItem={({ item }) => {
-            const isSelected = draftSelection.includes(item.id);
+            if (item.type === 'header') return <Text style={styles.sectionHeader}>{item.title}</Text>;
+            const isSelected = draftSelection.includes(item.activity.id);
             return (
               <Pressable
-                onPress={() => toggleActivity(item.id)}
+                onPress={() => toggleActivity(item.activity.id)}
                 style={({ pressed }) => [
                   styles.row,
                   isSelected ? styles.rowSelected : null,
                   { opacity: pressed ? 0.82 : 1 },
                 ]}>
                 <Text style={[styles.rowTitle, isSelected ? styles.rowTitleSelected : null]}>
-                  {item.name}
+                  {item.activity.name}
                 </Text>
                 <BodyText muted numberOfLines={1} style={styles.rowMeta}>
-                  {formatCategoryLabel(item.category)}
+                  {formatCategoryLabel(item.activity.category)}
                 </BodyText>
               </Pressable>
             );

@@ -32,6 +32,7 @@ export const GET_MY_PROFILE = gql`
       residence_city
       crew_role
       base_airport_iata
+      created_at
     }
   }
 `;

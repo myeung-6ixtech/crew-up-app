@@ -1,12 +1,14 @@
 import { useMemo, useState } from 'react';
+import { Pressable, View } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { FULL_NAME_PATTERN, NameHandleSchema, UsernameSchema } from '@crewup/shared';
-import { Input, PillSelectorGroup } from '@/components/ui';
+import { Avatar, BodyText, HeadlineText, Input, PillSelectorGroup } from '@/components/ui';
 import { hapticError, hapticSuccess } from '@/lib/haptics';
 import { useAuth, useSession } from '@/hooks/useSession';
+import { useTheme } from '@/theme';
 import { StepScaffold } from '../components/StepScaffold';
 import { UsernameField, type UsernameStatus } from '../components/UsernameField';
 import {
@@ -17,6 +19,7 @@ import {
 } from '../displayName';
 import { useStepSave } from '../hooks/useStepForm';
 import type { StepContext } from '../navigation';
+import { pickAndUploadAvatar } from './PhotoStep';
 import { OnboardingRequestError, saveStep } from '../services/onboardingService';
 
 const NamePartSchema = z
@@ -44,6 +47,7 @@ const STYLE_LABELS: Record<DisplayNameStyle, string> = {
 
 export function NameHandleStep({ context }: { context: StepContext }) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { profile } = useAuth();
   const { refreshProfile } = useSession();
   const [usernameStatus, setUsernameStatus] = useState<UsernameStatus>('idle');
@@ -52,6 +56,9 @@ export function NameHandleStep({ context }: { context: StepContext }) {
   );
   const [detailsError, setDetailsError] = useState('');
   const [savingDetails, setSavingDetails] = useState(false);
+  const [avatarFileId, setAvatarFileId] = useState<string | null>(profile?.avatar_file_id ?? null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const { save, saving, formError } = useStepSave('name_handle', context);
   const saved = splitFullName(profile?.full_name ?? '');
   const form = useForm<NameForm>({
@@ -68,6 +75,7 @@ export function NameHandleStep({ context }: { context: StepContext }) {
   const { control, watch, handleSubmit, setError } = form;
   const firstName = watch('firstName');
   const lastName = watch('lastName');
+  const displayStyle = watch('displayStyle');
   const inFlow = context === 'flow';
   const showDisplay = inFlow && phase === 'display';
 
@@ -103,8 +111,7 @@ export function NameHandleStep({ context }: { context: StepContext }) {
       return;
     }
     if (!inFlow) {
-      const preferredName = displayNameSample(values.firstName, values.lastName, values.displayStyle);
-      const withDisplay = payload(values, preferredName || null);
+      const withDisplay = payload(values, profile?.preferred_name ?? null);
       if (!withDisplay.success) {
         hapticError();
         setError('firstName', { message: withDisplay.error.issues[0]?.message ?? t('onboarding.genericError') });
@@ -134,6 +141,28 @@ export function NameHandleStep({ context }: { context: StepContext }) {
     }
   });
 
+  const onPickAvatar = async () => {
+    setDetailsError('');
+    setUploadingAvatar(true);
+    try {
+      const result = await pickAndUploadAvatar();
+      if (result.status === 'too_large') {
+        hapticError();
+        setDetailsError(t('onboarding.photo.tooLarge'));
+      }
+      if (result.status === 'uploaded') {
+        hapticSuccess();
+        setAvatarFileId(result.fileId);
+        setAvatarPreview(result.uri);
+      }
+    } catch {
+      hapticError();
+      setDetailsError(t('onboarding.genericError'));
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
   const onDisplayNext = handleSubmit(async (values) => {
     const preferredName = displayNameSample(values.firstName, values.lastName, values.displayStyle);
     const parsed = payload(values, preferredName || null);
@@ -141,6 +170,15 @@ export function NameHandleStep({ context }: { context: StepContext }) {
       hapticError();
       setDetailsError(parsed.error.issues[0]?.message ?? t('onboarding.genericError'));
       return;
+    }
+    if (avatarFileId && avatarFileId !== (profile?.avatar_file_id ?? null)) {
+      try {
+        await saveStep('photo', { avatarFileId }, { advance: false });
+      } catch (error) {
+        hapticError();
+        setDetailsError(error instanceof OnboardingRequestError ? error.message : t('onboarding.genericError'));
+        return;
+      }
     }
     await save(parsed.data, applyFieldError);
   });
@@ -160,7 +198,28 @@ export function NameHandleStep({ context }: { context: StepContext }) {
         primaryLabel={t('onboarding.next')}
         onPrimary={onDisplayNext}
         primaryLoading={saving}
+        primaryDisabled={uploadingAvatar}
         error={formError || detailsError}>
+        <View style={{ alignItems: 'center', marginBottom: theme.spacing.lg }}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={avatarFileId ? t('onboarding.photo.change') : t('onboarding.photo.choose')}
+            disabled={uploadingAvatar}
+            onPress={() => void onPickAvatar()}>
+            <Avatar
+              name={samples[displayStyle] || undefined}
+              fileId={avatarPreview ? null : avatarFileId}
+              localUri={avatarPreview}
+              size="xl"
+            />
+          </Pressable>
+          <HeadlineText style={{ marginTop: theme.spacing.md, textAlign: 'center' }}>
+            {samples[displayStyle]}
+          </HeadlineText>
+          <BodyText muted style={{ marginTop: theme.spacing.xs, textAlign: 'center' }}>
+            {uploadingAvatar ? t('onboarding.photo.uploading') : t('home.editProfilePhotoHint')}
+          </BodyText>
+        </View>
         <Controller
           control={control}
           name="displayStyle"
@@ -186,8 +245,8 @@ export function NameHandleStep({ context }: { context: StepContext }) {
       step="name_handle"
       context={context}
       progressCurrent={inFlow ? 1 : undefined}
-      title={t('onboarding.nameHandle.title')}
-      subtitle={t('onboarding.nameHandle.subtitle')}
+      title={inFlow ? t('onboarding.nameHandle.title') : t('onboarding.review.sections.nameHandle')}
+      subtitle={inFlow ? t('onboarding.nameHandle.subtitle') : undefined}
       primaryLabel={inFlow ? t('onboarding.next') : t('onboarding.save')}
       onPrimary={onDetailsNext}
       primaryLoading={savingDetails || saving}
@@ -252,25 +311,6 @@ export function NameHandleStep({ context }: { context: StepContext }) {
           />
         )}
       />
-      {inFlow ? null : (
-        <Controller
-          control={control}
-          name="displayStyle"
-          render={({ field }) => (
-            <PillSelectorGroup
-              label={t('onboarding.nameHandle.displayName')}
-              tone="fill"
-              value={field.value}
-              onChange={field.onChange}
-              options={(['full', 'initial', 'last'] as const).map((style) => ({
-                value: style,
-                label: samples[style] || t('onboarding.nameHandle.displayEmpty'),
-                accessibilityLabel: t(STYLE_LABELS[style]),
-              }))}
-            />
-          )}
-        />
-      )}
     </StepScaffold>
   );
 }

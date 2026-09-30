@@ -20,7 +20,7 @@ import { EVENT_TAGS } from '@/constants/screens';
 import { EVENT_MEET_VISIBILITY } from '@/constants/events';
 import { useAuth } from '@/hooks/useSession';
 import { createEventWithThread, insertEventActivities } from '@/services/eventService';
-import { fetchActivities } from '@/services/activityService';
+import { fetchActivities, fetchActivityPreferences } from '@/services/activityService';
 import type { Activity } from '@/types/domain';
 import { SCREENS } from '@/constants/screens';
 import { useThemedStyles } from '@/theme';
@@ -50,6 +50,7 @@ export default function CreateEventScreen() {
   const [tags, setTags] = useState<string[]>([]);
   const [activityIds, setActivityIds] = useState<string[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [pinnedActivityIds, setPinnedActivityIds] = useState<string[]>([]);
   const [activitiesLoading, setActivitiesLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [visibilityScope, setVisibilityScope] = useState<'all_verified' | 'friends'>(
@@ -67,8 +68,16 @@ export default function CreateEventScreen() {
     void (async () => {
       setActivitiesLoading(true);
       try {
-        const list = await fetchActivities(client);
-        if (!cancelled) setActivities(list);
+        const [list, preferences] = await Promise.all([
+          fetchActivities(client),
+          userId ? fetchActivityPreferences(client, userId) : Promise.resolve([]),
+        ]);
+        if (!cancelled) {
+          setActivities(list.filter((activity) => (activity.kind ?? 'activity') === 'activity'));
+          setPinnedActivityIds(
+            preferences.filter((item) => item.kind === 'activity').map((item) => item.activityId),
+          );
+        }
       } finally {
         if (!cancelled) setActivitiesLoading(false);
       }
@@ -76,7 +85,7 @@ export default function CreateEventScreen() {
     return () => {
       cancelled = true;
     };
-  }, [client]);
+  }, [client, userId]);
 
   const onSubmit = async () => {
     if (!userId) return;
@@ -137,6 +146,7 @@ export default function CreateEventScreen() {
             activities={activities}
             value={activityIds}
             onChange={setActivityIds}
+            pinnedIds={pinnedActivityIds}
             loading={activitiesLoading}
           />
         </FormSection>
