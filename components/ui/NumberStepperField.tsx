@@ -1,4 +1,5 @@
 import { Pressable, Text, View } from 'react-native';
+import { hapticSelection } from '@/lib/haptics';
 import { useThemedStyles } from '@/theme';
 
 export function NumberStepperField({
@@ -60,11 +61,15 @@ export function NumberStepperField({
   }));
 
   const decrement = () => {
-    if (value > min) onChange(value - 1);
+    if (value <= min) return;
+    hapticSelection();
+    onChange(value - 1);
   };
 
   const increment = () => {
-    if (value < max) onChange(value + 1);
+    if (value >= max) return;
+    hapticSelection();
+    onChange(value + 1);
   };
 
   return (

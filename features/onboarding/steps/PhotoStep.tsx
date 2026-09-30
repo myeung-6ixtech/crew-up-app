@@ -6,6 +6,7 @@ import { Avatar, BodyText, Button } from '@/components/ui';
 import { STORAGE_BUCKETS } from '@/constants/storage';
 import { useAuth } from '@/hooks/useSession';
 import { uploadFile } from '@/services/uploadService';
+import { hapticError, hapticSuccess } from '@/lib/haptics';
 import { useTheme } from '@/theme';
 import { StepScaffold } from '../components/StepScaffold';
 import { useStepSave } from '../hooks/useStepForm';
@@ -49,12 +50,17 @@ export function PhotoStep({ context }: { context: StepContext }) {
     setUploading(true);
     try {
       const result = await pickAndUploadAvatar();
-      if (result.status === 'too_large') setFormError(t('onboarding.photo.tooLarge'));
+      if (result.status === 'too_large') {
+        hapticError();
+        setFormError(t('onboarding.photo.tooLarge'));
+      }
       if (result.status === 'uploaded') {
+        hapticSuccess();
         setFileId(result.fileId);
         setPreviewUri(result.uri);
       }
     } catch {
+      hapticError();
       setFormError(t('onboarding.genericError'));
     } finally {
       setUploading(false);

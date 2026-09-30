@@ -1,4 +1,5 @@
 import { Pressable, View, Text } from 'react-native';
+import { hapticImpact } from '@/lib/haptics';
 import { useThemedStyles } from '@/theme';
 import { Avatar } from './Avatar';
 
@@ -51,7 +52,11 @@ export function ListRow({
 
   if (onPress) {
     return (
-      <Pressable onPress={onPress}>
+      <Pressable
+        onPress={() => {
+          hapticImpact();
+          onPress();
+        }}>
         {inner}
         <View style={styles.divider} />
       </Pressable>

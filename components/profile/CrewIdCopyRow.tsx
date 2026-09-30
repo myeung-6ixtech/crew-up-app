@@ -3,6 +3,7 @@ import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AppIcon } from '@/components/ui';
 import { copyToClipboard } from '@/lib/clipboard';
+import { hapticError, hapticSuccess } from '@/lib/haptics';
 import { formatFriendId } from '@/lib/friendId';
 import { useThemedStyles, useTheme } from '@/theme';
 
@@ -75,8 +76,14 @@ export function CrewIdCopyRow({ friendId, compact = false }: CrewIdCopyRowProps)
 
   const onCopy = useCallback(async () => {
     if (!friendId) return;
-    await copyToClipboard(formatFriendId(friendId));
-    setCopied(true);
+    try {
+      await copyToClipboard(formatFriendId(friendId));
+      hapticSuccess();
+      setCopied(true);
+    } catch {
+      hapticError();
+      return;
+    }
     setTimeout(() => setCopied(false), 2000);
   }, [friendId]);
 

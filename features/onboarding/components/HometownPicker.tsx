@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import {
   PickerFieldShell,
@@ -7,7 +7,7 @@ import {
   usePickerFieldStyles,
 } from '@/components/profile/pickerFieldShared';
 import { countryName } from '@crewup/shared';
-import { AppIcon, BodyText, BottomSheet, SearchInputField } from '@/components/ui';
+import { AppIcon, BodyText, BottomSheet, HapticPressable, SearchInputField } from '@/components/ui';
 import { useTheme } from '@/theme';
 import { searchHometowns, type PlaceHit } from '../services/placeSearch';
 
@@ -105,14 +105,15 @@ export function HometownPicker({ label, value, onChange, error, allowClear = tru
           placeholder={t('onboarding.about.hometownPlaceholder')}
         />
         {allowClear && value?.name ? (
-          <Pressable
+          <HapticPressable
+            haptic="selection"
             onPress={() => {
               onChange(null);
               close();
             }}
             style={styles.listRow}>
             <Text style={styles.subtitle}>{t('onboarding.about.hometownClear')}</Text>
-          </Pressable>
+          </HapticPressable>
         ) : null}
         {searching ? (
           <ActivityIndicator color={theme.colors.accentText} style={{ marginTop: theme.spacing.md }} />
@@ -135,7 +136,8 @@ export function HometownPicker({ label, value, onChange, error, allowClear = tru
             )
           }
           renderItem={({ item }) => (
-            <Pressable
+            <HapticPressable
+              haptic="selection"
               onPress={() => {
                 onChange({
                   name: item.name,
@@ -159,7 +161,7 @@ export function HometownPicker({ label, value, onChange, error, allowClear = tru
                   </Text>
                 ) : null}
               </View>
-            </Pressable>
+            </HapticPressable>
           )}
         />
       </BottomSheet>

@@ -14,7 +14,8 @@ import {
 import { useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Avatar, AppIcon } from '@/components/ui';
+import { Avatar, AppIcon, HapticPressable } from '@/components/ui';
+import { hapticSelection, hapticWarning } from '@/lib/haptics';
 import { CrewIdCopyRow } from '@/components/profile/CrewIdCopyRow';
 import { useAppMenu } from '@/contexts/AppMenuContext';
 import { SCREENS } from '@/constants/screens';
@@ -239,6 +240,7 @@ export function AppSideMenu() {
         text: t('auth.signOut'),
         style: 'destructive',
         onPress: () => {
+          hapticWarning();
           close();
           void signOut();
         },
@@ -274,7 +276,7 @@ export function AppSideMenu() {
             bounces={false}
             showsVerticalScrollIndicator={false}>
             {menuItems.map((item) => (
-              <Pressable
+              <HapticPressable
                 key={item.id}
                 accessibilityRole="button"
                 accessibilityLabel={item.label}
@@ -285,7 +287,7 @@ export function AppSideMenu() {
                 ]}>
                 <AppIcon name={item.icon} size={22} color={theme.colors.textSecondary} />
                 <Text style={styles.menuLabel}>{item.label}</Text>
-              </Pressable>
+              </HapticPressable>
             ))}
           </ScrollView>
 
@@ -321,7 +323,11 @@ export function AppSideMenu() {
                       accessibilityLabel={
                         mode === 'light' ? t('menu.themeLight') : t('menu.themeDark')
                       }
-                      onPress={() => setColorScheme(mode)}
+                      onPress={() => {
+                        if (selected) return;
+                        hapticSelection();
+                        setColorScheme(mode);
+                      }}
                       style={styles.themeOption}>
                       <AppIcon
                         name={mode === 'light' ? 'sun' : 'moon'}
@@ -333,7 +339,7 @@ export function AppSideMenu() {
                 })}
               </View>
             </View>
-            <Pressable
+            <HapticPressable
               accessibilityRole="button"
               accessibilityLabel={t('auth.signOut')}
               onPress={confirmSignOut}
@@ -345,7 +351,7 @@ export function AppSideMenu() {
               <Text style={[styles.menuLabel, styles.menuLabelDestructive]}>
                 {t('auth.signOut')}
               </Text>
-            </Pressable>
+            </HapticPressable>
           </View>
         </Animated.View>
       </View>

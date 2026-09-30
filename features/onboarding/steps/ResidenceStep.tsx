@@ -7,6 +7,7 @@ import { Subtitle, Title } from '@/components/ui';
 import { UPDATE_PROFILE } from '@/graphql/mutations/profile';
 import { useAuth, useSession } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
+import { hapticError, hapticSuccess } from '@/lib/haptics';
 import { useTheme } from '@/theme';
 import { getAboutDraft } from '../aboutDraft';
 import { HometownPicker, type HometownValue } from '../components/HometownPicker';
@@ -65,7 +66,10 @@ export function ResidenceStep({ context }: { context: StepContext }) {
     if (!hometown?.name || !hometown.countryCode) {
       setHomeError(t('onboarding.residence.chooseCity'));
     }
-    if (!residence.success || !hometown?.name || !hometown.countryCode) return;
+    if (!residence.success || !hometown?.name || !hometown.countryCode) {
+      hapticError();
+      return;
+    }
 
     const draft = getAboutDraft();
     const about = AboutSchema.safeParse({
@@ -77,6 +81,7 @@ export function ResidenceStep({ context }: { context: StepContext }) {
       hometownLongitude: hometown.longitude,
     });
     if (!about.success) {
+      hapticError();
       setPlaceError(about.error.issues[0]?.message ?? t('onboarding.genericError'));
       return;
     }
@@ -101,10 +106,12 @@ export function ResidenceStep({ context }: { context: StepContext }) {
       await saveStep('about', about.data, { advance: inFlow });
       await saveStep('residence', residence.data, { advance: inFlow });
       await refreshProfile();
+      hapticSuccess();
       if (inFlow) router.push(onboardingHref('crew'));
       else if (router.canGoBack()) router.back();
       else router.replace(onboardingHref('review'));
     } catch (error) {
+      hapticError();
       if (error instanceof OnboardingRequestError) setPlaceError(error.message);
       else setPlaceError(t('onboarding.about.hometownFailed'));
     } finally {

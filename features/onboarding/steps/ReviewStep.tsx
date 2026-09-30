@@ -14,6 +14,7 @@ import { StepScaffold } from '../components/StepScaffold';
 import { useOnboardingState } from '../hooks/useOnboardingState';
 import { useStepSave } from '../hooks/useStepForm';
 import { reviewEditHref } from '../navigation';
+import { hapticError } from '@/lib/haptics';
 import { incompleteFields } from '../profileInput';
 
 const LANGUAGE_NAMES = new Map(LANGUAGES.map(([code, name]) => [code, name]));
@@ -130,6 +131,7 @@ export function ReviewStep() {
 
   const onContinue = async () => {
     if (missing.size) {
+      hapticError();
       setFormError(t('onboarding.review.incomplete'));
       return;
     }

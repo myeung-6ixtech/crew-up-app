@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { nextStep, type OnboardingStep, type STEP_SCHEMAS, type StepData, type StepInput } from '@crewup/shared';
 import { useAppMode } from '@/hooks/useAppMode';
 import { useSession } from '@/hooks/useSession';
+import { hapticError, hapticSuccess } from '@/lib/haptics';
 import { onboardingHref, type StepContext } from '../navigation';
 import { OnboardingRequestError, saveStep } from '../services/onboardingService';
 
@@ -43,9 +44,11 @@ export function useStepSave<S extends OnboardingStep>(step: S, context: StepCont
       try {
         await saveStep(step, data, { advance: context === 'flow' });
         await refreshProfile();
+        hapticSuccess();
         navigate();
         return true;
       } catch (error) {
+        hapticError();
         if (error instanceof OnboardingRequestError) {
           const fields = Object.entries(error.fields);
           fields.forEach(([field, message]) => onFieldError?.(field, message));

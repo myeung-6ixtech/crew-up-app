@@ -12,6 +12,7 @@ import { icons as uniconsSolid } from '@iconify-json/uis';
 import { SvgXml } from 'react-native-svg';
 import { AppIcons, type AppIconName } from '@/components/icons/catalog';
 import { TAB_BAR_HIT_SLOP } from '@/constants/tabBar';
+import { hapticSelection } from '@/lib/haptics';
 import { useTheme } from '@/theme';
 
 type TabBarIconButtonProps = {
@@ -60,7 +61,10 @@ export const TabBarIconButton = memo(function TabBarIconButton({
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={() => {
+        hapticSelection();
+        onPress();
+      }}
       onLongPress={onLongPress}
       accessibilityRole="tab"
       accessibilityLabel={accessibilityLabel}

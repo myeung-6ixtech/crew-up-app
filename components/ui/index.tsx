@@ -1,6 +1,7 @@
 export { Screen } from './Screen';
 export { Card } from './Card';
 export { Button } from './Button';
+export { HapticPressable } from './HapticPressable';
 export { Input } from './Input';
 export { SearchInputField } from './SearchInputField';
 export { DateTimeField, combineDateAndTime } from './DateTimeField';

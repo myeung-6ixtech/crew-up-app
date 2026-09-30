@@ -1,4 +1,5 @@
 import { ActivityIndicator, Pressable, Text, View, type TextStyle } from 'react-native';
+import { hapticImpact } from '@/lib/haptics';
 import { useThemedStyles, useTheme } from '@/theme';
 
 export function AuthOutlineButton({
@@ -33,7 +34,13 @@ export function AuthOutlineButton({
   }));
 
   return (
-    <Pressable onPress={onPress} disabled={loading} style={styles.button}>
+    <Pressable
+      onPress={() => {
+        hapticImpact();
+        onPress();
+      }}
+      disabled={loading}
+      style={styles.button}>
       {loading ? (
         <ActivityIndicator color={theme.colors.accentText} />
       ) : (

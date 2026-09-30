@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { FULL_NAME_PATTERN, NameHandleSchema, UsernameSchema } from '@crewup/shared';
 import { Input, PillSelectorGroup } from '@/components/ui';
+import { hapticError, hapticSuccess } from '@/lib/haptics';
 import { useAuth, useSession } from '@/hooks/useSession';
 import { StepScaffold } from '../components/StepScaffold';
 import { UsernameField, type UsernameStatus } from '../components/UsernameField';
@@ -97,6 +98,7 @@ export function NameHandleStep({ context }: { context: StepContext }) {
   const onDetailsNext = handleSubmit(async (values) => {
     const parsed = payload(values, null);
     if (!parsed.success) {
+      hapticError();
       setError('firstName', { message: parsed.error.issues[0]?.message ?? t('onboarding.genericError') });
       return;
     }
@@ -104,6 +106,7 @@ export function NameHandleStep({ context }: { context: StepContext }) {
       const preferredName = displayNameSample(values.firstName, values.lastName, values.displayStyle);
       const withDisplay = payload(values, preferredName || null);
       if (!withDisplay.success) {
+        hapticError();
         setError('firstName', { message: withDisplay.error.issues[0]?.message ?? t('onboarding.genericError') });
         return;
       }
@@ -115,8 +118,10 @@ export function NameHandleStep({ context }: { context: StepContext }) {
     try {
       await saveStep('name_handle', parsed.data, { advance: false });
       await refreshProfile();
+      hapticSuccess();
       setPhase('display');
     } catch (error) {
+      hapticError();
       if (error instanceof OnboardingRequestError) {
         const fields = Object.entries(error.fields);
         fields.forEach(([field, message]) => applyFieldError(field, message));
@@ -133,6 +138,7 @@ export function NameHandleStep({ context }: { context: StepContext }) {
     const preferredName = displayNameSample(values.firstName, values.lastName, values.displayStyle);
     const parsed = payload(values, preferredName || null);
     if (!parsed.success) {
+      hapticError();
       setDetailsError(parsed.error.issues[0]?.message ?? t('onboarding.genericError'));
       return;
     }

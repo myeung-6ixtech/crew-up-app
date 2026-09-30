@@ -1,5 +1,6 @@
 import { Pressable } from 'react-native';
 import { AppIcon, type AppIconName } from '@/components/ui';
+import { hapticSelection } from '@/lib/haptics';
 import { useThemedStyles, useTheme } from '@/theme';
 
 type TabHeaderIconButtonProps = {
@@ -30,7 +31,10 @@ export function TabHeaderIconButton({
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={() => {
+        hapticSelection();
+        onPress();
+      }}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       style={({ pressed }) => [styles.hit, { opacity: pressed ? 0.72 : 1 }]}>

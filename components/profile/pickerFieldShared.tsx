@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { AppIcon } from '@/components/icons';
+import { hapticImpact } from '@/lib/haptics';
 import { useThemedStyles, useTheme } from '@/theme';
 
 const BADGE_SIZE = 44;
@@ -109,7 +110,11 @@ export function PickerFieldShell({
         accessibilityRole="button"
         accessibilityLabel={label}
         accessibilityHint={accessibilityHint}
-        onPress={onPress}
+        onPress={() => {
+          if (disabled) return;
+          hapticImpact();
+          onPress();
+        }}
         disabled={disabled}
         style={({ pressed }) => [
           styles.field,

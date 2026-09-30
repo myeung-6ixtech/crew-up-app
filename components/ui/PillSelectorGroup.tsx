@@ -1,4 +1,5 @@
 import { Pressable, Text, View } from 'react-native';
+import { hapticSelection } from '@/lib/haptics';
 import { useThemedStyles } from '@/theme';
 
 export type PillSelectorOption<T extends string> = {
@@ -44,7 +45,10 @@ function PillSelector<T extends string>({
       accessibilityRole="button"
       accessibilityState={{ selected }}
       accessibilityLabel={accessibilityLabel ?? label}
-      onPress={onPress}
+      onPress={() => {
+        hapticSelection();
+        onPress();
+      }}
       style={({ pressed }) => [styles.pill, { opacity: pressed ? 0.72 : 1 }]}>
       <Text style={styles.text}>{label}</Text>
     </Pressable>

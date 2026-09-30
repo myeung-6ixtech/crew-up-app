@@ -1,4 +1,5 @@
 import { Pressable, ActivityIndicator, View, Text } from 'react-native';
+import { hapticImpact, hapticWarning } from '@/lib/haptics';
 import { useThemedStyles, useTheme } from '@/theme';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive';
@@ -70,7 +71,11 @@ export function Button({
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={() => {
+        if (variant === 'destructive') hapticWarning();
+        else hapticImpact();
+        onPress();
+      }}
       disabled={disabled || loading}
       style={({ pressed }) => [
         styles.base,

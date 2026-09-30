@@ -18,6 +18,7 @@ import { AppIcon, BodyText, DatePickerField, PillSelectorGroup } from '@/compone
 import { UPDATE_PROFILE } from '@/graphql/mutations/profile';
 import { useAuth, useSession } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
+import { hapticError } from '@/lib/haptics';
 import { useTheme } from '@/theme';
 import { getAboutDraft, setAboutDraft, type AboutDraft, type Gender } from '../aboutDraft';
 import { StepScaffold } from '../components/StepScaffold';
@@ -128,6 +129,7 @@ export function AboutStep({ context }: { context: StepContext }) {
     const values = getValues();
     const parsed = DetailsSchema.safeParse(values);
     if (!parsed.success) {
+      hapticError();
       const issue = parsed.error.issues[0];
       const field = issue?.path[0];
       if (field === 'dateOfBirth' || field === 'gender') setError(field, { message: issue.message });
@@ -142,6 +144,7 @@ export function AboutStep({ context }: { context: StepContext }) {
       if (inFlow) setPhase('languages');
       else await saveLanguages(parsed.data.gender, values);
     } catch {
+      hapticError();
       setPhaseError(t('onboarding.genericError'));
     } finally {
       setSavingGender(false);
@@ -151,6 +154,7 @@ export function AboutStep({ context }: { context: StepContext }) {
   const saveLanguages = async (gender: Gender, values: AboutForm) => {
     const languages = LanguagesSchema.safeParse({ languages: values.languages });
     if (!languages.success) {
+      hapticError();
       setError('languages', { message: languages.error.issues[0]?.message ?? t('onboarding.genericError') });
       return;
     }
@@ -168,6 +172,7 @@ export function AboutStep({ context }: { context: StepContext }) {
         router.push(onboardingHref('residence'));
         return;
       }
+      hapticError();
       setPhaseError(about.error.issues[0]?.message ?? t('onboarding.genericError'));
       return;
     }

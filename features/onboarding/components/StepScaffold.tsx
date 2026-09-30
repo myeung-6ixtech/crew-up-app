@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PROFILE_STEPS, isProfileStep, previousStep, type OnboardingStep } from '@crewup/shared';
 import { AppIcon, BodyText, Button, Screen, Subtitle, Title } from '@/components/ui';
+import { hapticWarning } from '@/lib/haptics';
 import { useAppMode } from '@/hooks/useAppMode';
 import { useSession } from '@/hooks/useSession';
 import { useTheme, useThemedStyles } from '@/theme';
@@ -105,7 +106,14 @@ export function StepScaffold({
   const confirmSignOut = useCallback(() => {
     Alert.alert(t('onboarding.signOutConfirmTitle'), t('onboarding.signOutConfirmBody'), [
       { text: t('common.cancel'), style: 'cancel' },
-      { text: t('onboarding.logOut'), style: 'destructive', onPress: () => void signOut() },
+      {
+        text: t('onboarding.logOut'),
+        style: 'destructive',
+        onPress: () => {
+          hapticWarning();
+          void signOut();
+        },
+      },
     ]);
   }, [signOut, t]);
 

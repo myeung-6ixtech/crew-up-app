@@ -1,4 +1,5 @@
 import { Pressable, Text } from 'react-native';
+import { hapticSelection } from '@/lib/haptics';
 import { useThemedStyles } from '@/theme';
 
 export function SelectionOption({
@@ -25,7 +26,12 @@ export function SelectionOption({
   }));
 
   return (
-    <Pressable onPress={onPress} style={styles.row}>
+    <Pressable
+      onPress={() => {
+        hapticSelection();
+        onPress();
+      }}
+      style={styles.row}>
       <Text style={styles.text}>{label}</Text>
     </Pressable>
   );
