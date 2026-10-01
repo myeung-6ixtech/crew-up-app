@@ -1,0 +1,18 @@
+{
+  "name": "@crewup/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Onboarding schemas, step ids, reference lists and routing shared by crew-up-app, crew-up-nhost and crew-up-admin",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --import ./test/register-ts-hooks.mjs --test test/*.test.mjs"
+  },
+  "peerDependencies": {
+    "zod": "^4.0.0"
+  }
+}

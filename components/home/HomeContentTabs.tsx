@@ -89,7 +89,7 @@ export function HomeContentTabs({
           />
         ))}
       </View>
-      <View style={styles.panel} accessibilityRole="tabpanel">
+      <View style={styles.panel}>
         {children}
       </View>
     </View>

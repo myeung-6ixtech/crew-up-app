@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@apollo/client": "^4.2.8",
-    "@crewup/shared": "file:../packages/shared",
+    "@crewup/shared": "file:./packages/shared",
     "@expo-google-fonts/ibm-plex-mono": "^0.4.1",
     "@expo-google-fonts/inter": "^0.4.2",
     "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
@@ -58,6 +58,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "sync:shared": "node scripts/sync-shared.mjs",
     "typecheck": "tsc --noEmit",
     "test:timezone": "node --experimental-strip-types --test scripts/timezone.test.mjs"
   },
