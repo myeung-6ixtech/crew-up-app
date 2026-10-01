@@ -1,4 +1,4 @@
-import { ScrollView, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Card, BodyText, NumericText, StatusDot, SectionLabel, EmptyState } from '@/components/ui';
 import { HOME_SECTION_PADDING, HOME_SECTION_SPACING } from '@/constants/homeLayout';
@@ -15,9 +15,12 @@ import {
 export function UpcomingTripsCarousel({
   trips,
   embedded = false,
+  onPressTrip,
 }: {
   trips: TripEntry[];
   embedded?: boolean;
+  /** Trips with a stay open their layover. */
+  onPressTrip?: (trip: TripEntry) => void;
 }) {
   const { t } = useTranslation();
   const styles = useThemedStyles((theme) => ({
@@ -52,7 +55,12 @@ export function UpcomingTripsCarousel({
     const departureDate = tripDepartureDateLabel(trip);
 
     return (
-      <View key={trip.id} style={[styles.card, embedded && styles.cardGap]}>
+      <Pressable
+        key={trip.id}
+        accessibilityRole={stay && onPressTrip ? 'button' : undefined}
+        disabled={!stay || !onPressTrip}
+        onPress={() => onPressTrip?.(trip)}
+        style={({ pressed }) => [styles.card, embedded && styles.cardGap, { opacity: pressed ? 0.85 : 1 }]}>
         <Card>
           <View style={styles.cardInner}>
             <View style={styles.headerRow}>
@@ -85,7 +93,7 @@ export function UpcomingTripsCarousel({
             ) : null}
           </View>
         </Card>
-      </View>
+      </Pressable>
     );
   });
 

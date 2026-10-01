@@ -2,10 +2,6 @@ import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { AppSideMenu } from '@/components/navigation/AppSideMenu';
 import { FloatingTabBar } from '@/components/navigation/FloatingTabBar';
-import { HomeProfileHeaderButton } from '@/components/navigation/HomeProfileHeaderButton';
-import { EventsCreateHeaderButton } from '@/components/navigation/EventsCreateHeaderButton';
-import { FriendsAddHeaderButton } from '@/components/navigation/FriendsAddHeaderButton';
-import { TabHeaderMenuButton } from '@/components/navigation/TabHeaderMenuButton';
 import { AppMenuProvider } from '@/contexts/AppMenuContext';
 import { TabBarScrollProvider } from '@/contexts/TabBarScrollContext';
 import { useTheme } from '@/theme';
@@ -20,9 +16,7 @@ export default function TabLayout() {
         <Tabs
           tabBar={(props) => <FloatingTabBar {...props} />}
           screenOptions={{
-            headerShown: true,
-            headerTitle: '',
-            headerLeft: () => <TabHeaderMenuButton />,
+            headerShown: false,
             tabBarShowLabel: false,
             tabBarStyle: {
               position: 'absolute',
@@ -44,12 +38,12 @@ export default function TabLayout() {
             name="index"
             options={{
               tabBarAccessibilityLabel: t('tabs.home'),
-              headerRight: () => <HomeProfileHeaderButton />,
             }}
           />
           <Tabs.Screen
             name="network"
             options={{
+              href: null,
               tabBarAccessibilityLabel: t('tabs.network'),
             }}
           />
@@ -57,7 +51,6 @@ export default function TabLayout() {
             name="events"
             options={{
               tabBarAccessibilityLabel: t('tabs.events'),
-              headerRight: () => <EventsCreateHeaderButton />,
             }}
           />
           <Tabs.Screen
@@ -70,7 +63,12 @@ export default function TabLayout() {
             name="friends"
             options={{
               tabBarAccessibilityLabel: t('tabs.friends'),
-              headerRight: () => <FriendsAddHeaderButton />,
+            }}
+          />
+          <Tabs.Screen
+            name="profile"
+            options={{
+              tabBarAccessibilityLabel: t('tabs.profile'),
             }}
           />
         </Tabs>

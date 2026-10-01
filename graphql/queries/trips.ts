@@ -168,11 +168,16 @@ export const GET_TRIP_MATCHES = gql`
       arrival_airport
       overlap_start
       overlap_end
+      source_trip_id
       matchedUser {
         profile {
           display_name
+          preferred_name
           role_type
+          crew_role
           base_airport
+          base_airport_iata
+          avatar_file_id
         }
       }
     }

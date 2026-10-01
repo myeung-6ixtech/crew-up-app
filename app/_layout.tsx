@@ -70,12 +70,14 @@ function RootNavigator() {
       <Stack.Screen name="presence/[city]" options={{ title: 'Who is around' }} />
       <Stack.Screen name="network/connections" options={{ title: 'Connections' }} />
       <Stack.Screen name="network/discover" options={{ title: 'Discover' }} />
-      <Stack.Screen name="network/[userId]" options={{ title: 'Crew profile' }} />
-      <Stack.Screen name="events/[id]" options={{ title: 'Event' }} />
-      <Stack.Screen name="events/create" options={{ title: 'Create meetup' }} />
+      <Stack.Screen name="network/[userId]" options={{ headerShown: false }} />
+      <Stack.Screen name="events/[id]" options={{ headerShown: false }} />
+      <Stack.Screen name="events/create" options={{ headerShown: false }} />
       <Stack.Screen name="events/edit/[id]" options={{ title: 'Edit event' }} />
       <Stack.Screen name="messages/[threadId]" options={{ title: 'Chat' }} />
-      <Stack.Screen name="friends/add" options={{ title: '' }} />
+      <Stack.Screen name="friends/add" options={{ headerShown: false }} />
+      <Stack.Screen name="discover/search" options={{ headerShown: false }} />
+      <Stack.Screen name="discover/layover/[tripId]" options={{ headerShown: false }} />
       <Stack.Screen name="profile/edit" options={{ headerShown: false }} />
       <Stack.Screen name="profile/edit-section/[step]" options={{ title: '' }} />
       <Stack.Screen name="profile/privacy" options={{ title: 'Privacy Settings' }} />

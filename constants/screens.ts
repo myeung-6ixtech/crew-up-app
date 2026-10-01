@@ -5,6 +5,7 @@ export const SCREENS = {
     events: '/(tabs)/events',
     messages: '/(tabs)/messages',
     friends: '/(tabs)/friends',
+    profile: '/(tabs)/profile',
   },
   auth: {
     welcome: '/auth/welcome',
@@ -36,6 +37,12 @@ export const SCREENS = {
     addTripManual: '/roster/add-trip/manual',
     addTripAvailability: '/roster/add-trip/availability',
   },
+  discover: {
+    /** Search layovers; a saved layover passes its city and window. */
+    search: (params?: { city?: string; from?: string; to?: string }) =>
+      ({ pathname: '/discover/search', params: params ?? {} }) as const,
+    layover: (tripId: string) => `/discover/layover/${tripId}` as const,
+  },
   presence: (city: string) => `/presence/${encodeURIComponent(city)}` as const,
   network: {
     connections: '/network/connections',
@@ -48,7 +55,8 @@ export const SCREENS = {
     edit: (id: string) => `/events/edit/${id}` as const,
   },
   messages: {
-    thread: (threadId: string) => `/messages/${threadId}` as const,
+    thread: (threadId: string, withUserId?: string) =>
+      (withUserId ? `/messages/${threadId}?with=${withUserId}` : `/messages/${threadId}`) as `/messages/${string}`,
   },
   friends: {
     add: '/friends/add',
@@ -78,14 +86,7 @@ export const VISIBILITY_LEVELS: VisibilityLevel[] = [
   'all_verified',
 ];
 
-export const EVENT_TAGS = [
-  'alcohol_free',
-  'halal_friendly',
-  'women_only',
-  'karaoke',
-  'dinner',
-  'coffee',
-  'hiking',
-] as const;
+/** Quick tags are practical notes only. Dinner, coffee, hiking and karaoke are activities now. */
+export const EVENT_TAGS = ['alcohol_free', 'halal_friendly', 'women_only'] as const;
 
 export const ROLE_TYPES = ['cabin_crew', 'pilot', 'ground_ops'] as const;

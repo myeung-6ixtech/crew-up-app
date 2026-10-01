@@ -49,11 +49,16 @@ export type TripMatchEntry = {
   arrival_airport?: string | null;
   overlap_start?: string | null;
   overlap_end?: string | null;
+  source_trip_id?: string | null;
   matchedUser?: {
     profile?: {
       display_name?: string | null;
+      preferred_name?: string | null;
       role_type?: string | null;
+      crew_role?: string | null;
       base_airport?: string | null;
+      base_airport_iata?: string | null;
+      avatar_file_id?: string | null;
     } | null;
   } | null;
 };

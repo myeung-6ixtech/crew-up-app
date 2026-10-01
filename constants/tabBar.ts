@@ -1,7 +1,7 @@
 import { spacing } from '@/theme/tokens';
 
 /** Floating tab bar layout — see documentation/design-system.md §3.10 (revised). */
-export const TAB_BAR_EXPANDED_HEIGHT = 76;
+export const TAB_BAR_EXPANDED_HEIGHT = 64;
 export const TAB_BAR_COMPACT_HEIGHT = 52;
 export const TAB_BAR_FLOAT_OFFSET = spacing.lg;
 export const TAB_BAR_WIDTH_RATIO = 0.94;

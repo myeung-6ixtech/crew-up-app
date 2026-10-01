@@ -55,11 +55,16 @@ export const GET_HOME_DATA = gql`
       arrival_airport
       overlap_start
       overlap_end
+      source_trip_id
       matchedUser {
         profile {
           display_name
+          preferred_name
           role_type
+          crew_role
           base_airport
+          base_airport_iata
+          avatar_file_id
         }
       }
     }
@@ -97,11 +102,15 @@ export const GET_HOME_DATA = gql`
       requester {
         profile {
           display_name
+          preferred_name
+          avatar_file_id
         }
       }
       addressee {
         profile {
           display_name
+          preferred_name
+          avatar_file_id
         }
       }
     }

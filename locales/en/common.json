@@ -5,7 +5,8 @@
     "network": "Network",
     "events": "Events",
     "messages": "Messages",
-    "friends": "Friends"
+    "friends": "Friends",
+    "profile": "Profile"
   },
   "auth": {
     "welcomeTitle": "Every layover, someone to go with.",
@@ -324,7 +325,7 @@
     "emptyRoster": "Upload your roster to see layovers and matching.",
     "emptyPresence": "No crew nearby yet",
     "emptyPresenceBody": "Upload your roster or check back when you're on layover.",
-    "emptyEvents": "No upcoming meetups",
+    "emptyEvents": "No upcoming meets.",
     "emptyEventsBody": "Browse events or create one for your layover city.",
     "account": "Account",
     "yourProfile": "Your profile",
@@ -389,7 +390,10 @@
     "notifications": "Notifications",
     "verification": "Verification",
     "verificationComplete": "Your crew credentials are verified.",
-    "saveChanges": "Save Changes"
+    "saveChanges": "Save Changes",
+    "upcomingMeets": "Upcoming meets",
+    "recentConnections": "Recent connections",
+    "isNowYourFriend": "is now your friend"
   },
   "roster": {
     "upload": "Update schedule",
@@ -461,7 +465,10 @@
     "requests": "Requests",
     "yourFriends": "Your friends",
     "emptyTitle": "No friends yet",
-    "emptyBody": "Add crew to your network with their Crew ID or suggested matches."
+    "emptyBody": "Add crew to your network with their Crew ID or suggested matches.",
+    "nowFriends": "{{name}} is now your friend",
+    "suggestedBaseFirst": "Crew at {{base}} first.",
+    "crewIdQuietHint": "Try another code, or clear it — partial codes stay quiet."
   },
   "events": {
     "create": "Create meetup",
@@ -480,10 +487,10 @@
     "sectionMeet": "Meet",
     "sectionPrivacy": "Privacy",
     "sectionMeetDetails": "Meet details",
-    "meetTitle": "Meet Title",
+    "meetTitle": "Meet title",
     "meetTitlePlaceholder": "e.g. Sunday coffee in Shibuya",
     "notes": "Notes",
-    "notesPlaceholder": "Share anything helpful — where to meet, dress code, or what to bring.",
+    "notesPlaceholder": "Where to meet, dress code, or what to bring",
     "venue": "Venue",
     "venuePlaceholder": "Restaurant, café, or meeting spot",
     "venueAddress": "Address (optional)",
@@ -509,7 +516,33 @@
       "all": "All",
       "platform": "CrewUp Events",
       "community": "Community"
-    }
+    },
+    "searchPlaceholder": "Search meets, cities, activities",
+    "publicMeetNote": "Visible to verified crew",
+    "privateMeetNote": "Friends only",
+    "activitiesTitle": "Activities",
+    "activitiesHint": "Optional. Pick as many as fit.",
+    "interestsTitle": "Interests",
+    "interestsHint": "Optional. Helps crew who like the same things find it.",
+    "when": "When",
+    "where": "Where",
+    "who": "Who",
+    "what": "What",
+    "date": "Date",
+    "startTime": "Start time",
+    "city": "City",
+    "address": "Address",
+    "attendees": "Attendees",
+    "whoPublic": "Public · verified crew can join",
+    "whoPrivate": "Private · invited friends only",
+    "titleError": "Give your meet a title.",
+    "tag": {
+      "alcohol_free": "alcohol-free",
+      "halal_friendly": "halal-friendly",
+      "women_only": "women-only"
+    },
+    "attendingCount_one": "{{count}} attending",
+    "attendingCount_other": "{{count}} attending"
   },
   "messages": {
     "title": "Messages",
@@ -520,7 +553,9 @@
     "report": "Report",
     "block": "Block",
     "nudgeTitle": "Meeting someone new?",
-    "nudgeBody": "Prefer a public place or a group meetup. You can share plans with a friend outside the app."
+    "nudgeBody": "Prefer a public place or a group meetup. You can share plans with a friend outside the app.",
+    "blockConfirmTitle": "Block {{name}}?",
+    "blockConfirmBody": "They won't be able to find you, message you, or send you requests. They aren't told."
   },
   "common": {
     "loading": "Loading…",
@@ -634,6 +669,59 @@
     "onlyYou": "only you",
     "crewId": "Crew ID",
     "copyCrewId": "Copy Crew ID",
-    "copied": "Copied"
+    "copied": "Copied",
+    "shareCrewId": "Share Crew ID",
+    "base": "Base",
+    "wavedSent": "Waved · request sent",
+    "acceptOnFriends": "Respond in Friends",
+    "messageUnlocks": "Message unlocks once {{name}} accepts your request.",
+    "messageUnlocksWave": "Message unlocks once {{name}} accepts your wave."
+  },
+  "chat": {
+    "message": "Message"
+  },
+  "discover": {
+    "searchPlaceholder": "Search layovers by city",
+    "searchTitle": "Search layovers",
+    "cityPlaceholder": "City or IATA code",
+    "crossingPaths": "Crossing paths",
+    "ofMax": "{{count}} of {{max}}",
+    "reasonFlight": "On your flight",
+    "reasonRoute": "Same route",
+    "reasonCity": "Also in {{city}}",
+    "waved": "Waved",
+    "overlap": "{{duration}} overlap",
+    "bothLike": "You both like",
+    "addTrip": "Add Trip",
+    "offTitle": "Discovery is off.",
+    "offBody": "Your trips are set to Off, so other crew can't be matched with you until your trips are visible again.",
+    "changeVisibility": "Change visibility",
+    "whenAll": "All your saved layovers",
+    "whenSaved": "Your saved overlaps",
+    "allDates": "All dates",
+    "close": {
+      "flight": "On my flight",
+      "route": "Same route",
+      "city": "In the city with me"
+    },
+    "longRests": "{{hours}}h+ rests",
+    "people_one": "{{count}} person",
+    "people_other": "{{count}} people",
+    "strongestFirst": "Strongest overlap first",
+    "noneTitle": "No crew on this layover yet.",
+    "noneBody": "Widen the dates, or clear the city to see all your overlaps.",
+    "clearSearch": "Clear search",
+    "yourLayover": "Your layover",
+    "layoverSaved": "Layover · saved",
+    "layoverMissing": "This layover is no longer saved.",
+    "localTime": "{{code}} local",
+    "findOnLayover": "Find crew on this layover",
+    "findOnLayoverHint": "Opens search with {{city}} and these dates filled in.",
+    "alreadyOverlapping": "Already overlapping",
+    "crewCount_one": "{{count}} crew",
+    "crewCount_other": "{{count}} crew",
+    "freeWithYou": "free in {{city}} with you",
+    "arrives": "Arrives",
+    "freeUntil": "Free until"
   }
 }

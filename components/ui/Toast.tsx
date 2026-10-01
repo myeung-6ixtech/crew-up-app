@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useThemedStyles, useTheme } from '@/theme';
+import { fontFamily, useThemedStyles, useTheme } from '@/theme';
 
 export function Toast({
   message,
@@ -18,27 +18,36 @@ export function Toast({
   const insets = useSafeAreaInsets();
   const [rendered, setRendered] = useState(visible);
   const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(-16)).current;
+  const translateY = useRef(new Animated.Value(16)).current;
   const styles = useThemedStyles((t) => ({
     wrap: {
       position: 'absolute',
-      left: t.spacing.lg,
-      right: t.spacing.lg,
-      top: insets.top + t.spacing.lg,
+      left: 24,
+      right: 24,
+      bottom: insets.bottom + 96,
       zIndex: 100,
-      alignItems: 'center',
     },
     bubble: {
-      backgroundColor: t.colors.textPrimary,
-      borderRadius: t.radius.cta,
-      paddingHorizontal: t.spacing.lg,
-      paddingVertical: t.spacing.md,
-      maxWidth: '100%',
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      backgroundColor: '#0E1113',
+      borderRadius: 14,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      shadowColor: '#0E1113',
+      shadowOpacity: 0.25,
+      shadowRadius: 15,
+      shadowOffset: { width: 0, height: 10 },
+      elevation: 6,
     },
+    dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: t.colors.fill },
     text: {
-      ...t.typography.bodyStrong,
-      color: t.colors.textInverse,
-      textAlign: 'center',
+      flex: 1,
+      fontFamily: fontFamily.interMedium,
+      fontSize: 14,
+      lineHeight: 19,
+      color: '#EDF1F2',
     },
   }));
 
@@ -65,7 +74,7 @@ export function Toast({
           useNativeDriver: true,
         }),
         Animated.timing(translateY, {
-          toValue: -16,
+          toValue: 16,
           duration: theme.motion.fast,
           useNativeDriver: true,
         }),
@@ -87,7 +96,8 @@ export function Toast({
     <Animated.View
       style={[styles.wrap, { opacity, transform: [{ translateY }] }]}
       pointerEvents="none">
-      <View style={styles.bubble}>
+      <View style={styles.bubble} accessibilityLiveRegion="polite">
+        <View style={styles.dot} />
         <Text style={styles.text}>{message}</Text>
       </View>
     </Animated.View>

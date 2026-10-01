@@ -103,7 +103,7 @@ export interface EventItem {
   is_published?: boolean;
   featured_until?: string | null;
   eventActivities?: Array<{
-    activity: { id?: string; slug: string; name: string; icon?: string | null };
+    activity: { id?: string; slug: string; name: string; icon?: string | null; kind?: ActivityKind | null };
   }>;
 }
 

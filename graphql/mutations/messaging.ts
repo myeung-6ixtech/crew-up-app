@@ -27,6 +27,12 @@ export const GET_MY_THREADS = gql`
           user {
             profile {
               display_name
+              preferred_name
+              avatar_file_id
+              crew_role
+              role_type
+              base_airport
+              base_airport_iata
             }
           }
         }

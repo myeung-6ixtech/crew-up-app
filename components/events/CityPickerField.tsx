@@ -9,6 +9,8 @@ import {
 } from '@/constants/airports';
 import { BodyText, BottomSheet, SearchInputField } from '@/components/ui';
 import type { EventCity } from '@/types/airport';
+import { usePickerFieldVariant } from '@/components/profile/pickerFieldShared';
+import { FilledPressField } from '@/features/onboarding/components/kit';
 import { useThemedStyles, useTheme } from '@/theme';
 
 type CityPickerFieldProps = {
@@ -93,28 +95,41 @@ export function CityPickerField({ label, value, onChange, error }: CityPickerFie
     ? formatEventCityLabel(selected)
     : value.trim() || t('events.selectCity');
 
+  const variant = usePickerFieldVariant();
+
   return (
     <>
-      <View style={styles.wrap}>
-        <Text style={styles.label}>{label}</Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={label}
+      {variant === 'filled' ? (
+        <FilledPressField
+          label={label}
+          value={selected || value.trim() ? displayText : null}
+          placeholder={displayText}
+          error={error}
           accessibilityHint={t('events.selectCity')}
           onPress={() => setSheetOpen(true)}
-          style={({ pressed }) => [
-            styles.field,
-            sheetOpen ? styles.fieldFocused : null,
-            error ? styles.fieldError : null,
-            { opacity: pressed ? 0.72 : 1 },
-          ]}>
-          <Text style={[styles.fieldText, !selected && !value.trim() ? styles.placeholder : null]}>
-            {displayText}
-          </Text>
-          <AppIcon name="chevronDown" size={20} color={theme.colors.textTertiary} />
-        </Pressable>
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-      </View>
+        />
+      ) : (
+        <View style={styles.wrap}>
+          <Text style={styles.label}>{label}</Text>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={label}
+            accessibilityHint={t('events.selectCity')}
+            onPress={() => setSheetOpen(true)}
+            style={({ pressed }) => [
+              styles.field,
+              sheetOpen ? styles.fieldFocused : null,
+              error ? styles.fieldError : null,
+              { opacity: pressed ? 0.72 : 1 },
+            ]}>
+            <Text style={[styles.fieldText, !selected && !value.trim() ? styles.placeholder : null]}>
+              {displayText}
+            </Text>
+            <AppIcon name="chevronDown" size={20} color={theme.colors.textTertiary} />
+          </Pressable>
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+        </View>
+      )}
 
       <BottomSheet
         visible={sheetOpen}

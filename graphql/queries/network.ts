@@ -24,15 +24,23 @@ export const GET_CONNECTIONS = gql`
       requester {
         profile {
           display_name
+          preferred_name
           role_type
+          crew_role
           base_airport
+          base_airport_iata
+          avatar_file_id
         }
       }
       addressee {
         profile {
           display_name
+          preferred_name
           role_type
+          crew_role
           base_airport
+          base_airport_iata
+          avatar_file_id
         }
       }
     }
@@ -76,13 +84,25 @@ export const GET_PUBLIC_PROFILE = gql`
     profiles_by_pk(user_id: $userId) {
       user_id
       display_name
+      preferred_name
+      username
+      avatar_file_id
       role_type
+      crew_role
       base_airport
+      base_airport_iata
       airline_id
       is_verified
       show_rank
       rank
       friend_id
+      residence_city
+      residence_country_code
+      hometown_city
+      home_country_code
+      languages
+      visible_gender
+      created_at
     }
   }
 `;

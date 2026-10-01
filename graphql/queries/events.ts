@@ -21,6 +21,7 @@ const EVENT_FIELDS = `
       slug
       name
       icon
+      kind
     }
   }
 `;
@@ -69,6 +70,7 @@ export const GET_EVENT = gql`
           slug
           name
           icon
+          kind
         }
       }
       attendees {
@@ -78,6 +80,8 @@ export const GET_EVENT = gql`
         user {
           profile {
             display_name
+            preferred_name
+            avatar_file_id
           }
         }
       }
