@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Animated, View } from 'react-native';
+import { Animated, Easing, View } from 'react-native';
 import { useTheme } from '@/theme';
 
 /** Filled amount last shown, so the next step's bar slides from here. */
@@ -9,7 +9,7 @@ export function resetOnboardingProgress() {
   shownProgress = 0;
 }
 
-/** Lime bar for profile steps 1–7. `current` is 1-based. */
+/** Lime bar for the nine profile screens. `current` is 1-based. */
 export function OnboardingProgress({
   current,
   total,
@@ -28,10 +28,11 @@ export function OnboardingProgress({
     shownProgress = current;
     Animated.timing(progress, {
       toValue: current,
-      duration: theme.motion.base,
+      duration: 400,
+      easing: Easing.bezier(0.2, 0.8, 0.2, 1),
       useNativeDriver: false,
     }).start();
-  }, [current, progress, theme.motion.base]);
+  }, [current, progress]);
 
   const width = progress.interpolate({
     inputRange: [0, total],
@@ -44,8 +45,8 @@ export function OnboardingProgress({
       accessibilityRole="progressbar"
       accessibilityLabel={label}
       accessibilityValue={{ min: 0, max: total, now: current }}
-      style={{ height: 4, backgroundColor: theme.colors.accentSubtle }}>
-      <Animated.View style={{ width, height: '100%', backgroundColor: theme.colors.fill }} />
+      style={{ height: 4, borderRadius: 2, overflow: 'hidden', backgroundColor: theme.colors.track }}>
+      <Animated.View style={{ width, height: '100%', borderRadius: 2, backgroundColor: theme.colors.fill }} />
     </View>
   );
 }

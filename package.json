@@ -5,6 +5,7 @@
   "dependencies": {
     "@apollo/client": "^4.2.8",
     "@crewup/shared": "file:../packages/shared",
+    "@expo-google-fonts/ibm-plex-mono": "^0.4.1",
     "@expo-google-fonts/inter": "^0.4.2",
     "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
     "@hookform/resolvers": "^5.5.7",

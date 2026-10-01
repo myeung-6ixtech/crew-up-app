@@ -1,8 +1,19 @@
-import type { ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { AppIcon } from '@/components/icons';
 import { hapticImpact } from '@/lib/haptics';
-import { useThemedStyles, useTheme } from '@/theme';
+import { fontFamily, useThemedStyles, useTheme } from '@/theme';
+
+/**
+ * `filled`: onboarding's borderless field — label inside, no leading badge.
+ * Set by the onboarding StepScaffold so airline / airport / country pickers match without extra props.
+ */
+type PickerFieldVariant = 'outlined' | 'filled';
+const PickerFieldVariantContext = createContext<PickerFieldVariant>('outlined');
+export const PickerFieldVariantProvider = PickerFieldVariantContext.Provider;
+export function usePickerFieldVariant() {
+  return useContext(PickerFieldVariantContext);
+}
 
 const BADGE_SIZE = 44;
 const SQUIRCLE_RADIUS = 13;
@@ -76,6 +87,20 @@ export function usePickerFieldStyles() {
     },
     listContent: { flex: 1, gap: 2 },
     empty: { paddingVertical: t.spacing.lg },
+    filledField: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      minHeight: 60,
+      borderRadius: 14,
+      borderWidth: 2,
+      borderColor: t.colors.field,
+      backgroundColor: t.colors.field,
+      paddingHorizontal: 14,
+      paddingVertical: 7,
+      gap: 10,
+    },
+    filledLabel: { fontFamily: fontFamily.interMedium, fontSize: 11.5, lineHeight: 15, color: t.colors.textSecondary },
+    filledValue: { fontFamily: fontFamily.interMedium, fontSize: 16, lineHeight: 21, color: t.colors.textPrimary },
   }));
 }
 
@@ -89,6 +114,7 @@ export function PickerFieldShell({
   title,
   subtitle,
   placeholder,
+  filledTitle,
 }: {
   label: string;
   error?: string;
@@ -99,9 +125,44 @@ export function PickerFieldShell({
   title: string;
   subtitle?: string | null;
   placeholder?: boolean;
+  /** Single-line value for the filled variant, which has no subtitle row. */
+  filledTitle?: string;
 }) {
   const theme = useTheme();
   const styles = usePickerFieldStyles();
+  const variant = usePickerFieldVariant();
+
+  if (variant === 'filled') {
+    return (
+      <View style={[styles.wrap, { marginBottom: 10 }]}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={label}
+          accessibilityHint={accessibilityHint}
+          onPress={() => {
+            if (disabled) return;
+            hapticImpact();
+            onPress();
+          }}
+          disabled={disabled}
+          style={({ pressed }) => [
+            styles.filledField,
+            error ? styles.fieldError : null,
+            disabled ? styles.fieldDisabled : null,
+            { opacity: pressed && !disabled ? 0.8 : 1 },
+          ]}>
+          <View style={styles.content}>
+            <Text style={styles.filledLabel}>{label}</Text>
+            <Text style={[styles.filledValue, placeholder ? styles.titlePlaceholder : null]} numberOfLines={1}>
+              {filledTitle ?? title}
+            </Text>
+          </View>
+          <AppIcon name="chevronDown" size={18} color={theme.colors.textSecondary} />
+        </Pressable>
+        {error ? <Text style={[styles.error, { paddingLeft: 4 }]}>{error}</Text> : null}
+      </View>
+    );
+  }
 
   return (
     <View style={styles.wrap}>

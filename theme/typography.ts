@@ -6,7 +6,9 @@ import {
 import {
   PlusJakartaSans_500Medium,
   PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_700Bold,
 } from '@expo-google-fonts/plus-jakarta-sans';
+import { IBMPlexMono_500Medium } from '@expo-google-fonts/ibm-plex-mono';
 
 const tabularNums = ['tabular-nums'] as TextStyle['fontVariant'];
 
@@ -15,6 +17,8 @@ export const fontAssets = {
   Inter_500Medium,
   PlusJakartaSans_500Medium,
   PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_700Bold,
+  IBMPlexMono_500Medium,
 };
 
 export const fontFamily = {
@@ -22,6 +26,8 @@ export const fontFamily = {
   interMedium: 'Inter_500Medium',
   jakartaMedium: 'PlusJakartaSans_500Medium',
   jakartaSemiBold: 'PlusJakartaSans_600SemiBold',
+  jakartaBold: 'PlusJakartaSans_700Bold',
+  monoMedium: 'IBMPlexMono_500Medium',
 } as const;
 
 /** Type scale — see documentation/font-system.md */

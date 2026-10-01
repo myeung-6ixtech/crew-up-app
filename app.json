@@ -39,7 +39,14 @@
           "imageWidth": 180
         }
       ],
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "CrewUp uses your photos so you can choose a profile picture.",
+          "cameraPermission": "CrewUp uses the camera so you can take a profile picture."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

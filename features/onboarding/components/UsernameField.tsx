@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UsernameSchema } from '@crewup/shared';
-import { BodySmText, Input } from '@/components/ui';
-import { useTheme } from '@/theme';
+import { FilledField, MonoTag } from './kit';
 import { checkUsername } from '../services/onboardingService';
 
 export type UsernameStatus = 'idle' | 'checking' | 'available' | 'unavailable';
@@ -64,48 +63,28 @@ export function UsernameField({ value, onChange, onBlur, error, onStatusChange }
   }, [t, value]);
 
   const helper = error ?? (status === 'unavailable' ? message : undefined);
+  const tag =
+    status === 'available'
+      ? { label: t('onboarding.nameHandle.tagAvailable'), tone: 'positive' as const }
+      : status === 'checking'
+        ? { label: t('onboarding.nameHandle.tagChecking'), tone: 'muted' as const }
+        : null;
 
   return (
-    <>
-      <Input
-        label={t('onboarding.nameHandle.username')}
-        value={value}
-        onChangeText={(text) => onChange(text.toLowerCase().replace(/\s/g, ''))}
-        onBlur={onBlur}
-        placeholder={t('onboarding.nameHandle.usernamePlaceholder')}
-        autoCapitalize="none"
-        autoCorrect={false}
-        autoComplete="username"
-        maxLength={20}
-        error={helper}
-      />
-      <UsernameHint status={status} message={message} hasError={Boolean(helper)} />
-    </>
-  );
-}
-
-function UsernameHint({ status, message, hasError }: { status: UsernameStatus; message: string; hasError: boolean }) {
-  const { t } = useTranslation();
-  if (hasError) return null;
-  const text =
-    status === 'checking'
-      ? t('onboarding.nameHandle.usernameChecking')
-      :     status === 'available'
-        ? message
-        : t('onboarding.nameHandle.usernameHint');
-  return <UsernameHelperText text={text} positive={status === 'available'} />;
-}
-
-function UsernameHelperText({ text, positive }: { text: string; positive: boolean }) {
-  const theme = useTheme();
-  return (
-    <BodySmText
-      style={{
-        marginTop: -theme.spacing.sm,
-        marginBottom: theme.spacing.md,
-        color: positive ? theme.colors.accentText : theme.colors.textSecondary,
-      }}>
-      {text}
-    </BodySmText>
+    <FilledField
+      label={t('onboarding.nameHandle.username')}
+      prefix="@"
+      value={value}
+      onChangeText={(text) => onChange(text.toLowerCase().replace(/[\s@]/g, ''))}
+      onBlur={onBlur}
+      placeholder={t('onboarding.nameHandle.usernamePlaceholder')}
+      autoCapitalize="none"
+      autoCorrect={false}
+      autoComplete="username"
+      maxLength={20}
+      error={helper}
+      hint={t('onboarding.nameHandle.usernameHint')}
+      trailing={tag ? <MonoTag label={tag.label} tone={tag.tone} /> : null}
+    />
   );
 }

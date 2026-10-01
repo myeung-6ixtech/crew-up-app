@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Alert, Pressable } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { CREW_ROLES, CrewIdentitySchema, type CrewRole } from '@crewup/shared';
 import { AirlinePickerField, type AirlineOption } from '@/components/profile/AirlinePickerField';
 import { AirportPickerField } from '@/components/profile/AirportPickerField';
-import { BodySmText, BodyText, PillSelectorGroup } from '@/components/ui';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { formatApolloError } from '@/lib/graphqlError';
 import { useAuth } from '@/hooks/useSession';
 import { fetchAirlines } from '@/services/profileService';
-import { useTheme } from '@/theme';
+import { fontFamily, useTheme } from '@/theme';
+import { ChoicePill, MonoLabel } from '../components/kit';
 import { StepScaffold } from '../components/StepScaffold';
 import { useStepForm } from '../hooks/useStepForm';
 import type { StepContext } from '../navigation';
@@ -63,25 +63,32 @@ export function CrewIdentityStep({ context }: { context: StepContext }) {
       onPrimary={submit}
       primaryLoading={saving}
       error={formError}>
+      <MonoLabel>{t('onboarding.crew.role')}</MonoLabel>
       <Controller
         control={control}
         name="crewRole"
         render={({ field, fieldState }) => (
           <>
-            <PillSelectorGroup<CrewRole>
-              label={t('onboarding.crew.role')}
-              options={CREW_ROLES.map((role) => ({ value: role, label: t(`onboarding.crewRoles.${role}`) }))}
-              value={field.value}
-              onChange={field.onChange}
-            />
+            <View accessibilityRole="radiogroup" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
+              {CREW_ROLES.map((role: CrewRole) => (
+                <ChoicePill
+                  key={role}
+                  label={t(`onboarding.crewRoles.${role}`)}
+                  selected={field.value === role}
+                  onPress={() => field.onChange(role)}
+                  style={{ flexBasis: '48%', flexGrow: 1 }}
+                />
+              ))}
+            </View>
             {fieldState.error ? (
-              <BodySmText style={{ color: theme.colors.statusOnDuty, marginTop: -theme.spacing.sm, marginBottom: theme.spacing.md }}>
+              <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.statusOnDuty, marginTop: 6, paddingLeft: 4 }}>
                 {fieldState.error.message}
-              </BodySmText>
+              </Text>
             ) : null}
           </>
         )}
       />
+      <MonoLabel style={{ marginTop: 26, marginBottom: 10 }}>{t('onboarding.crew.airlineAndBase')}</MonoLabel>
       <Controller
         control={control}
         name="airlineId"
@@ -96,12 +103,6 @@ export function CrewIdentityStep({ context }: { context: StepContext }) {
           />
         )}
       />
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => Alert.alert(t('onboarding.crew.airlineMissing'), t('onboarding.crew.airlineMissingBody'))}
-        style={{ marginTop: -theme.spacing.xs, marginBottom: theme.spacing.lg }}>
-        <BodyText style={{ color: theme.colors.accentText }}>{t('onboarding.crew.airlineMissing')}</BodyText>
-      </Pressable>
       <Controller
         control={control}
         name="baseAirportIata"
@@ -116,6 +117,16 @@ export function CrewIdentityStep({ context }: { context: StepContext }) {
           />
         )}
       />
+      <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, lineHeight: 19, color: theme.colors.textSecondary, marginTop: 2 }}>
+        {t('onboarding.crew.airlineMissingLead')}{' '}
+        <Text
+          accessibilityRole="link"
+          onPress={() => Alert.alert(t('onboarding.crew.airlineMissing'), t('onboarding.crew.airlineMissingBody'))}
+          style={{ fontFamily: fontFamily.interMedium, color: theme.colors.accentText }}>
+          {t('onboarding.crew.contactSupport')}
+        </Text>{' '}
+        {t('onboarding.crew.airlineMissingTail')}
+      </Text>
     </StepScaffold>
   );
 }

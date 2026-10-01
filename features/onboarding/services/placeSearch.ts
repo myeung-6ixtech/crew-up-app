@@ -91,3 +91,43 @@ export async function searchHometowns(query: string, signal?: AbortSignal): Prom
   }
   return places;
 }
+
+function featured(name: string, countryCode: string, latitude: number, longitude: number): PlaceHit {
+  return {
+    id: `featured:${countryCode}:${name}`,
+    name,
+    detail: countryName(countryCode) ?? countryCode,
+    countryCode,
+    latitude,
+    longitude,
+  };
+}
+
+/** Shown before typing: Asia's major crew cities first, then North America. */
+export const FEATURED_CITIES: { key: 'asia' | 'northAmerica'; cities: PlaceHit[] }[] = [
+  {
+    key: 'asia',
+    cities: [
+      featured('Hong Kong', 'HK', 22.3193, 114.1694),
+      featured('Singapore', 'SG', 1.3521, 103.8198),
+      featured('Tokyo', 'JP', 35.6762, 139.6503),
+      featured('Seoul', 'KR', 37.5665, 126.978),
+      featured('Shanghai', 'CN', 31.2304, 121.4737),
+      featured('Taipei', 'TW', 25.033, 121.5654),
+      featured('Bangkok', 'TH', 13.7563, 100.5018),
+      featured('Manila', 'PH', 14.5995, 120.9842),
+      featured('Kuala Lumpur', 'MY', 3.139, 101.6869),
+      featured('Dubai', 'AE', 25.2048, 55.2708),
+    ],
+  },
+  {
+    key: 'northAmerica',
+    cities: [
+      featured('Vancouver', 'CA', 49.2827, -123.1207),
+      featured('San Francisco', 'US', 37.7749, -122.4194),
+      featured('Los Angeles', 'US', 34.0522, -118.2437),
+      featured('New York', 'US', 40.7128, -74.006),
+      featured('Toronto', 'CA', 43.6532, -79.3832),
+    ],
+  },
+];

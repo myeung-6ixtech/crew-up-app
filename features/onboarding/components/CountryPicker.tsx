@@ -59,6 +59,7 @@ export function CountryPicker({ label, value, onChange, error, describe, badge =
         placeholder={!selectedName}
         title={selectedName ?? t('onboarding.country.select')}
         subtitle={value && describe ? describe(value) : null}
+        filledTitle={value && describe ? (describe(value) ?? undefined) : undefined}
         leading={
           <SelectionSquircle muted={!selectedName}>
             <Text style={selectedName ? styles.squircleCode : styles.squirclePlaceholder}>

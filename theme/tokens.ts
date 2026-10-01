@@ -31,6 +31,10 @@ export const lightColors = {
   accentSubtle: '#E7F6C9',
 
   hairline: '#DDE2D6',
+  /** Borderless filled inputs and unselected choices. */
+  field: '#EAECE5',
+  /** Progress track and disabled CTA fill. */
+  track: '#DDE1D6',
 
   statusAvailable: '#1AAE6F',
   statusOnDuty: '#E5484D',
@@ -64,6 +68,8 @@ export const darkColors = {
   accentSubtle: '#243016',
 
   hairline: '#2A3134',
+  field: '#1C2124',
+  track: '#2A3134',
 
   statusAvailable: '#2ED18C',
   statusOnDuty: '#FF5B60',

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Archivo:wght@400;500;600;700&family=Public+Sans:wght@400;500;600&family=Poppins:wght@400;500;600&family=Karla:wght@400;500;600&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #eceae6; }
+  a { color: #1b4a6b; }
+  a:hover { color: #0f2c40; }
+</style>
+</helmet>
+
+<section style="padding: 56px 48px 24px; display: flex; flex-direction: column; gap: 40px; font-family: 'IBM Plex Sans', sans-serif;">
+  <div style="display: flex; flex-direction: column; gap: 10px; max-width: 800px;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b6660;">Turn 2 · Altitude, as a pair</div>
+    <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 34px; line-height: 1.15; color: #15120f;">Altitude in dark and light mode</div>
+    <div style="font-size: 15px; line-height: 1.6; color: #55504a; text-wrap: pretty;">Same type pairing and same lime. The one thing that has to change: <strong style="font-weight: 600;">#A8E05F cannot carry text on a light ground</strong> (1.7:1). In light mode it stays a fill — lime chip, dark ink label — and a deeper olive takes over for accent text. <a href="#2a">2a</a> dark · <a href="#2b">2b</a> light.</div>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start;">
+
+    <div id="2a" style="width: 470px; background: #0E1113; border: 1px solid #23282b; border-radius: 4px; padding: 32px; display: flex; flex-direction: column; gap: 26px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #A8E05F; color: #0E1113; padding: 4px 8px; border-radius: 3px;">2A</div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; color: #EDF1F2;">Altitude · Dark</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #7d878b;">DEFAULT</div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 40px; letter-spacing: -0.01em; color: #EDF1F2; line-height: 1;">CrewUp</div>
+        <div style="width: 50px; height: 50px; border-radius: 14px; background: #A8E05F; display: flex; align-items: center; justify-content: center; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 23px; color: #0E1113;">Cu</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; gap: 8px;">
+          <div style="flex: 1.6; height: 64px; border-radius: 3px; background: #0E1113; border: 1px solid #2c3134;"></div>
+          <div style="flex: 1; height: 64px; border-radius: 3px; background: #1C2124;"></div>
+          <div style="flex: 1; height: 64px; border-radius: 3px; background: #A8E05F;"></div>
+          <div style="flex: 1; height: 64px; border-radius: 3px; background: #E8C25A;"></div>
+          <div style="flex: 1; height: 64px; border-radius: 3px; background: #EDF1F2;"></div>
+        </div>
+        <div style="display: flex; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; line-height: 1.4; color: #7d878b; letter-spacing: 0.02em;">
+          <div style="flex: 1.6;">#0E1113<br>ground</div>
+          <div style="flex: 1;">#1C2124<br>card</div>
+          <div style="flex: 1;">#A8E05F<br>accent + text</div>
+          <div style="flex: 1;">#E8C25A<br>secondary</div>
+          <div style="flex: 1;">#EDF1F2<br>ink</div>
+        </div>
+      </div>
+
+      <div style="background: #1C2124; border: 1px solid #2c3134; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #7d878b;">Accent on ground · 11.4:1</div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 22px; color: #A8E05F;">9H REST · 6 KM</div>
+        <div style="font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; line-height: 1.6; color: #A7B1B5;">Lime works as both fill and text here, so it can carry live status, counts and the active nav item.</div>
+      </div>
+
+      <div style="width: 100%; box-sizing: border-box; background: #1C2124; border-radius: 26px; padding: 12px 12px 0; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; font-family: 'IBM Plex Sans', sans-serif; font-size: 10px; color: #7d878b; padding: 4px 10px 10px;">
+          <div>05:02</div>
+          <div>DXB · UTC+4</div>
+        </div>
+        <div style="background: #0E1113; border-radius: 18px 18px 0 0; padding: 20px 18px 24px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between;">
+            <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px; color: #EDF1F2;">Before report</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #A8E05F;">9H REST</div>
+          </div>
+          <div style="background: #1C2124; border: 1px solid #2c3134; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; color: #EDF1F2;">Beach run, Kite Beach</div>
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: #E8C25A;"></div>
+            </div>
+            <div style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; color: #A7B1B5;">05:40 · 6 km · 3 crew going</div>
+            <div style="display: flex; gap: 6px; margin-top: 6px;">
+              <div style="font-family: 'IBM Plex Sans', sans-serif; font-weight: 600; font-size: 12px; background: #A8E05F; color: #0E1113; padding: 7px 14px; border-radius: 6px;">I'm in</div>
+              <div style="font-family: 'IBM Plex Sans', sans-serif; font-weight: 500; font-size: 12px; border: 1px solid #3a4145; color: #EDF1F2; padding: 7px 14px; border-radius: 6px;">Details</div>
+            </div>
+          </div>
+          <div style="background: #1C2124; border: 1px solid #2c3134; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 5px;">
+            <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; color: #EDF1F2;">Pool laps, 22nd floor</div>
+            <div style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; color: #A7B1B5;">Open all night · 1 crew going</div>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-top: 1px solid #23282b; padding-top: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #7d878b;">
+            <div style="color: #A8E05F;">TODAY</div>
+            <div>CREW</div>
+            <div>PLACES</div>
+            <div>ME</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="2b" style="width: 470px; background: #F7F8F4; border: 1px solid #e0e3da; border-radius: 4px; padding: 32px; display: flex; flex-direction: column; gap: 26px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">2B</div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; color: #0E1113;">Altitude · Light</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #8b8f86;">DAYTIME</div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 40px; letter-spacing: -0.01em; color: #0E1113; line-height: 1;">CrewUp</div>
+        <div style="width: 50px; height: 50px; border-radius: 14px; background: #A8E05F; display: flex; align-items: center; justify-content: center; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 23px; color: #0E1113;">Cu</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; gap: 8px;">
+          <div style="flex: 1.6; height: 64px; border-radius: 3px; background: #F7F8F4; border: 1px solid #e0e3da;"></div>
+          <div style="flex: 1; height: 64px; border-radius: 3px; background: #FFFFFF; border: 1px solid #e0e3da;"></div>
+          <div style="flex: 1; height: 64px; border-radius: 3px; background: #A8E05F;"></div>
+          <div style="flex: 1; height: 64px; border-radius: 3px; background: #4F6E19;"></div>
+          <div style="flex: 1; height: 64px; border-radius: 3px; background: #0E1113;"></div>
+        </div>
+        <div style="display: flex; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; line-height: 1.4; color: #8b8f86; letter-spacing: 0.02em;">
+          <div style="flex: 1.6;">#F7F8F4<br>ground</div>
+          <div style="flex: 1;">#FFFFFF<br>card</div>
+          <div style="flex: 1;">#A8E05F<br>fill only</div>
+          <div style="flex: 1;">#4F6E19<br>accent text</div>
+          <div style="flex: 1;">#0E1113<br>ink</div>
+        </div>
+      </div>
+
+      <div style="background: #FFFFFF; border: 1px solid #e6e8e0; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #8b8f86;">Olive on white · 6.1:1</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 22px; color: #4F6E19;">9H REST · 6 KM</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 4px 8px; border-radius: 4px;">LIVE</div>
+        </div>
+        <div style="font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; line-height: 1.6; color: #4d534a;">Accent text shifts to #4F6E19; raw lime survives as chips, buttons and progress fills where the label sits in dark ink.</div>
+      </div>
+
+      <div style="width: 100%; box-sizing: border-box; background: #E6E9E0; border-radius: 26px; padding: 12px 12px 0; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; font-family: 'IBM Plex Sans', sans-serif; font-size: 10px; color: #7b8076; padding: 4px 10px 10px;">
+          <div>14:20</div>
+          <div>DXB · UTC+4</div>
+        </div>
+        <div style="background: #F7F8F4; border-radius: 18px 18px 0 0; padding: 20px 18px 24px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between;">
+            <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px; color: #0E1113;">Before report</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #4F6E19;">9H REST</div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #e6e8e0; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; color: #0E1113;">Beach run, Kite Beach</div>
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: #A8E05F;"></div>
+            </div>
+            <div style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; color: #545a50;">05:40 · 6 km · 3 crew going</div>
+            <div style="display: flex; gap: 6px; margin-top: 6px;">
+              <div style="font-family: 'IBM Plex Sans', sans-serif; font-weight: 600; font-size: 12px; background: #A8E05F; color: #0E1113; padding: 7px 14px; border-radius: 6px;">I'm in</div>
+              <div style="font-family: 'IBM Plex Sans', sans-serif; font-weight: 500; font-size: 12px; border: 1px solid #d4d8cd; color: #0E1113; padding: 7px 14px; border-radius: 6px;">Details</div>
+            </div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #e6e8e0; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 5px;">
+            <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; color: #0E1113;">Pool laps, 22nd floor</div>
+            <div style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; color: #545a50;">Open all night · 1 crew going</div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e6e8e0; padding-top: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #8b8f86;">
+            <div style="color: #0E1113; font-weight: 500; border-bottom: 2px solid #A8E05F; padding-bottom: 3px;">TODAY</div>
+            <div>CREW</div>
+            <div>PLACES</div>
+            <div>ME</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section style="padding: 56px 48px 80px; display: flex; flex-direction: column; gap: 40px; font-family: 'Public Sans', sans-serif;">
+  <div style="display: flex; flex-direction: column; gap: 10px; max-width: 760px;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b6660;">Turn 1 · CrewUp identity</div>
+    <div style="font-family: 'Archivo', sans-serif; font-weight: 600; font-size: 34px; line-height: 1.15; color: #15120f;">Three color &amp; type pairings for the CrewUp wordmark</div>
+    <div style="font-size: 15px; line-height: 1.6; color: #55504a; text-wrap: pretty;">The rounded geometric mark stays fixed in all three. What changes is the palette, the UI type voice, and how the app feels at 6am in a hotel lobby. Reference <a href="#1a">1a</a>, <a href="#1b">1b</a>, <a href="#1c">1c</a> in chat.</div>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start;">
+
+    <div id="1a" style="width: 470px; background: #F4F6F8; border: 1px solid #d9dee3; border-radius: 4px; padding: 32px; display: flex; flex-direction: column; gap: 28px;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #10233B; color: #F4F6F8; padding: 4px 8px; border-radius: 3px;">1A</div>
+          <div style="font-family: 'Archivo', sans-serif; font-weight: 600; font-size: 19px; color: #10233B;">Contrail</div>
+        </div>
+        <div style="font-family: 'Public Sans', sans-serif; font-size: 13.5px; line-height: 1.55; color: #4a5a6b; text-wrap: pretty;">Flight-deck navy with an oxidized copper accent. Reads credible and operational — closest to the aviation world the crew already lives in.</div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 42px; letter-spacing: -0.01em; color: #10233B; line-height: 1;">CrewUp</div>
+        <div style="width: 52px; height: 52px; border-radius: 14px; background: #10233B; display: flex; align-items: center; justify-content: center; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 24px; color: #C67A42;">Cu</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; gap: 8px;">
+          <div style="flex: 2; height: 72px; border-radius: 3px; background: #10233B;"></div>
+          <div style="flex: 1; height: 72px; border-radius: 3px; background: #C67A42;"></div>
+          <div style="flex: 1; height: 72px; border-radius: 3px; background: #4A88A8;"></div>
+          <div style="flex: 1; height: 72px; border-radius: 3px; background: #DDE3E8;"></div>
+          <div style="flex: 1; height: 72px; border-radius: 3px; background: #F4F6F8; border: 1px solid #d9dee3;"></div>
+        </div>
+        <sc-if value="{{ showHex }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #78848f; letter-spacing: 0.02em;">
+            <div style="flex: 2;">#10233B</div>
+            <div style="flex: 1;">#C67A42</div>
+            <div style="flex: 1;">#4A88A8</div>
+            <div style="flex: 1;">#DDE3E8</div>
+            <div style="flex: 1;">#F4F6F8</div>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #dfe4e9; padding-top: 20px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a949e;">Archivo · Public Sans</div>
+        <div style="font-family: 'Archivo', sans-serif; font-weight: 600; font-size: 27px; line-height: 1.2; color: #10233B;">Who's running in Narita?</div>
+        <div style="font-family: 'Public Sans', sans-serif; font-size: 14px; line-height: 1.6; color: #44525f; text-wrap: pretty;">Archivo's tight, slightly condensed caps hold up in small headers; Public Sans keeps rosters and times unambiguous at 13px.</div>
+      </div>
+
+      <sc-if value="{{ showScreens }}" hint-placeholder-val="{{ true }}">
+        <div style="width: 100%; box-sizing: border-box; background: #10233B; border-radius: 26px; padding: 12px 12px 0; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; font-family: 'Public Sans', sans-serif; font-size: 10px; color: #9fb4c6; padding: 4px 10px 10px;">
+            <div>06:12</div>
+            <div>NRT · UTC+9</div>
+          </div>
+          <div style="background: #F4F6F8; border-radius: 18px 18px 0 0; padding: 20px 18px 24px; display: flex; flex-direction: column; gap: 14px;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between;">
+              <div style="font-family: 'Archivo', sans-serif; font-weight: 600; font-size: 20px; color: #10233B;">Today, layover</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #C67A42;">18H LEFT</div>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #e2e7ec; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-family: 'Archivo', sans-serif; font-weight: 600; font-size: 15px; color: #10233B;">Morning 5K, Sakura Park</div>
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: #4A88A8;"></div>
+              </div>
+              <div style="font-family: 'Public Sans', sans-serif; font-size: 12.5px; color: #5c6b78;">07:30 · easy pace · 4 crew going</div>
+              <div style="display: flex; gap: 6px; margin-top: 6px;">
+                <div style="font-family: 'Public Sans', sans-serif; font-weight: 600; font-size: 12px; background: #10233B; color: #F4F6F8; padding: 7px 14px; border-radius: 6px;">I'm in</div>
+                <div style="font-family: 'Public Sans', sans-serif; font-weight: 500; font-size: 12px; border: 1px solid #ccd5dd; color: #44525f; padding: 7px 14px; border-radius: 6px;">Details</div>
+              </div>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #e2e7ec; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 5px;">
+              <div style="font-family: 'Archivo', sans-serif; font-weight: 600; font-size: 15px; color: #10233B;">Hotel gym circuit</div>
+              <div style="font-family: 'Public Sans', sans-serif; font-size: 12.5px; color: #5c6b78;">16:00 · 2 crew going</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-top: 1px solid #e2e7ec; padding-top: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #8a949e;">
+              <div style="color: #C67A42;">TODAY</div>
+              <div>CREW</div>
+              <div>PLACES</div>
+              <div>ME</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <div id="1b" style="width: 470px; background: #FBF7F1; border: 1px solid #e6ded2; border-radius: 4px; padding: 32px; display: flex; flex-direction: column; gap: 28px;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #2A2521; color: #FBF7F1; padding: 4px 8px; border-radius: 3px;">1B</div>
+          <div style="font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 19px; color: #2A2521;">Daylight</div>
+        </div>
+        <div style="font-family: 'Karla', sans-serif; font-size: 13.5px; line-height: 1.55; color: #5e564d; text-wrap: pretty;">Warm paper, clay and sage. The friendliest of the three — leans into the social, off-duty half of the product rather than the flight ops half.</div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 42px; letter-spacing: -0.01em; color: #2A2521; line-height: 1;">CrewUp</div>
+        <div style="width: 52px; height: 52px; border-radius: 26px; background: #C2683F; display: flex; align-items: center; justify-content: center; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 24px; color: #FBF7F1;">Cu</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; gap: 8px;">
+          <div style="flex: 2; height: 72px; border-radius: 3px; background: #2A2521;"></div>
+          <div style="flex: 1; height: 72px; border-radius: 3px; background: #C2683F;"></div>
+          <div style="flex: 1; height: 72px; border-radius: 3px; background: #6E8B63;"></div>
+          <div style="flex: 1; height: 72px; border-radius: 3px; background: #EFE5D6;"></div>
+          <div style="flex: 1; height: 72px; border-radius: 3px; background: #FBF7F1; border: 1px solid #e6ded2;"></div>
+        </div>
+        <sc-if value="{{ showHex }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #8d8377; letter-spacing: 0.02em;">
+            <div style="flex: 2;">#2A2521</div>
+            <div style="flex: 1;">#C2683F</div>
+            <div style="flex: 1;">#6E8B63</div>
+            <div style="flex: 1;">#EFE5D6</div>
+            <div style="flex: 1;">#FBF7F1</div>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #ece3d6; padding-top: 20px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #9c9285;">Poppins · Karla</div>
+        <div style="font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 27px; line-height: 1.2; color: #2A2521;">Yoga before the redeye</div>
+        <div style="font-family: 'Karla', sans-serif; font-size: 14px; line-height: 1.6; color: #574f47; text-wrap: pretty;">Poppins echoes the wordmark's geometry almost exactly, so headings feel like an extension of the logo. Karla's warmer body text stops it turning generic.</div>
+      </div>
+
+      <sc-if value="{{ showScreens }}" hint-placeholder-val="{{ true }}">
+        <div style="width: 100%; box-sizing: border-box; background: #EFE5D6; border-radius: 26px; padding: 12px 12px 0; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; font-family: 'Karla', sans-serif; font-size: 10px; color: #8d8377; padding: 4px 10px 10px;">
+            <div>17:40</div>
+            <div>LIS · UTC+1</div>
+          </div>
+          <div style="background: #FBF7F1; border-radius: 18px 18px 0 0; padding: 20px 18px 24px; display: flex; flex-direction: column; gap: 14px;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between;">
+              <div style="font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 20px; color: #2A2521;">Tonight in Lisbon</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #C2683F;">6 CREW</div>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #ece3d6; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 15px; color: #2A2521;">Sunset walk, Alfama</div>
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: #6E8B63;"></div>
+              </div>
+              <div style="font-family: 'Karla', sans-serif; font-size: 13px; color: #6a6259;">18:30 · 3 km · 3 crew going</div>
+              <div style="display: flex; gap: 6px; margin-top: 6px;">
+                <div style="font-family: 'Karla', sans-serif; font-weight: 600; font-size: 12px; background: #C2683F; color: #FBF7F1; padding: 8px 15px; border-radius: 20px;">I'm in</div>
+                <div style="font-family: 'Karla', sans-serif; font-weight: 500; font-size: 12px; border: 1px solid #ddd2c2; color: #574f47; padding: 8px 15px; border-radius: 20px;">Details</div>
+              </div>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #ece3d6; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 5px;">
+              <div style="font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 15px; color: #2A2521;">Rooftop dinner, 20:00</div>
+              <div style="font-family: 'Karla', sans-serif; font-size: 13px; color: #6a6259;">2 seats left</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-top: 1px solid #ece3d6; padding-top: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #9c9285;">
+              <div style="color: #C2683F;">TODAY</div>
+              <div>CREW</div>
+              <div>PLACES</div>
+              <div>ME</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <div id="1c" style="width: 470px; background: #0E1113; border: 1px solid #23282b; border-radius: 4px; padding: 32px; display: flex; flex-direction: column; gap: 28px;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #A8E05F; color: #0E1113; padding: 4px 8px; border-radius: 3px;">1C</div>
+          <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; color: #EDF1F2;">Altitude</div>
+        </div>
+        <div style="font-family: 'IBM Plex Sans', sans-serif; font-size: 13.5px; line-height: 1.55; color: #A7B1B5; text-wrap: pretty;">Night-cabin dark with a high-energy lime. Built for a phone checked in dim light at odd hours, and the most fitness-forward of the three.</div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 42px; letter-spacing: -0.01em; color: #EDF1F2; line-height: 1;">CrewUp</div>
+        <div style="width: 52px; height: 52px; border-radius: 14px; background: #A8E05F; display: flex; align-items: center; justify-content: center; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 24px; color: #0E1113;">Cu</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; gap: 8px;">
+          <div style="flex: 2; height: 72px; border-radius: 3px; background: #0E1113; border: 1px solid #2c3134;"></div>
+          <div style="flex: 1; height: 72px; border-radius: 3px; background: #A8E05F;"></div>
+          <div style="flex: 1; height: 72px; border-radius: 3px; background: #E8C25A;"></div>
+          <div style="flex: 1; height: 72px; border-radius: 3px; background: #1C2124;"></div>
+          <div style="flex: 1; height: 72px; border-radius: 3px; background: #EDF1F2;"></div>
+        </div>
+        <sc-if value="{{ showHex }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #7d878b; letter-spacing: 0.02em;">
+            <div style="flex: 2;">#0E1113</div>
+            <div style="flex: 1;">#A8E05F</div>
+            <div style="flex: 1;">#E8C25A</div>
+            <div style="flex: 1;">#1C2124</div>
+            <div style="flex: 1;">#EDF1F2</div>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #23282b; padding-top: 20px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #7d878b;">Space Grotesk · IBM Plex Sans</div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 27px; line-height: 1.2; color: #EDF1F2;">3 crew, 6km, 05:40</div>
+        <div style="font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.6; color: #A7B1B5; text-wrap: pretty;">Space Grotesk brings a technical edge the rounded mark lacks; Plex Sans handles the dense stuff — times, airport codes, roster names.</div>
+      </div>
+
+      <sc-if value="{{ showScreens }}" hint-placeholder-val="{{ true }}">
+        <div style="width: 100%; box-sizing: border-box; background: #1C2124; border-radius: 26px; padding: 12px 12px 0; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; font-family: 'IBM Plex Sans', sans-serif; font-size: 10px; color: #7d878b; padding: 4px 10px 10px;">
+            <div>05:02</div>
+            <div>DXB · UTC+4</div>
+          </div>
+          <div style="background: #0E1113; border-radius: 18px 18px 0 0; padding: 20px 18px 24px; display: flex; flex-direction: column; gap: 14px;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between;">
+              <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px; color: #EDF1F2;">Before report</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #A8E05F;">9H REST</div>
+            </div>
+            <div style="background: #1C2124; border: 1px solid #2c3134; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; color: #EDF1F2;">Beach run, Kite Beach</div>
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: #E8C25A;"></div>
+              </div>
+              <div style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; color: #A7B1B5;">05:40 · 6 km · 3 crew going</div>
+              <div style="display: flex; gap: 6px; margin-top: 6px;">
+                <div style="font-family: 'IBM Plex Sans', sans-serif; font-weight: 600; font-size: 12px; background: #A8E05F; color: #0E1113; padding: 7px 14px; border-radius: 6px;">I'm in</div>
+                <div style="font-family: 'IBM Plex Sans', sans-serif; font-weight: 500; font-size: 12px; border: 1px solid #3a4145; color: #EDF1F2; padding: 7px 14px; border-radius: 6px;">Details</div>
+              </div>
+            </div>
+            <div style="background: #1C2124; border: 1px solid #2c3134; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 5px;">
+              <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; color: #EDF1F2;">Pool laps, 22nd floor</div>
+              <div style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; color: #A7B1B5;">Open all night · 1 crew going</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-top: 1px solid #23282b; padding-top: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #7d878b;">
+              <div style="color: #A8E05F;">TODAY</div>
+              <div>CREW</div>
+              <div>PLACES</div>
+              <div>ME</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+  </div>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showScreens&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Display&quot;},&quot;showHex&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Display&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      showScreens: this.props.showScreens ?? true,
+      showHex: this.props.showHex ?? true
+    };
+  }
+}
+</script>
+</body>
+</html>

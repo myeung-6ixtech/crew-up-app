@@ -6,7 +6,8 @@ import {
   parsePhoneNumberFromString,
   type CountryCode,
 } from 'libphonenumber-js';
-import { Input } from '@/components/ui';
+import { View } from 'react-native';
+import { FilledField } from './kit';
 import { CountryPicker } from './CountryPicker';
 
 export type PhoneValue = { e164: string | null; valid: boolean; empty: boolean };
@@ -46,15 +47,13 @@ export function PhoneInput({ value, defaultCountry, onChange, error }: PhoneInpu
   }, [country, national, onChange]);
 
   return (
-    <>
-      <CountryPicker
-        label={t('onboarding.phone.country')}
-        value={country}
-        onChange={setCountry}
-        describe={dialCode}
-      />
-      <Input
-        label={t('onboarding.phone.number')}
+    <View style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
+      <View style={{ width: 108 }}>
+        <CountryPicker label={t('onboarding.phone.code')} value={country} onChange={setCountry} describe={dialCode} />
+      </View>
+      <FilledField
+        style={{ flex: 1 }}
+        label={t('onboarding.phone.mobile')}
         value={national}
         onChangeText={setNational}
         placeholder={t('onboarding.phone.numberPlaceholder')}
@@ -63,6 +62,6 @@ export function PhoneInput({ value, defaultCountry, onChange, error }: PhoneInpu
         autoComplete="tel"
         error={error}
       />
-    </>
+    </View>
   );
 }

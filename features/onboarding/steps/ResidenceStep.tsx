@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { AboutSchema, ResidenceSchema } from '@crewup/shared';
-import { Subtitle, Title } from '@/components/ui';
 import { UPDATE_PROFILE } from '@/graphql/mutations/profile';
 import { useAuth, useSession } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticError, hapticSuccess } from '@/lib/haptics';
-import { useTheme } from '@/theme';
+import { fontFamily, useTheme } from '@/theme';
 import { getAboutDraft } from '../aboutDraft';
 import { HometownPicker, type HometownValue } from '../components/HometownPicker';
 import { StepScaffold } from '../components/StepScaffold';
@@ -119,18 +118,30 @@ export function ResidenceStep({ context }: { context: StepContext }) {
     }
   };
 
+  const question = (title: string, hint: string, first?: boolean) => (
+    <View style={{ marginTop: first ? 0 : 28, marginBottom: 12 }}>
+      <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 17, color: theme.colors.textPrimary }}>{title}</Text>
+      <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, lineHeight: 19, color: theme.colors.textSecondary, marginTop: 4 }}>
+        {hint}
+      </Text>
+    </View>
+  );
+  const bothChosen = Boolean(residenceCity && residenceCountryCode && hometown?.name && hometown.countryCode);
+
   return (
     <StepScaffold
       step="residence"
       context={context}
+      title={t('onboarding.residence.placesTitle')}
       primaryLabel={inFlow ? t('onboarding.next') : t('onboarding.save')}
       onPrimary={() => void onNext()}
       primaryLoading={saving || savingPlace}
+      primaryDisabled={!bothChosen}
       error={formError || placeError}>
-      <Title style={{ marginBottom: 20 }}>{t('onboarding.residence.title')}</Title>
-      <Subtitle>{t('onboarding.residence.liveHint')}</Subtitle>
+      {question(t('onboarding.residence.title'), t('onboarding.residence.liveHint'), true)}
       <HometownPicker
-        label={t('onboarding.residence.residingCity')}
+        label={t('onboarding.residence.title')}
+        hint={t('onboarding.residence.liveHint')}
         allowClear={false}
         error={liveError}
         value={
@@ -143,17 +154,15 @@ export function ResidenceStep({ context }: { context: StepContext }) {
           setValue('residenceCountryCode', place?.countryCode ?? '', { shouldDirty: true, shouldValidate: true });
         }}
       />
-      <View style={{ marginTop: theme.spacing.lg }}>
-        <Title style={{ marginBottom: 20 }}>{t('onboarding.about.hometown')}</Title>
-        <Subtitle>{t('onboarding.residence.hometownHint')}</Subtitle>
-        <HometownPicker
-          label={t('onboarding.residence.homeCity')}
-          allowClear={false}
-          error={homeError}
-          value={hometown}
-          onChange={setHometown}
-        />
-      </View>
+      {question(t('onboarding.about.hometown'), t('onboarding.residence.hometownHint'))}
+      <HometownPicker
+        label={t('onboarding.about.hometown')}
+        hint={t('onboarding.residence.hometownHint')}
+        allowClear={false}
+        error={homeError}
+        value={hometown}
+        onChange={setHometown}
+      />
     </StepScaffold>
   );
 }

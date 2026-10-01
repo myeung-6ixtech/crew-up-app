@@ -14,19 +14,39 @@ import type { StepContext } from '../navigation';
 
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 
-/** Picks a square-cropped photo and uploads it straight to Nhost Storage with the user's session. */
-export async function pickAndUploadAvatar(): Promise<
-  { status: 'uploaded'; fileId: string; uri: string } | { status: 'cancelled' } | { status: 'too_large' }
+export type PhotoSource = 'camera' | 'library';
+
+/**
+ * Takes or picks a photo, lets the person move and scale it in the system square crop,
+ * then uploads it straight to Nhost Storage with the user's session.
+ */
+export async function pickAndUploadAvatar(
+  source: PhotoSource = 'library',
+  onUploadStart?: (uri: string) => void,
+): Promise<
+  | { status: 'uploaded'; fileId: string; uri: string }
+  | { status: 'cancelled' }
+  | { status: 'too_large' }
+  | { status: 'no_permission' }
 > {
-  const picked = await ImagePicker.launchImageLibraryAsync({
+  const options: ImagePicker.ImagePickerOptions = {
     mediaTypes: ['images'],
     allowsEditing: true,
     aspect: [1, 1],
     quality: 0.8,
-  });
+  };
+  if (source === 'camera') {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) return { status: 'no_permission' };
+  }
+  const picked =
+    source === 'camera'
+      ? await ImagePicker.launchCameraAsync({ ...options, cameraType: ImagePicker.CameraType.front })
+      : await ImagePicker.launchImageLibraryAsync(options);
   const asset = picked.canceled ? null : picked.assets[0];
   if (!asset) return { status: 'cancelled' };
   if (asset.fileSize && asset.fileSize > MAX_PHOTO_BYTES) return { status: 'too_large' };
+  onUploadStart?.(asset.uri);
   const fileId = await uploadFile({
     uri: asset.uri,
     name: 'avatar.jpg',

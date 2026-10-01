@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AboutSchema, LANGUAGES, LANGUAGE_CODES } from '@crewup/shared';
+import { AboutSchema, LANGUAGE_CODES } from '@crewup/shared';
 import { z } from 'zod';
-import { PillSelectorGroup } from '@/components/ui';
 import { hapticError } from '@/lib/haptics';
 import { useAuth } from '@/hooks/useSession';
+import { LanguagePills } from '../components/LanguagePills';
 import { StepScaffold } from '../components/StepScaffold';
 import { useStepSave } from '../hooks/useStepForm';
 
@@ -55,19 +55,7 @@ export function LanguagesStep() {
       onPrimary={() => void onSave()}
       primaryLoading={saving}
       error={formError || error}>
-      <PillSelectorGroup
-        tone="fill"
-        multiple
-        values={languages}
-        onToggle={(code) => {
-          setLanguages((current) => (current.includes(code) ? current.filter((item) => item !== code) : [...current, code]));
-        }}
-        options={LANGUAGES.map(([code, name, native]) => ({
-          value: code,
-          label: name,
-          accessibilityLabel: native === name ? name : `${name}, ${native}`,
-        }))}
-      />
+      <LanguagePills value={languages} onChange={setLanguages} />
     </StepScaffold>
   );
 }

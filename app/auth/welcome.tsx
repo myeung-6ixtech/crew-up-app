@@ -1,46 +1,24 @@
 import { useState } from 'react';
-import { Image, View } from 'react-native';
+import { Image, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { useTranslation } from 'react-i18next';
-import { AuthScreenLayout } from '@/components/auth/AuthScreenLayout';
-import { AuthOutlineButton } from '@/components/auth/AuthOutlineButton';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GoogleIcon } from '@/components/auth/GoogleIcon';
-import { Button, DisplayText, Subtitle, BodyText } from '@/components/ui';
-import { signInWithGoogle } from '@/services/authService';
-import { useSession } from '@/hooks/useSession';
 import { SCREENS } from '@/constants/screens';
-import { useThemedStyles } from '@/theme';
+import { DARK, DarkLimePill, DarkOutlinePill, TextPillAction } from '@/features/onboarding/components/kit';
+import { useSession } from '@/hooks/useSession';
+import { signInWithGoogle } from '@/services/authService';
+import { fontFamily } from '@/theme';
 
+/** Entry screen. Shares the dark ground with house rules: one lime primary, one outlined secondary, one text tertiary. */
 export default function WelcomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { refreshSession } = useSession();
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
-  const styles = useThemedStyles((t) => ({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      minHeight: 520,
-    },
-    hero: {
-      alignItems: 'center',
-      paddingHorizontal: t.spacing.xl,
-    },
-    wordmark: {
-      width: 252,
-      height: 72,
-      marginBottom: 20,
-    },
-    actions: {
-      marginTop: 24,
-      paddingBottom: t.spacing.sm,
-      gap: t.spacing.sm,
-    },
-    error: { ...t.typography.body, color: t.colors.statusOnDuty, marginBottom: t.spacing.sm, textAlign: 'center' },
-  }));
-
-  const goEmailSignup = () => router.push(SCREENS.auth.email('signup'));
 
   const onGoogle = async () => {
     setGoogleLoading(true);
@@ -59,40 +37,74 @@ export default function WelcomeScreen() {
   };
 
   return (
-    <AuthScreenLayout scroll>
-      <View style={styles.container}>
-        <View style={styles.hero}>
+    <View style={{ flex: 1, backgroundColor: DARK.ground }}>
+      <StatusBar style="light" />
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingTop: insets.top,
+          paddingBottom: Math.max(insets.bottom, 16),
+          paddingHorizontal: 28,
+        }}>
+        <View style={{ flex: 1, minHeight: 360, alignItems: 'center', justifyContent: 'center', gap: 28 }}>
           <Image
             source={require('@/assets/logos/crewup-wordmark-lime-2400.png')}
             accessibilityRole="image"
             accessibilityLabel={t('appName')}
             resizeMode="contain"
-            style={styles.wordmark}
+            style={{ width: 236, height: 67 }}
           />
-          <DisplayText style={{ marginBottom: 8, textAlign: 'center', fontSize: 20, lineHeight: 28 }}>
+          <Text
+            accessibilityRole="header"
+            style={{
+              fontFamily: fontFamily.jakartaBold,
+              fontSize: 27,
+              lineHeight: 30,
+              letterSpacing: -0.7,
+              color: DARK.ink,
+              textAlign: 'center',
+            }}>
             {t('auth.welcomeTitle')}
-          </DisplayText>
-          <Subtitle style={{ textAlign: 'center', marginBottom: 0 }}>{t('auth.welcomeSubtitle')}</Subtitle>
+          </Text>
+          <Text
+            style={{
+              fontFamily: fontFamily.interRegular,
+              fontSize: 14,
+              lineHeight: 21,
+              color: DARK.muted,
+              textAlign: 'center',
+              maxWidth: 280,
+            }}>
+            {t('auth.welcomeSubtitle')}
+          </Text>
         </View>
 
-        <View style={styles.actions}>
-          {error ? <BodyText style={styles.error}>{error}</BodyText> : null}
-
-          <Button label={t('auth.signUpFree')} onPress={goEmailSignup} noTopMargin />
-          <AuthOutlineButton
+        <View style={{ gap: 10, paddingTop: 16 }}>
+          {error ? (
+            <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: '#FF5B60', textAlign: 'center' }}>{error}</Text>
+          ) : null}
+          <DarkLimePill label={t('auth.signUpFree')} onPress={() => router.push(SCREENS.auth.email('signup'))} />
+          <DarkOutlinePill
             label={t('auth.continueWithGoogle')}
-            onPress={onGoogle}
-            loading={googleLoading}
             icon={<GoogleIcon />}
+            loading={googleLoading}
+            onPress={() => void onGoogle()}
           />
-          <Button
-            label={t('auth.logIn')}
-            onPress={() => router.push(SCREENS.auth.email('signin'))}
-            variant="secondary"
-            noTopMargin
-          />
+          <TextPillAction label={t('auth.logIn')} color={DARK.ink} onPress={() => router.push(SCREENS.auth.email('signin'))} />
+          <Text
+            style={{
+              fontFamily: fontFamily.interRegular,
+              fontSize: 11,
+              lineHeight: 16,
+              color: DARK.faint,
+              textAlign: 'center',
+              paddingHorizontal: 12,
+              paddingTop: 4,
+            }}>
+            {t('auth.termsNotice')}
+          </Text>
         </View>
-      </View>
-    </AuthScreenLayout>
+      </ScrollView>
+    </View>
   );
 }

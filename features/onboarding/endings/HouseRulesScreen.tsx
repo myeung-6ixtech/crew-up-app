@@ -1,21 +1,29 @@
-import { useEffect, useState } from 'react';
-import { Image, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { BackHandler, ScrollView, Text, View } from 'react-native';
+import { useFocusEffect } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { useTranslation } from 'react-i18next';
-import { BodyText, Subtitle, Title } from '@/components/ui';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { HapticPressable } from '@/components/ui';
 import { useAuth } from '@/hooks/useSession';
-import { useTheme } from '@/theme';
-import { StepScaffold } from '../components/StepScaffold';
+import { darkColors, fontFamily } from '@/theme';
 import { resetOnboardingProgress } from '../components/OnboardingProgress';
+import { useConfirmSignOut } from '../components/StepScaffold';
 import { useHouseRulesStore } from '../houseRulesStore';
 
 type HouseRule = { title: string; body: string };
 
-/** Welcome shown once before step 1. Agreement stays on the device. */
+const RULE_BORDER = '#23282B';
+const RULE_BODY = '#A7B1B5';
+const CTA_PRESSED = '#B8EA74';
+
+/** Shown once before step 1, agreement stored on the device. The only dark screen — a curtain-up before the light flow. */
 export function HouseRulesScreen() {
   const { t } = useTranslation();
-  const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const { userId } = useAuth();
   const accept = useHouseRulesStore((state) => state.accept);
+  const confirmSignOut = useConfirmSignOut();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | undefined>();
   const rules = t('onboarding.houseRules.rules', { returnObjects: true }) as HouseRule[];
@@ -24,46 +32,79 @@ export function HouseRulesScreen() {
     resetOnboardingProgress();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+        confirmSignOut();
+        return true;
+      });
+      return () => subscription.remove();
+    }, [confirmSignOut]),
+  );
+
+  const onAgree = () => {
+    if (!userId) return;
+    setSaving(true);
+    setError(undefined);
+    void accept(userId).catch(() => {
+      setSaving(false);
+      setError(t('onboarding.genericError'));
+    });
+  };
+
   return (
-    <StepScaffold
-      context="flow"
-      hideLeading
-      primaryLabel={t('onboarding.houseRules.cta')}
-      primaryLoading={saving}
-      onPrimary={() => {
-        if (!userId) return;
-        setSaving(true);
-        setError(undefined);
-        void accept(userId)
-          .catch(() => {
-            setSaving(false);
-            setError(t('onboarding.genericError'));
-          });
-      }}
-      error={error}>
-      <Image
-        source={require('@/assets/logos/crewup-wordmark-lime-2400.png')}
-        accessibilityRole="image"
-        accessibilityLabel={t('appName')}
-        resizeMode="contain"
-        style={{ width: 176, height: 50, alignSelf: 'center', marginBottom: 20 }}
-      />
-      <Title style={{ textAlign: 'center', marginBottom: 20 }}>{t('onboarding.houseRules.title')}</Title>
-      <Subtitle style={{ textAlign: 'center', marginBottom: 50 }}>
-        {t('onboarding.houseRules.subtitle')}
-      </Subtitle>
-      <View style={{ alignSelf: 'center', width: '100%', paddingHorizontal: 20 }}>
-        {Array.isArray(rules)
-          ? rules.map((rule, index) => (
-              <View key={rule.title} style={{ marginBottom: index === rules.length - 1 ? 0 : 35 }}>
-                <BodyText strong style={{ textAlign: 'left', marginBottom: 2 }}>
-                  {`${index + 1}.  ${rule.title}`}
-                </BodyText>
-                <BodyText style={{ textAlign: 'left', color: theme.colors.textSecondary }}>{rule.body}</BodyText>
-              </View>
-            ))
-          : null}
+    <View style={{ flex: 1, backgroundColor: darkColors.ground }}>
+      <StatusBar style="light" />
+      <ScrollView contentContainerStyle={{ paddingTop: insets.top + 72, paddingHorizontal: 24, paddingBottom: 24 }}>
+        <Text
+          accessibilityRole="header"
+          style={{ fontFamily: fontFamily.jakartaBold, fontSize: 32, lineHeight: 34, letterSpacing: -0.8, color: darkColors.ink }}>
+          {t('onboarding.houseRules.title')}
+        </Text>
+        <View style={{ marginTop: 32, borderBottomWidth: 1, borderBottomColor: RULE_BORDER }}>
+          {Array.isArray(rules)
+            ? rules.map((rule, index) => (
+                <View
+                  key={rule.title}
+                  style={{ flexDirection: 'row', gap: 16, paddingVertical: 16, borderTopWidth: 1, borderTopColor: RULE_BORDER }}>
+                  <Text style={{ fontFamily: fontFamily.monoMedium, fontSize: 12, color: darkColors.fill, paddingTop: 3 }}>
+                    {String(index + 1).padStart(2, '0')}
+                  </Text>
+                  <View style={{ flex: 1, gap: 3 }}>
+                    <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 17, color: darkColors.ink }}>{rule.title}</Text>
+                    <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, lineHeight: 20, color: RULE_BODY }}>
+                      {rule.body}
+                    </Text>
+                  </View>
+                </View>
+              ))
+            : null}
+        </View>
+        {error ? (
+          <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: darkColors.statusOnDuty, marginTop: 16 }}>
+            {error}
+          </Text>
+        ) : null}
+      </ScrollView>
+      <View style={{ paddingHorizontal: 24, paddingTop: 12, paddingBottom: Math.max(insets.bottom, 16) }}>
+        <HapticPressable
+          accessibilityRole="button"
+          accessibilityState={{ busy: saving }}
+          disabled={saving}
+          onPress={onAgree}
+          style={({ pressed }) => ({
+            height: 56,
+            borderRadius: 28,
+            backgroundColor: pressed ? CTA_PRESSED : darkColors.fill,
+            alignItems: 'center',
+            justifyContent: 'center',
+            opacity: saving ? 0.7 : 1,
+          })}>
+          <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 16, color: darkColors.onFill }}>
+            {t('onboarding.houseRules.cta')}
+          </Text>
+        </HapticPressable>
       </View>
-    </StepScaffold>
+    </View>
   );
 }

@@ -44,6 +44,7 @@ export function AirportPickerField({
         placeholder={!selected}
         title={selected ? selected.city : placeholderText}
         subtitle={selected ? `${selected.name} · ${selected.country}` : null}
+        filledTitle={selected ? `${selected.iata} · ${selected.name}` : undefined}
         leading={
           <SelectionSquircle muted={!selected}>
             <Text style={selected ? styles.squircleCode : styles.squirclePlaceholder}>

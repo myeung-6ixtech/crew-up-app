@@ -1,17 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { LANGUAGES, countryName } from '@crewup/shared';
-import { ProfilePills } from '@/components/profile/ProfilePills';
-import { AppIcon, Avatar, BodyText, DisplaySmText } from '@/components/ui';
+import { LANGUAGES } from '@crewup/shared';
+import { AppIcon } from '@/components/ui';
 import { findAirportByIata } from '@/constants/airports';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { useAuth } from '@/hooks/useSession';
 import { hapticError } from '@/lib/haptics';
 import { fetchActivityPreferences } from '@/services/activityService';
 import { fetchAirlines } from '@/services/profileService';
-import { useTheme, useThemedStyles } from '@/theme';
+import { fontFamily, shouldUppercaseLabels, useTheme, useThemedStyles } from '@/theme';
 import type { ActivityPreference } from '@/types/domain';
+import { MonoLabel } from '../components/kit';
+import { PhotoCircle } from '../components/PhotoCircle';
 import { StepScaffold } from '../components/StepScaffold';
 import { useOnboardingState } from '../hooks/useOnboardingState';
 import { useStepSave } from '../hooks/useStepForm';
@@ -43,37 +44,41 @@ export function ReviewStep() {
   const [airlineName, setAirlineName] = useState<string | null>(null);
   const [preferences, setPreferences] = useState<ActivityPreference[]>([]);
   const styles = useThemedStyles((th) => ({
-    header: { alignItems: 'center', marginBottom: th.spacing.sm },
-    nameRow: {
-      flexDirection: 'row',
+    card: {
+      backgroundColor: th.colors.card,
+      borderRadius: 22,
+      paddingTop: 22,
+      paddingHorizontal: 18,
+      paddingBottom: 6,
+      shadowColor: '#0E1113',
+      shadowOpacity: 0.06,
+      shadowRadius: 15,
+      shadowOffset: { width: 0, height: 10 },
+      elevation: 3,
+    },
+    header: {
       alignItems: 'center',
-      justifyContent: 'center',
-      gap: th.spacing.xs,
-      marginTop: th.spacing.md,
+      gap: 4,
+      paddingBottom: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: th.colors.hairline,
     },
-    handle: { textAlign: 'center', marginTop: th.spacing.xs },
-    since: { textAlign: 'center', marginTop: th.spacing.xs },
-    section: {
-      alignSelf: 'stretch',
-      marginTop: th.spacing.md,
-      padding: th.spacing.md,
-      borderRadius: th.radius.card,
-      borderWidth: 1,
-      borderColor: th.colors.hairline,
-      backgroundColor: th.colors.bgSurface,
-      gap: th.spacing.sm,
-    },
-    sectionTitle: {
-      ...th.typography.label,
+    nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 },
+    name: { fontFamily: fontFamily.jakartaBold, fontSize: 20, letterSpacing: -0.4, color: th.colors.textPrimary },
+    handle: { fontFamily: fontFamily.interRegular, fontSize: 13, color: th.colors.textSecondary },
+    since: {
+      fontFamily: fontFamily.monoMedium,
+      fontSize: 10,
+      letterSpacing: 0.8,
       color: th.colors.textTertiary,
+      textTransform: shouldUppercaseLabels() ? 'uppercase' : 'none',
     },
-    row: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-      justifyContent: 'space-between',
-      gap: th.spacing.md,
-    },
-    rowValue: { flex: 1, textAlign: 'right' },
+    section: { gap: 8, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: th.colors.hairline },
+    sectionLast: { borderBottomWidth: 0 },
+    line: { fontFamily: fontFamily.interMedium, fontSize: 13.5, lineHeight: 19, color: th.colors.textPrimary },
+    pills: { flexDirection: 'row', flexWrap: 'wrap', gap: 5 },
+    pill: { backgroundColor: th.colors.fill, borderRadius: 12, paddingHorizontal: 10, paddingVertical: 5 },
+    pillText: { fontFamily: fontFamily.interMedium, fontSize: 12, color: th.colors.onFill },
   }));
 
   useEffect(() => {
@@ -94,14 +99,29 @@ export function ReviewStep() {
   const airport = findAirportByIata(profile?.base_airport_iata);
   const displayName = profile?.preferred_name || profile?.display_name || profile?.full_name || '';
   const showGenderIcon = profile?.own_show_gender !== false && (profile?.visible_gender === 'male' || profile?.visible_gender === 'female');
-  const residing = [profile?.residence_city, countryName(profile?.residence_country_code)].filter(Boolean).join(', ');
-  const hometown = [profile?.hometown_city, countryName(profile?.home_country_code)].filter(Boolean).join(', ');
+  const residing = [profile?.residence_city, profile?.residence_country_code].filter(Boolean).join(', ');
+  const hometown = [profile?.hometown_city, profile?.home_country_code].filter(Boolean).join(', ');
   const languages = (profile?.languages ?? []).map((code) => LANGUAGE_NAMES.get(code) ?? code);
   const role = profile?.crew_role ? t(`onboarding.crewRoles.${profile.crew_role}`) : '';
-  const base = airport ? `${airport.iata} · ${airport.city}` : profile?.base_airport_iata ?? '';
+  const base = airport?.iata ?? profile?.base_airport_iata ?? '';
   const since = profile?.created_at ? memberSinceWhen(profile.created_at, t) : '';
   const activityNames = preferences.filter((item) => item.kind === 'activity').map((item) => item.name);
   const interestNames = preferences.filter((item) => item.kind === 'interest').map((item) => item.name);
+
+  const places = [
+    residing ? t('onboarding.review.livesIn', { place: residing }) : '',
+    hometown ? t('onboarding.review.from', { place: hometown }) : '',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  const crewLine = [role, airlineName, base].filter(Boolean).join(' · ');
+  const sections: { key: string; label: string; line?: string; pills?: string[] }[] = [
+    crewLine ? { key: 'crew', label: t('onboarding.review.crewSection'), line: crewLine } : null,
+    places ? { key: 'places', label: t('onboarding.review.placesSection'), line: places } : null,
+    languages.length ? { key: 'languages', label: t('onboarding.review.languagesSection'), pills: languages } : null,
+    activityNames.length ? { key: 'activities', label: t('onboarding.review.activitiesSection'), pills: activityNames } : null,
+    interestNames.length ? { key: 'interests', label: t('onboarding.review.interestsSection'), pills: interestNames } : null,
+  ].filter((section): section is NonNullable<typeof section> => section !== null);
 
   const onContinue = async () => {
     if (missing.size) {
@@ -118,86 +138,48 @@ export function ReviewStep() {
       step="review"
       context="flow"
       title={t('onboarding.review.title')}
+      titleStyle={prefilledFromBeta ? undefined : { marginBottom: -10 }}
       banner={prefilledFromBeta ? t('onboarding.review.prefilledBanner') : undefined}
-      primaryLabel={t('onboarding.review.done')}
+      headerLabel={prefilledFromBeta ? t('onboarding.review.betaEnded') : undefined}
+      primaryLabel={prefilledFromBeta ? t('onboarding.review.looksGood') : t('onboarding.review.done')}
       onPrimary={() => void onContinue()}
       primaryLoading={saving}
       error={formError}>
-      <View style={styles.header}>
-        <Avatar name={displayName || undefined} fileId={profile?.avatar_file_id} size="xl" />
-        {displayName ? (
-          <View style={styles.nameRow}>
-            <DisplaySmText>{displayName}</DisplaySmText>
-            {showGenderIcon ? (
-              <AppIcon
-                name={profile?.visible_gender === 'female' ? 'genderFemale' : 'genderMale'}
-                size={18}
-                color={theme.colors.accentText}
-              />
-            ) : null}
+      <View style={styles.card}>
+        <View style={styles.header}>
+          <PhotoCircle size={76} tone="lime" name={displayName} fileId={profile?.avatar_file_id} />
+          {displayName ? (
+            <View style={styles.nameRow}>
+              <Text style={styles.name}>{displayName}</Text>
+              {showGenderIcon ? (
+                <AppIcon
+                  name={profile?.visible_gender === 'female' ? 'genderFemale' : 'genderMale'}
+                  size={16}
+                  color={theme.colors.accentText}
+                />
+              ) : null}
+            </View>
+          ) : null}
+          {profile?.username ? <Text style={styles.handle}>{`@${profile.username}`}</Text> : null}
+          {since ? <Text style={styles.since}>{t('onboarding.review.memberSince', { when: since })}</Text> : null}
+        </View>
+        {sections.map((section, index) => (
+          <View key={section.key} style={[styles.section, index === sections.length - 1 ? styles.sectionLast : null]}>
+            <MonoLabel style={{ fontSize: 10, color: theme.colors.textTertiary }}>{section.label}</MonoLabel>
+            {section.pills ? (
+              <View style={styles.pills}>
+                {section.pills.map((name) => (
+                  <View key={name} style={styles.pill}>
+                    <Text style={styles.pillText}>{name}</Text>
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <Text style={styles.line}>{section.line}</Text>
+            )}
           </View>
-        ) : null}
-        {profile?.username ? <BodyText muted style={styles.handle}>{`@${profile.username}`}</BodyText> : null}
-        {since ? <BodyText muted style={styles.since}>{t('onboarding.review.memberSince', { when: since })}</BodyText> : null}
+        ))}
       </View>
-      {role || airlineName || base ? (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('onboarding.review.crewSection')}</Text>
-          {role ? (
-            <View style={styles.row}>
-              <BodyText muted>{t('onboarding.crew.role')}</BodyText>
-              <BodyText style={styles.rowValue}>{role}</BodyText>
-            </View>
-          ) : null}
-          {airlineName ? (
-            <View style={styles.row}>
-              <BodyText muted>{t('onboarding.crew.airline')}</BodyText>
-              <BodyText style={styles.rowValue}>{airlineName}</BodyText>
-            </View>
-          ) : null}
-          {base ? (
-            <View style={styles.row}>
-              <BodyText muted>{t('onboarding.crew.base')}</BodyText>
-              <BodyText style={styles.rowValue}>{base}</BodyText>
-            </View>
-          ) : null}
-        </View>
-      ) : null}
-      {residing || hometown ? (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('onboarding.review.placesSection')}</Text>
-          {residing ? (
-            <View style={styles.row}>
-              <BodyText muted>{t('onboarding.residence.residingCity')}</BodyText>
-              <BodyText style={styles.rowValue}>{residing}</BodyText>
-            </View>
-          ) : null}
-          {hometown ? (
-            <View style={styles.row}>
-              <BodyText muted>{t('onboarding.residence.homeCity')}</BodyText>
-              <BodyText style={styles.rowValue}>{hometown}</BodyText>
-            </View>
-          ) : null}
-        </View>
-      ) : null}
-      {languages.length ? (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('onboarding.review.languagesSection')}</Text>
-          <ProfilePills names={languages} />
-        </View>
-      ) : null}
-      {activityNames.length ? (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('onboarding.review.activitiesSection')}</Text>
-          <ProfilePills names={activityNames} />
-        </View>
-      ) : null}
-      {interestNames.length ? (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('onboarding.review.interestsSection')}</Text>
-          <ProfilePills names={interestNames} />
-        </View>
-      ) : null}
     </StepScaffold>
   );
 }

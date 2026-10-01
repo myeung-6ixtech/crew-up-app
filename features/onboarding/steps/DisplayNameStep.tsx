@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NameHandleSchema } from '@crewup/shared';
-import { HeadlineText, PillSelectorGroup } from '@/components/ui';
+import { Text, View } from 'react-native';
 import { hapticError } from '@/lib/haptics';
 import { useAuth } from '@/hooks/useSession';
-import { useTheme } from '@/theme';
+import { fontFamily, useTheme } from '@/theme';
+import { RadioPill } from '../components/kit';
 import { StepScaffold } from '../components/StepScaffold';
 import { displayNameSample, displayStyleFromSaved, splitFullName, type DisplayNameStyle } from '../displayName';
 import { useStepSave } from '../hooks/useStepForm';
@@ -60,17 +61,29 @@ export function DisplayNameStep() {
       onPrimary={() => void onSave()}
       primaryLoading={saving}
       error={formError || error}>
-      <HeadlineText style={{ textAlign: 'center', marginBottom: theme.spacing.lg }}>{samples[style]}</HeadlineText>
-      <PillSelectorGroup
-        tone="fill"
-        value={style}
-        onChange={setStyle}
-        options={(['full', 'initial', 'last'] as const).map((option) => ({
-          value: option,
-          label: samples[option] || t('onboarding.nameHandle.displayEmpty'),
-          accessibilityLabel: t(STYLE_LABELS[option]),
-        }))}
-      />
+      <Text
+        numberOfLines={1}
+        style={{
+          fontFamily: fontFamily.jakartaBold,
+          fontSize: 24,
+          letterSpacing: -0.5,
+          color: theme.colors.textPrimary,
+          textAlign: 'center',
+          marginBottom: 24,
+        }}>
+        {samples[style]}
+      </Text>
+      <View style={{ gap: 8 }}>
+        {(['full', 'initial', 'last'] as const).map((option) => (
+          <RadioPill
+            key={option}
+            label={samples[option] || t('onboarding.nameHandle.displayEmpty')}
+            accessibilityLabel={t(STYLE_LABELS[option])}
+            selected={style === option}
+            onPress={() => setStyle(option)}
+          />
+        ))}
+      </View>
     </StepScaffold>
   );
 }

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, Switch, Text, View } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -14,14 +14,16 @@ import {
   MINIMUM_AGE,
   languageFromLocale,
 } from '@crewup/shared';
-import { AppIcon, BodyText, DatePickerField, PillSelectorGroup } from '@/components/ui';
 import { UPDATE_PROFILE } from '@/graphql/mutations/profile';
 import { useAuth, useSession } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticError } from '@/lib/haptics';
-import { useTheme } from '@/theme';
+import { fontFamily, useTheme } from '@/theme';
 import { getAboutDraft, setAboutDraft, type AboutDraft, type Gender } from '../aboutDraft';
+import { DobField } from '../components/DobField';
 import { InterestsFields } from '../components/InterestsFields';
+import { ChoicePill, MonoLabel } from '../components/kit';
+import { LanguagePills } from '../components/LanguagePills';
 import { StepScaffold } from '../components/StepScaffold';
 import { useActivitySelection } from '../hooks/useActivitySelection';
 import { useStepSave } from '../hooks/useStepForm';
@@ -225,27 +227,31 @@ export function AboutStep({ context }: { context: StepContext }) {
     }
   };
 
+  const errorText = (message?: string) =>
+    message ? (
+      <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.statusOnDuty, marginTop: 6, paddingLeft: 4 }}>
+        {message}
+      </Text>
+    ) : null;
+
   const genderField = (
     <Controller
       control={control}
       name="gender"
       render={({ field, fieldState }) => (
         <>
-          <PillSelectorGroup
-            label={t('onboarding.about.gender')}
-            tone="fill"
-            value={field.value || undefined}
-            onChange={field.onChange}
-            options={GENDERS.map((gender) => ({
-              value: gender,
-              label: t(GENDER_LABELS[gender]),
-            }))}
-          />
-          {fieldState.error?.message ? (
-            <BodyText style={{ color: theme.colors.statusOnDuty, marginTop: -theme.spacing.sm }}>
-              {fieldState.error.message}
-            </BodyText>
-          ) : null}
+          <MonoLabel style={{ marginTop: 30 }}>{t('onboarding.about.gender')}</MonoLabel>
+          <View accessibilityRole="radiogroup" style={{ gap: 8, marginTop: 10 }}>
+            {GENDERS.map((gender) => (
+              <ChoicePill
+                key={gender}
+                label={t(GENDER_LABELS[gender])}
+                selected={field.value === gender}
+                onPress={() => field.onChange(gender)}
+              />
+            ))}
+          </View>
+          {errorText(fieldState.error?.message)}
         </>
       )}
     />
@@ -257,21 +263,28 @@ export function AboutStep({ context }: { context: StepContext }) {
       name="showGender"
       render={({ field }) => (
         <Pressable
-          accessibilityRole="checkbox"
+          accessibilityRole="switch"
           accessibilityState={{ checked: field.value }}
           onPress={() => field.onChange(!field.value)}
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            gap: theme.spacing.sm,
-            marginBottom: theme.spacing.lg,
+            justifyContent: 'space-between',
+            marginTop: 20,
+            paddingVertical: 16,
+            borderTopWidth: 1,
+            borderTopColor: theme.colors.hairline,
           }}>
-          <AppIcon
-            name={field.value ? 'checkboxOn' : 'checkboxOff'}
-            size={22}
-            color={field.value ? theme.colors.accentText : theme.colors.textTertiary}
+          <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 15, color: theme.colors.textPrimary }}>
+            {t('onboarding.about.showGender')}
+          </Text>
+          <Switch
+            value={field.value}
+            onValueChange={field.onChange}
+            trackColor={{ true: theme.colors.fill, false: theme.colors.track }}
+            thumbColor="#FFFFFF"
+            ios_backgroundColor={theme.colors.track}
           />
-          <BodyText>{t('onboarding.about.showGender')}</BodyText>
         </Pressable>
       )}
     />
@@ -282,30 +295,7 @@ export function AboutStep({ context }: { context: StepContext }) {
       control={control}
       name="languages"
       render={({ field, fieldState }) => (
-        <>
-          <PillSelectorGroup
-            label={inFlow ? undefined : t('onboarding.about.languages')}
-            tone="fill"
-            multiple
-            values={field.value ?? []}
-            onToggle={(code) => {
-              const current = field.value ?? [];
-              field.onChange(
-                current.includes(code) ? current.filter((item) => item !== code) : [...current, code],
-              );
-            }}
-            options={LANGUAGES.map(([code, name, native]) => ({
-              value: code,
-              label: name,
-              accessibilityLabel: native === name ? name : `${name}, ${native}`,
-            }))}
-          />
-          {fieldState.error?.message ? (
-            <BodyText style={{ color: theme.colors.statusOnDuty, marginTop: -theme.spacing.sm }}>
-              {fieldState.error.message}
-            </BodyText>
-          ) : null}
-        </>
+        <LanguagePills value={field.value ?? []} onChange={field.onChange} error={fieldState.error?.message} />
       )}
     />
   );
@@ -323,12 +313,16 @@ export function AboutStep({ context }: { context: StepContext }) {
           setPhase('languages');
         }}
         title={t('onboarding.about.intoTitle')}
-        primaryLabel={t('onboarding.next')}
+        titleStyle={{ marginBottom: -8 }}
+        headerAction={{ label: t('onboarding.skipShort'), onPress: () => void finishAbout() }}
+        primaryLabel={
+          interests.selectedIds.length
+            ? t('onboarding.about.nextPicked', { count: interests.selectedIds.length })
+            : t('onboarding.next')
+        }
         onPrimary={() => void onIntoNext()}
         primaryLoading={interests.saving || saving}
         primaryDisabled={interests.loading || interests.failed}
-        secondaryLabel={t('onboarding.skip')}
-        onSecondary={() => void finishAbout()}
         error={formError || phaseError || (interests.failed ? t('onboarding.genericError') : '')}>
         <InterestsFields
           activities={interests.activities}
@@ -353,6 +347,7 @@ export function AboutStep({ context }: { context: StepContext }) {
           setPhase('details');
         }}
         title={t('onboarding.about.languages')}
+        titleStyle={{ marginBottom: -18 }}
         primaryLabel={t('onboarding.next')}
         onPrimary={() => void onLanguagesNext()}
         primaryLoading={saving}
@@ -367,24 +362,28 @@ export function AboutStep({ context }: { context: StepContext }) {
       step="about"
       context={context}
       title={t('onboarding.about.title')}
-      subtitle={t('onboarding.about.subtitle')}
       primaryLabel={inFlow ? t('onboarding.next') : t('onboarding.save')}
       onPrimary={() => void onDetailsNext()}
       primaryLoading={savingGender || saving}
       error={formError || phaseError}>
+      <MonoLabel>{t('onboarding.about.dateOfBirth')}</MonoLabel>
       <Controller
         control={control}
         name="dateOfBirth"
         render={({ field, fieldState }) => (
-          <DatePickerField
-            label={t('onboarding.about.dateOfBirth')}
-            value={fromIsoDate(field.value)}
-            onChange={(date) => field.onChange(toIsoDate(date))}
-            placeholder={t('onboarding.about.dateOfBirthPlaceholder')}
-            maximumDate={yearsAgo(MINIMUM_AGE)}
-            minimumDate={yearsAgo(MAXIMUM_AGE)}
-            error={fieldState.error?.message}
-          />
+          <View style={{ marginTop: 10 }}>
+            <DobField
+              label={t('onboarding.about.dateOfBirth')}
+              value={fromIsoDate(field.value)}
+              onChange={(date) => field.onChange(toIsoDate(date))}
+              maximumDate={yearsAgo(MINIMUM_AGE)}
+              minimumDate={yearsAgo(MAXIMUM_AGE)}
+              error={fieldState.error?.message}
+            />
+            <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, lineHeight: 19, color: theme.colors.textSecondary, marginTop: 10 }}>
+              {t('onboarding.about.dateOfBirthHint')}
+            </Text>
+          </View>
         )}
       />
       {genderField}

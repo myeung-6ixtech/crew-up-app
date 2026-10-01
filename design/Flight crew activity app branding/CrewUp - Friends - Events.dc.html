@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #E3E5DE; }
+  a { color: #4F6E19; }
+  a:hover { color: #0E1113; }
+  input::placeholder { color: #6f7569; }
+</style>
+</helmet>
+
+<section style="padding: 56px 56px 24px; display: flex; flex-direction: column; gap: 40px; font-family: 'IBM Plex Sans', sans-serif;">
+  <div style="display: flex; flex-direction: column; gap: 12px; max-width: 880px;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #5f6559;">Turn 3 · Events · Altitude Light</div>
+    <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 36px; letter-spacing: -0.02em; line-height: 1.1; color: #0E1113;">Find a meet, create a meet</div>
+    <div style="font-size: 15px; line-height: 1.6; color: #4d534a; text-wrap: pretty;">Per events.md, including the addition: meets carry activities and interests, cards show both as lime pills, and search matches title, city, activity or interest. Quick tags are practical-only now.</div>
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #545a50;"><div>Discover:</div><a href="#3a">3A Home · Activity</a><div>/</div><a href="#3b">3B Events</a><div>→</div><a href="#3e">3E The meet</a><div>·</div><div>Create:</div><a href="#3c">3C Empty</a><div>→</div><a href="#3c">kind sheet</a><div>→</div><a href="#3d">3D Create meetup</a><div>→</div><a href="#3e">3E</a></div>
+  </div>
+  <div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start;">
+
+    <div id="3a" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">3A</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Home · Activity</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">NAV · HOME</div>
+      </div>
+      <div data-screen-label="E1 Home Activity" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 24px 0;">
+          <img src="assets/crewup-wordmark-lime.svg" alt="CrewUp" style="height: 26px; width: auto; display: block; filter: brightness(0.35) saturate(1.6);">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M6 10a6 6 0 0112 0v4l1.6 2.6a.6.6 0 01-.5.9H4.9a.6.6 0 01-.5-.9L6 14z" stroke="#0E1113" stroke-width="2" fill="none"></path><path d="M9.5 19.5a2.5 2.5 0 005 0" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div>
+        </div>
+        <div style="display: flex; gap: 8px; padding: 18px 24px 0;">
+          <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #EAECE5; color: #0E1113; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">What's next</div>
+          <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #EAECE5; color: #0E1113; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">Matches</div>
+          <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #0E1113; color: #F7F8F4; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">Activity</div>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; margin-top: 22px;">UPCOMING MEETS</div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+            <div style="background: #FFFFFF; border-radius: 18px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer;">
+              <div style="width: 48px; height: 52px; border-radius: 14px; background: #0E1113; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #A8E05F;">OCT</div><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 19px; color: #EDF1F2; line-height: 1;">8</div></div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 15px; font-weight: 600; color: #0E1113;">CrewUp Event: Rooftop sunset yoga</div><div style="font-size: 12.5px; color: #6f7569;">Dubai · Thu 8 Oct</div></div>
+              <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <div style="background: #FFFFFF; border-radius: 18px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer;">
+              <div style="width: 48px; height: 52px; border-radius: 14px; background: #EAECE5; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #4F6E19;">OCT</div><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 19px; color: #0E1113; line-height: 1;">11</div></div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 15px; font-weight: 600; color: #0E1113;">Sunday coffee in Alserkal</div><div style="font-size: 12.5px; color: #6f7569;">Dubai · Sun 11 Oct</div></div>
+              <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+          </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; margin-top: 24px;">RECENT CONNECTIONS</div>
+          <div style="display: flex; flex-direction: column; margin-top: 4px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #E8EAE3;"><div style="width: 44px; height: 44px; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #A8E05F; flex-shrink: 0;">PN</div><div style="flex: 1; font-size: 14px; color: #0E1113;"><strong style="font-weight: 600;">Priya Nair</strong> is now your friend</div><div style="font-size: 12px; color: #6f7569;">2h</div></div>
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0;"><div style="width: 44px; height: 44px; border-radius: 50%; background: #DDE1D6; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113; flex-shrink: 0;">SM</div><div style="flex: 1; font-size: 14px; color: #0E1113;"><strong style="font-weight: 600;">Sofia Marques</strong> is now your friend</div><div style="font-size: 12px; color: #6f7569;">1d</div></div>
+          </div>
+          <div style="display: flex; justify-content: center; margin-top: 18px;"><div style="height: 44px; box-sizing: border-box; border-radius: 22px; border: 1.5px solid #c9cec1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: #0E1113; cursor: pointer;">+ Create Event</div></div>
+        </div>
+        <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" fill="#0E1113"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" stroke="#0E1113" stroke-width="2" fill="none"></rect><path d="M3 9.5h18M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" stroke="#0E1113" stroke-width="1.8" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M15.5 4.3A3 3 0 1117 10M18 13c2.4.6 3.9 2.6 4.3 5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><div style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 50%;  display: flex;"><div style="flex: 1; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div></div></div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Meets keep opening the meet from here; search lives on Events. Platform meets read “CrewUp Event: …”.</div>
+      </sc-if>
+    </div>
+
+    <div id="3b" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">3B</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Events</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">NAV · EVENTS</div>
+      </div>
+      <div data-screen-label="E2 Events search" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 24px 0;">
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 27px; letter-spacing: -0.025em; color: #0E1113;">Events</div>
+          <div style="display: flex; gap: 8px;"><div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 2v12M2 8h12" stroke="#0E1113" stroke-width="2.2" stroke-linecap="round"></path></svg></div></div>
+        </div>
+        <div style="height: 48px; box-sizing: border-box; border-radius: 24px; background: #EAECE5; display: flex; align-items: center; gap: 10px; padding: 0 18px; margin: 14px 24px 0;">
+          <svg width="16" height="16" viewBox="0 0 16 16" style="flex-shrink: 0;"><circle cx="7" cy="7" r="5.2" stroke="#0E1113" stroke-width="1.8" fill="none"></circle><path d="M11 11l3.2 3.2" stroke="#0E1113" stroke-width="1.8" stroke-linecap="round"></path></svg>
+          <input value="{{ q }}" onChange="{{ onQ }}" placeholder="Search meets, cities, activities" style="flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; color: #0E1113;">
+        </div>
+        <div style="display: flex; gap: 8px; padding: 12px 24px 0;">
+          <sc-for list="{{ filters }}" as="p" hint-placeholder-count="3"><div onClick="{{ p.onClick }}" style="height: 36px; padding: 0 16px; border-radius: 18px; background: {{ p.bg }}; color: {{ p.fg }}; display: flex; align-items: center; font-size: 13.5px; font-weight: 600; cursor: pointer;">{{ p.label }}</div></sc-for>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+            <sc-for list="{{ events }}" as="e" hint-placeholder-count="4"><div style="background: #FFFFFF; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 8px; cursor: pointer;">
+                <sc-if value="{{ e.hosted }}" hint-placeholder-val="{{ false }}"><div style="align-self: flex-start; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; background: #0E1113; color: #A8E05F; padding: 4px 8px; border-radius: 8px;">CREWUP EVENT</div></sc-if>
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16.5px; letter-spacing: -0.01em; color: #0E1113;">{{ e.title }}</div>
+                <div style="font-size: 13px; color: #545a50;">{{ e.city }} · {{ e.when }}</div>
+                <sc-if value="{{ e.hasActs }}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-wrap: wrap; gap: 5px;"><sc-for list="{{ e.acts }}" as="x" hint-placeholder-count="1"><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">{{ x }}</div></sc-for></div></sc-if>
+                <sc-if value="{{ e.hasInts }}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-wrap: wrap; gap: 5px;"><sc-for list="{{ e.ints }}" as="x" hint-placeholder-count="1"><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">{{ x }}</div></sc-for></div></sc-if>
+              </div></sc-for>
+          </div>
+          <sc-if value="{{ noEvents }}" hint-placeholder-val="{{ false }}"><div style="margin-top: 28px; border: 1.5px dashed #c9cec1; border-radius: 20px; padding: 28px 22px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;">
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">No upcoming meets.</div>
+            <div style="font-size: 13.5px; line-height: 1.5; color: #545a50; max-width: 260px;">Browse events or create one for your layover city.</div>
+            <div style="margin-top: 4px;"><div style="height: 44px; border-radius: 22px; background: #A8E05F; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: #0E1113; cursor: pointer;">Create Event</div></div>
+          </div></sc-if>
+        </div>
+        <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" fill="#0E1113"></rect><path d="M3 9.5h18" stroke="#F7F8F4" stroke-width="2"></path><path d="M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" stroke="#0E1113" stroke-width="1.8" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M15.5 4.3A3 3 0 1117 10M18 13c2.4.6 3.9 2.6 4.3 5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><div style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 50%;  display: flex;"><div style="flex: 1; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div></div></div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Search field added at the top — it is live: try “coffee”, “music”, “London”. Filters stack with the query. Header ＋ skips the kind sheet.</div>
+      </sc-if>
+    </div>
+
+    <div id="3c" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">3C</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">What kind of meet?</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">NO MATCH → CREATE</div>
+      </div>
+      <div data-screen-label="E3 Kind of meet" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 24px 0;">
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 27px; letter-spacing: -0.025em; color: #0E1113;">Events</div>
+          <div style="display: flex; gap: 8px;"><div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 2v12M2 8h12" stroke="#0E1113" stroke-width="2.2" stroke-linecap="round"></path></svg></div></div>
+        </div>
+        <div style="height: 48px; box-sizing: border-box; border-radius: 24px; background: #EAECE5; display: flex; align-items: center; gap: 10px; padding: 0 18px; margin: 14px 24px 0;">
+          <svg width="16" height="16" viewBox="0 0 16 16" style="flex-shrink: 0;"><circle cx="7" cy="7" r="5.2" stroke="#0E1113" stroke-width="1.8" fill="none"></circle><path d="M11 11l3.2 3.2" stroke="#0E1113" stroke-width="1.8" stroke-linecap="round"></path></svg>
+          <div style="flex: 1; font-size: 15px; color: #0E1113;">karaoke</div><div style="width: 20px; height: 20px; border-radius: 10px; background: #B9BEB2; display: flex; align-items: center; justify-content: center;"><svg width="8" height="8" viewBox="0 0 8 8"><path d="M1 1l6 6M7 1L1 7" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"></path></svg></div>
+        </div>
+        <div style="display: flex; gap: 8px; padding: 12px 24px 0;">
+          <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #0E1113; color: #F7F8F4; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">All</div>
+          <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #EAECE5; color: #0E1113; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">CrewUp Events</div>
+          <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #EAECE5; color: #0E1113; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">Community</div>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="margin-top: 28px; border: 1.5px dashed #c9cec1; border-radius: 20px; padding: 28px 22px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;">
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">No upcoming meets.</div>
+            <div style="font-size: 13.5px; line-height: 1.5; color: #545a50; max-width: 260px;">Browse events or create one for your layover city.</div>
+            <div style="margin-top: 4px;"><div style="height: 44px; border-radius: 22px; background: #A8E05F; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: #0E1113; cursor: pointer;">Create Event</div></div>
+          </div>
+        </div>
+        <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" fill="#0E1113"></rect><path d="M3 9.5h18" stroke="#F7F8F4" stroke-width="2"></path><path d="M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" stroke="#0E1113" stroke-width="1.8" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M15.5 4.3A3 3 0 1117 10M18 13c2.4.6 3.9 2.6 4.3 5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><div style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 50%;  display: flex;"><div style="flex: 1; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div></div></div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+        <div style="position: absolute; inset: 0; background: rgba(14,17,19,0.42);"></div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; background: #FFFFFF; border-radius: 28px 28px 0 0; display: flex; flex-direction: column; padding: 8px 20px 8px; gap: 10px; box-shadow: 0 -10px 40px rgba(14,17,19,0.18);">
+          <div style="width: 38px; height: 5px; border-radius: 3px; background: #D4D8CD; align-self: center;"></div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 4px 6px;">
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: -0.02em; color: #0E1113;">What kind of meet?</div>
+            <div style="width: 32px; height: 32px; border-radius: 16px; background: #EAECE5; display: flex; align-items: center; justify-content: center;"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1l8 8M9 1L1 9" stroke="#0E1113" stroke-width="1.8" stroke-linecap="round"></path></svg></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 18px; background: #F2F4EE; cursor: pointer;">
+              <div style="width: 48px; height: 48px; border-radius: 14px; background: #A8E05F; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z" stroke="#0E1113" stroke-width="2" fill="none"></path></svg></div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;">Public Meet</div>
+                <div style="font-size: 13px; line-height: 1.45; color: #545a50;">Create a meet for everyone in the community to join.</div>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #4F6E19; margin-top: 2px;">VISIBLE TO VERIFIED CREW</div>
+              </div>
+              <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+          <div style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 18px; background: #F2F4EE; cursor: pointer;">
+              <div style="width: 48px; height: 48px; border-radius: 14px; background: #A8E05F; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="20" height="22" viewBox="0 0 16 18"><rect x="2" y="8" width="12" height="9" rx="2" fill="#0E1113"></rect><path d="M5 8V5.5a3 3 0 016 0V8" stroke="#0E1113" stroke-width="1.8" fill="none"></path></svg></div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;">Private Meeting</div>
+                <div style="font-size: 13px; line-height: 1.45; color: #545a50;">Create a meet for your invited friends only.</div>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #4F6E19; margin-top: 2px;">FRIENDS ONLY</div>
+              </div>
+              <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+          <div style="height: 18px;"></div>
+          <div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center;"></div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">No-match search uses the same empty state and still offers Create Event, which opens this sheet.</div>
+      </sc-if>
+    </div>
+
+    <div id="3d" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">3D</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Create meetup</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FORM · TOP</div>
+      </div>
+      <div data-screen-label="E4 Create top" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;">Create meetup</div>
+          <div style="width: 40px; display: flex; justify-content: flex-end;"></div>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="display: flex; gap: 6px; margin-top: 18px; background: #EAECE5; border-radius: 22px; padding: 4px;">
+            <sc-for list="{{ kindOpts }}" as="k" hint-placeholder-count="2"><div onClick="{{ k.onClick }}" style="flex: 1; height: 38px; border-radius: 19px; background: {{ k.bg }}; color: {{ k.fg }}; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer;">{{ k.label }}</div></sc-for>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 10px; margin-top: 24px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4F6E19;">01</div><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Activities</div></div>
+          <div style="font-size: 12px; color: #6f7569; margin: 4px 0 10px;">Optional. Pick as many as fit.</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; margin-bottom: 8px;">YOUR ACTIVITIES</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;"><sc-for list="{{ cYourActs }}" as="p" hint-placeholder-count="4"><div onClick="{{ p.onClick }}" style="height: 36px; box-sizing: border-box; border-radius: 18px; padding: 0 14px; background: {{ p.bg }}; border: 1.5px solid {{ p.border }}; display: flex; align-items: center; font-size: 13.5px; font-weight: 500; color: #0E1113; cursor: pointer;">{{ p.label }}</div></sc-for></div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; margin: 14px 0 8px;">ALL ACTIVITIES</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;"><sc-for list="{{ cAllActs }}" as="p" hint-placeholder-count="4"><div onClick="{{ p.onClick }}" style="height: 36px; box-sizing: border-box; border-radius: 18px; padding: 0 14px; background: {{ p.bg }}; border: 1.5px solid {{ p.border }}; display: flex; align-items: center; font-size: 13.5px; font-weight: 500; color: #0E1113; cursor: pointer;">{{ p.label }}</div></sc-for></div>
+          <div style="display: flex; align-items: baseline; gap: 10px; margin-top: 24px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4F6E19;">02</div><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Interests</div></div>
+          <div style="font-size: 12px; color: #6f7569; margin: 4px 0 10px;">Optional. Helps crew who like the same things find it.</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;"><sc-for list="{{ cInts }}" as="p" hint-placeholder-count="4"><div onClick="{{ p.onClick }}" style="height: 36px; box-sizing: border-box; border-radius: 18px; padding: 0 14px; background: {{ p.bg }}; border: 1.5px solid {{ p.border }}; display: flex; align-items: center; font-size: 13.5px; font-weight: 500; color: #0E1113; cursor: pointer;">{{ p.label }}</div></sc-for></div>
+          <div style="display: flex; align-items: baseline; gap: 10px; margin-top: 24px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4F6E19;">03</div><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">When</div></div>
+          <div style="display: flex; gap: 10px; margin-top: 10px;"><div style="flex: 1; min-width: 0; min-height: 58px; box-sizing: border-box; border-radius: 14px; background: #EAECE5; padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">Date</div>
+                <div style="font-size: 15.5px; font-weight: 500; color: #0E1113;">Sun, 11 Oct</div>
+              </div>
+            </div><div style="flex: 1; min-width: 0; min-height: 58px; box-sizing: border-box; border-radius: 14px; background: #EAECE5; padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">Start time</div>
+                <div style="font-size: 15.5px; font-weight: 500; color: #0E1113;">10:00</div>
+              </div>
+            </div></div>
+          <div style="font-size: 12px; color: #6f7569; margin-top: 8px;">Choose when your meet starts.</div>
+        </div>
+        <div style="flex-shrink: 0; padding: 12px 24px 14px; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #E0E3DA;">
+          <div style="height: 56px; border-radius: 28px; background: #A8E05F; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113; cursor: pointer;">Save</div>
+          <div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center;"></div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Visibility sits at the top as a toggle. Activities (yours first) and interests are two pill groups, both optional.</div>
+      </sc-if>
+    </div>
+
+    <div id="3d·2" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">3D·2</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Create meetup</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FORM · SCROLLED</div>
+      </div>
+      <div data-screen-label="E5 Create bottom" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;">Create meetup</div>
+          <div style="width: 40px; display: flex; justify-content: flex-end;"></div>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: #9aa092; text-align: center; margin-top: 10px;">SCROLLED</div>
+          <div style="display: flex; align-items: baseline; gap: 10px; margin-top: 24px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4F6E19;">04</div><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Where</div></div>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+            <div style="flex: 1; min-width: 0; min-height: 58px; box-sizing: border-box; border-radius: 14px; background: #EAECE5; padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">City</div>
+                <div style="font-size: 15.5px; font-weight: 500; color: #0E1113;">Dubai, AE</div>
+              </div><svg width="16" height="16" viewBox="0 0 16 16" style="flex-shrink: 0;"><circle cx="7" cy="7" r="5.2" stroke="#0E1113" stroke-width="1.8" fill="none"></circle><path d="M11 11l3.2 3.2" stroke="#0E1113" stroke-width="1.8" stroke-linecap="round"></path></svg>
+            </div>
+            <div style="flex: 1; min-width: 0; min-height: 58px; box-sizing: border-box; border-radius: 14px; background: #EAECE5; padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">Venue</div>
+                <div style="font-size: 15.5px; font-weight: 500; color: #0E1113;">Nightjar Coffee, Alserkal Avenue</div>
+              </div>
+            </div>
+            <div style="flex: 1; min-width: 0; min-height: 58px; box-sizing: border-box; border-radius: 14px; background: #EAECE5; padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">Address</div>
+                <div style="font-size: 15.5px; font-weight: 500; color: #6f7569;">Optional</div>
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 10px; margin-top: 24px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4F6E19;">05</div><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Who</div></div>
+          <div style="display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border-radius: 16px; padding: 12px 14px; margin-top: 10px;">
+            <div style="display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 15px; font-weight: 600; color: #0E1113;">Attendees</div><div style="font-size: 12px; color: #6f7569;">{{ kindWho }}</div></div>
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div onClick="{{ dec }}" style="width: 36px; height: 36px; border-radius: 18px; background: #EAECE5; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 20px; color: #0E1113; cursor: pointer;">−</div>
+              <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 20px; color: #0E1113; min-width: 22px; text-align: center;">{{ attendees }}</div>
+              <div onClick="{{ inc }}" style="width: 36px; height: 36px; border-radius: 18px; background: #A8E05F; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 20px; color: #0E1113; cursor: pointer;">+</div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 10px; margin-top: 24px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4F6E19;">06</div><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">What</div></div>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+            <div style="min-height: 58px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: 2px solid #0E1113; padding: 9px 14px; display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 11px; font-weight: 500; color: #545a50;">Meet title</div><div style="font-size: 15.5px; font-weight: 500; color: #0E1113;">Sunday coffee in Alserkal</div></div>
+            <div style="min-height: 78px; box-sizing: border-box; border-radius: 14px; background: #EAECE5; padding: 9px 14px; display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 11px; font-weight: 500; color: #545a50;">Notes</div><div style="font-size: 14px; line-height: 1.45; color: #6f7569;">Where to meet, dress code, or what to bring</div></div>
+          </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; margin: 14px 0 8px;">QUICK TAGS</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;"><sc-for list="{{ qTags }}" as="p" hint-placeholder-count="3"><div onClick="{{ p.onClick }}" style="height: 34px; box-sizing: border-box; border-radius: 17px; padding: 0 13px; background: {{ p.bg }}; border: 1.5px solid {{ p.border }}; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #0E1113; cursor: pointer;">{{ p.label }}</div></sc-for></div>
+        </div>
+        <div style="flex-shrink: 0; padding: 12px 24px 14px; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #E0E3DA;">
+          <div style="height: 56px; border-radius: 28px; background: #A8E05F; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113; cursor: pointer;">Save</div>
+          <div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center;"></div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Where, Who (attendee stepper reflects public vs private), What. Quick tags are now alcohol-free, halal-friendly, women-only only.</div>
+      </sc-if>
+    </div>
+
+    <div id="3e" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">3E</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">The meet</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">AFTER SAVE / FROM A CARD</div>
+      </div>
+      <div data-screen-label="E6 The meet" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;"></div>
+          <div style="width: 40px; display: flex; justify-content: flex-end;"><div style="font-size: 13.5px; font-weight: 600; color: #0E1113; cursor: pointer;">Report</div></div>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="background: #0E1113; border-radius: 24px; padding: 20px; margin-top: 14px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; background: #A8E05F; color: #0E1113; padding: 4px 8px; border-radius: 8px;">CREWUP EVENT</div>
+              <div style="font-size: 12.5px; color: #A7B1B5;">Hosted by CrewUp</div>
+            </div>
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 27px; letter-spacing: -0.025em; line-height: 1.08; color: #EDF1F2;">Rooftop sunset yoga</div>
+            <div style="font-size: 14px; color: #A7B1B5;">Dubai · Thu 8 Oct, 18:00 GST</div>
+          </div>
+          <div style="background: #FFFFFF; border-radius: 18px; padding: 16px; margin-top: 12px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">NOTES</div>
+            <div style="font-size: 14px; line-height: 1.55; color: #3d4239;">Meet at the pool deck, level 32. Mats provided — bring water and something warm for after.</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 18px;">
+            <div style="display: flex; flex-direction: column; gap: 8px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">ACTIVITIES</div><div style="display: flex; flex-wrap: wrap; gap: 5px;"><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Yoga</div><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Pilates</div></div></div>
+            <div style="display: flex; flex-direction: column; gap: 8px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">INTERESTS</div><div style="display: flex; flex-wrap: wrap; gap: 5px;"><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Music</div></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; margin-top: 20px;">
+            <div style="display: flex;">
+              <div style="margin-right: -10px; border: 2px solid #F7F8F4; border-radius: 50%;"><div style="width: 30px; height: 30px; border-radius: 50%; background: #A8E05F; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 11px; color: #0E1113; flex-shrink: 0;">AR</div></div>
+              <div style="margin-right: -10px; border: 2px solid #F7F8F4; border-radius: 50%;"><div style="width: 30px; height: 30px; border-radius: 50%; background: #DDE1D6; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 11px; color: #0E1113; flex-shrink: 0;">TB</div></div>
+              <div style="border: 2px solid #F7F8F4; border-radius: 50%;"><div style="width: 30px; height: 30px; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 11px; color: #A8E05F; flex-shrink: 0;">PN</div></div>
+            </div>
+            <div style="font-size: 14px; font-weight: 600; color: #0E1113;">{{ attending }} attending</div>
+          </div>
+        </div>
+        <div style="flex-shrink: 0; padding: 10px 24px 104px; margin-top: -8px;"><div onClick="{{ onRsvp }}" style="height: 56px; border-radius: 28px; background: {{ rsvpBg }}; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: {{ rsvpFg }}; cursor: pointer;">{{ rsvpLabel }}</div></div>
+        <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" fill="#0E1113"></rect><path d="M3 9.5h18" stroke="#F7F8F4" stroke-width="2"></path><path d="M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" stroke="#0E1113" stroke-width="1.8" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M15.5 4.3A3 3 0 1117 10M18 13c2.4.6 3.9 2.6 4.3 5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><div style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 50%;  display: flex;"><div style="flex: 1; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div></div></div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Dark title card, notes, two pill rows, attendees. RSVP → Going, then inert. Report in the header. No edit here.</div>
+      </sc-if>
+    </div>
+  </div>
+</section>
+
+<section style="padding: 56px 56px 96px; display: flex; flex-direction: column; gap: 40px; font-family: 'IBM Plex Sans', sans-serif;">
+  <div style="display: flex; flex-direction: column; gap: 12px; max-width: 880px;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #5f6559;">Turn 2 · Profile & friends · Altitude Light</div>
+    <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 36px; letter-spacing: -0.02em; line-height: 1.1; color: #0E1113;">Profile, Crew ID and friends</div>
+    <div style="font-size: 15px; line-height: 1.6; color: #4d534a; text-wrap: pretty;">Per friends-request.md. Bottom nav (Home · Events · Trips · Friends · Profile) floats as a translucent pill on every tab and pushed screen — it shrinks as you scroll down and springs back on scroll up; hidden on modal create flows and sheets. Accept, Decline, Send request, Copy and Connect are live — and the Crew ID field really normalizes and looks up.</div>
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #545a50;"><a href="#2a">2A Profile</a><div>·</div><a href="#2b">2B Friends</a><div>→</div><a href="#2c">2C Add friend</a><div>·</div><a href="#2b">2B</a><div>→</div><a href="#2d">2D Their profile</a></div>
+  </div>
+  <div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start;">
+
+    <div id="2a" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">2A</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Your profile</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">NAV · PROFILE</div>
+      </div>
+      <div data-screen-label="F1 Profile" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 24px 0;">
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 19px; color: #0E1113;">@maya.okafor</div>
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="14" viewBox="0 0 18 14"><path d="M1 1h16M1 7h16M1 13h16" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="display: flex; align-items: center; gap: 18px; margin-top: 16px;">
+            <div style="width: 84px; height: 84px; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 30px; color: #A8E05F; flex-shrink: 0;">MO</div>
+            <div style="flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));"><div style="display: flex; flex-direction: column; align-items: center; gap: 1px;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 19px; color: #0E1113;">1</div><div style="font-size: 12px; color: #545a50;">Trips</div></div><div style="display: flex; flex-direction: column; align-items: center; gap: 1px; border-left: 1px solid #E0E3DA; border-right: 1px solid #E0E3DA;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 19px; color: #0E1113;">1</div><div style="font-size: 12px; color: #545a50;">Cities</div></div><div style="display: flex; flex-direction: column; align-items: center; gap: 1px;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 19px; color: #0E1113;">{{ friendCount }}</div><div style="font-size: 12px; color: #545a50;">Friends</div></div></div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 2px; margin-top: 14px;">
+            <div style="display: flex; align-items: center; gap: 6px;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 18px; color: #0E1113;">Maya Okafor</div><div style="font-size: 14px; font-weight: 600; color: #4F6E19;">F</div></div>
+            <div style="font-size: 13.5px; color: #545a50;">Cabin crew · Emirates · DXB</div>
+            <div style="font-size: 13.5px; color: #545a50;">Lives in Dubai · From Lagos</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 14px;">
+            <div style="flex: 1;"><div style="height: 40px; box-sizing: border-box; border-radius: 20px; border: 1.5px solid #c9cec1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: #0E1113; cursor: pointer;">Edit profile</div></div>
+            <div style="flex: 1;"><div style="height: 40px; box-sizing: border-box; border-radius: 20px; border: 1.5px solid #c9cec1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: #0E1113; cursor: pointer;">Share Crew ID</div></div>
+          </div>
+          <div style="margin-top: 16px;"><div style="background: #0E1113; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #EDF1F2;">Crew ID</div>
+              <div style="display: flex; gap: 8px;">
+                <div onClick="{{ onCopy }}" style="height: 32px; padding: 0 12px; border-radius: 16px; background: #A8E05F; display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: #0E1113; cursor: pointer;"><sc-if value="{{ copied }}" hint-placeholder-val="{{ false }}"><svg width="14" height="12" viewBox="0 0 10 8"><path d="M1 4l2.8 2.8L9 1.2" stroke="#0E1113" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></sc-if><sc-if value="{{ notCopied }}" hint-placeholder-val="{{ true }}"><svg width="15" height="15" viewBox="0 0 16 16"><rect x="5" y="5" width="9" height="9" rx="2" stroke="#0E1113" stroke-width="1.7" fill="none"></rect><path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" stroke="#0E1113" stroke-width="1.7" fill="none"></path></svg></sc-if>{{ copyLabel }}</div>
+                <div style="height: 32px; padding: 0 12px; border-radius: 16px; background: #EDF1F2; display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: #0E1113; cursor: pointer;"><svg width="15" height="15" viewBox="0 0 16 16"><path d="M8 10V2M5 4.5L8 1.5l3 3" stroke="#0E1113" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3.5 7.5v5.5a1 1 0 001 1h7a1 1 0 001-1V7.5" stroke="#0E1113" stroke-width="1.7" fill="none" stroke-linecap="round"></path></svg>Share</div>
+              </div>
+            </div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500; letter-spacing: 0.06em; color: #A8E05F;">CREW-4K8Q-2XMT</div>
+            <div style="font-size: 12.5px; line-height: 1.45; color: #A7B1B5;">Share this code so other crew can find and add you.</div>
+          </div></div>
+          <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 18px;">
+            <div style="display: flex; flex-direction: column; gap: 8px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">LANGUAGES</div><div style="display: flex; flex-wrap: wrap; gap: 5px;"><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">English</div><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Arabic</div></div></div>
+            <div style="display: flex; flex-direction: column; gap: 8px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">ACTIVITIES</div><div style="display: flex; flex-wrap: wrap; gap: 5px;"><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Running</div><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Gym</div><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Coffee</div><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Hiking</div></div></div>
+            <div style="display: flex; flex-direction: column; gap: 8px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">INTERESTS</div><div style="display: flex; flex-wrap: wrap; gap: 5px;"><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Travel</div><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Food</div></div></div>
+          </div>
+        </div>
+        <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" stroke="#0E1113" stroke-width="2" fill="none"></rect><path d="M3 9.5h18M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" stroke="#0E1113" stroke-width="1.8" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M15.5 4.3A3 3 0 1117 10M18 13c2.4.6 3.9 2.6 4.3 5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><div style="width: 30px; height: 30px; box-sizing: border-box; border-radius: 50%; border: 2px solid #0E1113; padding: 2px; display: flex;"><div style="flex: 1; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div></div></div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Profile tab. Counts, two equal actions, then the Crew ID card with Copy (icon flips to a check) and Share. Pills echo onboarding.</div>
+      </sc-if>
+    </div>
+
+    <div id="2b" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">2B</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Friends</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">NAV · FRIENDS</div>
+      </div>
+      <div data-screen-label="F2 Friends" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 24px 0;">
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 27px; letter-spacing: -0.025em; color: #0E1113;">Friends</div>
+          <div style="display: flex; gap: 8px;"><div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24"><circle cx="10" cy="8" r="4" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M2.5 20c.8-3.6 3.8-6 7.5-6s6.7 2.4 7.5 6" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M19 7v6M16 10h6" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div></div>
+        </div>
+        <div style="font-size: 13.5px; color: #545a50; padding: 4px 24px 0;">Your crew connections and pending requests.</div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <sc-if value="{{ hasRequests }}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 22px;">
+              <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Requests</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 2px 7px; border-radius: 9px;">{{ reqCount }}</div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+              <sc-for list="{{ requests }}" as="r" hint-placeholder-count="2">
+                <div style="background: #FFFFFF; border-radius: 18px; padding: 4px 14px 14px; display: flex; flex-direction: column;">
+                  <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
+                <div style="width: 48px; height: 48px; border-radius: 50%; background: {{ r.bg }}; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: {{ r.fg }}; flex-shrink: 0;">{{ r.ini }}</div>
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px;">
+                  <div style="font-size: 15px; font-weight: 600; color: #0E1113;">{{ r.name }}</div>
+                  <div style="font-size: 12.5px; color: #6f7569;">{{ r.role }} · {{ r.base }}</div>
+                </div>
+                
+              </div>
+                  <div style="display: flex; gap: 8px;">
+                    <div onClick="{{ r.accept }}" style="flex: 1; height: 40px; border-radius: 20px; background: #A8E05F; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: #0E1113; cursor: pointer;">Accept</div>
+                    <div onClick="{{ r.decline }}" style="flex: 1; height: 40px; box-sizing: border-box; border-radius: 20px; border: 1.5px solid #c9cec1; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: #0E1113; cursor: pointer;">Decline</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113; margin-top: 24px;">Your friends</div>
+          <div style="display: flex; flex-direction: column; margin-top: 2px;">
+            <sc-for list="{{ friends }}" as="p" hint-placeholder-count="3">
+              <div style="border-bottom: 1px solid #E8EAE3; cursor: pointer;"><div style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
+                <div style="width: 48px; height: 48px; border-radius: 50%; background: {{ p.bg }}; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: {{ p.fg }}; flex-shrink: 0;">{{ p.ini }}</div>
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px;">
+                  <div style="font-size: 15px; font-weight: 600; color: #0E1113;">{{ p.name }}</div>
+                  <div style="font-size: 12.5px; color: #6f7569;">{{ p.role }} · {{ p.base }}</div>
+                </div>
+                <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div></div>
+            </sc-for>
+          </div>
+        </div>
+        <sc-if value="{{ fToast }}" hint-placeholder-val="{{ false }}"><div style="position: absolute; left: 24px; right: 24px; bottom: 104px; background: #0E1113; color: #EDF1F2; border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; box-shadow: 0 10px 30px rgba(14,17,19,0.25);"><div style="width: 8px; height: 8px; border-radius: 4px; background: #A8E05F;"></div>{{ toastText }}</div></sc-if>
+        <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" stroke="#0E1113" stroke-width="2" fill="none"></rect><path d="M3 9.5h18M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" stroke="#0E1113" stroke-width="1.8" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" fill="#0E1113"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5z" fill="#0E1113"></path><circle cx="17" cy="7" r="3" fill="#0E1113"></circle><path d="M17.5 12.5c2.7.3 4.5 2.6 5 5.5h-4" fill="#0E1113"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><div style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 50%;  display: flex;"><div style="flex: 1; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div></div></div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Requests show only when someone asked. Accept moves them into Your friends; Decline removes the card (it blocks — heavier than a no).</div>
+      </sc-if>
+    </div>
+
+    <div id="2c" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">2C</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Add friend</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FROM 2B ＋</div>
+      </div>
+      <div data-screen-label="F3 Add friend" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;">Add friend</div>
+          <div style="width: 40px; display: flex; justify-content: flex-end;"></div>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113; margin-top: 22px;">Suggested friends</div>
+          <div style="font-size: 12.5px; color: #6f7569; margin-top: 2px;">Crew at DXB first.</div>
+          <div style="display: flex; gap: 10px; margin: 12px -24px 0; padding: 0 24px; overflow: hidden;">
+            <sc-for list="{{ suggested }}" as="s" hint-placeholder-count="3">
+              <div style="width: 138px; flex-shrink: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 16px 12px 12px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: {{ s.bg }}; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 22px; color: {{ s.fg }}; margin-bottom: 4px;">{{ s.ini }}</div>
+                <div style="font-size: 14px; font-weight: 600; color: #0E1113;">{{ s.name }}</div>
+                <div style="font-size: 12px; color: #6f7569;">{{ s.role }} · {{ s.base }}</div>
+                <div onClick="{{ s.send }}" style="margin-top: 8px; width: 100%; height: 34px; border-radius: 17px; background: #A8E05F; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 13px; color: #0E1113; cursor: pointer;">Send request</div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ noSuggested }}" hint-placeholder-val="{{ false }}"><div style="font-size: 13.5px; line-height: 1.5; color: #545a50; padding: 16px 0;">No other crew to suggest right now. Try searching by Crew ID below.</div></sc-if>
+          </div>
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113; margin-top: 28px;">Search by Crew ID</div>
+          <div style="height: 52px; box-sizing: border-box; border-radius: 26px; background: #FFFFFF; border: 2px solid #0E1113; display: flex; align-items: center; gap: 10px; padding: 0 18px; margin-top: 12px;">
+            <svg width="16" height="16" viewBox="0 0 16 16" style="flex-shrink: 0;"><circle cx="7" cy="7" r="5.2" stroke="#0E1113" stroke-width="1.8" fill="none"></circle><path d="M11 11l3.2 3.2" stroke="#0E1113" stroke-width="1.8" stroke-linecap="round"></path></svg>
+            <input value="{{ cid }}" onChange="{{ onCid }}" placeholder="Search by Crew ID" spellcheck="false" style="flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 500; letter-spacing: 0.04em; color: #0E1113;">
+          </div>
+          <div style="font-size: 12px; color: #6f7569; margin-top: 8px; padding-left: 4px;">Try another code, or clear it — partial codes stay quiet.</div>
+          <sc-if value="{{ cidMatch }}" hint-placeholder-val="{{ true }}">
+            <div style="background: #FFFFFF; border-radius: 18px; padding: 14px; display: flex; align-items: center; gap: 12px; margin-top: 12px;">
+              <div style="width: 52px; height: 52px; border-radius: 50%; background: #DDE1D6; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 19px; color: #0E1113; flex-shrink: 0;">JL</div>
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px;">
+                <div style="font-size: 15px; font-weight: 600; color: #0E1113;">Jonas Lind</div>
+                <div style="font-size: 12.5px; color: #6f7569;">Pilot · ARN</div>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4F6E19;">Crew ID: CREW-8F2K-9M4X</div>
+              </div>
+              <div onClick="{{ sendCid }}" style="height: 36px; padding: 0 14px; border-radius: 18px; background: {{ cidBtnBg }}; display: flex; align-items: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 13px; color: {{ cidBtnFg }}; cursor: pointer; white-space: nowrap;">{{ cidBtnLabel }}</div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ cidNone }}" hint-placeholder-val="{{ false }}">
+            <div style="background: #FFFFFF; border-radius: 18px; padding: 18px; margin-top: 12px; font-size: 13.5px; line-height: 1.5; color: #545a50; text-align: center;">No users found. Check the Crew ID and try again.</div>
+          </sc-if>
+        </div>
+        <sc-if value="{{ fToast }}" hint-placeholder-val="{{ false }}"><div style="position: absolute; left: 24px; right: 24px; bottom: 96px; background: #0E1113; color: #EDF1F2; border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; box-shadow: 0 10px 30px rgba(14,17,19,0.25);"><div style="width: 8px; height: 8px; border-radius: 4px; background: #A8E05F;"></div>{{ toastText }}</div></sc-if>
+        <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" stroke="#0E1113" stroke-width="2" fill="none"></rect><path d="M3 9.5h18M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" stroke="#0E1113" stroke-width="1.8" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" fill="#0E1113"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5z" fill="#0E1113"></path><circle cx="17" cy="7" r="3" fill="#0E1113"></circle><path d="M17.5 12.5c2.7.3 4.5 2.6 5 5.5h-4" fill="#0E1113"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><div style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 50%;  display: flex;"><div style="flex: 1; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div></div></div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Suggested row scrolls sideways; Send request drops the card and toasts. Crew ID search strips dashes/spaces and uppercases — type <code>crew 8f2k 9m4x</code> or a wrong full code to see both states.</div>
+      </sc-if>
+    </div>
+
+    <div id="2d" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">2D</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Someone's profile</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FROM A FRIEND</div>
+      </div>
+      <div data-screen-label="F4 Their profile" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;">@kenji.w</div>
+          <div style="width: 40px; display: flex; justify-content: flex-end;"></div>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 18px; text-align: center;">
+            <div style="width: 96px; height: 96px; border-radius: 50%; background: #A8E05F; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 35px; color: #0E1113; flex-shrink: 0;">KW</div>
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: 10px;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.02em; color: #0E1113;">Kenji Watanabe</div><div style="font-size: 14px; font-weight: 600; color: #4F6E19;">M</div></div>
+            <div style="font-size: 13.5px; color: #545a50;">Pilot · Japan Airlines · NRT</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #4F6E19; margin-top: 2px;">Crew ID: CREW-7QH3-WZ2N</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">MEMBER SINCE 3 MONTHS</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 18px;">
+            <div style="flex: 1;"><div onClick="{{ onConnect }}" style="height: 46px; border-radius: 23px; background: {{ connectBg }}; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: #0E1113; cursor: pointer;">{{ connectLabel }}</div></div>
+            <div style="flex: 1;"><div style="height: 46px; box-sizing: border-box; border-radius: 23px; border: 1.5px solid #c9cec1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: #0E1113; cursor: pointer;">Message</div></div>
+          </div>
+          <div style="background: #FFFFFF; border-radius: 20px; padding: 4px 16px; margin-top: 16px; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #EEF0EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #6f7569;">ROLE</div><div style="font-size: 13.5px; font-weight: 500; color: #0E1113;">Pilot</div></div>
+            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #EEF0EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #6f7569;">AIRLINE</div><div style="font-size: 13.5px; font-weight: 500; color: #0E1113;">Japan Airlines</div></div>
+            <div style="display: flex; justify-content: space-between; padding: 12px 0;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #6f7569;">BASE</div><div style="font-size: 13.5px; font-weight: 500; color: #0E1113;">NRT · Tokyo</div></div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 18px;">
+            <div style="display: flex; flex-direction: column; gap: 8px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">PLACES</div><div style="font-size: 13.5px; color: #0E1113;">Lives in Tokyo, JP · From Osaka, JP</div></div>
+            <div style="display: flex; flex-direction: column; gap: 8px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">LANGUAGES</div><div style="display: flex; flex-wrap: wrap; gap: 5px;"><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Japanese</div><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">English</div></div></div>
+            <div style="display: flex; flex-direction: column; gap: 8px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">ACTIVITIES</div><div style="display: flex; flex-wrap: wrap; gap: 5px;"><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Running</div><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Climbing</div><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Coffee</div></div></div>
+          </div>
+        </div>
+        <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" stroke="#0E1113" stroke-width="2" fill="none"></rect><path d="M3 9.5h18M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" stroke="#0E1113" stroke-width="1.8" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" fill="#0E1113"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5z" fill="#0E1113"></path><circle cx="17" cy="7" r="3" fill="#0E1113"></circle><path d="M17.5 12.5c2.7.3 4.5 2.6 5 5.5h-4" fill="#0E1113"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><div style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 50%;  display: flex;"><div style="flex: 1; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div></div></div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Crew ID written out. Connect sends a request with no message; button flips to Requested. Label-left / value-right crew block, as on the preview.</div>
+      </sc-if>
+    </div>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showNotes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Display&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    this._lt = new WeakMap();
+    this._onS = e => {
+      const el = e.target;
+      if (!el || !el.getAttribute || el.getAttribute('data-scroll') !== 'true') return;
+      const frame = el.closest('[data-screen-label]');
+      const nav = frame && frame.querySelector('[data-nav]');
+      if (!nav) return;
+      const y = el.scrollTop, d = y - (this._lt.get(el) || 0);
+      if (Math.abs(d) < 3) return;
+      this._lt.set(el, y);
+      const compact = d > 0 && y > 24;
+      nav.style.transform = compact ? 'scale(0.8) translateY(10px)' : 'none';
+      nav.style.background = compact ? 'rgba(247,248,244,0.58)' : 'rgba(247,248,244,0.72)';
+    };
+    document.addEventListener('scroll', this._onS, true);
+  }
+  componentWillUnmount() { document.removeEventListener('scroll', this._onS, true); }
+  state = {
+    requests: ['ar', 'tb'], friends: ['sm', 'kw', 'pn'], sent: [], cid: 'CREW-8F2K-9M4X', cidSent: false,
+    copied: false, connected: false, toast: '',
+    q: '', filter: 'All', rsvp: false,
+    kind: 'public', attendees: 8, cActs: ['Coffee'], cInts: ['Art'], tags: ['alcohol-free']
+  };
+  flash(t) { clearTimeout(this._t); this.setState({ toast: t }); this._t = setTimeout(() => this.setState({ toast: '' }), 1800); }
+  tog(key, v) { this.setState(s => ({ [key]: s[key].includes(v) ? s[key].filter(x => x !== v) : [...s[key], v] })); }
+  renderVals() {
+    const s = this.state;
+    const P = {
+      ar: { name: 'Aisha Rahman', role: 'Cabin crew', base: 'DXB', ini: 'AR', bg: '#A8E05F', fg: '#0E1113' },
+      tb: { name: 'Tom Becker', role: 'Pilot', base: 'DXB', ini: 'TB', bg: '#DDE1D6', fg: '#0E1113' },
+      sm: { name: 'Sofia Marques', role: 'Cabin crew', base: 'LIS', ini: 'SM', bg: '#DDE1D6', fg: '#0E1113' },
+      kw: { name: 'Kenji Watanabe', role: 'Pilot', base: 'NRT', ini: 'KW', bg: '#A8E05F', fg: '#0E1113' },
+      pn: { name: 'Priya Nair', role: 'Cabin crew', base: 'DXB', ini: 'PN', bg: '#0E1113', fg: '#A8E05F' },
+      lh: { name: 'Leila Haddad', role: 'Cabin crew', base: 'DXB', ini: 'LH', bg: '#0E1113', fg: '#A8E05F' },
+      mr: { name: 'Marco Rossi', role: 'Pilot', base: 'DXB', ini: 'MR', bg: '#A8E05F', fg: '#0E1113' },
+      hk: { name: 'Hana Kim', role: 'Cabin crew', base: 'DXB', ini: 'HK', bg: '#DDE1D6', fg: '#0E1113' },
+      do: { name: 'Daniel Osei', role: 'Ground ops', base: 'DXB', ini: 'DO', bg: '#0E1113', fg: '#A8E05F' }
+    };
+    const sugg = ['lh', 'mr', 'hk', 'do'].filter(k => !s.sent.includes(k));
+    const norm = s.cid.replace(/[\s-]/g, '').toUpperCase();
+    const full = /^CREW[0-9A-HJKMNP-TV-Z]{8}$/.test(norm);
+    const EV = [
+      { title: 'Rooftop sunset yoga', city: 'Dubai', when: 'Thu 8 Oct, 18:00', hosted: true, acts: ['Yoga', 'Pilates'], ints: ['Music'] },
+      { title: 'Sunday coffee in Alserkal', city: 'Dubai', when: 'Sun 11 Oct, 10:00', hosted: false, acts: ['Coffee'], ints: ['Art', 'Photography'] },
+      { title: 'Old Town food walk', city: 'London', when: 'Thu 8 Oct, 19:30', hosted: true, acts: ['Dinner', 'Sightsee'], ints: ['Food', 'Travel'] },
+      { title: 'Kite Beach 5K', city: 'Dubai', when: 'Fri 9 Oct, 06:30', hosted: false, acts: ['Running'], ints: [] },
+      { title: 'Padel doubles, crew night', city: 'Dubai', when: 'Sat 10 Oct, 20:00', hosted: false, acts: ['Padel'], ints: [] }
+    ];
+    const ql = s.q.trim().toLowerCase();
+    const evs = EV.filter(e => s.filter === 'All' || (s.filter === 'CrewUp Events' ? e.hosted : !e.hosted))
+      .filter(e => !ql || [e.title, e.city, ...e.acts, ...e.ints].some(x => x.toLowerCase().includes(ql)))
+      .map(e => ({ ...e, hasActs: e.acts.length > 0, hasInts: e.ints.length > 0 }));
+    const sel = (key, arr) => arr.map(v => { const on = s[key].includes(v); return { label: v, bg: on ? '#A8E05F' : '#FFFFFF', border: on ? '#A8E05F' : '#d4d8cd', onClick: () => this.tog(key, v) }; });
+    return {
+      showNotes: this.props.showNotes ?? true,
+      toastText: s.toast, fToast: !!s.toast,
+      // friends
+      copied: s.copied, notCopied: !s.copied, copyLabel: s.copied ? 'Copied' : 'Copy',
+      onCopy: () => { this.setState({ copied: true }); clearTimeout(this._c); this._c = setTimeout(() => this.setState({ copied: false }), 1400); },
+      friendCount: s.friends.length,
+      hasRequests: s.requests.length > 0, reqCount: s.requests.length,
+      requests: s.requests.map(k => ({ ...P[k], accept: () => { this.setState(st => ({ requests: st.requests.filter(x => x !== k), friends: [k, ...st.friends] })); this.flash(P[k].name.split(' ')[0] + ' is now your friend'); }, decline: () => this.setState(st => ({ requests: st.requests.filter(x => x !== k) })) })),
+      friends: s.friends.map(k => P[k]),
+      suggested: sugg.map(k => ({ ...P[k], send: () => { this.setState(st => ({ sent: [...st.sent, k] })); this.flash('Request sent.'); } })),
+      noSuggested: sugg.length === 0,
+      cid: s.cid, onCid: e => this.setState({ cid: e.target.value, cidSent: false }),
+      cidMatch: full && norm === 'CREW8F2K9M4X', cidNone: full && norm !== 'CREW8F2K9M4X',
+      cidBtnLabel: s.cidSent ? 'Requested' : 'Send request', cidBtnBg: s.cidSent ? '#EAECE5' : '#A8E05F', cidBtnFg: s.cidSent ? '#545a50' : '#0E1113',
+      sendCid: () => { if (!s.cidSent) { this.setState({ cidSent: true }); this.flash('Request sent.'); } },
+      connectLabel: s.connected ? 'Requested' : 'Connect', connectBg: s.connected ? '#EAECE5' : '#A8E05F',
+      onConnect: () => this.setState({ connected: true }),
+      // events
+      q: s.q, onQ: e => this.setState({ q: e.target.value }),
+      filters: ['All', 'CrewUp Events', 'Community'].map(label => ({ label, bg: s.filter === label ? '#0E1113' : '#EAECE5', fg: s.filter === label ? '#F7F8F4' : '#0E1113', onClick: () => this.setState({ filter: label }) })),
+      events: evs, noEvents: evs.length === 0,
+      kindOpts: [['public', 'Public Meet'], ['private', 'Private Meeting']].map(([k, label]) => ({ label, bg: s.kind === k ? '#0E1113' : 'transparent', fg: s.kind === k ? '#F7F8F4' : '#0E1113', onClick: () => this.setState({ kind: k }) })),
+      kindWho: s.kind === 'public' ? 'Public · verified crew can join' : 'Private · invited friends only',
+      cYourActs: sel('cActs', ['Running', 'Gym', 'Coffee', 'Hiking']),
+      cAllActs: sel('cActs', ['Yoga', 'Swimming', 'Cycling', 'Climbing', 'Padel', 'Dinner', 'Sightsee', 'Pilates']),
+      cInts: sel('cInts', ['Food', 'Travel', 'Music', 'Museums', 'Photography', 'Art', 'Books', 'Film']),
+      qTags: sel('tags', ['alcohol-free', 'halal-friendly', 'women-only']),
+      attendees: s.attendees,
+      inc: () => this.setState(st => ({ attendees: Math.min(50, st.attendees + 1) })),
+      dec: () => this.setState(st => ({ attendees: Math.max(1, st.attendees - 1) })),
+      attending: s.rsvp ? 13 : 12,
+      rsvpLabel: s.rsvp ? 'Going ✓' : 'RSVP', rsvpBg: s.rsvp ? '#0E1113' : '#A8E05F', rsvpFg: s.rsvp ? '#A8E05F' : '#0E1113',
+      onRsvp: () => this.setState({ rsvp: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

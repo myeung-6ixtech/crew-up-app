@@ -1,14 +1,16 @@
 import { useMemo, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { FULL_NAME_PATTERN, NameHandleSchema, UsernameSchema } from '@crewup/shared';
-import { Avatar, BodyText, HeadlineText, Input, PillSelectorGroup } from '@/components/ui';
 import { hapticError, hapticSuccess } from '@/lib/haptics';
 import { useAuth, useSession } from '@/hooks/useSession';
-import { useTheme } from '@/theme';
+import { fontFamily, useTheme } from '@/theme';
+import { FilledField, MonoTag, RadioPill } from '../components/kit';
+import { PhotoCircle } from '../components/PhotoCircle';
+import { useAvatarPicker } from '../components/PhotoSourceSheet';
 import { StepScaffold } from '../components/StepScaffold';
 import { UsernameField, type UsernameStatus } from '../components/UsernameField';
 import {
@@ -19,7 +21,6 @@ import {
 } from '../displayName';
 import { useStepSave } from '../hooks/useStepForm';
 import type { StepContext } from '../navigation';
-import { pickAndUploadAvatar } from './PhotoStep';
 import { OnboardingRequestError, saveStep } from '../services/onboardingService';
 
 const NamePartSchema = z
@@ -56,9 +57,8 @@ export function NameHandleStep({ context }: { context: StepContext }) {
   );
   const [detailsError, setDetailsError] = useState('');
   const [savingDetails, setSavingDetails] = useState(false);
-  const [avatarFileId, setAvatarFileId] = useState<string | null>(profile?.avatar_file_id ?? null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const photo = useAvatarPicker(profile?.avatar_file_id ?? null);
+  const avatarFileId = photo.fileId;
   const { save, saving, formError } = useStepSave('name_handle', context);
   const saved = splitFullName(profile?.full_name ?? '');
   const form = useForm<NameForm>({
@@ -141,28 +141,6 @@ export function NameHandleStep({ context }: { context: StepContext }) {
     }
   });
 
-  const onPickAvatar = async () => {
-    setDetailsError('');
-    setUploadingAvatar(true);
-    try {
-      const result = await pickAndUploadAvatar();
-      if (result.status === 'too_large') {
-        hapticError();
-        setDetailsError(t('onboarding.photo.tooLarge'));
-      }
-      if (result.status === 'uploaded') {
-        hapticSuccess();
-        setAvatarFileId(result.fileId);
-        setAvatarPreview(result.uri);
-      }
-    } catch {
-      hapticError();
-      setDetailsError(t('onboarding.genericError'));
-    } finally {
-      setUploadingAvatar(false);
-    }
-  };
-
   const onDisplayNext = handleSubmit(async (values) => {
     const preferredName = displayNameSample(values.firstName, values.lastName, values.displayStyle);
     const parsed = payload(values, preferredName || null);
@@ -194,46 +172,62 @@ export function NameHandleStep({ context }: { context: StepContext }) {
           setPhase('details');
         }}
         title={t('onboarding.nameHandle.displayPrompt')}
-        titleStyle={{ marginBottom: 20 }}
         primaryLabel={t('onboarding.next')}
         onPrimary={onDisplayNext}
         primaryLoading={saving}
-        primaryDisabled={uploadingAvatar}
-        error={formError || detailsError}>
-        <View style={{ alignItems: 'center', marginBottom: theme.spacing.lg }}>
+        primaryDisabled={photo.uploading}
+        footerNote={
+          photo.uploading
+            ? t('onboarding.photo.uploading')
+            : photo.hasPhoto
+              ? t('onboarding.photo.savedHint')
+              : t('onboarding.photo.optionalHint')
+        }
+        error={formError || detailsError || photo.error}>
+        <View style={{ alignItems: 'center', gap: 14 }}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={avatarFileId ? t('onboarding.photo.change') : t('onboarding.photo.choose')}
-            disabled={uploadingAvatar}
-            onPress={() => void onPickAvatar()}>
-            <Avatar
-              name={samples[displayStyle] || undefined}
-              fileId={avatarPreview ? null : avatarFileId}
-              localUri={avatarPreview}
-              size="xl"
+            accessibilityLabel={photo.hasPhoto ? t('onboarding.photo.change') : t('onboarding.photo.choose')}
+            disabled={photo.uploading}
+            onPress={photo.open}
+            style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}>
+            <PhotoCircle
+              size={148}
+              tone="picker"
+              name={samples.full}
+              fileId={photo.previewUri ? null : photo.fileId}
+              localUri={photo.previewUri}
+              uploading={photo.uploading}
+              uploadingLabel={t('onboarding.photo.uploadingTag')}
             />
           </Pressable>
-          <HeadlineText style={{ marginTop: theme.spacing.md, textAlign: 'center' }}>
+          <Text
+            numberOfLines={1}
+            style={{
+              fontFamily: fontFamily.jakartaBold,
+              fontSize: 24,
+              letterSpacing: -0.5,
+              color: theme.colors.textPrimary,
+            }}>
             {samples[displayStyle]}
-          </HeadlineText>
-          <BodyText muted style={{ marginTop: theme.spacing.xs, textAlign: 'center' }}>
-            {uploadingAvatar ? t('onboarding.photo.uploading') : t('home.editProfilePhotoHint')}
-          </BodyText>
+          </Text>
         </View>
+        {photo.sheet}
         <Controller
           control={control}
           name="displayStyle"
           render={({ field }) => (
-            <PillSelectorGroup
-              tone="fill"
-              value={field.value}
-              onChange={field.onChange}
-              options={(['full', 'initial', 'last'] as const).map((style) => ({
-                value: style,
-                label: samples[style],
-                accessibilityLabel: t(STYLE_LABELS[style]),
-              }))}
-            />
+            <View style={{ gap: 8, marginTop: 24 }}>
+              {(['full', 'initial', 'last'] as const).map((style) => (
+                <RadioPill
+                  key={style}
+                  label={samples[style]}
+                  accessibilityLabel={t(STYLE_LABELS[style])}
+                  selected={field.value === style}
+                  onPress={() => field.onChange(style)}
+                />
+              ))}
+            </View>
           )}
         />
       </StepScaffold>
@@ -269,7 +263,7 @@ export function NameHandleStep({ context }: { context: StepContext }) {
         control={control}
         name="firstName"
         render={({ field, fieldState }) => (
-          <Input
+          <FilledField
             label={t('onboarding.nameHandle.firstName')}
             value={field.value ?? ''}
             onChangeText={field.onChange}
@@ -285,7 +279,7 @@ export function NameHandleStep({ context }: { context: StepContext }) {
         control={control}
         name="lastName"
         render={({ field, fieldState }) => (
-          <Input
+          <FilledField
             label={t('onboarding.nameHandle.lastName')}
             value={field.value ?? ''}
             onChangeText={field.onChange}
@@ -301,13 +295,14 @@ export function NameHandleStep({ context }: { context: StepContext }) {
         control={control}
         name="fullNameNative"
         render={({ field, fieldState }) => (
-          <Input
+          <FilledField
             label={t('onboarding.nameHandle.fullNameNative')}
             value={field.value ?? ''}
             onChangeText={field.onChange}
             onBlur={field.onBlur}
             placeholder={t('onboarding.nameHandle.fullNameNativePlaceholder')}
             error={fieldState.error?.message}
+            trailing={<MonoTag label={t('onboarding.optionalTag')} />}
           />
         )}
       />

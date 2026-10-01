@@ -8,8 +8,8 @@
     "friends": "Friends"
   },
   "auth": {
-    "welcomeTitle": "Connect with crew on layover",
-    "welcomeSubtitle": "Find who's around, join meetups, and chat with verified crew.",
+    "welcomeTitle": "Every layover, someone to go with.",
+    "welcomeSubtitle": "Runs, gyms and dinners with crew on the same rest.",
     "signUpFree": "Sign up free",
     "continueWithEmail": "Continue with Email",
     "continueWithGoogle": "Continue with Google",
@@ -18,7 +18,7 @@
     "createAccountTitle": "Create your account",
     "welcomeBackTitle": "Welcome back",
     "login": "Sign in",
-    "logIn": "Log In",
+    "logIn": "Log in",
     "register": "Create account",
     "email": "Email",
     "password": "Password",
@@ -29,7 +29,8 @@
     "passwordMismatch": "Passwords do not match.",
     "forgotPassword": "Forgot password?",
     "signOut": "Sign out",
-    "googleCancelled": "Google sign-in was cancelled"
+    "googleCancelled": "Google sign-in was cancelled",
+    "termsNotice": "By continuing you agree to CrewUp's Terms and Privacy Policy."
   },
   "onboarding": {
     "stepOf": "Step {{current}} of {{total}}",
@@ -44,19 +45,31 @@
     "optional": "optional",
     "genericError": "Something went wrong. Try again.",
     "houseRules": {
-      "title": "Welcome to CrewUp",
+      "title": "Welcome aboard. A few house rules.",
       "subtitle": "Please follow these house rules",
       "rules": [
-        { "title": "Be Yourself", "body": "Use your real name and photo." },
-        { "title": "Stay Safe", "body": "Meet in public until you know someone." },
-        { "title": "Play it cool", "body": "No pressure or unwanted contact." },
-        { "title": "Be Proactive", "body": "Report anything that feels wrong." }
+        {
+          "title": "Be yourself",
+          "body": "Real name, real photo, real you."
+        },
+        {
+          "title": "Stay safe",
+          "body": "Meet in public. Tell someone where you're going."
+        },
+        {
+          "title": "Play it cool",
+          "body": "No pressure, no pitching. Everyone's on rest."
+        },
+        {
+          "title": "Be proactive",
+          "body": "Post the plan. Someone's on the same layover."
+        }
       ],
-      "cta": "I Agree"
+      "cta": "I agree"
     },
     "nameHandle": {
-      "title": "Create Your Account",
-      "subtitle": "Use your real name.",
+      "title": "Create your account",
+      "subtitle": "Your legal name stays private. You pick what crew see next.",
       "displayPrompt": "How do you want to be seen?",
       "firstName": "First name",
       "firstNamePlaceholder": "e.g. Tai Man",
@@ -67,15 +80,17 @@
       "displayInitial": "Last name, first letter of first name",
       "displayLast": "Last name only",
       "displayEmpty": "Fill in your name to see a sample",
-      "fullNameNative": "Other Names (optional)",
+      "fullNameNative": "Other names",
       "fullNameNativePlaceholder": "e.g. 陳大文, 김민수 (optional)",
       "username": "Username",
       "usernamePlaceholder": "yourhandle",
-      "usernameHint": "3–20 characters: a–z, 0–9, . or _",
+      "usernameHint": "3–20 characters, starts with a letter",
       "usernameChecking": "Checking…",
       "usernameAvailable": "Username is available",
       "usernameTaken": "Username is already taken",
-      "usernameReserved": "This username is reserved"
+      "usernameReserved": "This username is reserved",
+      "tagAvailable": "Available",
+      "tagChecking": "Checking"
     },
     "about": {
       "title": "About you",
@@ -101,45 +116,84 @@
       "genderMale": "Male",
       "genderFemale": "Female",
       "genderUnspecified": "Rather not say",
-      "showGender": "Show gender on my profile"
+      "showGender": "Show gender on my profile",
+      "day": "Day",
+      "month": "Month",
+      "year": "Year",
+      "dateOfBirthHint": "Confirms you're 18 or over. Crew never see it.",
+      "languagesHint": "Pick at least one.",
+      "nextPicked": "Next · {{count}} picked",
+      "activitiesLabel": "Activities · do with crew",
+      "interestsLabel": "Interests · on your profile"
     },
     "residence": {
       "title": "Where do you live?",
       "subtitle": "City only. We never ask for your street, district or location.",
-      "liveHint": "Your city helps CrewUp show you crew who are around the same place.",
-      "hometownHint": "Your hometown helps CrewUp match you with people who share your background.",
+      "liveHint": "Helps CrewUp show crew around the same place.",
+      "hometownHint": "Helps CrewUp match people who share a background.",
       "chooseCity": "Choose a city",
       "country": "Country",
       "city": "City",
       "residingCity": "Residing City",
       "homeCity": "Home City",
-      "cityPlaceholder": "e.g. Hong Kong"
+      "cityPlaceholder": "e.g. Hong Kong",
+      "placesTitle": "Places",
+      "results": "Results",
+      "confirmCity": "Confirm {{city}}",
+      "pickCity": "Pick a city",
+      "searchPlaceholder": "Search city or country",
+      "searchMore": "Search to find any other city.",
+      "featured": {
+        "asia": "Asia",
+        "asiaHint": "Major crew cities",
+        "northAmerica": "North America",
+        "northAmericaHint": "Popular routes"
+      }
     },
     "crew": {
       "title": "Crew identity",
-      "subtitle": "Helps us connect you with crew at your airline and base.",
+      "subtitle": "So crew know who's on the same rotation.",
       "role": "Role",
       "airline": "Airline",
       "base": "Base airport",
       "baseHint": "Search by code, city or airport name.",
       "airlineMissing": "My airline isn't listed",
-      "airlineMissingBody": "We're adding airlines as CrewUp grows. Contact support and we'll let you know when yours is available."
+      "airlineMissingBody": "We're adding airlines as CrewUp grows. Contact support and we'll let you know when yours is available.",
+      "airlineAndBase": "Airline & base",
+      "airlineMissingLead": "Airline not listed?",
+      "contactSupport": "Contact support",
+      "airlineMissingTail": "and pick the closest match for now."
     },
     "phone": {
       "title": "Phone number",
-      "subtitle": "Optional. Kept private and never shown to other crew. We'll ask you to verify this in a future update.",
+      "subtitle": "Optional. Kept private and never shown on your profile.",
       "country": "Country code",
       "number": "Phone number",
       "numberPlaceholder": "Mobile number",
-      "invalid": "Enter a valid phone number for the selected country"
+      "invalid": "Enter a valid phone number for the selected country",
+      "code": "Code",
+      "mobile": "Mobile",
+      "privateNote": "Only you can see this. We'll use it for account recovery later."
     },
     "photo": {
       "title": "Add a photo",
       "subtitle": "A clear photo of your face helps crew recognise you when you meet.",
       "choose": "Choose photo",
       "change": "Change photo",
-      "uploading": "Uploading…",
-      "tooLarge": "That photo is larger than 5 MB. Choose a smaller one."
+      "uploading": "Uploading your photo…",
+      "tooLarge": "That photo is larger than 5 MB. Choose a smaller one.",
+      "optionalHint": "Photo is optional. You can add one later.",
+      "sheetTitle": "Profile photo",
+      "sheetSubtitle": "The first thing crew see. Optional — add it now or later.",
+      "takePhoto": "Take photo",
+      "takePhotoHint": "Use your camera",
+      "chooseLibrary": "Choose from library",
+      "chooseLibraryHint": "Pick an existing photo",
+      "tipFace": "Your face, clearly visible",
+      "tipNoGroup": "No sunglasses or group shots",
+      "uploadingTag": "Uploading",
+      "savedHint": "Photo saved. Tap it to change.",
+      "cameraDenied": "CrewUp needs camera access to take a photo. You can allow it in Settings, or choose from your library."
     },
     "review": {
       "title": "This is how crew will see you",
@@ -174,19 +228,29 @@
         "photo": "Photo"
       },
       "notProvided": "Not provided",
-      "photoAdded": "Photo added"
+      "photoAdded": "Photo added",
+      "livesIn": "Lives in {{place}}",
+      "from": "From {{place}}",
+      "betaEnded": "Beta ended · App is open",
+      "looksGood": "Looks good · Continue"
     },
     "betaNotify": {
       "title": "Get notified at launch",
       "subtitle": "We'll send one notification when CrewUp opens to everyone.",
       "enable": "Notify me",
-      "skip": "Skip"
+      "skip": "Skip",
+      "sampleTime": "now",
+      "sampleBody": "CrewUp is open. Find crew on your next layover.",
+      "onlyOne": "The only one we'll send"
     },
     "betaHolding": {
       "title": "You're on the list, {{name}}.",
       "subtitle": "Thanks for joining the CrewUp beta. We'll let you know as soon as the app opens.",
       "editProfile": "Edit profile",
-      "checkAgain": "Check for updates"
+      "checkAgain": "Check for updates",
+      "badge": "Beta",
+      "checking": "Checking…",
+      "stillBeta": "Still in beta. You'll stay on the list — nothing else changes."
     },
     "privacy": {
       "title": "Your privacy comes first",
@@ -243,7 +307,9 @@
       "search": "Search languages",
       "noResults": "No matching languages",
       "done": "Done"
-    }
+    },
+    "skipShort": "Skip",
+    "optionalTag": "Optional"
   },
   "verification": {
     "pending": "Verification pending",
@@ -464,7 +530,8 @@
     "cancel": "Cancel",
     "back": "Back",
     "continue": "Continue",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "clear": "Clear"
   },
   "settings": {
     "languages": {
@@ -561,5 +628,12 @@
     "matchSameFlight": "On your flight",
     "matchSameRoute": "Same route",
     "matchLayover": "Also in {{city}}"
+  },
+  "profile": {
+    "editTitle": "Edit profile",
+    "onlyYou": "only you",
+    "crewId": "Crew ID",
+    "copyCrewId": "Copy Crew ID",
+    "copied": "Copied"
   }
 }

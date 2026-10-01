@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #E3E5DE; }
+  a { color: #4F6E19; }
+  a:hover { color: #0E1113; }
+</style>
+</helmet>
+
+<section style="padding: 56px 56px 96px; display: flex; flex-direction: column; gap: 40px; font-family: 'IBM Plex Sans', sans-serif;">
+  <div style="display: flex; flex-direction: column; gap: 12px; max-width: 860px;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #5f6559;">Turn 1 · Add Trip · Altitude Light</div>
+    <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 36px; letter-spacing: -0.02em; line-height: 1.1; color: #0E1113;">From Home to a saved trip</div>
+    <div style="font-size: 15px; line-height: 1.6; color: #4d534a; text-wrap: pretty;">Flow A (search) and Flow B (manual), per flight-request.md. Crew aren't booking — they're telling CrewUp which flight they're on and when they're free after landing.</div>
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #545a50;">
+      <a href="#1a">1A Home</a><div>→</div><a href="#1b">1B Method</a><div>→</div><a href="#1c">1C Route</a><div>⇢</div><a href="#1d">1D Airport</a><div>→</div><a href="#1e">1E Results</a><div>→</div><a href="#1i">1I Free window</a><div>→</div><a href="#1j">1J Home</a>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #545a50;">
+      <div>Fallback:</div><a href="#1e">1E</a><div>/</div><a href="#1f">1F empty</a><div>/</div><a href="#1g">1G unavailable</a><div>→</div><a href="#1h">1H Manual</a><div>→</div><a href="#1i">1I</a>
+    </div>
+  </div>
+  <div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start;">
+
+    <div id="1a" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">1A</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Home</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">EMPTY</div>
+      </div>
+      <div data-screen-label="01 Home" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div data-scroll="true" style="display: flex; flex-direction: column; padding: 18px 24px 112px; flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none;">
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 68px; height: 68px; border-radius: 50%; background: #0E1113; position: relative; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 24px; color: #A8E05F; flex-shrink: 0;">MO
+              <div style="position: absolute; right: 1px; bottom: 1px; width: 16px; height: 16px; border-radius: 8px; background: #A8E05F; border: 3px solid #F7F8F4;"></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.02em; color: #0E1113;">Maya Okafor</div>
+              <div style="font-size: 13.5px; color: #545a50;">Emirates · Cabin crew</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 22px; background: #FFFFFF; border-radius: 18px; padding: 14px 0;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 22px; color: #0E1113;">0</div><div style="font-size: 12px; color: #545a50;">Trips</div></div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; border-left: 1px solid #EEF0EA; border-right: 1px solid #EEF0EA;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 22px; color: #0E1113;">0</div><div style="font-size: 12px; color: #545a50;">Cities</div></div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 22px; color: #0E1113;">0</div><div style="font-size: 12px; color: #545a50;">Connections</div></div>
+          </div>
+          <div style="margin-top: 16px;"><div style="height: 56px; border-radius: 28px; background: #A8E05F; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113; cursor: pointer;"><span style="font-size: 22px; line-height: 1; margin-top: -2px;">+</span> Add Trip</div></div>
+          <div style="font-size: 13px; color: #545a50; text-align: center; margin-top: 10px;">Add your next trip to find crew flying with you.</div>
+          <div style="display: flex; gap: 8px; margin-top: 22px;">
+            <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #0E1113; color: #F7F8F4; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">What's next</div>
+            <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #EAECE5; color: #0E1113; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">Matches</div>
+            <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #EAECE5; color: #0E1113; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">Activity</div>
+          </div>
+          <div style="margin-top: 16px; border: 1.5px dashed #c9cec1; border-radius: 20px; padding: 28px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;">
+            <div style="width: 52px; height: 52px; border-radius: 26px; background: #EAECE5; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" fill="#545a50"></path></svg></div>
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">No upcoming trips.</div>
+            <div style="font-size: 13.5px; line-height: 1.5; color: #545a50; max-width: 250px;">Add a trip to start matching with crew on your route.</div>
+          </div>
+          <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" fill="#0E1113"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" stroke="#0E1113" stroke-width="2" fill="none"></rect><path d="M3 9.5h18M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" stroke="#0E1113" stroke-width="1.8" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M15.5 4.3A3 3 0 1117 10M18 13c2.4.6 3.9 2.6 4.3 5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><div style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 50%;  display: flex;"><div style="flex: 1; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div></div></div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Profile, counts, then one lime Add Trip. Tabs are pills; What’s next holds the empty state until a trip exists.</div>
+      </sc-if>
+    </div>
+
+    <div id="1b" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">1B</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Which method?</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">SHEET</div>
+      </div>
+      <div data-screen-label="02 Method sheet" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div data-scroll="true" style="display: flex; flex-direction: column; padding: 18px 24px 112px; flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none;">
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 68px; height: 68px; border-radius: 50%; background: #0E1113; position: relative; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 24px; color: #A8E05F; flex-shrink: 0;">MO
+              <div style="position: absolute; right: 1px; bottom: 1px; width: 16px; height: 16px; border-radius: 8px; background: #A8E05F; border: 3px solid #F7F8F4;"></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.02em; color: #0E1113;">Maya Okafor</div>
+              <div style="font-size: 13.5px; color: #545a50;">Emirates · Cabin crew</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 22px; background: #FFFFFF; border-radius: 18px; padding: 14px 0;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 22px; color: #0E1113;">0</div><div style="font-size: 12px; color: #545a50;">Trips</div></div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; border-left: 1px solid #EEF0EA; border-right: 1px solid #EEF0EA;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 22px; color: #0E1113;">0</div><div style="font-size: 12px; color: #545a50;">Cities</div></div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 22px; color: #0E1113;">0</div><div style="font-size: 12px; color: #545a50;">Connections</div></div>
+          </div>
+          <div style="margin-top: 16px;"><div style="height: 56px; border-radius: 28px; background: #A8E05F; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113; cursor: pointer;"><span style="font-size: 22px; line-height: 1; margin-top: -2px;">+</span> Add Trip</div></div>
+          <div style="font-size: 13px; color: #545a50; text-align: center; margin-top: 10px;">Add your next trip to find crew flying with you.</div>
+          <div style="display: flex; gap: 8px; margin-top: 22px;">
+            <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #0E1113; color: #F7F8F4; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">What's next</div>
+            <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #EAECE5; color: #0E1113; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">Matches</div>
+            <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #EAECE5; color: #0E1113; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">Activity</div>
+          </div>
+          <div style="margin-top: 16px; border: 1.5px dashed #c9cec1; border-radius: 20px; padding: 28px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;">
+            <div style="width: 52px; height: 52px; border-radius: 26px; background: #EAECE5; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" fill="#545a50"></path></svg></div>
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">No upcoming trips.</div>
+            <div style="font-size: 13.5px; line-height: 1.5; color: #545a50; max-width: 250px;">Add a trip to start matching with crew on your route.</div>
+          </div>
+          <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" fill="#0E1113"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" stroke="#0E1113" stroke-width="2" fill="none"></rect><path d="M3 9.5h18M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" stroke="#0E1113" stroke-width="1.8" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M15.5 4.3A3 3 0 1117 10M18 13c2.4.6 3.9 2.6 4.3 5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><div style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 50%;  display: flex;"><div style="flex: 1; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div></div></div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+        </div>
+        <div style="position: absolute; inset: 0; background: rgba(14,17,19,0.42);"></div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; background: #FFFFFF; border-radius: 28px 28px 0 0; display: flex; flex-direction: column; padding: 8px 20px 14px; gap: 10px; box-shadow: 0 -10px 40px rgba(14,17,19,0.18);">
+          <div style="width: 38px; height: 5px; border-radius: 3px; background: #D4D8CD; align-self: center;"></div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 4px 6px;">
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: -0.02em; color: #0E1113;">Which method?</div>
+            <div style="width: 32px; height: 32px; border-radius: 16px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1l8 8M9 1L1 9" stroke="#0E1113" stroke-width="1.8" stroke-linecap="round"></path></svg></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 18px; background: #F2F4EE; cursor: pointer;" style-hover="background: #EAECE5;">
+              <div style="width: 48px; height: 48px; border-radius: 14px; background: #A8E05F; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" fill="#0E1113"></path></svg></div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;">Search by flight</div>
+                <div style="font-size: 13px; line-height: 1.45; color: #545a50;">Find one flight by number or route and add it as a trip.</div>
+              </div>
+              <svg width="8" height="14" viewBox="0 0 8 14"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#6f7569" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+          <div style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 18px; background: #F2F4EE; cursor: pointer;" style-hover="background: #EAECE5;">
+              <div style="width: 48px; height: 48px; border-radius: 14px; background: #A8E05F; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 15V4M7 8.5L12 4l5 4.5" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><path d="M4 14v4.5A1.5 1.5 0 005.5 20h13a1.5 1.5 0 001.5-1.5V14" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round"></path></svg></div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;">Roster upload</div>
+                <div style="font-size: 13px; line-height: 1.45; color: #545a50;">Upload your roster PDF and add a whole month of layovers at once.</div>
+              </div>
+              <svg width="8" height="14" viewBox="0 0 8 14"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#6f7569" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+          <div style="height: 14px;"></div>
+          <div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center; margin-top: 6px;"></div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Short bottom sheet over Home. Two choices only — Search by flight leads to Flow A; Roster upload is Flow C (not drawn here).</div>
+      </sc-if>
+    </div>
+
+    <div id="1c" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">1C</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Search by route</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FLOW A · 1</div>
+      </div>
+      <div data-screen-label="03 Search by route" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-size: 14px; font-weight: 600; color: #545a50;"></div>
+          <div style="width: 40px; text-align: right; font-size: 14px; font-weight: 600; color: #0E1113;"></div>
+        </div>
+        <div style="display: flex; flex-direction: column; padding: 18px 24px 0;">
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 27px; letter-spacing: -0.025em; line-height: 1.1; color: #0E1113;">Search by route</div>
+          <div style="display: flex; gap: 10px; margin-top: 20px; position: relative;">
+            <div style="flex: 1; height: 138px; box-sizing: border-box; background: #FFFFFF; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: #6f7569;">DEPARTURE</div>
+              <div style="display: flex; flex-direction: column; gap: 2px;">
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 40px; letter-spacing: -0.02em; line-height: 1; color: #0E1113;">DXB</div>
+                <div style="font-size: 13px; color: #545a50;">Dubai</div>
+              </div>
+            </div>
+            <div style="flex: 1; height: 138px; box-sizing: border-box; background: #FFFFFF; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: #6f7569;">ARRIVAL</div>
+              <div style="display: flex; flex-direction: column; gap: 2px;">
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 40px; letter-spacing: -0.02em; line-height: 1; color: #0E1113;">{{ arrCode }}</div>
+                <div style="font-size: 13px; color: #545a50;">{{ arrCity }}</div>
+              </div>
+            </div>
+            <div onClick="{{ doSwap }}" style="position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 22px; background: #0E1113; border: 4px solid #F7F8F4; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M3 6h11M11 3l3 3-3 3M15 12H4M7 9l-3 3 3 3" stroke="#A8E05F" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          </div>
+          <div style="font-size: 12.5px; color: #6f7569; text-align: center; margin-top: 10px;">Tap an airport to change it. Use ⇄ to swap.</div>
+          <div style="height: 1px; background: #E0E3DA; margin-top: 22px;"></div>
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113; text-align: center; margin-top: 20px;">When are you flying?</div>
+          <div onClick="{{ toggleDate }}" style="height: 56px; box-sizing: border-box; border-radius: 28px; background: #EAECE5; display: flex; align-items: center; gap: 12px; padding: 0 20px; margin-top: 14px; cursor: pointer;">
+            <svg width="18" height="18" viewBox="0 0 18 18"><rect x="2" y="3.5" width="14" height="12.5" rx="2.5" stroke="#0E1113" stroke-width="1.7" fill="none"></rect><path d="M2 7.5h14M6 2v3M12 2v3" stroke="#0E1113" stroke-width="1.7" stroke-linecap="round"></path></svg>
+            <div style="flex: 1; font-size: 15.5px; font-weight: 500; color: {{ dateFg }};">{{ dateText }}</div>
+          </div>
+          <div style="font-size: 12.5px; line-height: 1.5; color: #6f7569; text-align: center; margin-top: 10px; text-wrap: balance;">{{ dateHint }}</div>
+        </div>
+        <div style="margin-top: auto; padding: 16px 24px 14px; display: flex; flex-direction: column; gap: 10px;"><div style="height: 56px; border-radius: 28px; background: {{ searchBg }}; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: {{ searchFg }}; cursor: pointer;">Search flights</div>
+            <div style="height: 54px; box-sizing: border-box; border-radius: 27px; border: 1.5px solid {{ manualBorder }}; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: {{ manualFg }}; cursor: pointer;">Add flight manually</div>
+            <div style="height: 44px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #0E1113; cursor: pointer;">Cancel</div>
+            <div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center; margin-top: 6px;"></div>
+          </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Departure starts at base (DXB). Tap the date field to see the disabled footer state.</div>
+      </sc-if>
+    </div>
+
+    <div id="1d" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">1D</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Airport search</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FLOW A · 1 · SHEET</div>
+      </div>
+      <div data-screen-label="04 Airport search" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-size: 14px; font-weight: 600; color: #545a50;"></div>
+          <div style="width: 40px; text-align: right; font-size: 14px; font-weight: 600; color: #0E1113;"></div>
+        </div>
+        <div style="display: flex; flex-direction: column; padding: 18px 24px 0;">
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 27px; letter-spacing: -0.025em; line-height: 1.1; color: #0E1113;">Search by route</div>
+          <div style="display: flex; gap: 10px; margin-top: 20px; position: relative;">
+            <div style="flex: 1; height: 138px; box-sizing: border-box; background: #FFFFFF; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: #6f7569;">DEPARTURE</div>
+              <div style="display: flex; flex-direction: column; gap: 2px;">
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 40px; letter-spacing: -0.02em; line-height: 1; color: #0E1113;">DXB</div>
+                <div style="font-size: 13px; color: #545a50;">Dubai</div>
+              </div>
+            </div>
+            <div style="flex: 1; height: 138px; box-sizing: border-box; background: #FFFFFF; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: #6f7569;">ARRIVAL</div>
+              <div style="display: flex; flex-direction: column; gap: 2px;">
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 40px; letter-spacing: -0.02em; line-height: 1; color: #0E1113;">{{ arrCode }}</div>
+                <div style="font-size: 13px; color: #545a50;">{{ arrCity }}</div>
+              </div>
+            </div>
+            <div onClick="{{ doSwap }}" style="position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 22px; background: #0E1113; border: 4px solid #F7F8F4; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M3 6h11M11 3l3 3-3 3M15 12H4M7 9l-3 3 3 3" stroke="#A8E05F" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          </div>
+          <div style="font-size: 12.5px; color: #6f7569; text-align: center; margin-top: 10px;">Tap an airport to change it. Use ⇄ to swap.</div>
+          <div style="height: 1px; background: #E0E3DA; margin-top: 22px;"></div>
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113; text-align: center; margin-top: 20px;">When are you flying?</div>
+          <div onClick="{{ toggleDate }}" style="height: 56px; box-sizing: border-box; border-radius: 28px; background: #EAECE5; display: flex; align-items: center; gap: 12px; padding: 0 20px; margin-top: 14px; cursor: pointer;">
+            <svg width="18" height="18" viewBox="0 0 18 18"><rect x="2" y="3.5" width="14" height="12.5" rx="2.5" stroke="#0E1113" stroke-width="1.7" fill="none"></rect><path d="M2 7.5h14M6 2v3M12 2v3" stroke="#0E1113" stroke-width="1.7" stroke-linecap="round"></path></svg>
+            <div style="flex: 1; font-size: 15.5px; font-weight: 500; color: {{ dateFg }};">{{ dateText }}</div>
+          </div>
+          <div style="font-size: 12.5px; line-height: 1.5; color: #6f7569; text-align: center; margin-top: 10px; text-wrap: balance;">{{ dateHint }}</div>
+        </div>
+        <div style="position: absolute; inset: 0; background: rgba(14,17,19,0.42);"></div>
+        <div style="position: absolute; left: 0; right: 0; top: 58px; bottom: 0; background: #FFFFFF; border-radius: 28px 28px 0 0; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(14,17,19,0.18);">
+          <div style="width: 38px; height: 5px; border-radius: 3px; background: #D4D8CD; align-self: center; margin-top: 8px;"></div>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px 0;">
+            <div style="font-size: 14px; font-weight: 600; color: #0E1113; width: 56px;">Cancel</div>
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;">Arrival</div>
+            <div style="width: 56px;"></div>
+          </div>
+          <div style="margin: 16px 16px 0; height: 50px; box-sizing: border-box; border-radius: 25px; background: #EAECE5; display: flex; align-items: center; gap: 10px; padding: 0 18px;">
+            <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5.2" stroke="#0E1113" stroke-width="1.8" fill="none"></circle><path d="M11 11l3.2 3.2" stroke="#0E1113" stroke-width="1.8" stroke-linecap="round"></path></svg>
+            <div style="display: flex; align-items: center; flex: 1; font-size: 16px; font-weight: 500; color: #0E1113;">Lon<div style="width: 2px; height: 20px; background: #4F6E19; margin-left: 1px; border-radius: 1px;"></div></div>
+          </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #6f7569; padding: 20px 24px 6px;">AIRPORTS</div>
+          <div style="display: flex; flex-direction: column; padding: 0 8px;">
+            <sc-for list="{{ airports }}" as="a" hint-placeholder-count="5">
+              <div onClick="{{ a.onClick }}" style="display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 14px; background: {{ a.bg }}; cursor: pointer;">
+                <div style="width: 48px; height: 40px; border-radius: 12px; background: #EAECE5; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 14px; color: #0E1113; flex-shrink: 0;">{{ a.code }}</div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 1px;">
+                  <div style="font-size: 15.5px; font-weight: 600; color: #0E1113;">{{ a.name }}</div>
+                  <div style="font-size: 12.5px; color: #6f7569;">London, United Kingdom</div>
+                </div>
+                <div style="width: 24px; height: 24px; border-radius: 12px; background: #0E1113; display: {{ a.check }}; align-items: center; justify-content: center;"><svg width="11" height="9" viewBox="0 0 10 8"><path d="M1 4l2.8 2.8L9 1.2" stroke="#A8E05F" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size: 12.5px; color: #6f7569; text-align: center; padding: 18px 24px 0;">City, airport, or IATA code</div>
+          <div style="margin-top: auto; padding-bottom: 14px; display: flex; flex-direction: column;"><div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center; margin-top: 6px;"></div></div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Opens from either route card. Same near-full sheet as onboarding Places. Picking an airport updates the route everywhere.</div>
+      </sc-if>
+    </div>
+
+    <div id="1e" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">1E</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Select your flight</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FLOW A · 2</div>
+      </div>
+      <div data-screen-label="05 Select your flight" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-size: 14px; font-weight: 600; color: #545a50;"></div>
+          <div style="width: 40px; text-align: right; font-size: 14px; font-weight: 600; color: #0E1113;"></div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 18px 24px 0;">
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 27px; letter-spacing: -0.025em; line-height: 1.1; color: #0E1113; text-wrap: balance;">Select your flight</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; color: #0E1113; background: #A8E05F; padding: 5px 12px; border-radius: 14px;">DXB → {{ arrCode }}</div>
+            <div style="font-size: 14px; font-weight: 600; color: #0E1113; margin-top: 4px;">Thursday, 8 October 2026</div>
+            <div style="font-size: 13.5px; line-height: 1.5; color: #545a50; text-wrap: balance;">Flights from DXB to {{ arrCode }} on this date</div>
+          </div>
+        <div style="flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 20px 20px 0; position: relative; -webkit-mask-image: linear-gradient(#000 82%, transparent); mask-image: linear-gradient(#000 82%, transparent);">
+          <sc-for list="{{ flights }}" as="f" hint-placeholder-count="4">
+            <div onClick="{{ f.onClick }}" style="border-radius: 20px; background: {{ f.bg }}; border: 2px solid {{ f.border }}; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; cursor: pointer;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 15px; color: #0E1113;">{{ f.no }}</div>
+                <div style="font-size: 12.5px; color: #545a50;">{{ f.airline }}</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="display: flex; flex-direction: column; gap: 1px;">
+                  <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #545a50;">DXB</div>
+                  <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 21px; color: #0E1113;">{{ f.dep }} <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; color: #6f7569;">GST</span></div>
+                  <div style="font-size: 11.5px; color: #6f7569;">8 Oct</div>
+                </div>
+                <div style="flex: 1; display: flex; align-items: center; gap: 6px;"><div style="flex: 1; height: 1.5px; background: #C9CEC1;"></div><svg width="16" height="16" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" fill="#545a50"></path></svg><div style="flex: 1; height: 1.5px; background: #C9CEC1;"></div></div>
+                <div style="display: flex; flex-direction: column; gap: 1px; align-items: flex-end;">
+                  <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #545a50;">{{ arrCode }}</div>
+                  <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 21px; color: #0E1113;">{{ f.arr }} <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; color: #6f7569;">BST</span></div>
+                  <div style="font-size: 11.5px; color: #6f7569;">{{ f.arrDate }}</div>
+                </div>
+              </div>
+              <sc-if value="{{ f.nextDay }}" hint-placeholder-val="{{ false }}">
+                <div style="align-self: flex-start; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 500; color: #4F6E19; background: #EEF7DF; padding: 4px 9px; border-radius: 10px;">ARRIVES NEXT DAY</div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top: auto; padding: 16px 24px 14px; display: flex; flex-direction: column; gap: 10px;"><div style="height: 56px; border-radius: 28px; background: {{ contBg }}; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: {{ contFg }}; cursor: pointer;">Continue</div>
+            <div style="height: 44px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #0E1113; cursor: pointer;">Back</div>
+            <div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center; margin-top: 6px;"></div>
+          </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Times are airport-local with zone labels. One selected card: lime border, tinted fill. Continue unlocks on selection.</div>
+      </sc-if>
+    </div>
+
+    <div id="1f" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">1F</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">No flights found</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FLOW A · 2 · EMPTY</div>
+      </div>
+      <div data-screen-label="06 Results empty" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-size: 14px; font-weight: 600; color: #545a50;"></div>
+          <div style="width: 40px; text-align: right; font-size: 14px; font-weight: 600; color: #0E1113;"></div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 18px 24px 0;">
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 27px; letter-spacing: -0.025em; line-height: 1.1; color: #0E1113; text-wrap: balance;">Select your flight</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; color: #0E1113; background: #A8E05F; padding: 5px 12px; border-radius: 14px;">DXB → {{ arrCode }}</div>
+            <div style="font-size: 14px; font-weight: 600; color: #0E1113; margin-top: 4px;">Thursday, 8 October 2026</div>
+            <div style="font-size: 13.5px; line-height: 1.5; color: #545a50; text-wrap: balance;">Flights from DXB to {{ arrCode }} on this date</div>
+          </div>
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 12px; padding: 0 36px;">
+          <div style="width: 64px; height: 64px; border-radius: 32px; background: #EAECE5; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" fill="#6f7569"></path></svg></div>
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.015em; line-height: 1.25; color: #0E1113; text-wrap: balance;">No flights found for this route and date.</div>
+          <div style="font-size: 14px; line-height: 1.5; color: #545a50; text-wrap: balance;">Double-check the route and date, or add the flight yourself.</div>
+        </div>
+        <div style="margin-top: auto; padding: 16px 24px 14px; display: flex; flex-direction: column; gap: 10px;"><div style="height: 56px; border-radius: 28px; background: #A8E05F; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113; cursor: pointer;">Enter flight manually</div>
+            <div style="height: 44px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #0E1113; cursor: pointer;">Back</div>
+            <div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center; margin-top: 6px;"></div>
+          </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Always a way forward: manual entry carries the route and date.</div>
+      </sc-if>
+    </div>
+
+    <div id="1g" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">1G</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Schedules unavailable</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FLOW A · 2 · ERROR</div>
+      </div>
+      <div data-screen-label="07 Results unavailable" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-size: 14px; font-weight: 600; color: #545a50;"></div>
+          <div style="width: 40px; text-align: right; font-size: 14px; font-weight: 600; color: #0E1113;"></div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 18px 24px 0;">
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 27px; letter-spacing: -0.025em; line-height: 1.1; color: #0E1113; text-wrap: balance;">Select your flight</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; color: #0E1113; background: #A8E05F; padding: 5px 12px; border-radius: 14px;">DXB → {{ arrCode }}</div>
+            <div style="font-size: 14px; font-weight: 600; color: #0E1113; margin-top: 4px;">Thursday, 8 October 2026</div>
+            <div style="font-size: 13.5px; line-height: 1.5; color: #545a50; text-wrap: balance;">Flights from DXB to {{ arrCode }} on this date</div>
+          </div>
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 12px; padding: 0 36px;">
+          <div style="width: 64px; height: 64px; border-radius: 32px; background: #EAECE5; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" fill="#6f7569"></path></svg></div>
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.015em; line-height: 1.25; color: #0E1113; text-wrap: balance;">Flight schedules are unavailable right now.</div>
+          <div style="font-size: 14px; line-height: 1.5; color: #545a50; text-wrap: balance;">Try again shortly or add the flight yourself.</div>
+        </div>
+        <div style="margin-top: auto; padding: 16px 24px 14px; display: flex; flex-direction: column; gap: 10px;"><div style="height: 56px; border-radius: 28px; background: #A8E05F; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113; cursor: pointer;">Retry</div>
+            <div style="height: 54px; box-sizing: border-box; border-radius: 27px; border: 1.5px solid #c9cec1; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #0E1113; cursor: pointer;">Enter flight manually</div>
+            <div style="height: 44px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #0E1113; cursor: pointer;">Back</div>
+            <div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center; margin-top: 6px;"></div>
+          </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Retry is primary, manual entry secondary. No vendor names or error codes.</div>
+      </sc-if>
+    </div>
+
+    <div id="1h" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">1H</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Enter flight manually</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FLOW B</div>
+      </div>
+      <div data-screen-label="08 Enter flight manually" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-size: 14px; font-weight: 600; color: #545a50;"></div>
+          <div style="width: 40px; text-align: right; font-size: 14px; font-weight: 600; color: #0E1113;"></div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 18px 24px 0;">
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 27px; letter-spacing: -0.025em; line-height: 1.1; color: #0E1113; text-wrap: balance;">Enter flight manually</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; color: #0E1113; background: #A8E05F; padding: 5px 12px; border-radius: 14px;">DXB → LHR</div>
+            <div style="font-size: 14px; font-weight: 600; color: #0E1113; margin-top: 4px;">Thursday, 8 October 2026</div>
+            <div style="font-size: 13.5px; line-height: 1.5; color: #545a50; text-wrap: balance;">Add your DXB to LHR flight using the times printed on your roster.</div>
+          </div>
+        <div style="display: flex; flex-direction: column; gap: 10px; padding: 22px 24px 0;">
+          <div style="display: flex; gap: 10px;">
+            <div style="flex: 1.4; display: flex;"><div style="flex: 1; min-width: 0; min-height: 60px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: 2px solid #0E1113; padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">Flight number</div>
+                <div style="font-size: 16px; font-weight: 500; color: #0E1113;">EK001</div>
+              </div>
+            </div></div>
+            <div style="flex: 1; display: flex;"><div style="flex: 1; min-width: 0; min-height: 60px; box-sizing: border-box; border-radius: 14px; background: #EAECE5;  padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">Airline code</div>
+                <div style="font-size: 16px; font-weight: 500; color: #0E1113;">EK</div>
+              </div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6f7569;">OPT</div>
+            </div></div>
+          </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; margin-top: 10px;">DEPARTS · DXB LOCAL</div>
+          <div style="display: flex; gap: 10px;"><div style="flex: 1; min-width: 0; min-height: 60px; box-sizing: border-box; border-radius: 14px; background: #EAECE5;  padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">Departure date (DXB local)</div>
+                <div style="font-size: 16px; font-weight: 500; color: #0E1113;">8 Oct 2026</div>
+              </div>
+            </div><div style="flex: 1; min-width: 0; min-height: 60px; box-sizing: border-box; border-radius: 14px; background: #EAECE5;  padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">Departure time (DXB local)</div>
+                <div style="font-size: 16px; font-weight: 500; color: #0E1113;">07:45</div>
+              </div>
+            </div></div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; margin-top: 10px;">ARRIVES · LHR LOCAL</div>
+          <div style="display: flex; gap: 10px;"><div style="flex: 1; min-width: 0; min-height: 60px; box-sizing: border-box; border-radius: 14px; background: #EAECE5;  padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">Arrival date (LHR local)</div>
+                <div style="font-size: 16px; font-weight: 500; color: #0E1113;">8 Oct 2026</div>
+              </div>
+            </div><div style="flex: 1; min-width: 0; min-height: 60px; box-sizing: border-box; border-radius: 14px; background: #EAECE5;  padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">Arrival time (LHR local)</div>
+                <div style="font-size: 16px; font-weight: 500; color: #0E1113;">11:55</div>
+              </div>
+            </div></div>
+        </div>
+        <div style="margin-top: auto; padding: 16px 24px 14px; display: flex; flex-direction: column; gap: 10px;"><div style="height: 56px; border-radius: 28px; background: #A8E05F; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113; cursor: pointer;">Continue</div>
+            <div style="height: 44px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #0E1113; cursor: pointer;">Back</div>
+            <div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center; margin-top: 6px;"></div>
+          </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Route and date already set. Every clock is labelled with its airport zone.</div>
+      </sc-if>
+    </div>
+
+    <div id="1i" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">1I</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">When are you free?</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FLOW A + B · 3</div>
+      </div>
+      <div data-screen-label="09 When are you free" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-size: 14px; font-weight: 600; color: #545a50;"></div>
+          <div style="width: 40px; text-align: right; font-size: 14px; font-weight: 600; color: #0E1113;"></div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 18px 24px 0;">
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 27px; letter-spacing: -0.025em; line-height: 1.1; color: #0E1113; text-wrap: balance;">When are you free?</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; color: #0E1113; background: #A8E05F; padding: 5px 12px; border-radius: 14px;">{{ flightNo }} · DXB → {{ arrCode }}</div>
+            <div style="font-size: 14px; font-weight: 600; color: #0E1113; margin-top: 4px;">Thursday, 8 October 2026</div>
+            <div style="font-size: 13.5px; font-weight: 600; color: #4F6E19;">Lands {{ flightArr }} BST on 8 Oct</div>
+            <div style="font-size: 13.5px; line-height: 1.5; color: #545a50; text-wrap: balance;">Tell crew when you're free in London. We never share your full itinerary.</div>
+          </div>
+        <div style="margin: 22px 24px 0; background: #0E1113; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #EDF1F2;">8h free in London</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #A8E05F;">BST</div>
+          </div>
+          <div style="height: 8px; border-radius: 4px; background: #2c3134; position: relative;">
+            <div style="position: absolute; left: 18%; width: 46%; top: 0; bottom: 0; border-radius: 4px; background: #A8E05F;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #A7B1B5;">
+            <div>LAND {{ flightArr }}</div>
+            <div>UNTIL {{ freeUntil }}</div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px; padding: 18px 24px 0;">
+          <div style="display: flex; gap: 10px;"><div style="flex: 1; min-width: 0; min-height: 60px; box-sizing: border-box; border-radius: 14px; background: #EAECE5;  padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">Free from</div>
+                <div style="font-size: 16px; font-weight: 500; color: #0E1113;">8 Oct 2026</div>
+              </div>
+            </div><div style="flex: 1; min-width: 0; min-height: 60px; box-sizing: border-box; border-radius: 14px; background: #EAECE5;  padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">Start time</div>
+                <div style="font-size: 16px; font-weight: 500; color: #0E1113;">{{ flightArr }}</div>
+              </div>
+            </div></div>
+          <div style="display: flex; gap: 10px;"><div style="flex: 1; min-width: 0; min-height: 60px; box-sizing: border-box; border-radius: 14px; background: #EAECE5;  padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">Free until</div>
+                <div style="font-size: 16px; font-weight: 500; color: #0E1113;">8 Oct 2026</div>
+              </div>
+            </div><div style="flex: 1; min-width: 0; min-height: 60px; box-sizing: border-box; border-radius: 14px; background: #EAECE5;  padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 500; color: #545a50;">End time</div>
+                <div style="font-size: 16px; font-weight: 500; color: #0E1113;">{{ freeUntil }}</div>
+              </div>
+            </div></div>
+        </div>
+        <div style="margin-top: auto; padding: 16px 24px 14px; display: flex; flex-direction: column; gap: 10px;"><div onClick="{{ onSave }}" style="height: 56px; border-radius: 28px; background: {{ saveBg }}; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113; cursor: pointer;">{{ saveLabel }}</div>
+            <div style="height: 44px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #0E1113; cursor: pointer;">Back</div>
+            <div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center; margin-top: 6px;"></div>
+          </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Shared by search and manual. Dark window card previews what crew will see. Tap Save trip for the saving label.</div>
+      </sc-if>
+    </div>
+
+    <div id="1j" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">1J</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Home</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">TRIP SAVED</div>
+      </div>
+      <div data-screen-label="10 Home with trip" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div data-scroll="true" style="display: flex; flex-direction: column; padding: 18px 24px 112px; flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none;">
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 68px; height: 68px; border-radius: 50%; background: #0E1113; position: relative; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 24px; color: #A8E05F; flex-shrink: 0;">MO
+              <div style="position: absolute; right: 1px; bottom: 1px; width: 16px; height: 16px; border-radius: 8px; background: #A8E05F; border: 3px solid #F7F8F4;"></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.02em; color: #0E1113;">Maya Okafor</div>
+              <div style="font-size: 13.5px; color: #545a50;">Emirates · Cabin crew</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 22px; background: #FFFFFF; border-radius: 18px; padding: 14px 0;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 22px; color: #0E1113;">1</div><div style="font-size: 12px; color: #545a50;">Trips</div></div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; border-left: 1px solid #EEF0EA; border-right: 1px solid #EEF0EA;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 22px; color: #0E1113;">1</div><div style="font-size: 12px; color: #545a50;">Cities</div></div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 22px; color: #0E1113;">0</div><div style="font-size: 12px; color: #545a50;">Connections</div></div>
+          </div>
+          <div style="margin-top: 16px;"><div style="height: 56px; border-radius: 28px; background: #A8E05F; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113; cursor: pointer;"><span style="font-size: 22px; line-height: 1; margin-top: -2px;">+</span> Add Trip</div></div>
+          
+          <div style="display: flex; gap: 8px; margin-top: 22px;">
+            <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #0E1113; color: #F7F8F4; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">What's next</div>
+            <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #EAECE5; color: #0E1113; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">Matches</div>
+            <div style="height: 36px; padding: 0 16px; border-radius: 18px; background: #EAECE5; color: #0E1113; display: flex; align-items: center; font-size: 13.5px; font-weight: 600;">Activity</div>
+          </div>
+          <div style="margin-top: 16px; background: #FFFFFF; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 9px; height: 9px; border-radius: 5px; background: #A8E05F; box-shadow: 0 0 0 3px #EEF7DF;"></div>
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;">EK001 · DXB → LHR</div>
+              </div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #545a50;">THU 8 OCT</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 20px; color: #0E1113;">07:45 <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 500; color: #6f7569;">GST</span></div>
+              <div style="flex: 1; height: 1.5px; background: #DDE1D6;"></div>
+              <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 20px; color: #0E1113;">11:55 <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 500; color: #6f7569;">BST</span></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #EEF0EA; padding-top: 12px;">
+              <div style="font-size: 13px; font-weight: 600; color: #4F6E19;">Free until 19:55 in London</div>
+              <div style="font-size: 12.5px; color: #545a50;">Finding matches…</div>
+            </div>
+          </div>
+          <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" fill="#0E1113"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" stroke="#0E1113" stroke-width="2" fill="none"></rect><path d="M3 9.5h18M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" stroke="#0E1113" stroke-width="1.8" fill="none" stroke-linejoin="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M15.5 4.3A3 3 0 1117 10M18 13c2.4.6 3.9 2.6 4.3 5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><div style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 50%;  display: flex;"><div style="flex: 1; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div></div></div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">What’s next shows the trip, local times, and the free window. Matches fill in once another crew member overlaps.</div>
+      </sc-if>
+    </div>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showNotes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Display&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    this._lt = new WeakMap();
+    this._onS = e => {
+      const el = e.target;
+      if (!el || !el.getAttribute || el.getAttribute('data-scroll') !== 'true') return;
+      const frame = el.closest('[data-screen-label]');
+      const nav = frame && frame.querySelector('[data-nav]');
+      if (!nav) return;
+      const y = el.scrollTop, d = y - (this._lt.get(el) || 0);
+      if (Math.abs(d) < 3) return;
+      this._lt.set(el, y);
+      const compact = d > 0 && y > 24;
+      nav.style.transform = compact ? 'scale(0.8) translateY(10px)' : 'none';
+      nav.style.background = compact ? 'rgba(247,248,244,0.58)' : 'rgba(247,248,244,0.72)';
+    };
+    document.addEventListener('scroll', this._onS, true);
+  }
+  componentWillUnmount() { document.removeEventListener('scroll', this._onS, true); }
+  state = { arr: 'LHR', dateSet: true, flight: 0, saved: false, swapped: false };
+  renderVals() {
+    const s = this.state;
+    const AIR = [['LHR', 'Heathrow'], ['LGW', 'Gatwick'], ['LCY', 'London City'], ['STN', 'Stansted'], ['LTN', 'Luton']];
+    const FL = [
+      { no: 'EK001', airline: 'Emirates', dep: '07:45', arr: '11:55', until: '19:55', arrDate: '8 Oct', nextDay: false },
+      { no: 'BA108', airline: 'British Airways', dep: '09:10', arr: '13:40', until: '21:40', arrDate: '8 Oct', nextDay: false },
+      { no: 'EK003', airline: 'Emirates', dep: '14:30', arr: '18:40', until: '02:40', arrDate: '8 Oct', nextDay: false },
+      { no: 'EK007', airline: 'Emirates', dep: '20:20', arr: '00:35', until: '08:35', arrDate: '9 Oct', nextDay: true }
+    ];
+    const f = s.flight == null ? FL[0] : FL[s.flight];
+    const ok = s.dateSet;
+    return {
+      showNotes: this.props.showNotes ?? true,
+      arrCode: s.arr, arrCity: 'London',
+      doSwap: () => this.setState(st => ({ swapped: !st.swapped })),
+      toggleDate: () => this.setState(st => ({ dateSet: !st.dateSet })),
+      dateText: ok ? 'Thu, 8 Oct 2026' : 'Select flight date',
+      dateFg: ok ? '#0E1113' : '#6f7569',
+      dateHint: ok ? 'Tap Search flights to see scheduled departures for this route.' : 'Choose departure and arrival above to pick a date.',
+      searchBg: ok ? '#A8E05F' : '#DDE1D6', searchFg: ok ? '#0E1113' : '#6f7569',
+      manualBorder: ok ? '#c9cec1' : '#E0E3DA', manualFg: ok ? '#0E1113' : '#9aa092',
+      airports: AIR.map(([code, name]) => { const on = s.arr === code; return { code, name, bg: on ? '#F2F4EE' : 'transparent', check: on ? 'flex' : 'none', onClick: () => this.setState({ arr: code }) }; }),
+      flights: FL.map((x, i) => { const on = s.flight === i; return { ...x, bg: on ? '#F4FAEA' : '#FFFFFF', border: on ? '#A8E05F' : '#FFFFFF', onClick: () => this.setState({ flight: on ? null : i, saved: false }) }; }),
+      contBg: s.flight != null ? '#A8E05F' : '#DDE1D6', contFg: s.flight != null ? '#0E1113' : '#6f7569',
+      flightNo: f.no, flightArr: f.arr, freeUntil: f.until,
+      saveLabel: s.saved ? 'Trip saved! Finding matches…' : 'Save trip',
+      saveBg: s.saved ? '#B8EA74' : '#A8E05F',
+      onSave: () => this.setState(st => ({ saved: !st.saved }))
+    };
+  }
+}
+</script>
+</body>
+</html>
