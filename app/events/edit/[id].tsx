@@ -1,22 +1,26 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { MeetWhereFields } from '@/components/events/MeetWhereFields';
 import { WhenTiles } from '@/components/events/WhenTiles';
 import { Screen, combineDateAndTime } from '@/components/ui';
 import { SCREENS } from '@/constants/screens';
-import { FilledField, PillCta, TextAction } from '@/features/onboarding/components/kit';
+import { FilledField, MonoLabel, PillCta, TextAction, TogglePill } from '@/features/onboarding/components/kit';
 import { useAuth } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticError, hapticSelection, hapticSuccess } from '@/lib/haptics';
-import { fetchEvent, updateEvent } from '@/services/eventService';
+import { fetchActivities, fetchActivityPreferences } from '@/services/activityService';
+import { fetchEvent, replaceEventActivities, updateEvent } from '@/services/eventService';
 import { fontFamily, useTheme } from '@/theme';
+import type { Activity } from '@/types/domain';
 
 type EventDetail = {
   id: string;
   title: string;
   description?: string | null;
+  city: string;
   starts_at: string;
   venue_name?: string | null;
   venue_address?: string | null;
@@ -25,6 +29,7 @@ type EventDetail = {
   host_type?: string | null;
   cancelled_at?: string | null;
   attendees?: { status: string }[];
+  eventActivities?: Array<{ activity?: { id?: string | null } | null }>;
 };
 
 /** Edit meet: prefilled, modal. The limit can't drop below who's going; time or place changes reach everyone going. */
@@ -40,10 +45,14 @@ export default function EditEventScreen() {
   const [title, setTitle] = useState('');
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState<Date | null>(null);
+  const [city, setCity] = useState('');
   const [venue, setVenue] = useState('');
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
   const [capacity, setCapacity] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [catalog, setCatalog] = useState<Activity[]>([]);
+  const [mineIds, setMineIds] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -59,11 +68,43 @@ export default function EditEventScreen() {
     setTitle(next.title);
     setDate(new Date(next.starts_at));
     setTime(new Date(next.starts_at));
+    setCity(next.city ?? '');
     setVenue(next.venue_name ?? '');
     setAddress(next.venue_address ?? '');
     setNotes(next.description ?? '');
     setCapacity(next.capacity ?? 1);
+    setSelectedIds(
+      (next.eventActivities ?? []).flatMap((row) => (row.activity?.id ? [row.activity.id] : [])),
+    );
   }, [client, id, router, userId]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void Promise.all([fetchActivities(client), userId ? fetchActivityPreferences(client, userId) : Promise.resolve([])])
+      .then(([list, preferences]) => {
+        if (cancelled) return;
+        setCatalog(list);
+        setMineIds(preferences.filter((item) => item.kind === 'activity').map((item) => item.activityId));
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [client, userId]);
+
+  const { mine, others, interests } = useMemo(() => {
+    const activities = catalog.filter((item) => (item.kind ?? 'activity') === 'activity');
+    return {
+      mine: activities.filter((item) => mineIds.includes(item.id)),
+      others: activities.filter((item) => !mineIds.includes(item.id)),
+      interests: catalog.filter((item) => item.kind === 'interest'),
+    };
+  }, [catalog, mineIds]);
+
+  const toggle = (activityId: string) =>
+    setSelectedIds((current) =>
+      current.includes(activityId) ? current.filter((item) => item !== activityId) : [...current, activityId],
+    );
 
   useEffect(() => {
     void load();
@@ -80,6 +121,11 @@ export default function EditEventScreen() {
       setError(t('events.titleError'));
       return;
     }
+    if (!city.trim()) {
+      hapticError();
+      setError(t('events.selectCityError'));
+      return;
+    }
     if (!startsAt || startsAt.getTime() < Date.now()) {
       hapticError();
       setError(t('events.selectDateTimeError'));
@@ -93,6 +139,7 @@ export default function EditEventScreen() {
         id,
         {
           title: title.trim(),
+          city: city.trim(),
           starts_at: startsAt.toISOString(),
           venue_name: venue.trim() || null,
           venue_address: address.trim() || null,
@@ -101,6 +148,7 @@ export default function EditEventScreen() {
         },
         profile?.airline_id,
       );
+      await replaceEventActivities(client, id, selectedIds);
       hapticSuccess();
       router.back();
     } catch {
@@ -146,8 +194,61 @@ export default function EditEventScreen() {
               <View style={{ marginBottom: 10 }}>
                 <WhenTiles date={date} time={time} minimumDate={new Date()} onDateChange={setDate} onTimeChange={setTime} />
               </View>
-              <FilledField label={t('events.venue')} value={venue} onChangeText={setVenue} placeholder={t('events.venuePlaceholder')} />
-              <FilledField label={t('events.address')} value={address} onChangeText={setAddress} placeholder={t('onboarding.optionalTag')} />
+              <MeetWhereFields
+                city={city}
+                onCityChange={setCity}
+                venue={venue}
+                onVenueChange={setVenue}
+                address={address}
+                onAddressChange={setAddress}
+              />
+            </View>
+            <MonoLabel style={{ fontSize: 10.5, marginTop: 8, marginBottom: 8 }}>{t('events.activitiesTitle')}</MonoLabel>
+            <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textTertiary, marginBottom: 10 }}>
+              {t('events.activitiesHint')}
+            </Text>
+            {mine.length ? (
+              <>
+                <MonoLabel style={{ fontSize: 10.5, marginBottom: 8 }}>{t('events.yourActivities')}</MonoLabel>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
+                  {mine.map((item) => (
+                    <TogglePill
+                      key={item.id}
+                      size="sm"
+                      label={item.name}
+                      selected={selectedIds.includes(item.id)}
+                      onPress={() => toggle(item.id)}
+                    />
+                  ))}
+                </View>
+              </>
+            ) : null}
+            <MonoLabel style={{ fontSize: 10.5, marginBottom: 8 }}>{t('events.allActivities')}</MonoLabel>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+              {others.map((item) => (
+                <TogglePill
+                  key={item.id}
+                  size="sm"
+                  label={item.name}
+                  selected={selectedIds.includes(item.id)}
+                  onPress={() => toggle(item.id)}
+                />
+              ))}
+            </View>
+            <MonoLabel style={{ fontSize: 10.5, marginTop: 18, marginBottom: 8 }}>{t('events.interestsTitle')}</MonoLabel>
+            <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textTertiary, marginBottom: 10 }}>
+              {t('events.interestsHint')}
+            </Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
+              {interests.map((item) => (
+                <TogglePill
+                  key={item.id}
+                  size="sm"
+                  label={item.name}
+                  selected={selectedIds.includes(item.id)}
+                  onPress={() => toggle(item.id)}
+                />
+              ))}
             </View>
             <View
               style={{

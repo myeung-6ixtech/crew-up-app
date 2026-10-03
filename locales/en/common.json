@@ -497,6 +497,10 @@
     "notesPlaceholder": "Where to meet, dress code, or what to bring",
     "venue": "Venue",
     "venuePlaceholder": "Restaurant, café, or meeting spot",
+    "venueSearchPlaceholder": "Search for a place",
+    "venueSearchEmpty": "No places match that search",
+    "venueSearchFailed": "Place search is unavailable. Try again.",
+    "venueUseTyped": "Use “{{name}}”",
     "venueAddress": "Address (optional)",
     "venueAddressPlaceholder": "Street address or landmark",
     "visibility": "Visibility",
@@ -608,7 +612,9 @@
     "searchLabel": "Search",
     "searchPlaceholder": "Search by name or code",
     "noResults": "No airlines match your search",
-    "clear": "No airline"
+    "clear": "No airline",
+    "recommended": "Recommended",
+    "all": "All airlines"
   },
   "airport": {
     "searchLabel": "Search",

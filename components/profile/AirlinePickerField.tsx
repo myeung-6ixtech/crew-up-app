@@ -12,7 +12,12 @@ export type AirlineOption = {
   id: string;
   name: string;
   code: string;
+  countryCode?: string | null;
 };
+
+type AirlineRow =
+  | { key: string; kind: 'header'; title: string }
+  | { key: string; kind: 'airline'; airline: AirlineOption };
 
 type AirlinePickerFieldProps = {
   label: string;
@@ -23,6 +28,8 @@ type AirlinePickerFieldProps = {
   error?: string;
   /** When true, user can clear the selection. */
   optional?: boolean;
+  /** ISO country of the place the member lives. Those airlines are listed first. */
+  recommendedCountry?: string | null;
 };
 
 export function AirlinePickerField({
@@ -33,6 +40,7 @@ export function AirlinePickerField({
   loading = false,
   error,
   optional = false,
+  recommendedCountry,
 }: AirlinePickerFieldProps) {
   const { t } = useTranslation();
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -44,15 +52,30 @@ export function AirlinePickerField({
     [airlines, value],
   );
 
-  const filtered = useMemo(() => {
+  const rows = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    if (!normalized) return airlines;
-    return airlines.filter(
-      (airline) =>
-        airline.name.toLowerCase().includes(normalized) ||
-        airline.code.toLowerCase().includes(normalized),
-    );
-  }, [airlines, query]);
+    const country = recommendedCountry?.trim().toUpperCase() ?? '';
+    const matches = normalized
+      ? airlines.filter(
+          (airline) =>
+            airline.name.toLowerCase().includes(normalized) || airline.code.toLowerCase().includes(normalized),
+        )
+      : airlines;
+    const recommended = country
+      ? matches.filter((airline) => airline.countryCode?.toUpperCase() === country)
+      : [];
+    const rest = matches.filter((airline) => !recommended.includes(airline));
+    const next: AirlineRow[] = [];
+    if (recommended.length) {
+      next.push({ key: 'recommended', kind: 'header', title: t('airline.recommended') });
+      recommended.forEach((airline) => next.push({ key: airline.id, kind: 'airline', airline }));
+    }
+    if (rest.length) {
+      if (recommended.length) next.push({ key: 'all', kind: 'header', title: t('airline.all') });
+      rest.forEach((airline) => next.push({ key: airline.id, kind: 'airline', airline }));
+    }
+    return next;
+  }, [airlines, query, recommendedCountry, t]);
 
   const closeSheet = () => {
     setSheetOpen(false);
@@ -102,8 +125,8 @@ export function AirlinePickerField({
 
         <FlatList
           style={styles.list}
-          data={filtered}
-          keyExtractor={(item) => item.id}
+          data={rows}
+          keyExtractor={(item) => item.key}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator
           ListHeaderComponent={
@@ -130,21 +153,26 @@ export function AirlinePickerField({
             </View>
           }
           renderItem={({ item }) => {
-            const isSelected = value === item.id;
+            if (item.kind === 'header') {
+              return (
+                <Text style={[styles.subtitle, { marginTop: 14, marginBottom: 4, marginLeft: 4 }]}>{item.title}</Text>
+              );
+            }
+            const isSelected = value === item.airline.id;
             return (
               <Pressable
-                onPress={() => selectAirline(item.id)}
+                onPress={() => selectAirline(item.airline.id)}
                 style={({ pressed }) => [
                   styles.listRow,
                   isSelected ? styles.listRowSelected : null,
                   { opacity: pressed ? 0.82 : 1 },
                 ]}>
-                <AirlineLogoInline code={item.code} />
+                <AirlineLogoInline code={item.airline.code} />
                 <View style={styles.listContent}>
                   <Text style={styles.title} numberOfLines={1}>
-                    {item.name}
+                    {item.airline.name}
                   </Text>
-                  <Text style={styles.subtitle}>{item.code}</Text>
+                  <Text style={styles.subtitle}>{item.airline.code}</Text>
                 </View>
               </Pressable>
             );

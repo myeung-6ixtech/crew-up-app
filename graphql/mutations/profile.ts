@@ -89,6 +89,7 @@ export const GET_AIRLINES = gql`
       id
       code
       name
+      country_code
     }
   }
 `;

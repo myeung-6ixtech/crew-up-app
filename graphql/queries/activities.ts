@@ -54,3 +54,11 @@ export const INSERT_EVENT_ACTIVITIES = gql`
     }
   }
 `;
+
+export const DELETE_EVENT_ACTIVITIES = gql`
+  mutation DeleteEventActivities($eventId: uuid!) {
+    delete_event_activities(where: { event_id: { _eq: $eventId } }) {
+      affected_rows
+    }
+  }
+`;

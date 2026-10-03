@@ -4,9 +4,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PushedTopBar } from '@/components/crew/kit';
-import { CityPickerField } from '@/components/events/CityPickerField';
+import { MeetWhereFields } from '@/components/events/MeetWhereFields';
 import { WhenTiles } from '@/components/events/WhenTiles';
-import { PickerFieldVariantProvider } from '@/components/profile/pickerFieldShared';
 import { Screen, combineDateAndTime } from '@/components/ui';
 import { EVENT_MEET_VISIBILITY, type EventMeetType, meetTypeFromVisibilityScope } from '@/constants/events';
 import { EVENT_TAGS, SCREENS } from '@/constants/screens';
@@ -263,23 +262,17 @@ export default function CreateEventScreen() {
 
           <SectionHead index="04" title={t('events.where')} />
           <View style={{ marginTop: 10 }}>
-            <PickerFieldVariantProvider value="filled">
-              <CityPickerField
-                label={t('events.city')}
-                value={city}
-                onChange={(next) => {
-                  setCity(next);
-                  setCityError('');
-                }}
-                error={cityError || undefined}
-              />
-            </PickerFieldVariantProvider>
-            <FilledField label={t('events.venue')} value={venueName} onChangeText={setVenueName} placeholder={t('events.venuePlaceholder')} />
-            <FilledField
-              label={t('events.address')}
-              value={venueAddress}
-              onChangeText={setVenueAddress}
-              placeholder={t('onboarding.optionalTag')}
+            <MeetWhereFields
+              city={city}
+              cityError={cityError || undefined}
+              onCityChange={(next) => {
+                setCity(next);
+                setCityError('');
+              }}
+              venue={venueName}
+              onVenueChange={setVenueName}
+              address={venueAddress}
+              onAddressChange={setVenueAddress}
             />
           </View>
 

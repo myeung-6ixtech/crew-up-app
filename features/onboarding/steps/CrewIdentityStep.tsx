@@ -39,8 +39,17 @@ export function CrewIdentityStep({ context }: { context: StepContext }) {
   useEffect(() => {
     let cancelled = false;
     void fetchAirlines(client)
-      .then((rows) => {
-        if (!cancelled) setAirlines(rows);
+      .then((rows: { id: string; name: string; code: string; country_code?: string | null }[]) => {
+        if (!cancelled) {
+          setAirlines(
+            rows.map((row) => ({
+              id: row.id,
+              name: row.name,
+              code: row.code,
+              countryCode: row.country_code ?? null,
+            })),
+          );
+        }
       })
       .catch((error) => {
         if (!cancelled) setAirlinesError(formatApolloError(error));
@@ -100,6 +109,7 @@ export function CrewIdentityStep({ context }: { context: StepContext }) {
             onChange={(id) => field.onChange(id ?? '')}
             loading={airlinesLoading}
             error={airlinesError || fieldState.error?.message}
+            recommendedCountry={profile?.residence_country_code}
           />
         )}
       />

@@ -9,7 +9,7 @@ import {
   UPDATE_ATTENDEE,
   UPDATE_EVENT,
 } from '@/graphql/queries/events';
-import { INSERT_EVENT_ACTIVITIES } from '@/graphql/queries/activities';
+import { DELETE_EVENT_ACTIVITIES, INSERT_EVENT_ACTIVITIES } from '@/graphql/queries/activities';
 import { GET_EVENT_THREAD, INSERT_THREAD_PARTICIPANT } from '@/graphql/mutations/messaging';
 import { normalizeEventVisibilityScope } from '@/lib/visibilityOptions';
 
@@ -159,6 +159,15 @@ export async function insertEventActivities(
       objects: activityIds.map((activity_id) => ({ event_id: eventId, activity_id })),
     },
   });
+}
+
+/** Replaces every activity and interest on a meet the caller hosts. */
+export async function replaceEventActivities(client: ApolloClient, eventId: string, activityIds: string[]) {
+  await client.mutate({
+    mutation: DELETE_EVENT_ACTIVITIES,
+    variables: { eventId },
+  });
+  await insertEventActivities(client, eventId, activityIds);
 }
 
 export async function createEventWithThread(
