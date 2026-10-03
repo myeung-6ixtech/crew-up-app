@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NameHandleSchema } from '@crewup/shared';
+import { NameHandlePatchSchema } from '@crewup/shared';
 import { Text, View } from 'react-native';
 import { hapticError } from '@/lib/haptics';
 import { useAuth } from '@/hooks/useSession';
@@ -38,12 +38,12 @@ export function DisplayNameStep() {
 
   const onSave = async () => {
     const preferredName = samples[style];
-    const parsed = NameHandleSchema.safeParse({
-      fullName: samples.full,
-      fullNameNative: profile?.full_name_native || null,
-      preferredName: preferredName || null,
-      username: profile?.username ?? '',
-    });
+    if (!preferredName) {
+      hapticError();
+      setError(t('onboarding.genericError'));
+      return;
+    }
+    const parsed = NameHandlePatchSchema.safeParse({ preferredName });
     if (!parsed.success) {
       hapticError();
       setError(parsed.error.issues[0]?.message ?? t('onboarding.genericError'));

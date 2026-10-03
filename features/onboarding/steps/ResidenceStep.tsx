@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { AboutSchema, ResidenceSchema } from '@crewup/shared';
+import { AboutPatchSchema, ResidenceSchema } from '@crewup/shared';
 import { UPDATE_PROFILE } from '@/graphql/mutations/profile';
 import { useAuth, useSession } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
@@ -71,9 +71,7 @@ export function ResidenceStep({ context }: { context: StepContext }) {
     }
 
     const draft = getAboutDraft();
-    const about = AboutSchema.safeParse({
-      dateOfBirth: draft?.dateOfBirth || profile?.own_date_of_birth || '',
-      languages: draft?.languages?.length ? draft.languages : (profile?.languages ?? []),
+    const about = AboutPatchSchema.safeParse({
       homeCountryCode: hometown.countryCode,
       hometownCity: hometown.name,
       hometownLatitude: hometown.latitude,

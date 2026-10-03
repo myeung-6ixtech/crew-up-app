@@ -7,6 +7,7 @@ export default function AddTripLayout() {
   return (
     <Stack
       screenOptions={{
+        headerShown: false,
         headerBackTitle: 'Back',
         headerStyle: { backgroundColor: theme.colors.bgCanvas },
         headerTitleStyle: {

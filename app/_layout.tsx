@@ -62,10 +62,10 @@ function RootNavigator() {
       <Stack.Screen name="auth/forgot-password" options={{ title: 'Forgot password' }} />
       <Stack.Screen name="auth/reset-password" options={{ title: 'Reset password' }} />
       <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
-      <Stack.Screen name="roster/upload" options={{ title: 'Upload roster' }} />
-      <Stack.Screen name="roster/confirm" options={{ title: 'Confirm layovers' }} />
+      <Stack.Screen name="roster/upload" options={{ headerShown: false }} />
+      <Stack.Screen name="roster/confirm" options={{ headerShown: false }} />
       <Stack.Screen name="roster/manage" options={{ title: 'My schedule' }} />
-      <Stack.Screen name="trips/index" options={{ title: 'Trips' }} />
+      <Stack.Screen name="trips/index" options={{ headerShown: false }} />
       <Stack.Screen name="roster/add-trip" options={{ headerShown: false }} />
       <Stack.Screen name="presence/[city]" options={{ title: 'Who is around' }} />
       <Stack.Screen name="network/connections" options={{ title: 'Connections' }} />
@@ -73,8 +73,9 @@ function RootNavigator() {
       <Stack.Screen name="network/[userId]" options={{ headerShown: false }} />
       <Stack.Screen name="events/[id]" options={{ headerShown: false }} />
       <Stack.Screen name="events/create" options={{ headerShown: false }} />
-      <Stack.Screen name="events/edit/[id]" options={{ title: 'Edit event' }} />
-      <Stack.Screen name="messages/[threadId]" options={{ title: 'Chat' }} />
+      <Stack.Screen name="events/edit/[id]" options={{ headerShown: false, presentation: 'modal' }} />
+      <Stack.Screen name="events/attendees/[id]" options={{ headerShown: false }} />
+      <Stack.Screen name="messages/[threadId]" options={{ headerShown: false }} />
       <Stack.Screen name="friends/add" options={{ headerShown: false }} />
       <Stack.Screen name="discover/search" options={{ headerShown: false }} />
       <Stack.Screen name="discover/layover/[tripId]" options={{ headerShown: false }} />

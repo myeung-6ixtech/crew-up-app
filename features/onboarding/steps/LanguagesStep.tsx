@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AboutSchema, LANGUAGE_CODES } from '@crewup/shared';
+import { AboutPatchSchema, LANGUAGE_CODES } from '@crewup/shared';
 import { z } from 'zod';
 import { hapticError } from '@/lib/haptics';
 import { useAuth } from '@/hooks/useSession';
@@ -30,14 +30,7 @@ export function LanguagesStep() {
       setError(parsed.error.issues[0]?.message ?? t('onboarding.genericError'));
       return;
     }
-    const about = AboutSchema.safeParse({
-      dateOfBirth: profile?.own_date_of_birth ?? '',
-      languages: parsed.data.languages,
-      homeCountryCode: profile?.home_country_code ?? '',
-      hometownCity: profile?.hometown_city ?? null,
-      hometownLatitude: profile?.own_hometown_latitude ?? null,
-      hometownLongitude: profile?.own_hometown_longitude ?? null,
-    });
+    const about = AboutPatchSchema.safeParse({ languages: parsed.data.languages });
     if (!about.success) {
       hapticError();
       setError(about.error.issues[0]?.message ?? t('onboarding.genericError'));

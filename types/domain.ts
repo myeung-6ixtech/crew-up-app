@@ -102,6 +102,8 @@ export interface EventItem {
   host_type?: 'user' | 'platform';
   is_published?: boolean;
   featured_until?: string | null;
+  rsvp_closed_at?: string | null;
+  cancelled_at?: string | null;
   eventActivities?: Array<{
     activity: { id?: string; slug: string; name: string; icon?: string | null; kind?: ActivityKind | null };
   }>;

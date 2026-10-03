@@ -90,9 +90,28 @@ export async function rsvpEvent(
 export async function updateRsvp(
   client: ApolloClient,
   attendeeId: string,
-  status: 'going' | 'waitlisted' | 'cancelled',
+  status: 'going' | 'waitlisted' | 'cancelled' | 'removed',
 ) {
   await client.mutate({ mutation: UPDATE_ATTENDEE, variables: { id: attendeeId, status } });
+}
+
+/** Host only: take someone off the meet. They can't RSVP to it again. */
+export async function removeAttendee(client: ApolloClient, attendeeId: string) {
+  await updateRsvp(client, attendeeId, 'removed');
+}
+
+/** Host only: stop new RSVPs (reversible) or cancel the meet (final). */
+export async function setEventClosure(
+  client: ApolloClient,
+  eventId: string,
+  closure: 'rsvps_closed' | 'reopened' | 'cancelled',
+) {
+  const now = new Date().toISOString();
+  const set =
+    closure === 'cancelled'
+      ? { cancelled_at: now }
+      : { rsvp_closed_at: closure === 'rsvps_closed' ? now : null };
+  await client.mutate({ mutation: UPDATE_EVENT, variables: { id: eventId, set } });
 }
 
 async function ensureEventThreadMembership(

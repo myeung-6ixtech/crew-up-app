@@ -26,6 +26,7 @@ export const GET_HOME_DATA = gql`
       }
       stays(order_by: { starts_at: asc }, limit: 1) {
         city
+        airport_iata
         starts_at
         ends_at
       }
@@ -65,6 +66,7 @@ export const GET_HOME_DATA = gql`
           base_airport
           base_airport_iata
           avatar_file_id
+          airline_id
         }
       }
     }

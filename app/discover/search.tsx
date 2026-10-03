@@ -6,6 +6,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PushedTopBar } from '@/components/crew/kit';
 import { openMatchProfile } from '@/components/discover/DiscoverEmpty';
 import { MatchCard } from '@/components/discover/MatchCard';
+import { MyAirlineCard, airlineCounts } from '@/components/discover/MyAirlineCard';
+import { useAirlines } from '@/components/crew/airline';
+import { useAuth } from '@/hooks/useSession';
 import {
   CLOSENESS_BY_TYPE,
   LONG_REST_HOURS,
@@ -47,6 +50,10 @@ export default function SearchLayoversScreen() {
   const [longOnly, setLongOnly] = useState(false);
   const [toast, setToast] = useState('');
   const { waved, waving, wave } = useWave(setToast);
+  const { profile } = useAuth();
+  const airlines = useAirlines();
+  const [airlineOnly, setAirlineOnly] = useState(false);
+  const myAirline = profile?.airline_id ? airlines.get(profile.airline_id) : undefined;
 
   const load = useCallback(async () => {
     setAll(await fetchTripMatches(client).catch(() => []));
@@ -65,6 +72,7 @@ export default function SearchLayoversScreen() {
         if (!isCurrent(match)) return false;
         if (!closeness.includes(CLOSENESS_BY_TYPE[match.match_type])) return false;
         if (!matchesPlace(match, query)) return false;
+        if (airlineOnly && match.matchedUser?.profile?.airline_id !== profile?.airline_id) return false;
         const hours = overlapHours(match);
         if (longOnly && (hours === null || hours < LONG_REST_HOURS)) return false;
         if (from !== null && to !== null && match.overlap_start && match.overlap_end) {
@@ -73,7 +81,7 @@ export default function SearchLayoversScreen() {
         return true;
       }),
     );
-  }, [all, closeness, longOnly, query, range]);
+  }, [airlineOnly, all, closeness, longOnly, profile?.airline_id, query, range]);
 
   const toggleCloseness = (value: Closeness) =>
     setCloseness((current) => (current.includes(value) ? current.filter((item) => item !== value) : [...current, value]));
@@ -177,8 +185,16 @@ export default function SearchLayoversScreen() {
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: insets.bottom + 40 }}>
         {all === null ? (
           <ActivityIndicator color={theme.colors.accentText} style={{ marginTop: 40 }} />
-        ) : results.length ? (
+        ) : results.length || airlineOnly ? (
           <>
+            {myAirline ? (
+              <MyAirlineCard
+                airline={myAirline}
+                {...airlineCounts(results, profile?.airline_id)}
+                active={airlineOnly}
+                onToggle={() => setAirlineOnly((value) => !value)}
+              />
+            ) : null}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 14 }}>
               <MonoLabel style={{ fontSize: 10.5 }}>{resultLabel}</MonoLabel>
               <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 11.5, color: theme.colors.textTertiary }}>{t('discover.strongestFirst')}</Text>
@@ -188,6 +204,8 @@ export default function SearchLayoversScreen() {
                 <MatchCard
                   key={match.id}
                   match={match}
+                  airline={match.matchedUser?.profile?.airline_id ? airlines.get(match.matchedUser.profile.airline_id) : null}
+                  myAirline={Boolean(profile?.airline_id) && match.matchedUser?.profile?.airline_id === profile?.airline_id}
                   waved={waved.has(match.matched_user_id)}
                   waving={waving === match.matched_user_id}
                   onWave={() => void wave(match.matched_user_id)}

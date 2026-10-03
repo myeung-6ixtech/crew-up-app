@@ -15,6 +15,7 @@ import { SCREENS } from '@/constants/screens';
 import { MonoLabel } from '@/features/onboarding/components/kit';
 import { memberSinceWhen } from '@/features/onboarding/memberSince';
 import { useAuth } from '@/hooks/useSession';
+import { AirlineLine, AirlineMark, useAirlines } from '@/components/crew/airline';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { formatFriendId } from '@/lib/friendId';
 import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
@@ -135,7 +136,8 @@ export default function PublicProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const client = useApolloClient();
-  const { userId } = useAuth();
+  const { userId, profile: me } = useAuth();
+  const airlines = useAirlines();
   const [profile, setProfile] = useState<PublicProfile | null>(null);
   const [airlineName, setAirlineName] = useState<string | null>(null);
   const [activityNames, setActivityNames] = useState<string[]>([]);
@@ -237,6 +239,9 @@ export default function PublicProfileScreen() {
   const airport = findAirportByIata(profile?.base_airport_iata ?? profile?.base_airport);
   const role = profile?.crew_role ? t(`onboarding.crewRoles.${profile.crew_role}`) : profile?.role_type;
   const headline = [role, airlineName, airport?.iata ?? profile?.base_airport].filter(Boolean).join(' · ');
+  const theirAirline = profile?.airline_id ? airlines.get(profile.airline_id) : null;
+  const roleBase = [role, airport?.iata ?? profile?.base_airport].filter(Boolean).join(' · ');
+  const flightCode = params.matchTitle?.match(/^([A-Z0-9]{2})\d/)?.[1] ?? null;
   const place = (city?: string | null, code?: string | null) => [city, code].filter(Boolean).join(', ');
   const placesLine = [
     profile?.residence_city ? t('onboarding.review.livesIn', { place: place(profile.residence_city, profile.residence_country_code) }) : null,
@@ -271,7 +276,9 @@ export default function PublicProfileScreen() {
                 <AppIcon name={profile.visible_gender === 'female' ? 'genderFemale' : 'genderMale'} size={15} color={theme.colors.accentText} />
               ) : null}
             </View>
-            {headline ? (
+            {theirAirline ? (
+              <AirlineLine airline={theirAirline} mine={theirAirline.id === me?.airline_id} rest={roleBase} />
+            ) : headline ? (
               <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textSecondary }}>{headline}</Text>
             ) : null}
             {profile.friend_id ? (
@@ -304,7 +311,10 @@ export default function PublicProfileScreen() {
           {params.matchTitle ? (
             <View style={{ backgroundColor: theme.colors.accentSubtle, borderRadius: 16, paddingVertical: 12, paddingHorizontal: 14, marginTop: 16, gap: 3 }}>
               {params.matchLabel ? <MonoLabel style={{ fontSize: 10, color: theme.colors.accentText }}>{params.matchLabel}</MonoLabel> : null}
-              <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 13.5, color: theme.colors.textPrimary }}>{params.matchTitle}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                {flightCode ? <AirlineMark code={flightCode} size={22} /> : null}
+                <Text style={{ flex: 1, fontFamily: fontFamily.interMedium, fontSize: 13.5, color: theme.colors.textPrimary }}>{params.matchTitle}</Text>
+              </View>
               {params.matchDetail ? (
                 <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, color: theme.colors.textSecondary }}>{params.matchDetail}</Text>
               ) : null}

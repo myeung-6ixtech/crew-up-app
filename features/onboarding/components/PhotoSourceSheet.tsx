@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
@@ -44,9 +44,9 @@ export function useAvatarPicker(initialFileId: string | null, onUploaded?: (file
   const [previewUri, setPreviewUri] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
+  const pendingSource = useRef<PhotoSource | null>(null);
 
-  const choose = async (source: PhotoSource) => {
-    setSheetOpen(false);
+  const uploadFrom = async (source: PhotoSource) => {
     setError('');
     const previous = previewUri;
     try {
@@ -77,6 +77,18 @@ export function useAvatarPicker(initialFileId: string | null, onUploaded?: (file
     }
   };
 
+  const choose = (source: PhotoSource) => {
+    pendingSource.current = source;
+    setSheetOpen(false);
+  };
+
+  const onSheetDismissed = () => {
+    const source = pendingSource.current;
+    pendingSource.current = null;
+    if (!source) return;
+    void uploadFrom(source);
+  };
+
   return {
     fileId,
     previewUri,
@@ -84,7 +96,14 @@ export function useAvatarPicker(initialFileId: string | null, onUploaded?: (file
     uploading,
     error,
     open: () => setSheetOpen(true),
-    sheet: <PhotoSourceSheet visible={sheetOpen} onClose={() => setSheetOpen(false)} onChoose={(source) => void choose(source)} />,
+    sheet: (
+      <PhotoSourceSheet
+        visible={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        onDismissed={onSheetDismissed}
+        onChoose={choose}
+      />
+    ),
   };
 }
 
@@ -130,10 +149,12 @@ function SourceRow({ title, subtitle, icon, onPress }: { title: string; subtitle
 export function PhotoSourceSheet({
   visible,
   onClose,
+  onDismissed,
   onChoose,
 }: {
   visible: boolean;
   onClose: () => void;
+  onDismissed?: () => void;
   onChoose: (source: PhotoSource) => void;
 }) {
   const { t } = useTranslation();
@@ -141,7 +162,7 @@ export function PhotoSourceSheet({
   const tips = [t('onboarding.photo.tipFace'), t('onboarding.photo.tipNoGroup')];
 
   return (
-    <BottomSheet visible={visible} onClose={onClose}>
+    <BottomSheet visible={visible} onClose={onClose} onDismissed={onDismissed}>
       <View style={{ gap: 10 }}>
         <View style={{ gap: 4, paddingHorizontal: 4, paddingBottom: 4 }}>
           <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 24, letterSpacing: -0.5, color: theme.colors.textPrimary }}>

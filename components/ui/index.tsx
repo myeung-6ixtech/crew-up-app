@@ -19,7 +19,6 @@ export { NumberStepperField } from './NumberStepperField';
 export { SelectionOption } from './SelectionOption';
 export { PillSelectorGroup, type PillSelectorOption } from './PillSelectorGroup';
 export { BottomSheet } from './BottomSheet';
-export { ChoiceModal, type ChoiceModalOption } from './ChoiceModal';
 export { Toast } from './Toast';
 export {
   DisplayText,

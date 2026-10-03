@@ -12,13 +12,7 @@ export default function OnboardingLayout() {
       }}>
       <Stack.Screen
         name="roster-intro"
-        options={{
-          headerShown: true,
-          headerBackVisible: false,
-          title: '',
-          headerStyle: { backgroundColor: theme.colors.bgCanvas },
-          headerShadowVisible: false,
-        }}
+        options={{ headerShown: false }}
       />
     </Stack>
   );

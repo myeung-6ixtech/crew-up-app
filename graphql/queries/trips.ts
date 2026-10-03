@@ -178,6 +178,7 @@ export const GET_TRIP_MATCHES = gql`
           base_airport
           base_airport_iata
           avatar_file_id
+          airline_id
         }
       }
     }

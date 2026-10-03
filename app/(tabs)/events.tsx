@@ -53,6 +53,7 @@ export default function EventsTab() {
   const visible = useMemo(
     () =>
       events
+        .filter((event) => !event.cancelled_at)
         .filter((event) => (filter === 'platform' ? isPlatformEvent(event) : filter === 'community' ? !isPlatformEvent(event) : true))
         .filter((event) => matchesQuery(event, query)),
     [events, filter, query],

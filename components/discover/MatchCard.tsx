@@ -1,5 +1,6 @@
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { AirlineLine, AirlineMark, type AirlineInfo } from '@/components/crew/airline';
 import { CrewAvatar, LimePills } from '@/components/crew/kit';
 import { personName, personRoleBase } from '@/components/crew/people';
 import { hapticImpact } from '@/lib/haptics';
@@ -27,6 +28,8 @@ export function MatchCard({
   onWave,
   onPress,
   sharedTags,
+  airline,
+  myAirline,
 }: {
   match: TripMatchEntry;
   waved: boolean;
@@ -34,6 +37,9 @@ export function MatchCard({
   onWave: () => void;
   onPress: () => void;
   sharedTags?: string[];
+  /** Their airline; the logo shows when it is also yours. */
+  airline?: AirlineInfo | null;
+  myAirline?: boolean;
 }) {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -43,6 +49,14 @@ export function MatchCard({
   const hours = overlapHours(match);
   const window = overlapWindow(match);
   const upper = shouldUppercaseLabels();
+  const roleLabel = profile?.crew_role ? t(`onboarding.crewRoles.${profile.crew_role}`) : (profile?.role_type ?? '');
+  const flightLabel = [
+    match.flight_number,
+    match.departure_airport && match.arrival_airport ? `${match.departure_airport} → ${match.arrival_airport}` : null,
+    match.overlap_start ? new Date(match.overlap_start).toLocaleDateString(undefined, { day: 'numeric', month: 'short' }) : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
     <Pressable
@@ -73,7 +87,9 @@ export function MatchCard({
               {matchReason(match, t)}
             </Text>
           </View>
-          {personRoleBase(profile, t) ? (
+          {airline ? (
+            <AirlineLine airline={airline} mine={Boolean(myAirline)} rest={roleLabel} />
+          ) : personRoleBase(profile, t) ? (
             <Text numberOfLines={1} style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, color: theme.colors.textTertiary }}>
               {personRoleBase(profile, t)}
             </Text>
@@ -107,6 +123,15 @@ export function MatchCard({
           )}
         </Pressable>
       </View>
+      {match.match_type === 'same_flight' && flightLabel ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#0E1113', borderRadius: 12, paddingVertical: 8, paddingHorizontal: 10 }}>
+          {airline ? <AirlineMark code={airline.code} size={24} /> : null}
+          <View style={{ flex: 1, gap: 1 }}>
+            <Text style={{ fontFamily: fontFamily.monoMedium, fontSize: 9.5, letterSpacing: 0.8, color: '#A8E05F' }}>{t('discover.sameFlight')}</Text>
+            <Text numberOfLines={1} style={{ fontFamily: fontFamily.interMedium, fontSize: 12.5, color: '#EDF1F2' }}>{flightLabel}</Text>
+          </View>
+        </View>
+      ) : null}
       {window ? (
         <View
           style={{

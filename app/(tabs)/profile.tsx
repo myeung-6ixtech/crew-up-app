@@ -12,6 +12,7 @@ import { SCREENS } from '@/constants/screens';
 import { useAppMenu } from '@/contexts/AppMenuContext';
 import { useAuth } from '@/hooks/useSession';
 import { useTabBarScroll } from '@/hooks/useTabBarScroll';
+import { AirlineLine, useAirlines } from '@/components/crew/airline';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { fetchActivityPreferences } from '@/services/activityService';
 import { fetchHomeData } from '@/services/presenceService';
@@ -35,6 +36,7 @@ export default function ProfileTab() {
   const { share } = useCrewIdActions(profile?.friend_id);
   const [stats, setStats] = useState<ProfileStats>({ trips: 0, cities: 0, friends: 0 });
   const [airlineName, setAirlineName] = useState<string | null>(null);
+  const airlines = useAirlines();
   const [activities, setActivities] = useState<string[]>([]);
   const [interests, setInterests] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -66,13 +68,14 @@ export default function ProfileTab() {
 
   const name = profile?.preferred_name || profile?.full_name || profile?.display_name || '';
   const airport = findAirportByIata(profile?.base_airport_iata ?? profile?.base_airport);
-  const crewLine = [
+  const myAirline = profile?.airline_id ? airlines.get(profile.airline_id) : null;
+  const roleBase = [
     profile?.crew_role ? t(`onboarding.crewRoles.${profile.crew_role}`) : null,
-    airlineName,
     airport?.iata ?? profile?.base_airport_iata,
   ]
     .filter(Boolean)
     .join(' · ');
+  const crewLine = [airlineName, roleBase].filter(Boolean).join(' · ');
   const placesLine = [
     profile?.residence_city ? t('onboarding.review.livesIn', { place: profile.residence_city }) : null,
     profile?.hometown_city ? t('onboarding.review.from', { place: profile.hometown_city }) : null,
@@ -159,7 +162,11 @@ export default function ProfileTab() {
               />
             ) : null}
           </View>
-          {crewLine ? (
+          {myAirline ? (
+            <View style={{ marginVertical: 2 }}>
+              <AirlineLine airline={myAirline} mine rest={roleBase} size={22} emphasize />
+            </View>
+          ) : crewLine ? (
             <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textSecondary }}>{crewLine}</Text>
           ) : null}
           {placesLine ? (

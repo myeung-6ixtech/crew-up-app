@@ -59,6 +59,7 @@ export type TripMatchEntry = {
       base_airport?: string | null;
       base_airport_iata?: string | null;
       avatar_file_id?: string | null;
+      airline_id?: string | null;
     } | null;
   } | null;
 };

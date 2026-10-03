@@ -6,14 +6,13 @@ const PLACEHOLDER_COUNT = 5;
 
 export function FlightSearchResultsSkeleton() {
   const styles = useThemedStyles((t) => ({
-    wrap: { width: '100%', gap: t.spacing.sm },
+    wrap: { width: '100%', gap: 10 },
     row: {
-      borderWidth: 1,
-      borderColor: t.colors.hairline,
-      borderRadius: t.radius.card,
-      padding: t.spacing.md,
-      backgroundColor: t.colors.bgSurfaceRaised,
-      gap: t.spacing.sm,
+      borderRadius: 20,
+      paddingVertical: 14,
+      paddingHorizontal: 16,
+      backgroundColor: t.colors.card,
+      gap: 10,
     },
     topLine: {
       flexDirection: 'row',

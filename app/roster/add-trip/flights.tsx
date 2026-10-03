@@ -1,154 +1,147 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { TripFlightSearchView } from '@/components/roster/TripFlightSearchView';
-import { BodyText, Button, NumericText, Screen } from '@/components/ui';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FlightOptionCard } from '@/components/roster/FlightOptionCard';
+import { FlightSearchResultsSkeleton } from '@/components/roster/FlightSearchResultsSkeleton';
+import { CloudOffGlyph, FlowFooter, FlowHeader, FlowNotice, FlowTopBar, PlaneGlyph } from '@/components/roster/flowKit';
+import { Screen } from '@/components/ui';
 import { findAirportByIata } from '@/constants/airports';
 import { SCREENS } from '@/constants/screens';
 import { formatFlightDateLabel, fromFlightDateKey } from '@/lib/flightDateKey';
-import type { FlightOption } from '@/types/flight';
-import { useThemedStyles } from '@/theme';
+import { searchFlights } from '@/services/flightService';
+import { fontFamily, useTheme } from '@/theme';
+import type { FlightOption, FlightSearchErrorCode } from '@/types/flight';
+import { toFlightSearchErrorCode } from '@/types/flight';
 
+/** Select your flight: that day's departures, one selectable card each. Empty or unavailable always offers manual entry. */
 export default function AddTripFlightsScreen() {
   const { t } = useTranslation();
+  const theme = useTheme();
   const router = useRouter();
-  const { depIata, arrIata, date } = useLocalSearchParams<{
-    depIata?: string;
-    arrIata?: string;
-    date?: string;
-  }>();
-
-  const [selectedFlight, setSelectedFlight] = useState<FlightOption | null>(null);
-
+  const insets = useSafeAreaInsets();
+  const { depIata, arrIata, date } = useLocalSearchParams<{ depIata?: string; arrIata?: string; date?: string }>();
   const origin = useMemo(() => findAirportByIata(depIata), [depIata]);
   const destination = useMemo(() => findAirportByIata(arrIata), [arrIata]);
-  const flightDate = useMemo(() => (date ? fromFlightDateKey(date) : null), [date]);
-  const paramsValid = Boolean(origin && destination && flightDate && date);
+  const [flights, setFlights] = useState<FlightOption[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [errorCode, setErrorCode] = useState<FlightSearchErrorCode | null>(null);
+  const [retryToken, setRetryToken] = useState(0);
+  const [selected, setSelected] = useState<FlightOption | null>(null);
 
-  const styles = useThemedStyles((theme) => ({
-    scroll: {
-      flexGrow: 1,
-      paddingBottom: theme.spacing.xxxl,
-    },
-    header: {
-      paddingHorizontal: theme.spacing.lg,
-      paddingTop: theme.spacing.lg,
-      paddingBottom: theme.spacing.xl,
-      alignItems: 'center',
-      gap: theme.spacing.xs,
-    },
-    title: {
-      ...theme.typography.headline,
-      color: theme.colors.textPrimary,
-      textAlign: 'center',
-    },
-    route: {
-      color: theme.colors.textPrimary,
-      textAlign: 'center',
-    },
-    date: {
-      textAlign: 'center',
-    },
-    hint: {
-      textAlign: 'center',
-      maxWidth: 320,
-      marginTop: theme.spacing.sm,
-    },
-    results: {
-      paddingHorizontal: theme.spacing.lg,
-    },
-    footer: {
-      paddingHorizontal: theme.spacing.lg,
-      paddingTop: theme.spacing.xl,
-      gap: theme.spacing.sm,
-    },
-    error: {
-      color: theme.colors.statusOnDuty,
-      textAlign: 'center',
-    },
-  }));
+  useEffect(() => {
+    if (!origin || !destination || !date) return undefined;
+    let cancelled = false;
+    setLoading(true);
+    setErrorCode(null);
+    void searchFlights({ depIata: origin.iata, arrIata: destination.iata, flightDate: fromFlightDateKey(date) })
+      .then((result) => {
+        if (!cancelled) setFlights(result.flights);
+      })
+      .catch((e) => {
+        if (cancelled) return;
+        setFlights([]);
+        setErrorCode(toFlightSearchErrorCode(e));
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [date, destination, origin, retryToken]);
 
-  const onManualEntry = () => {
-    if (!origin || !destination || !date) return;
-    router.push({
-      pathname: SCREENS.roster.addTripManual,
-      params: { depIata: origin.iata, arrIata: destination.iata, date },
-    });
-  };
+  const manual = () =>
+    origin && destination && date && router.push({ pathname: SCREENS.roster.addTripManual, params: { depIata: origin.iata, arrIata: destination.iata, date } });
 
-  const onContinue = () => {
-    if (!selectedFlight?.selectionToken || !origin || !destination || !date) return;
+  const proceed = () => {
+    if (!selected?.selectionToken || !origin || !destination || !date) return;
     router.push({
       pathname: SCREENS.roster.addTripAvailability,
       params: {
         depIata: origin.iata,
         arrIata: destination.iata,
         date,
-        selectionToken: selectedFlight.selectionToken,
-        flightNumber: selectedFlight.flightNumber,
-        arrivalTime: selectedFlight.arrivalTime,
+        selectionToken: selected.selectionToken,
+        flightNumber: selected.flightNumber,
+        arrivalTime: selected.arrivalTime,
         destinationCity: destination.city,
       },
     });
   };
 
-  if (!paramsValid || !origin || !destination || !flightDate || !date) {
+  const back = { label: t('common.back'), onPress: () => router.back() };
+
+  if (!origin || !destination || !date) {
     return (
       <Screen style={{ padding: 0 }}>
-        <View style={[styles.header, styles.footer]}>
-          <BodyText style={styles.error}>{t('addTrip.invalidSearchParams')}</BodyText>
-          <Button label={t('common.back')} onPress={() => router.back()} noTopMargin />
+        <View style={{ paddingTop: insets.top }}>
+          <FlowTopBar backLabel={t('common.back')} onBack={() => router.back()} />
         </View>
+        <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, color: theme.colors.statusOnDuty, textAlign: 'center', marginTop: 60, paddingHorizontal: 24 }}>
+          {t('addTrip.invalidSearchParams')}
+        </Text>
       </Screen>
     );
   }
 
+  const empty = !loading && !errorCode && flights.length === 0;
+  const retryable = errorCode === 'FLIGHT_SCHEDULE_UNAVAILABLE' || errorCode === 'FLIGHT_SEARCH_FAILED';
+
   return (
     <Screen style={{ padding: 0 }}>
-      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-        <View style={styles.header}>
-          <Text style={styles.title}>{t('addTrip.selectFlight')}</Text>
-          <NumericText style={styles.route}>
-            {origin.iata} → {destination.iata}
-          </NumericText>
-          <BodyText muted style={styles.date}>
-            {formatFlightDateLabel(date)}
-          </BodyText>
-          <BodyText muted style={styles.hint}>
-            {t('addTrip.flightSearchHint', {
-              origin: origin.iata,
-              destination: destination.iata,
-            })}
-          </BodyText>
-        </View>
+      <View style={{ paddingTop: insets.top }}>
+        <FlowTopBar backLabel={t('common.back')} onBack={() => router.back()} />
+      </View>
+      <FlowHeader
+        title={t('addTrip.selectFlight')}
+        chip={`${origin.iata} → ${destination.iata}`}
+        date={formatFlightDateLabel(date)}
+        hint={t('addTrip.flightSearchHint', { origin: origin.iata, destination: destination.iata })}
+      />
 
-        <View style={styles.results}>
-          <TripFlightSearchView
-            depIata={origin.iata}
-            arrIata={destination.iata}
-            flightDate={flightDate}
-            selectedFlight={selectedFlight}
-            onSelectFlight={setSelectedFlight}
-            onManualEntry={onManualEntry}
-          />
-        </View>
+      {errorCode ? (
+        <FlowNotice
+          icon={<CloudOffGlyph color={theme.colors.textTertiary} />}
+          title={errorCode === 'FLIGHT_SEARCH_UNAUTHENTICATED' ? t('addTrip.flightSearchSignedOut') : t('addTrip.unavailableTitle')}
+          body={errorCode === 'FLIGHT_SEARCH_UNAUTHENTICATED' ? t('addTrip.signedOutBody') : t('addTrip.unavailableBody')}
+        />
+      ) : empty ? (
+        <FlowNotice icon={<PlaneGlyph color={theme.colors.textTertiary} size={26} />} title={t('addTrip.noFlightsFound')} body={t('addTrip.noFlightsFoundHint')} />
+      ) : (
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 10, paddingHorizontal: 20, paddingTop: 20, paddingBottom: 12 }}>
+          {loading ? (
+            <FlightSearchResultsSkeleton />
+          ) : (
+            flights.map((flight) => (
+              <FlightOptionCard
+                key={flight.id}
+                flight={flight}
+                selected={selected?.id === flight.id}
+                onPress={() => setSelected((current) => (current?.id === flight.id ? null : flight))}
+              />
+            ))
+          )}
+        </ScrollView>
+      )}
 
-        <View style={styles.footer}>
-          <Button
-            label={t('common.continue')}
-            onPress={onContinue}
-            disabled={!selectedFlight?.selectionToken}
-            noTopMargin
+      {errorCode ? (
+        retryable ? (
+          <FlowFooter
+            bottomInset={insets.bottom}
+            primary={{ label: t('common.retry'), onPress: () => setRetryToken((token) => token + 1) }}
+            secondary={{ label: t('addTrip.enterFlightManually'), onPress: manual }}
+            tertiary={back}
           />
-          <Button
-            label={t('common.back')}
-            onPress={() => router.back()}
-            variant="ghost"
-            noTopMargin
-          />
-        </View>
-      </ScrollView>
+        ) : (
+          <FlowFooter bottomInset={insets.bottom} primary={{ label: t('addTrip.enterFlightManually'), onPress: manual }} tertiary={back} />
+        )
+      ) : empty ? (
+        <FlowFooter bottomInset={insets.bottom} primary={{ label: t('addTrip.enterFlightManually'), onPress: manual }} tertiary={back} />
+      ) : (
+        <FlowFooter bottomInset={insets.bottom} primary={{ label: t('common.continue'), disabled: !selected?.selectionToken, onPress: proceed }} tertiary={back} />
+      )}
     </Screen>
   );
 }

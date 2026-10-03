@@ -53,6 +53,7 @@ export const SCREENS = {
     detail: (id: string) => `/events/${id}` as const,
     create: '/events/create',
     edit: (id: string) => `/events/edit/${id}` as const,
+    attendees: (id: string) => `/events/attendees/${id}` as const,
   },
   messages: {
     thread: (threadId: string, withUserId?: string) =>

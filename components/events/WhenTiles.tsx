@@ -9,7 +9,7 @@ import { useTheme } from '@/theme';
 
 type Mode = 'date' | 'time';
 
-/** Date and start time as two filled tiles side by side, each opening the native picker. */
+/** Date and time as two filled tiles side by side, each opening the native picker. */
 export function WhenTiles({
   date,
   time,
@@ -17,6 +17,10 @@ export function WhenTiles({
   onTimeChange,
   minimumDate,
   error,
+  dateLabel,
+  timeLabel,
+  dateFormat = { weekday: 'short', day: 'numeric', month: 'short' },
+  hour12,
 }: {
   date: Date | null;
   time: Date | null;
@@ -24,6 +28,11 @@ export function WhenTiles({
   onTimeChange: (time: Date) => void;
   minimumDate?: Date;
   error?: string;
+  dateLabel?: string;
+  timeLabel?: string;
+  dateFormat?: Intl.DateTimeFormatOptions;
+  /** false for airport clocks (07:45); defaults to the device setting. */
+  hour12?: boolean;
 }) {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -39,8 +48,8 @@ export function WhenTiles({
         <FilledPressField
           style={{ flex: 1, marginBottom: 0 }}
           chevron={false}
-          label={t('events.date')}
-          value={date ? date.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }) : null}
+          label={dateLabel ?? t('events.date')}
+          value={date ? date.toLocaleDateString(undefined, dateFormat) : null}
           placeholder={t('events.selectDate')}
           error={error ? ' ' : undefined}
           onPress={() => setOpen('date')}
@@ -48,8 +57,8 @@ export function WhenTiles({
         <FilledPressField
           style={{ flex: 1, marginBottom: 0 }}
           chevron={false}
-          label={t('events.startTime')}
-          value={time ? time.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }) : null}
+          label={timeLabel ?? t('events.startTime')}
+          value={time ? time.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12 }) : null}
           placeholder={t('events.selectTime')}
           error={error ? ' ' : undefined}
           onPress={() => setOpen('time')}

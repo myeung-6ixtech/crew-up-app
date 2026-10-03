@@ -13,7 +13,7 @@ export function fromFlightDateKey(dateKey: string): Date {
 export function formatFlightDateLabel(dateKey: string): string {
   return fromFlightDateKey(dateKey).toLocaleDateString(undefined, {
     weekday: 'long',
-    month: 'short',
+    month: 'long',
     day: 'numeric',
     year: 'numeric',
   });

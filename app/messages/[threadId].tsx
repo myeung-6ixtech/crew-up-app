@@ -3,6 +3,7 @@ import { FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, V
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Path } from 'react-native-svg';
 import { BackGlyph, CircleButton, CrewAvatar } from '@/components/crew/kit';
 import { personName, personRoleBase, type PersonProfile } from '@/components/crew/people';
 import { ReportSheet } from '@/components/ReportSheet';
@@ -214,17 +215,26 @@ export default function ChatScreen() {
               accessibilityState={{ disabled: !canSend }}
               disabled={!canSend}
               onPress={() => void onSend()}
+              accessibilityLabel={t('messages.send')}
               style={({ pressed }) => ({
+                width: 48,
                 height: 48,
-                paddingHorizontal: 18,
                 borderRadius: 24,
                 backgroundColor: canSend ? theme.colors.fill : theme.colors.track,
+                alignItems: 'center',
                 justifyContent: 'center',
                 opacity: pressed ? 0.85 : 1,
               })}>
-              <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 15, color: canSend ? theme.colors.onFill : theme.colors.textTertiary }}>
-                {t('messages.send')}
-              </Text>
+              <Svg width={20} height={20} viewBox="0 0 24 24">
+                <Path
+                  d="M3.4 20.4l17.45-7.48a1 1 0 000-1.84L3.4 3.6a.99.99 0 00-1.38 1.17L4.5 12l-2.48 7.23a.99.99 0 001.38 1.17zM4.5 12h7"
+                  stroke={canSend ? theme.colors.onFill : theme.colors.textTertiary}
+                  strokeWidth={2}
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </Svg>
             </Pressable>
           </View>
           {info.otherId ? (

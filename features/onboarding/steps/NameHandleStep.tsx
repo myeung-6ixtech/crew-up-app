@@ -4,7 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
-import { FULL_NAME_PATTERN, NameHandleSchema, UsernameSchema } from '@crewup/shared';
+import { FULL_NAME_PATTERN, NameHandlePatchSchema, UsernameSchema } from '@crewup/shared';
 import { hapticError, hapticSuccess } from '@/lib/haptics';
 import { useAuth, useSession } from '@/hooks/useSession';
 import { fontFamily, useTheme } from '@/theme';
@@ -88,12 +88,11 @@ export function NameHandleStep({ context }: { context: StepContext }) {
     [firstName, lastName],
   );
 
-  const payload = (values: NameForm, preferredName: string | null) => {
+  const detailsPayload = (values: NameForm) => {
     const fullName = displayNameSample(values.firstName, values.lastName, 'full');
-    return NameHandleSchema.safeParse({
+    return NameHandlePatchSchema.safeParse({
       fullName,
       fullNameNative: values.fullNameNative || null,
-      preferredName,
       username: values.username,
     });
   };
@@ -104,20 +103,14 @@ export function NameHandleStep({ context }: { context: StepContext }) {
   };
 
   const onDetailsNext = handleSubmit(async (values) => {
-    const parsed = payload(values, null);
+    const parsed = detailsPayload(values);
     if (!parsed.success) {
       hapticError();
       setError('firstName', { message: parsed.error.issues[0]?.message ?? t('onboarding.genericError') });
       return;
     }
     if (!inFlow) {
-      const withDisplay = payload(values, profile?.preferred_name ?? null);
-      if (!withDisplay.success) {
-        hapticError();
-        setError('firstName', { message: withDisplay.error.issues[0]?.message ?? t('onboarding.genericError') });
-        return;
-      }
-      await save(withDisplay.data, applyFieldError);
+      await save(parsed.data, applyFieldError);
       return;
     }
     setSavingDetails(true);
@@ -143,7 +136,12 @@ export function NameHandleStep({ context }: { context: StepContext }) {
 
   const onDisplayNext = handleSubmit(async (values) => {
     const preferredName = displayNameSample(values.firstName, values.lastName, values.displayStyle);
-    const parsed = payload(values, preferredName || null);
+    if (!preferredName) {
+      hapticError();
+      setDetailsError(t('onboarding.genericError'));
+      return;
+    }
+    const parsed = NameHandlePatchSchema.safeParse({ preferredName });
     if (!parsed.success) {
       hapticError();
       setDetailsError(parsed.error.issues[0]?.message ?? t('onboarding.genericError'));

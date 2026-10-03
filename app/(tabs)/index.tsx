@@ -6,9 +6,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CircleButton, CrewAvatar, MenuGlyph, RowChevron } from '@/components/crew/kit';
 import { DiscoverEmpty, openMatchProfile } from '@/components/discover/DiscoverEmpty';
 import { MatchCard } from '@/components/discover/MatchCard';
+import { MyAirlineCard, airlineCounts } from '@/components/discover/MyAirlineCard';
+import { useAirlines } from '@/components/crew/airline';
 import { isCurrent } from '@/components/discover/matches';
 import { useWave } from '@/components/discover/useWave';
-import { UpcomingTripsCarousel } from '@/components/home/UpcomingTripsCarousel';
+import { PlaneGlyph } from '@/components/roster/flowKit';
+import { NoTripsCard, TripCard } from '@/components/roster/TripCard';
 import { Screen, Toast } from '@/components/ui';
 import { SCREENS } from '@/constants/screens';
 import { useAppMenu } from '@/contexts/AppMenuContext';
@@ -93,6 +96,8 @@ export default function HomeScreen() {
   const [toast, setToast] = useState('');
   const [tab, setTab] = useState<HomeTab>('matches');
   const { waved, waving, wave } = useWave(setToast);
+  const airlines = useAirlines();
+  const [airlineOnly, setAirlineOnly] = useState(false);
   const tabScroll = useTabBarScroll({ contentContainerStyle: { paddingHorizontal: 24 } });
 
   const load = useCallback(async () => {
@@ -110,6 +115,9 @@ export default function HomeScreen() {
     () => dedupeTripMatches((data?.tripMatches ?? []).filter((match) => isCurrent(match))).slice(0, MAX_MATCHES),
     [data?.tripMatches],
   );
+  const myAirline = profile?.airline_id ? airlines.get(profile.airline_id) : undefined;
+  const mineCounts = airlineCounts(matches, profile?.airline_id);
+  const shownMatches = airlineOnly ? matches.filter((match) => match.matchedUser?.profile?.airline_id === profile?.airline_id) : matches;
   const connections = (data?.connections ?? [])
     .slice()
     .sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
@@ -167,18 +175,29 @@ export default function HomeScreen() {
             {t('discover.searchPlaceholder')}
           </Text>
         </Pressable>
+        {myAirline ? (
+          <MyAirlineCard
+            airline={myAirline}
+            count={mineCounts.count}
+            onFlight={mineCounts.onFlight}
+            active={airlineOnly}
+            onToggle={() => setAirlineOnly((value) => !value)}
+          />
+        ) : null}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 16 }}>
           <MonoLabel style={{ fontSize: 10.5 }}>{t('discover.crossingPaths')}</MonoLabel>
           <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textTertiary }}>
-            {t('discover.ofMax', { count: matches.length, max: MAX_MATCHES })}
+            {t('discover.ofMax', { count: shownMatches.length, max: MAX_MATCHES })}
           </Text>
         </View>
-        {matches.length ? (
+        {shownMatches.length ? (
           <View style={{ gap: 8, marginTop: 10 }}>
-            {matches.map((match) => (
+            {shownMatches.map((match) => (
               <MatchCard
                 key={match.id}
                 match={match}
+                airline={match.matchedUser?.profile?.airline_id ? airlines.get(match.matchedUser.profile.airline_id) : null}
+                myAirline={Boolean(profile?.airline_id) && match.matchedUser?.profile?.airline_id === profile?.airline_id}
                 waved={waved.has(match.matched_user_id)}
                 waving={waving === match.matched_user_id}
                 onWave={() => void wave(match.matched_user_id)}
@@ -310,7 +329,29 @@ export default function HomeScreen() {
             <MenuGlyph color={theme.colors.textPrimary} />
           </CircleButton>
         </View>
-        <View accessibilityRole="tablist" style={{ flexDirection: 'row', gap: 8, paddingTop: 16, paddingHorizontal: 24 }}>
+        <View style={{ paddingTop: 16, paddingHorizontal: 24 }}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={openAddTrip}
+            style={({ pressed }) => ({
+              height: 56,
+              borderRadius: 28,
+              backgroundColor: pressed ? theme.colors.accentPressed : theme.colors.fill,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+            })}>
+            <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 22, lineHeight: 24, color: theme.colors.onFill }}>+</Text>
+            <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 16, color: theme.colors.onFill }}>{t('discover.addTrip')}</Text>
+          </Pressable>
+          {noTrips ? (
+            <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: theme.colors.textSecondary, textAlign: 'center', marginTop: 10 }}>
+              {t('home.addTripHint')}
+            </Text>
+          ) : null}
+        </View>
+        <View accessibilityRole="tablist" style={{ flexDirection: 'row', gap: 8, paddingTop: 18, paddingHorizontal: 24 }}>
           {tabs.map((item) => {
             const selected = tab === item.key;
             return (
@@ -353,28 +394,19 @@ export default function HomeScreen() {
           />
         }>
         {tab === 'next' ? (
-          <View style={{ marginTop: 16, marginHorizontal: -24 }}>
-            <UpcomingTripsCarousel
-              trips={data?.upcomingTrips ?? []}
-              embedded
-              onPressTrip={(trip) => router.push(SCREENS.discover.layover(trip.id))}
-            />
-            <View style={{ alignItems: 'center', marginTop: 18 }}>
-              <Pressable
-                accessibilityRole="button"
-                onPress={openAddTrip}
-                style={({ pressed }) => ({
-                  height: 44,
-                  borderRadius: 22,
-                  paddingHorizontal: 18,
-                  backgroundColor: theme.colors.fill,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  opacity: pressed ? 0.85 : 1,
-                })}>
-                <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 14, color: theme.colors.onFill }}>{`+ ${t('discover.addTrip')}`}</Text>
-              </Pressable>
-            </View>
+          <View style={{ gap: 10, marginTop: 16 }}>
+            {(data?.upcomingTrips ?? []).length ? (
+              (data?.upcomingTrips ?? []).map((trip) => (
+                <TripCard
+                  key={trip.id}
+                  trip={trip}
+                  matchCount={new Set((data?.tripMatches ?? []).filter((match) => match.source_trip_id === trip.id).map((match) => match.matched_user_id)).size}
+                  onPress={trip.stays?.length ? () => router.push(SCREENS.discover.layover(trip.id)) : undefined}
+                />
+              ))
+            ) : data ? (
+              <NoTripsCard icon={<PlaneGlyph color={theme.colors.textSecondary} />} />
+            ) : null}
           </View>
         ) : tab === 'matches' ? (
           renderMatches()

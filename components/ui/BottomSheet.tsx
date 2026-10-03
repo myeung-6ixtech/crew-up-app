@@ -21,6 +21,7 @@ const DEFAULT_SHEET_HEIGHT_RATIO = 0.75;
 export function BottomSheet({
   visible,
   onClose,
+  onDismissed,
   children,
   title,
   scrollable = true,
@@ -28,6 +29,8 @@ export function BottomSheet({
 }: {
   visible: boolean;
   onClose: () => void;
+  /** Fires after the native modal is gone. Needed before presenting the camera or photo library. */
+  onDismissed?: () => void;
   children: React.ReactNode;
   title?: string;
   /** When false, children manage their own scroll (e.g. FlatList). */
@@ -42,9 +45,22 @@ export function BottomSheet({
   const [modalVisible, setModalVisible] = useState(visible);
   const scrimOpacity = useRef(new Animated.Value(0)).current;
   const sheetTranslateY = useRef(new Animated.Value(SHEET_OFFSCREEN_Y)).current;
+  const onDismissedRef = useRef(onDismissed);
+  const presentedRef = useRef(false);
+  const notifiedRef = useRef(false);
+  onDismissedRef.current = onDismissed;
+
+  const notifyDismissed = () => {
+    if (!presentedRef.current || notifiedRef.current) return;
+    notifiedRef.current = true;
+    presentedRef.current = false;
+    onDismissedRef.current?.();
+  };
 
   useEffect(() => {
     if (visible) {
+      presentedRef.current = true;
+      notifiedRef.current = false;
       setModalVisible(true);
       Animated.parallel([
         Animated.timing(scrimOpacity, {
@@ -75,6 +91,14 @@ export function BottomSheet({
       });
     }
   }, [visible, scrimOpacity, sheetTranslateY, theme.motion.base, theme.motion.fast]);
+
+  useEffect(() => {
+    if (visible || modalVisible || !presentedRef.current || notifiedRef.current) return;
+    // iOS reports the real dismiss via Modal.onDismiss. This covers Android, and iOS if that callback never arrives.
+    const delay = Platform.OS === 'ios' ? 300 : 200;
+    const timer = setTimeout(notifyDismissed, delay);
+    return () => clearTimeout(timer);
+  }, [visible, modalVisible]);
 
   const styles = useThemedStyles((t) => ({
     root: { flex: 1, justifyContent: 'flex-end' },
@@ -124,7 +148,12 @@ export function BottomSheet({
   }));
 
   return (
-    <Modal visible={modalVisible} transparent animationType="none" onRequestClose={onClose}>
+    <Modal
+      visible={modalVisible}
+      transparent
+      animationType="none"
+      onRequestClose={onClose}
+      onDismiss={notifyDismissed}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>

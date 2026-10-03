@@ -1,15 +1,12 @@
 import { useMemo, useState } from 'react';
 import { Pressable, Switch, Text, View } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
-import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import * as Localization from 'expo-localization';
 import { z } from 'zod';
 import {
-  AboutSchema,
   DateOfBirthSchema,
   LANGUAGE_CODES,
-  LANGUAGES,
   MAXIMUM_AGE,
   MINIMUM_AGE,
   languageFromLocale,
@@ -17,7 +14,7 @@ import {
 import { UPDATE_PROFILE } from '@/graphql/mutations/profile';
 import { useAuth, useSession } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { hapticError } from '@/lib/haptics';
+import { hapticError, hapticSuccess } from '@/lib/haptics';
 import { fontFamily, useTheme } from '@/theme';
 import { getAboutDraft, setAboutDraft, type AboutDraft, type Gender } from '../aboutDraft';
 import { DobField } from '../components/DobField';
@@ -27,7 +24,8 @@ import { LanguagePills } from '../components/LanguagePills';
 import { StepScaffold } from '../components/StepScaffold';
 import { useActivitySelection } from '../hooks/useActivitySelection';
 import { useStepSave } from '../hooks/useStepForm';
-import { onboardingHref, type StepContext } from '../navigation';
+import { type StepContext } from '../navigation';
+import { OnboardingRequestError, saveStep } from '../services/onboardingService';
 
 const GENDERS = ['male', 'female', 'unspecified'] as const;
 
@@ -78,7 +76,6 @@ function yearsAgo(years: number): Date {
 export function AboutStep({ context }: { context: StepContext }) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const router = useRouter();
   const client = useApolloClient();
   const { profile, userId } = useAuth();
   const { refreshProfile } = useSession();
@@ -146,45 +143,35 @@ export function AboutStep({ context }: { context: StepContext }) {
     try {
       await persistGender(parsed.data.gender, parsed.data.showGender);
       remember('languages', values, parsed.data.gender);
-      if (inFlow) setPhase('languages');
-      else await saveLanguages(parsed.data.gender, values);
-    } catch {
+      if (inFlow) {
+        await saveStep('about', { dateOfBirth: parsed.data.dateOfBirth }, { advance: false });
+        await refreshProfile();
+        hapticSuccess();
+        setPhase('languages');
+      } else {
+        await save({ dateOfBirth: parsed.data.dateOfBirth }, (field, message) => {
+          if (field === 'dateOfBirth') setError('dateOfBirth', { message });
+        });
+      }
+    } catch (error) {
       hapticError();
-      setPhaseError(t('onboarding.genericError'));
+      setPhaseError(error instanceof OnboardingRequestError ? error.message : t('onboarding.genericError'));
     } finally {
       setSavingGender(false);
     }
   };
 
-  const saveLanguages = async (gender: Gender, values: AboutForm) => {
+  const saveLanguages = async (values: AboutForm) => {
     const languages = LanguagesSchema.safeParse({ languages: values.languages });
     if (!languages.success) {
       hapticError();
       const message = languages.error.issues[0]?.message ?? t('onboarding.genericError');
       setError('languages', { message });
-      if (!inFlow) setPhaseError(message);
+      setPhase('languages');
       return;
     }
-    remember('languages', values, gender);
-    const about = AboutSchema.safeParse({
-      dateOfBirth: values.dateOfBirth,
-      languages: languages.data.languages,
-      homeCountryCode: profile?.home_country_code ?? '',
-      hometownCity: profile?.hometown_city ?? null,
-      hometownLatitude: profile?.own_hometown_latitude ?? null,
-      hometownLongitude: profile?.own_hometown_longitude ?? null,
-    });
-    if (!about.success) {
-      if (inFlow) {
-        router.push(onboardingHref('residence'));
-        return;
-      }
-      hapticError();
-      setPhaseError(about.error.issues[0]?.message ?? t('onboarding.genericError'));
-      return;
-    }
-    await save(about.data, (field, message) => {
-      if (field === 'dateOfBirth' || field === 'languages') setError(field, { message });
+    await save({ languages: languages.data.languages }, (field, message) => {
+      if (field === 'languages') setError('languages', { message });
     });
   };
 
@@ -214,7 +201,7 @@ export function AboutStep({ context }: { context: StepContext }) {
       return;
     }
     setPhaseError('');
-    await saveLanguages(gender, values);
+    await saveLanguages(values);
   };
 
   const onIntoNext = async () => {

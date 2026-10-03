@@ -15,6 +15,8 @@ const EVENT_FIELDS = `
   host_type
   is_published
   featured_until
+  rsvp_closed_at
+  cancelled_at
   eventActivities {
     activity {
       id
@@ -64,6 +66,19 @@ export const GET_EVENT = gql`
       host_type
       is_published
       featured_until
+      rsvp_closed_at
+      cancelled_at
+      creator {
+        id
+        profile {
+          display_name
+          preferred_name
+          avatar_file_id
+          crew_role
+          role_type
+          airline_id
+        }
+      }
       eventActivities {
         activity {
           id
@@ -82,6 +97,10 @@ export const GET_EVENT = gql`
             display_name
             preferred_name
             avatar_file_id
+            crew_role
+            role_type
+            airline_id
+            base_airport_iata
           }
         }
       }

@@ -22,6 +22,454 @@
 
 <section style="padding: 56px 56px 24px; display: flex; flex-direction: column; gap: 40px; font-family: 'IBM Plex Sans', sans-serif;">
   <div style="display: flex; flex-direction: column; gap: 12px; max-width: 900px;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #5f6559;">Turn 5 · The meet · organiser variations</div>
+    <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 36px; letter-spacing: -0.02em; line-height: 1.1; color: #0E1113;">When you’re the host</div>
+    <div style="font-size: 15px; line-height: 1.6; color: #4d534a; text-wrap: pretty;">Same meet as <a href="#3e">3E</a>, seen by its creator. RSVP is replaced by a Host controls card: edit, attendees, close. All three are live and share state — rename on 5C, remove someone on 5B, pick a close option on 5D, and the other screens follow.</div>
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #545a50;"><a href="#5a">5A Host view</a><div>→</div><a href="#5b">5B Attendees</a><div>·</div><a href="#5a">5A</a><div>→</div><a href="#5c">5C Edit</a><div>·</div><a href="#5a">5A</a><div>→</div><a href="#5d">5D Close sheet</a><div>→</div><a href="#5e">5E Closed</a><div>·</div><a href="#5f">5F Guest sees</a></div>
+  </div>
+  <div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start;">
+
+    <div id="5a" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">5A</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">The meet · host</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">OPEN</div>
+      </div>
+      <div data-screen-label="H1 Host view" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0; flex-shrink: 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;"></div>
+          <div style="min-width: 40px; display: flex; justify-content: flex-end;"><div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="4" viewBox="0 0 18 4"><circle cx="2" cy="2" r="2" fill="#0E1113"></circle><circle cx="9" cy="2" r="2" fill="#0E1113"></circle><circle cx="16" cy="2" r="2" fill="#0E1113"></circle></svg></div></div>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="background: #0E1113; border-radius: 24px; padding: 20px; margin-top: 14px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; background: #A8E05F; color: #0E1113; padding: 4px 8px; border-radius: 8px;">YOU'RE HOSTING</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; background: #2c3134; color: #EDF1F2; padding: 4px 8px; border-radius: 8px;">OPEN</div>
+            </div>
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 27px; letter-spacing: -0.025em; line-height: 1.08; color: #EDF1F2; text-decoration: {{ evStrike }};">{{ evTitle }}</div>
+            <div style="font-size: 14px; color: #A7B1B5;">Dubai · {{ evWhen }}</div>
+          </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; margin-top: 20px;">HOST CONTROLS</div>
+          <div style="background: #FFFFFF; border-radius: 20px; padding: 2px 16px; margin-top: 10px; display: flex; flex-direction: column; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 1px solid #EEF0EA; cursor: pointer;">
+              <div style="width: 38px; height: 38px; border-radius: 12px; background: #EAECE5; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 14l.8-3.2L11 2.6a1.4 1.4 0 012 0l.4.4a1.4 1.4 0 010 2L5.2 13.2z" stroke="#0E1113" stroke-width="1.7" fill="none" stroke-linejoin="round"></path></svg></div>
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px;">
+                <div style="font-size: 15px; font-weight: 600; color: #0E1113;">Edit details</div>
+                <div style="font-size: 12.5px; color: #6f7569;">Title, time, venue, notes, limit</div>
+              </div>
+              <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <div style="display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 1px solid #EEF0EA; cursor: pointer;">
+              <div style="width: 38px; height: 38px; border-radius: 12px; background: #EAECE5; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="18" height="18" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M2.5 20c.7-3.4 3.4-5.5 6.5-5.5s5.8 2.1 6.5 5.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M16 4.6a3 3 0 010 6.3M18 14.5c1.9.6 3.2 2.4 3.6 4.8" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div>
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;"><div style="font-size: 15px; font-weight: 600; color: #0E1113;">Attendees</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4F6E19;">{{ goingCount }} / {{ cap }}</div></div>
+                <div style="height: 6px; border-radius: 3px; background: #DDE1D6; overflow: hidden;"><div style="width: {{ capPct }}; height: 100%; border-radius: 3px; background: #A8E05F; transition: width 300ms ease;"></div></div>
+              </div>
+              <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <div style="display: flex; align-items: center; gap: 14px; padding: 13px 0; cursor: pointer;">
+              <div style="width: 38px; height: 38px; border-radius: 12px; background: #F7E3DF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.3" stroke="#9B2C1F" stroke-width="1.7" fill="none"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="#9B2C1F" stroke-width="1.7" stroke-linecap="round"></path></svg></div>
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px;">
+                <div style="font-size: 15px; font-weight: 600; color: #9B2C1F;">Close event</div>
+                <div style="font-size: 12.5px; color: #6f7569;">Stop new RSVPs or cancel the meet</div>
+              </div>
+              <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+          </div>
+          <div style="background: #FFFFFF; border-radius: 18px; padding: 16px; margin-top: 16px; display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">NOTES</div>
+            <div style="font-size: 14px; line-height: 1.55; color: #3d4239;">Meet at the pool deck, level 32. Mats provided — bring water and something warm for after.</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">ACTIVITIES</div><div style="display: flex; flex-wrap: wrap; gap: 5px;"><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Yoga</div><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Pilates</div></div></div>
+          <div style="display: flex; align-items: center; gap: 10px; background: #FFFFFF; border-radius: 16px; padding: 12px 14px; margin-top: 16px; flex-shrink: 0;">
+            <div style="width: 32px; height: 32px; border-radius: 16px; background: #A8E05F; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="14" height="16" viewBox="0 0 16 18" style="flex-shrink: 0;"><path d="M8 17s6-5.6 6-10A6 6 0 002 7c0 4.4 6 10 6 10z" fill="#0E1113"></path><circle cx="8" cy="7" r="2.2" fill="#A8E05F"></circle></svg></div>
+            <div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 14px; font-weight: 600; color: #0E1113;">Address Sky View · Pool deck, L32</div><div style="font-size: 12px; color: #6f7569;">Downtown Dubai</div></div>
+          </div>
+        </div>
+        <sc-if value="{{ fToast }}" hint-placeholder-val="{{ false }}"><div style="position: absolute; left: 24px; right: 24px; bottom: 104px; background: #0E1113; color: #EDF1F2; border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; box-shadow: 0 10px 30px rgba(14,17,19,0.25); z-index: 5;"><div style="width: 8px; height: 8px; border-radius: 4px; background: #A8E05F;"></div>{{ toastText }}</div></sc-if>
+        <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" fill="#0E1113"></rect><path d="M3 9.5h18" stroke="#F7F8F4" stroke-width="2"></path><path d="M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M6.5 3h11A2.5 2.5 0 0120 5.5v8a2.5 2.5 0 01-2.5 2.5H11l-5 4.5V16A2.5 2.5 0 014 13.5v-8A2.5 2.5 0 016.5 3z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M15.5 4.3A3 3 0 1117 10M18 13c2.4.6 3.9 2.6 4.3 5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><div style="width: 28px; height: 28px; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div>
+          </div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Hosting chip replaces “Hosted by”. The three controls sit above the details, with Close set apart in red. Capacity shows as a bar.</div>
+      </sc-if>
+    </div>
+
+    <div id="5b" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">5B</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Attendees</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FROM 5A</div>
+      </div>
+      <div data-screen-label="H2 Attendees" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0; flex-shrink: 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;">Attendees</div>
+          <div style="min-width: 40px; display: flex; justify-content: flex-end;"></div>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 18px;">
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 27px; letter-spacing: -0.025em; color: #0E1113;">{{ goingCount }} going</div>
+            <div style="font-size: 13px; color: #545a50;">{{ spotsLeft }} spots left</div>
+          </div>
+          <div style="margin-top: 10px;"><div style="height: 6px; border-radius: 3px; background: #DDE1D6; overflow: hidden;"><div style="width: {{ capPct }}; height: 100%; border-radius: 3px; background: #A8E05F; transition: width 300ms ease;"></div></div></div>
+          <div style="font-size: 12.5px; color: #6f7569; margin-top: 8px;">{{ evTitle }} · {{ evWhen }}</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; margin-top: 22px;">HOST</div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #E8EAE3;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #A8E05F; flex-shrink: 0;">MO</div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 15px; font-weight: 600; color: #0E1113;">Maya Okafor (you)</div><div style="font-size: 12.5px; color: #6f7569;">Cathay Pacific · Cabin crew</div></div>
+          </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; margin-top: 20px;">GOING</div>
+          <div style="display: flex; flex-direction: column;">
+            <sc-for list="{{ attList }}" as="a" hint-placeholder-count="6">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid #E8EAE3;">
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: {{ a.bg }}; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: {{ a.fg }}; flex-shrink: 0;">{{ a.ini }}</div>
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 15px; font-weight: 600; color: #0E1113;">{{ a.name }}</div><div style="font-size: 12.5px; color: #6f7569;">{{ a.sub }}</div></div>
+                <div onClick="{{ a.remove }}" style="height: 32px; box-sizing: border-box; padding: 0 12px; border-radius: 16px; border: 1.5px solid #c9cec1; display: flex; align-items: center; font-size: 12.5px; font-weight: 600; color: #0E1113; cursor: pointer;">Remove</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size: 12px; line-height: 1.5; color: #6f7569; margin-top: 12px;">Removed crew are notified and can’t RSVP to this meet again.</div>
+        </div>
+        <sc-if value="{{ fToast }}" hint-placeholder-val="{{ false }}"><div style="position: absolute; left: 24px; right: 24px; bottom: 104px; background: #0E1113; color: #EDF1F2; border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; box-shadow: 0 10px 30px rgba(14,17,19,0.25); z-index: 5;"><div style="width: 8px; height: 8px; border-radius: 4px; background: #A8E05F;"></div>{{ toastText }}</div></sc-if>
+        <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" fill="#0E1113"></rect><path d="M3 9.5h18" stroke="#F7F8F4" stroke-width="2"></path><path d="M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M6.5 3h11A2.5 2.5 0 0120 5.5v8a2.5 2.5 0 01-2.5 2.5H11l-5 4.5V16A2.5 2.5 0 014 13.5v-8A2.5 2.5 0 016.5 3z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M15.5 4.3A3 3 0 1117 10M18 13c2.4.6 3.9 2.6 4.3 5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><div style="width: 28px; height: 28px; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div>
+          </div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">You first as host, then everyone going. Remove is live and updates counts everywhere. No bulk actions — one person at a time.</div>
+      </sc-if>
+    </div>
+
+    <div id="5c" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">5C</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Edit meet</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FROM 5A</div>
+      </div>
+      <div data-screen-label="H3 Edit" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0; flex-shrink: 0;">
+          <div style="font-size: 15px; font-weight: 600; color: #0E1113; cursor: pointer; width: 60px;">Cancel</div>
+          <div style="flex: 1; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;">Edit meet</div>
+          <div style="width: 60px;"></div>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 16px;">
+          <div style="display: flex; gap: 10px; align-items: flex-start; background: #F6E7B8; border-radius: 14px; padding: 12px 14px; margin-top: 16px;">
+            <div style="width: 8px; height: 8px; border-radius: 4px; background: #6B4E00; margin-top: 6px; flex-shrink: 0;"></div>
+            <div style="font-size: 13px; line-height: 1.45; color: #3a2c00;">{{ goingCount }} attendees are notified if you change the time or place.</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px;">
+            <div style="min-height: 58px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: 2px solid #0E1113; padding: 9px 14px; display: flex; flex-direction: column; gap: 2px;">
+              <div style="font-size: 11px; font-weight: 500; color: #545a50;">Meet title</div>
+              <input value="{{ evTitle }}" onChange="{{ onTitle }}" style="border: none; outline: none; background: transparent; padding: 0; font-family: 'IBM Plex Sans', sans-serif; font-size: 15.5px; font-weight: 500; color: #0E1113;">
+            </div>
+            <div style="display: flex; gap: 10px;"><div style="flex: 1; min-width: 0; min-height: 58px; box-sizing: border-box; border-radius: 14px; background: #EAECE5; padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;"><div style="font-size: 11px; font-weight: 500; color: #545a50;">Date</div><div style="font-size: 15.5px; font-weight: 500; color: #0E1113;">Thu, 8 Oct</div></div>
+            </div><div onClick="{{ cycleTime }}" style="flex: 1; min-width: 0; min-height: 58px; box-sizing: border-box; border-radius: 14px; background: #EAECE5; padding: 9px 14px; display: flex; flex-direction: column; gap: 2px; cursor: pointer;"><div style="font-size: 11px; font-weight: 500; color: #545a50;">Start time · tap</div><div style="font-size: 15.5px; font-weight: 500; color: #0E1113;">{{ evTime }}</div></div></div>
+            <div style="flex: 1; min-width: 0; min-height: 58px; box-sizing: border-box; border-radius: 14px; background: #EAECE5; padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;"><div style="font-size: 11px; font-weight: 500; color: #545a50;">Venue</div><div style="font-size: 15.5px; font-weight: 500; color: #0E1113;">Address Sky View · Pool deck, L32</div></div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border-radius: 16px; padding: 12px 14px; margin-top: 10px;">
+            <div style="display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 15px; font-weight: 600; color: #0E1113;">Attendee limit</div><div style="font-size: 12px; color: #6f7569;">Can’t go below {{ goingCount }} going</div></div>
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div onClick="{{ capDec }}" style="width: 36px; height: 36px; border-radius: 18px; background: #EAECE5; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 20px; color: #0E1113; cursor: pointer;">−</div>
+              <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 20px; color: #0E1113; min-width: 24px; text-align: center;">{{ cap }}</div>
+              <div onClick="{{ capInc }}" style="width: 36px; height: 36px; border-radius: 18px; background: #A8E05F; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 20px; color: #0E1113; cursor: pointer;">+</div>
+            </div>
+          </div>
+          <div style="min-height: 78px; box-sizing: border-box; border-radius: 14px; background: #EAECE5; padding: 9px 14px; margin-top: 10px; display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 11px; font-weight: 500; color: #545a50;">Notes</div><div style="font-size: 14px; line-height: 1.45; color: #0E1113;">Meet at the pool deck, level 32. Mats provided — bring water and something warm for after.</div></div>
+          <div style="font-size: 12px; color: #6f7569; margin-top: 12px;">Public vs private can’t change once crew have joined.</div>
+        </div>
+        <div style="flex-shrink: 0; padding: 12px 24px 14px; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #E0E3DA;">
+          <div onClick="{{ onSaveEdit }}" style="height: 56px; border-radius: 28px; background: #A8E05F; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113; cursor: pointer;">Save changes</div>
+          <div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center;"></div>
+        </div>
+        <sc-if value="{{ fToast }}" hint-placeholder-val="{{ false }}"><div style="position: absolute; left: 24px; right: 24px; bottom: 104px; background: #0E1113; color: #EDF1F2; border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500;"><div style="width: 8px; height: 8px; border-radius: 4px; background: #A8E05F;"></div>{{ toastText }}</div></sc-if>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Prefilled form, modal (no nav). Title is a real field; tap the time to change it; limit can’t drop below who’s going. Banner says who gets notified.</div>
+      </sc-if>
+    </div>
+
+    <div id="5d" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">5D</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Close this meet?</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FROM 5A</div>
+      </div>
+      <div data-screen-label="H4 Close sheet" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0; flex-shrink: 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;"></div>
+          <div style="min-width: 40px; display: flex; justify-content: flex-end;"><div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="4" viewBox="0 0 18 4"><circle cx="2" cy="2" r="2" fill="#0E1113"></circle><circle cx="9" cy="2" r="2" fill="#0E1113"></circle><circle cx="16" cy="2" r="2" fill="#0E1113"></circle></svg></div></div>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="background: #0E1113; border-radius: 24px; padding: 20px; margin-top: 14px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; background: #A8E05F; color: #0E1113; padding: 4px 8px; border-radius: 8px;">YOU'RE HOSTING</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; background: #2c3134; color: #EDF1F2; padding: 4px 8px; border-radius: 8px;">OPEN</div>
+            </div>
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 27px; letter-spacing: -0.025em; line-height: 1.08; color: #EDF1F2; text-decoration: {{ evStrike }};">{{ evTitle }}</div>
+            <div style="font-size: 14px; color: #A7B1B5;">Dubai · {{ evWhen }}</div>
+          </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; margin-top: 20px;">HOST CONTROLS</div>
+          <div style="background: #FFFFFF; border-radius: 20px; padding: 2px 16px; margin-top: 10px; display: flex; flex-direction: column; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 1px solid #EEF0EA; cursor: pointer;">
+              <div style="width: 38px; height: 38px; border-radius: 12px; background: #EAECE5; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 14l.8-3.2L11 2.6a1.4 1.4 0 012 0l.4.4a1.4 1.4 0 010 2L5.2 13.2z" stroke="#0E1113" stroke-width="1.7" fill="none" stroke-linejoin="round"></path></svg></div>
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px;">
+                <div style="font-size: 15px; font-weight: 600; color: #0E1113;">Edit details</div>
+                <div style="font-size: 12.5px; color: #6f7569;">Title, time, venue, notes, limit</div>
+              </div>
+              <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <div style="display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 1px solid #EEF0EA; cursor: pointer;">
+              <div style="width: 38px; height: 38px; border-radius: 12px; background: #EAECE5; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="18" height="18" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M2.5 20c.7-3.4 3.4-5.5 6.5-5.5s5.8 2.1 6.5 5.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M16 4.6a3 3 0 010 6.3M18 14.5c1.9.6 3.2 2.4 3.6 4.8" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div>
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;"><div style="font-size: 15px; font-weight: 600; color: #0E1113;">Attendees</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4F6E19;">{{ goingCount }} / {{ cap }}</div></div>
+                <div style="height: 6px; border-radius: 3px; background: #DDE1D6; overflow: hidden;"><div style="width: {{ capPct }}; height: 100%; border-radius: 3px; background: #A8E05F; transition: width 300ms ease;"></div></div>
+              </div>
+              <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <div style="display: flex; align-items: center; gap: 14px; padding: 13px 0; cursor: pointer;">
+              <div style="width: 38px; height: 38px; border-radius: 12px; background: #F7E3DF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.3" stroke="#9B2C1F" stroke-width="1.7" fill="none"></circle><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="#9B2C1F" stroke-width="1.7" stroke-linecap="round"></path></svg></div>
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px;">
+                <div style="font-size: 15px; font-weight: 600; color: #9B2C1F;">Close event</div>
+                <div style="font-size: 12.5px; color: #6f7569;">Stop new RSVPs or cancel the meet</div>
+              </div>
+              <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+          </div>
+          <div style="background: #FFFFFF; border-radius: 18px; padding: 16px; margin-top: 16px; display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">NOTES</div>
+            <div style="font-size: 14px; line-height: 1.55; color: #3d4239;">Meet at the pool deck, level 32. Mats provided — bring water and something warm for after.</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">ACTIVITIES</div><div style="display: flex; flex-wrap: wrap; gap: 5px;"><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Yoga</div><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Pilates</div></div></div>
+          <div style="display: flex; align-items: center; gap: 10px; background: #FFFFFF; border-radius: 16px; padding: 12px 14px; margin-top: 16px; flex-shrink: 0;">
+            <div style="width: 32px; height: 32px; border-radius: 16px; background: #A8E05F; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="14" height="16" viewBox="0 0 16 18" style="flex-shrink: 0;"><path d="M8 17s6-5.6 6-10A6 6 0 002 7c0 4.4 6 10 6 10z" fill="#0E1113"></path><circle cx="8" cy="7" r="2.2" fill="#A8E05F"></circle></svg></div>
+            <div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 14px; font-weight: 600; color: #0E1113;">Address Sky View · Pool deck, L32</div><div style="font-size: 12px; color: #6f7569;">Downtown Dubai</div></div>
+          </div>
+        </div>
+        
+        <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" fill="#0E1113"></rect><path d="M3 9.5h18" stroke="#F7F8F4" stroke-width="2"></path><path d="M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M6.5 3h11A2.5 2.5 0 0120 5.5v8a2.5 2.5 0 01-2.5 2.5H11l-5 4.5V16A2.5 2.5 0 014 13.5v-8A2.5 2.5 0 016.5 3z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M15.5 4.3A3 3 0 1117 10M18 13c2.4.6 3.9 2.6 4.3 5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><div style="width: 28px; height: 28px; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div>
+          </div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+        <div style="position: absolute; inset: 0; background: rgba(14,17,19,0.42);"></div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; background: #FFFFFF; border-radius: 28px 28px 0 0; display: flex; flex-direction: column; padding: 8px 20px 10px; gap: 10px; box-shadow: 0 -10px 40px rgba(14,17,19,0.18);">
+          <div style="width: 38px; height: 5px; border-radius: 3px; background: #D4D8CD; align-self: center;"></div>
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: -0.02em; color: #0E1113; padding: 10px 4px 2px;">Close this meet?</div>
+          <div style="font-size: 13.5px; color: #545a50; padding: 0 4px 4px;">{{ goingCount }} crew are going.</div>
+          <sc-for list="{{ hostCloseOpts }}" as="o" hint-placeholder-count="2">
+            <div onClick="{{ o.onClick }}" style="display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; border-radius: 18px; background: {{ o.bg }}; border: 2px solid {{ o.border }}; cursor: pointer;">
+              <div style="width: 22px; height: 22px; border-radius: 11px; box-sizing: border-box; border: 2px solid {{ o.ring }}; background: {{ o.fill }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;"><div style="width: 8px; height: 8px; border-radius: 4px; background: {{ o.dot }};"></div></div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15.5px; color: {{ o.titleFg }};">{{ o.title }}</div>
+                <div style="font-size: 12.5px; line-height: 1.45; color: #545a50;">{{ o.body }}</div>
+              </div>
+            </div>
+          </sc-for>
+          <div onClick="{{ onConfirmClose }}" style="height: 56px; border-radius: 28px; background: {{ cBtnBg }}; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: {{ cBtnFg }}; cursor: pointer; margin-top: 6px;">{{ cBtnLabel }}</div>
+          <div style="height: 44px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #0E1113; cursor: pointer;">Keep it open</div>
+          <div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center;"></div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Two strengths of close. Stop new RSVPs is reversible; Cancel is red and final. The confirm button follows the choice.</div>
+      </sc-if>
+    </div>
+
+    <div id="5e" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">5E</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">The meet · closed</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">AFTER 5D</div>
+      </div>
+      <div data-screen-label="H5 Host closed" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0; flex-shrink: 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;"></div>
+          <div style="min-width: 40px; display: flex; justify-content: flex-end;"><div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="4" viewBox="0 0 18 4"><circle cx="2" cy="2" r="2" fill="#0E1113"></circle><circle cx="9" cy="2" r="2" fill="#0E1113"></circle><circle cx="16" cy="2" r="2" fill="#0E1113"></circle></svg></div></div>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="background: #0E1113; border-radius: 24px; padding: 20px; margin-top: 14px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; background: #A8E05F; color: #0E1113; padding: 4px 8px; border-radius: 8px;">YOU'RE HOSTING</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; background: {{ stBg }}; color: {{ stFg }}; padding: 4px 8px; border-radius: 8px;">{{ stLabel }}</div>
+            </div>
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 27px; letter-spacing: -0.025em; line-height: 1.08; color: #EDF1F2; text-decoration: {{ evStrike }};">{{ evTitle }}</div>
+            <div style="font-size: 14px; color: #A7B1B5;">Dubai · {{ evWhen }}</div>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: flex-start; background: {{ banBg }}; border-radius: 16px; padding: 14px 16px; margin-top: 12px; flex-shrink: 0;">
+            <div style="width: 8px; height: 8px; border-radius: 4px; background: {{ banDot }}; margin-top: 6px; flex-shrink: 0;"></div>
+            <div style="display: flex; flex-direction: column; gap: 3px;"><div style="font-size: 14px; font-weight: 600; color: #0E1113;">{{ banTitle }}</div><div style="font-size: 12.5px; line-height: 1.45; color: #3d4239;">{{ banBody }}</div></div>
+          </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; margin-top: 20px;">HOST CONTROLS</div>
+          <div style="background: #FFFFFF; border-radius: 20px; padding: 2px 16px; margin-top: 10px; display: flex; flex-direction: column; flex-shrink: 0;">
+            <sc-if value="{{ isRsvpClosed }}" hint-placeholder-val="{{ true }}"><div style="display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 1px solid #EEF0EA; cursor: pointer;">
+              <div style="width: 38px; height: 38px; border-radius: 12px; background: #EAECE5; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 14l.8-3.2L11 2.6a1.4 1.4 0 012 0l.4.4a1.4 1.4 0 010 2L5.2 13.2z" stroke="#0E1113" stroke-width="1.7" fill="none" stroke-linejoin="round"></path></svg></div>
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px;">
+                <div style="font-size: 15px; font-weight: 600; color: #0E1113;">Edit details</div>
+                <div style="font-size: 12.5px; color: #6f7569;">Attendees are notified of time or place changes</div>
+              </div>
+              <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div></sc-if>
+            <div style="display: flex; align-items: center; gap: 14px; padding: 13px 0;{{ attBorder }} cursor: pointer;">
+              <div style="width: 38px; height: 38px; border-radius: 12px; background: #EAECE5; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="18" height="18" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M2.5 20c.7-3.4 3.4-5.5 6.5-5.5s5.8 2.1 6.5 5.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M16 4.6a3 3 0 010 6.3M18 14.5c1.9.6 3.2 2.4 3.6 4.8" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 15px; font-weight: 600; color: #0E1113;">Attendees</div><div style="font-size: 12.5px; color: #6f7569;">{{ attSub }}</div></div>
+              <div style="display: flex;">
+                <div style="margin-right: -8px; border: 2px solid #FFFFFF; border-radius: 50%;"><div style="width: 26px; height: 26px; border-radius: 50%; background: #A8E05F; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #0E1113; flex-shrink: 0;">AR</div></div>
+                <div style="margin-right: -8px; border: 2px solid #FFFFFF; border-radius: 50%;"><div style="width: 26px; height: 26px; border-radius: 50%; background: #DDE1D6; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #0E1113; flex-shrink: 0;">TB</div></div>
+                <div style="border: 2px solid #FFFFFF; border-radius: 50%;"><div style="width: 26px; height: 26px; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F; flex-shrink: 0;">PN</div></div>
+              </div>
+            </div>
+            <sc-if value="{{ isRsvpClosed }}" hint-placeholder-val="{{ true }}">
+              <div onClick="{{ onReopen }}" style="display: flex; align-items: center; gap: 14px; padding: 13px 0; border-top: 1px solid #EEF0EA; cursor: pointer;">
+                <div style="width: 38px; height: 38px; border-radius: 12px; background: #A8E05F; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7" stroke="#0E1113" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 15px; font-weight: 600; color: #0E1113;">Reopen RSVPs</div><div style="font-size: 12.5px; color: #6f7569;">{{ spotsLeft }} spots open up again</div></div>
+                <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+            </sc-if>
+          </div>
+          <div style="background: #FFFFFF; border-radius: 18px; padding: 16px; margin-top: 16px; display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">NOTES</div>
+            <div style="font-size: 14px; line-height: 1.55; color: #3d4239;">Meet at the pool deck, level 32. Mats provided — bring water and something warm for after.</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">ACTIVITIES</div><div style="display: flex; flex-wrap: wrap; gap: 5px;"><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Yoga</div><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Pilates</div></div></div>
+          <div style="display: flex; align-items: center; gap: 10px; background: #FFFFFF; border-radius: 16px; padding: 12px 14px; margin-top: 16px; flex-shrink: 0;">
+            <div style="width: 32px; height: 32px; border-radius: 16px; background: #A8E05F; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="14" height="16" viewBox="0 0 16 18" style="flex-shrink: 0;"><path d="M8 17s6-5.6 6-10A6 6 0 002 7c0 4.4 6 10 6 10z" fill="#0E1113"></path><circle cx="8" cy="7" r="2.2" fill="#A8E05F"></circle></svg></div>
+            <div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 14px; font-weight: 600; color: #0E1113;">Address Sky View · Pool deck, L32</div><div style="font-size: 12px; color: #6f7569;">Downtown Dubai</div></div>
+          </div>
+        </div>
+        <sc-if value="{{ fToast }}" hint-placeholder-val="{{ false }}"><div style="position: absolute; left: 24px; right: 24px; bottom: 104px; background: #0E1113; color: #EDF1F2; border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; box-shadow: 0 10px 30px rgba(14,17,19,0.25); z-index: 5;"><div style="width: 8px; height: 8px; border-radius: 4px; background: #A8E05F;"></div>{{ toastText }}</div></sc-if>
+        <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" fill="#0E1113"></rect><path d="M3 9.5h18" stroke="#F7F8F4" stroke-width="2"></path><path d="M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M6.5 3h11A2.5 2.5 0 0120 5.5v8a2.5 2.5 0 01-2.5 2.5H11l-5 4.5V16A2.5 2.5 0 014 13.5v-8A2.5 2.5 0 016.5 3z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M15.5 4.3A3 3 0 1117 10M18 13c2.4.6 3.9 2.6 4.3 5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><div style="width: 28px; height: 28px; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div>
+          </div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Reflects the choice on 5D. RSVPs closed: edit and Reopen stay. Cancelled: title struck through, only the attendee list remains.</div>
+      </sc-if>
+    </div>
+
+    <div id="5f" style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">5F</div>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">The meet · guest</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">RSVPS CLOSED</div>
+      </div>
+      <div data-screen-label="H6 Guest closed" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+          <div>9:41</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0; flex-shrink: 0;">
+          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="flex: 1; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113;"></div>
+          <div style="min-width: 40px; display: flex; justify-content: flex-end;"><div style="font-size: 13.5px; font-weight: 600; color: #0E1113;">Report</div></div>
+        </div>
+        <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="background: #0E1113; border-radius: 24px; padding: 20px; margin-top: 14px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; background: #E8C25A; color: #0E1113; padding: 4px 8px; border-radius: 8px;">RSVPS CLOSED</div>
+              <div style="font-size: 12.5px; color: #A7B1B5;">Hosted by Maya O.</div>
+            </div>
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 27px; letter-spacing: -0.025em; line-height: 1.08; color: #EDF1F2;">{{ evTitle }}</div>
+            <div style="font-size: 14px; color: #A7B1B5;">Dubai · {{ evWhen }}</div>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: flex-start; background: #EEF7DF; border-radius: 16px; padding: 14px 16px; margin-top: 12px;">
+            <div style="width: 8px; height: 8px; border-radius: 4px; background: #4F6E19; margin-top: 6px; flex-shrink: 0;"></div>
+            <div style="font-size: 13.5px; line-height: 1.45; color: #2f4210;">The host closed RSVPs. You’re still going — see you there.</div>
+          </div>
+          <div style="background: #FFFFFF; border-radius: 18px; padding: 16px; margin-top: 16px; display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">NOTES</div>
+            <div style="font-size: 14px; line-height: 1.55; color: #3d4239;">Meet at the pool deck, level 32. Mats provided — bring water and something warm for after.</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">ACTIVITIES</div><div style="display: flex; flex-wrap: wrap; gap: 5px;"><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Yoga</div><div style="font-size: 12px; font-weight: 500; background: #A8E05F; color: #0E1113; padding: 5px 10px; border-radius: 12px;">Pilates</div></div></div>
+          <div style="display: flex; align-items: center; gap: 10px; background: #FFFFFF; border-radius: 16px; padding: 12px 14px; margin-top: 16px; flex-shrink: 0;">
+            <div style="width: 32px; height: 32px; border-radius: 16px; background: #A8E05F; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="14" height="16" viewBox="0 0 16 18" style="flex-shrink: 0;"><path d="M8 17s6-5.6 6-10A6 6 0 002 7c0 4.4 6 10 6 10z" fill="#0E1113"></path><circle cx="8" cy="7" r="2.2" fill="#A8E05F"></circle></svg></div>
+            <div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 14px; font-weight: 600; color: #0E1113;">Address Sky View · Pool deck, L32</div><div style="font-size: 12px; color: #6f7569;">Downtown Dubai</div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; margin-top: 18px;">
+            <div style="display: flex;">
+              <div style="margin-right: -10px; border: 2px solid #F7F8F4; border-radius: 50%;"><div style="width: 30px; height: 30px; border-radius: 50%; background: #A8E05F; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 11px; color: #0E1113; flex-shrink: 0;">AR</div></div>
+              <div style="margin-right: -10px; border: 2px solid #F7F8F4; border-radius: 50%;"><div style="width: 30px; height: 30px; border-radius: 50%; background: #DDE1D6; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 11px; color: #0E1113; flex-shrink: 0;">TB</div></div>
+              <div style="border: 2px solid #F7F8F4; border-radius: 50%;"><div style="width: 30px; height: 30px; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 11px; color: #A8E05F; flex-shrink: 0;">PN</div></div>
+            </div>
+            <div style="font-size: 14px; font-weight: 600; color: #0E1113;">{{ goingCount }} attending</div>
+          </div>
+        </div>
+        <div style="flex-shrink: 0; padding: 10px 24px 104px; margin-top: -8px;">
+          <div style="height: 56px; border-radius: 28px; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #A8E05F;">Going ✓</div>
+        </div>
+        <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" fill="#0E1113"></rect><path d="M3 9.5h18" stroke="#F7F8F4" stroke-width="2"></path><path d="M8 2.5v4M16 2.5v4" stroke="#0E1113" stroke-width="2" stroke-linecap="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M6.5 3h11A2.5 2.5 0 0120 5.5v8a2.5 2.5 0 01-2.5 2.5H11l-5 4.5V16A2.5 2.5 0 014 13.5v-8A2.5 2.5 0 016.5 3z" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" stroke="#0E1113" stroke-width="2" fill="none"></circle><path d="M1.5 20.5c.7-3.8 3.8-6.5 7.5-6.5s6.8 2.7 7.5 6.5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M15.5 4.3A3 3 0 1117 10M18 13c2.4.6 3.9 2.6 4.3 5" stroke="#0E1113" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></div>
+            <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;"><div style="width: 28px; height: 28px; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 9px; color: #A8E05F;">MO</div></div>
+          </div>
+        </div>
+        <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">What an attendee sees after the host stops RSVPs: their spot is safe, the button stays Going.</div>
+      </sc-if>
+    </div>
+  </div>
+</section>
+
+<section style="padding: 56px 56px 24px; display: flex; flex-direction: column; gap: 40px; font-family: 'IBM Plex Sans', sans-serif;">
+  <div style="display: flex; flex-direction: column; gap: 12px; max-width: 900px;">
     <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #5f6559;">Turn 4 · Discover + Chat · Altitude Light</div>
     <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 36px; letter-spacing: -0.02em; line-height: 1.1; color: #0E1113;">Find crew on your rest, then talk</div>
     <div style="font-size: 15px; line-height: 1.6; color: #4d534a; text-wrap: pretty;">Per layovers.md (proposal, lime badges) and chat-feature.md. Messages is now a tab, so the nav reads Home · Events · Messages · Friends · Profile everywhere; Trips stays one tap away from Home. Wave, filters, search and the thread composer are live.</div>
@@ -52,6 +500,15 @@
         </div>
         <div style="height: 48px; box-sizing: border-box; border-radius: 24px; background: #EAECE5; display: flex; align-items: center; gap: 10px; padding: 0 18px; margin: 14px 24px 0; flex-shrink: 0; cursor: pointer;"><svg width="16" height="16" viewBox="0 0 16 16" style="flex-shrink: 0;"><circle cx="7" cy="7" r="5.2" stroke="#0E1113" stroke-width="1.8" fill="none"></circle><path d="M11 11l3.2 3.2" stroke="#0E1113" stroke-width="1.8" stroke-linecap="round"></path></svg><div style="flex: 1; font-size: 15px; color: #6f7569;">Search layovers by city</div></div>
         <div data-scroll="true" style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; padding: 0 24px 112px;">
+          <div style="margin-top: 16px; background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
+            <img src="assets/airline-logo.png" alt="Cathay Pacific" style="width: 44px; height: 44px; border-radius: 12px; display: block; flex-shrink: 0;">
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; color: #6f7569;">YOUR AIRLINE</div>
+              <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15.5px; color: #0E1113;">Cathay Pacific</div>
+              <div style="font-size: 12px; color: #545a50;">{{ cxCount }} Cathay crew crossing paths · 1 on your flight</div>
+            </div>
+            <div onClick="{{ toggleCx }}" style="height: 32px; padding: 0 12px; border-radius: 16px; background: {{ cxBg }}; display: flex; align-items: center; font-size: 12.5px; font-weight: 600; color: {{ cxFg }}; cursor: pointer; white-space: nowrap;">{{ cxLabel }}</div>
+          </div>
           <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 16px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; ">CROSSING PATHS</div><div style="font-size: 12px; color: #6f7569;">{{ homeMatchCount }} of 12</div></div>
           <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;"><sc-for list="{{ homeMatches }}" as="p" hint-placeholder-count="4">
               <div style="background: #FFFFFF; border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
@@ -59,10 +516,20 @@
                   <div style="width: 48px; height: 48px; border-radius: 50%; background: {{ p.bg }}; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: {{ p.fg }}; flex-shrink: 0;">{{ p.ini }}</div>
                   <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
                     <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;"><div style="font-size: 15px; font-weight: 600; color: #0E1113;">{{ p.name }}</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.05em; background: {{ p.rBg }}; color: {{ p.rFg }}; padding: 4px 8px; border-radius: 9px; white-space: nowrap;">{{ p.reason }}</div></div>
-                    <div style="font-size: 12.5px; color: #6f7569;">{{ p.role }} · {{ p.base }}</div>
+                    <div style="display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #6f7569;">
+                      <sc-if value="{{ p.isCX }}" hint-placeholder-val="{{ false }}"><img src="assets/airline-logo.png" alt="Cathay Pacific" style="width: 18px; height: 18px; border-radius: 5px; display: block; flex-shrink: 0;"></sc-if>
+                      <sc-if value="{{ p.notCX }}" hint-placeholder-val="{{ true }}"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 500; color: #0E1113; background: #EAECE5; padding: 2px 5px; border-radius: 5px;">{{ p.air }}</div></sc-if>
+                      <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.airName }} · {{ p.role }}</div>
+                    </div>
                   </div>
                   <div onClick="{{ p.wave }}" style="height: 36px; padding: 0 14px; border-radius: 18px; background: {{ p.waveBg }}; display: flex; align-items: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 13px; color: {{ p.waveFg }}; cursor: pointer; white-space: nowrap;">{{ p.waveLabel }}</div>
                 </div>
+                <sc-if value="{{ p.isFlight }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; align-items: center; gap: 10px; background: #0E1113; border-radius: 12px; padding: 8px 10px;">
+                    <img src="assets/airline-logo.png" alt="Cathay Pacific" style="width: 24px; height: 24px; border-radius: 6px; display: block; flex-shrink: 0;">
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 1px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #A8E05F;">SAME FLIGHT</div><div style="font-size: 12.5px; font-weight: 600; color: #EDF1F2;">{{ p.flight }}</div></div>
+                  </div>
+                </sc-if>
                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #F2F4EE; border-radius: 12px; padding: 8px 10px;">
                   <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #0E1113;">{{ p.window }}</div>
                   <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 500; color: {{ p.durFg }};">{{ p.dur }}</div>
@@ -117,8 +584,8 @@
             <div style="font-size: 14px; color: #0E1113;"><strong style="font-weight: 600;">3 crew</strong> free in Hong Kong with you</div>
           </div>
           <div style="background: #FFFFFF; border-radius: 18px; padding: 4px 16px; margin-top: 16px; display: flex; flex-direction: column;">
-            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #EEF0EA;"><div style="font-size: 13.5px; color: #545a50;">Arrives</div><div style="font-size: 13.5px; font-weight: 600; color: #0E1113;">EK380 · 14:35</div></div>
-            <div style="display: flex; justify-content: space-between; padding: 12px 0;"><div style="font-size: 13.5px; color: #545a50;">Departs</div><div style="font-size: 13.5px; font-weight: 600; color: #0E1113;">EK381 · 21:15</div></div>
+            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #EEF0EA;"><div style="font-size: 13.5px; color: #545a50;">Arrives</div><div style="font-size: 13.5px; font-weight: 600; color: #0E1113;">CX746 · 14:35</div></div>
+            <div style="display: flex; justify-content: space-between; padding: 12px 0;"><div style="font-size: 13.5px; color: #545a50;">Departs</div><div style="font-size: 13.5px; font-weight: 600; color: #0E1113;">CX745 · 21:15</div></div>
           </div>
         </div>
         <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
@@ -172,10 +639,20 @@
                   <div style="width: 48px; height: 48px; border-radius: 50%; background: {{ p.bg }}; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: {{ p.fg }}; flex-shrink: 0;">{{ p.ini }}</div>
                   <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
                     <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;"><div style="font-size: 15px; font-weight: 600; color: #0E1113;">{{ p.name }}</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.05em; background: {{ p.rBg }}; color: {{ p.rFg }}; padding: 4px 8px; border-radius: 9px; white-space: nowrap;">{{ p.reason }}</div></div>
-                    <div style="font-size: 12.5px; color: #6f7569;">{{ p.role }} · {{ p.base }}</div>
+                    <div style="display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #6f7569;">
+                      <sc-if value="{{ p.isCX }}" hint-placeholder-val="{{ false }}"><img src="assets/airline-logo.png" alt="Cathay Pacific" style="width: 18px; height: 18px; border-radius: 5px; display: block; flex-shrink: 0;"></sc-if>
+                      <sc-if value="{{ p.notCX }}" hint-placeholder-val="{{ true }}"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 500; color: #0E1113; background: #EAECE5; padding: 2px 5px; border-radius: 5px;">{{ p.air }}</div></sc-if>
+                      <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.airName }} · {{ p.role }}</div>
+                    </div>
                   </div>
                   <div onClick="{{ p.wave }}" style="height: 36px; padding: 0 14px; border-radius: 18px; background: {{ p.waveBg }}; display: flex; align-items: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 13px; color: {{ p.waveFg }}; cursor: pointer; white-space: nowrap;">{{ p.waveLabel }}</div>
                 </div>
+                <sc-if value="{{ p.isFlight }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; align-items: center; gap: 10px; background: #0E1113; border-radius: 12px; padding: 8px 10px;">
+                    <img src="assets/airline-logo.png" alt="Cathay Pacific" style="width: 24px; height: 24px; border-radius: 6px; display: block; flex-shrink: 0;">
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 1px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #A8E05F;">SAME FLIGHT</div><div style="font-size: 12.5px; font-weight: 600; color: #EDF1F2;">{{ p.flight }}</div></div>
+                  </div>
+                </sc-if>
                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #F2F4EE; border-radius: 12px; padding: 8px 10px;">
                   <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #0E1113;">{{ p.window }}</div>
                   <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 500; color: {{ p.durFg }};">{{ p.dur }}</div>
@@ -218,12 +695,12 @@
           <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 16px; text-align: center;">
             <div style="width: 92px; height: 92px; border-radius: 50%; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 33px; color: #A8E05F; flex-shrink: 0;">HK</div>
             <div style="display: flex; align-items: center; gap: 6px; margin-top: 10px;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.02em; color: #0E1113;">Hana Kim</div><svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1l1.8 1.3 2.2-.1.7 2.1 1.8 1.3-.7 2.1.7 2.1-1.8 1.3-.7 2.1-2.2-.1L8 15l-1.8-1.3-2.2.1-.7-2.1L1.5 10.4l.7-2.1-.7-2.1 1.8-1.3.7-2.1 2.2.1z" fill="#A8E05F"></path><path d="M5.2 8.2l1.9 1.8 3.7-3.8" stroke="#0E1113" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
-            <div style="font-size: 13.5px; color: #545a50;">Cabin crew · DXB</div>
+            <div style="display: flex; align-items: center; gap: 6px;"><img src="assets/airline-logo.png" alt="Cathay Pacific" style="width: 18px; height: 18px; border-radius: 5px; display: block; flex-shrink: 0;"><div style="font-size: 13.5px; color: #545a50;">Cathay Pacific · Cabin crew · DXB</div></div>
             <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #4F6E19; margin-top: 2px;">Crew ID: CREW-2MPW-8KDN</div>
           </div>
           <div style="background: #EEF7DF; border-radius: 16px; padding: 12px 14px; margin-top: 16px; display: flex; flex-direction: column; gap: 3px;">
             <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #4F6E19;">ON YOUR FLIGHT</div>
-            <div style="font-size: 13.5px; font-weight: 600; color: #0E1113;">EK380 · DXB → HKG · 8 Oct</div>
+            <div style="display: flex; align-items: center; gap: 8px;"><img src="assets/airline-logo.png" alt="Cathay Pacific" style="width: 22px; height: 22px; border-radius: 6px; display: block; flex-shrink: 0;"><div style="font-size: 13.5px; font-weight: 600; color: #0E1113;">CX746 · DXB → HKG · 8 Oct</div></div>
             <div style="font-size: 12.5px; color: #3d4239;">Then both free in Hong Kong until 9 Oct, 21:15</div>
           </div>
           <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
@@ -385,7 +862,7 @@
         <div style="flex-shrink: 0; padding: 10px 16px 10px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #E0E3DA; background: #F7F8F4;">
           <div style="display: flex; align-items: center; gap: 8px;">
             <div style="flex: 1; height: 48px; box-sizing: border-box; border-radius: 24px; background: #FFFFFF; border: 1.5px solid #DDE1D6; display: flex; align-items: center; padding: 0 18px;"><div style="font-size: 15px; color: #6f7569;">Type a message…</div></div>
-            <div style="height: 48px; padding: 0 18px; border-radius: 24px; background: #DDE1D6; display: flex; align-items: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #6f7569; cursor: pointer;">Send</div>
+            <div style="height: 48px; width: 48px; flex-shrink: 0; border-radius: 24px; background: #DDE1D6; display: flex; align-items: center; justify-content: center; cursor: pointer;" aria-label="Send"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M3.4 20.4l17.45-7.48a1 1 0 000-1.84L3.4 3.6a.99.99 0 00-1.38 1.17L4.5 12l-2.48 7.23a.99.99 0 001.38 1.17zM4.5 12h7" stroke="#6f7569" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
           </div>
           <div style="text-align: center; font-size: 12px; font-weight: 600; color: #6f7569; cursor: pointer;">Report</div>
           <div style="height: 6px;"></div>
@@ -424,7 +901,7 @@
         <div style="flex-shrink: 0; padding: 10px 16px 10px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #E0E3DA; background: #F7F8F4;">
           <div style="display: flex; align-items: center; gap: 8px;">
             <div style="flex: 1; height: 48px; box-sizing: border-box; border-radius: 24px; background: #FFFFFF; border: 1.5px solid #DDE1D6; display: flex; align-items: center; padding: 0 18px;"><input value="{{ draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onDraftKey }}" placeholder="Type a message…" style="flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; color: #0E1113;"></div>
-            <div onClick="{{ onSend }}" style="height: 48px; padding: 0 18px; border-radius: 24px; background: {{ sendBg }}; display: flex; align-items: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: {{ sendFg }}; cursor: pointer;">Send</div>
+            <div onClick="{{ onSend }}" style="height: 48px; width: 48px; flex-shrink: 0; border-radius: 24px; background: {{ sendBg }}; display: flex; align-items: center; justify-content: center; cursor: pointer;" aria-label="Send"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M3.4 20.4l17.45-7.48a1 1 0 000-1.84L3.4 3.6a.99.99 0 00-1.38 1.17L4.5 12l-2.48 7.23a.99.99 0 001.38 1.17zM4.5 12h7" stroke="{{ sendFg }}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
           </div>
           <div style="text-align: center; font-size: 12px; font-weight: 600; color: #6f7569; cursor: pointer;">Report</div>
           <div style="height: 6px;"></div>
@@ -893,6 +1370,23 @@
             </div>
             <div style="font-size: 14px; font-weight: 600; color: #0E1113;">{{ attending }} attending</div>
           </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; margin-top: 24px;">LOCATION</div>
+          <div style="background: #FFFFFF; border-radius: 20px; overflow: hidden; flex-shrink: 0; margin-top: 10px; display: flex; flex-direction: column;">
+            <div style="position: relative; height: 180px; flex-shrink: 0; background: #EAECE5;">
+              <iframe src="https://maps.google.com/maps?q=Address%20Sky%20View%20Hotel%2C%20Dubai&amp;z=15&amp;output=embed" title="Map of Address Sky View, Dubai" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block;"></iframe>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px;">
+              <div style="width: 36px; height: 36px; border-radius: 18px; background: #A8E05F; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="16" height="18" viewBox="0 0 16 18" style="flex-shrink: 0;"><path d="M8 17s6-5.6 6-10A6 6 0 002 7c0 4.4 6 10 6 10z" fill="#0E1113"></path><circle cx="8" cy="7" r="2.2" fill="#A8E05F"></circle></svg></div>
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                <div style="font-size: 14.5px; font-weight: 600; color: #0E1113;">Address Sky View · Pool deck, L32</div>
+                <div style="font-size: 12.5px; color: #6f7569;">Sheikh Mohammed bin Rashid Blvd, Downtown Dubai</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; padding: 0 16px 16px;">
+              <a href="https://www.google.com/maps/dir/?api=1&amp;destination=Address%20Sky%20View%20Hotel%2C%20Dubai" target="_blank" rel="noopener" style="flex: 1; height: 42px; border-radius: 21px; background: #0E1113; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 13.5px; color: #A8E05F; text-decoration: none;">Directions</a>
+              <a href="https://www.google.com/maps/search/?api=1&amp;query=Address%20Sky%20View%20Hotel%2C%20Dubai" target="_blank" rel="noopener" style="flex: 1; height: 42px; box-sizing: border-box; border-radius: 21px; border: 1.5px solid #c9cec1; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 13.5px; color: #0E1113; text-decoration: none;">Open in Maps</a>
+            </div>
+          </div>
         </div>
         <div style="flex-shrink: 0; padding: 10px 24px 104px; margin-top: -8px;"><div onClick="{{ onRsvp }}" style="height: 56px; border-radius: 28px; background: {{ rsvpBg }}; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: {{ rsvpFg }}; cursor: pointer;">{{ rsvpLabel }}</div></div>
         <div data-nav="true" style="position: absolute; left: 14px; right: 14px; bottom: 24px; height: 64px; box-sizing: border-box; border-radius: 32px; background: rgba(247,248,244,0.72); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); border: 1px solid rgba(255,255,255,0.75); box-shadow: 0 12px 32px rgba(14,17,19,0.16), inset 0 1px 0 rgba(255,255,255,0.7); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; transform-origin: 50% 100%; transition: transform 460ms cubic-bezier(0.2, 0.9, 0.25, 1.12), background 300ms ease;">
@@ -901,7 +1395,7 @@
         <div style="position: absolute; left: 50%; bottom: 8px; width: 134px; margin-left: -67px; height: 5px; border-radius: 3px; background: #0E1113;"></div>
       </div>
       <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
-        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Dark title card, notes, two pill rows, attendees. RSVP → Going, then inert. Report in the header. No edit here.</div>
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Dark title card, notes, two pill rows, attendees, then Location: a live Google map with venue, address, Directions and Open in Maps. RSVP → Going, then inert. Report in the header.</div>
       </sc-if>
     </div>
   </div>
@@ -938,7 +1432,11 @@
           </div>
           <div style="display: flex; flex-direction: column; gap: 2px; margin-top: 14px;">
             <div style="display: flex; align-items: center; gap: 6px;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 18px; color: #0E1113;">Maya Okafor</div><div style="font-size: 14px; font-weight: 600; color: #4F6E19;">F</div></div>
-            <div style="font-size: 13.5px; color: #545a50;">Cabin crew · Emirates · DXB</div>
+            <div style="display: flex; align-items: center; gap: 8px; margin: 4px 0 2px;">
+              <img src="assets/airline-logo.png" alt="Cathay Pacific" style="width: 22px; height: 22px; border-radius: 6px; display: block; flex-shrink: 0;">
+              <div style="font-size: 13.5px; font-weight: 600; color: #0E1113;">Cathay Pacific</div>
+              <div style="font-size: 13.5px; color: #545a50;">· Cabin crew · DXB</div>
+            </div>
             <div style="font-size: 13.5px; color: #545a50;">Lives in Dubai · From Lagos</div>
           </div>
           <div style="display: flex; gap: 8px; margin-top: 14px;">
@@ -1176,7 +1674,8 @@ class Component extends DCLogic {
     copied: false, connected: false, toast: '',
     q: '', filter: 'All', rsvp: false,
     kind: 'public', attendees: 8, cActs: ['Coffee'], cInts: ['Art'], tags: ['alcohol-free'],
-    waved: [], lq: 'HKG', mode: 'mine', close: ['flight', 'route', 'city'], longOnly: false, hanaWaved: false,
+    waved: [], cxOnly: false, lq: 'HKG', mode: 'mine', close: ['flight', 'route', 'city'], longOnly: false, hanaWaved: false,
+    hTitle: 'Rooftop sunset yoga', hTime: 1, cap: 20, removed: [], closeMode: 'rsvp', reopened: false,
     draft: '', msgs: [{ me: false, t: 'Saw we overlap in Tokyo on the 14th — you running by the palace?' }, { me: true, t: 'Yes! Landing 17:35. Morning run on the 15th?' }, { me: false, t: 'Perfect. 06:30 at Sakuradamon gate.' }]
   };
   flash(t) { clearTimeout(this._t); this.setState({ toast: t }); this._t = setTimeout(() => this.setState({ toast: '' }), 1800); }
@@ -1205,18 +1704,21 @@ class Component extends DCLogic {
       { title: 'Padel doubles, crew night', city: 'Dubai', when: 'Sat 10 Oct, 20:00', hosted: false, acts: ['Padel'], ints: [] }
     ];
     const ql = s.q.trim().toLowerCase();
+    const TIMES = ['17:30', '18:00', '18:30', '19:00'];
+    const ATT = [['Aisha Rahman','AR','#A8E05F','#0E1113','Emirates · Cabin crew'],['Tom Becker','TB','#DDE1D6','#0E1113','Emirates · Pilot'],['Priya Nair','PN','#0E1113','#A8E05F','Cathay Pacific · Cabin crew'],['Hana Kim','HK','#0E1113','#A8E05F','Cathay Pacific · Cabin crew'],['Wei Chen','WC','#A8E05F','#0E1113','Cathay Pacific · Pilot'],['Yuki Sato','YS','#DDE1D6','#0E1113','Japan Airlines · Cabin crew'],['Lena Park','LP','#DDE1D6','#0E1113','Korean Air · Cabin crew'],['Kenji Watanabe','KW','#A8E05F','#0E1113','Japan Airlines · Pilot'],['Sofia Marques','SM','#DDE1D6','#0E1113','TAP · Cabin crew'],['Leila Haddad','LH','#0E1113','#A8E05F','Emirates · Cabin crew'],['Marco Rossi','MR','#A8E05F','#0E1113','Emirates · Pilot'],['Daniel Osei','DO','#0E1113','#A8E05F','Emirates · Ground ops']].map(([name, ini, bg, fg, sub]) => ({ name, ini, bg, fg, sub }));
+    const going = ATT.length - s.removed.length;
     const send = () => { const t = this.state.draft.trim(); if (!t) return; this.setState(st => ({ msgs: [...st.msgs, { me: true, t }], draft: '' }), () => document.querySelectorAll('[data-thread]').forEach(el => { el.scrollTop = el.scrollHeight; })); };
     const RS = { flight: ['ON YOUR FLIGHT', '#0E1113', '#A8E05F', 0], route: ['SAME ROUTE', '#EAECE5', '#0E1113', 1], city: ['', '#EEF7DF', '#2f4210', 2] };
     const M = [
-      { id: 'hk', name: 'Hana Kim', role: 'Cabin crew', base: 'DXB', ini: 'HK', bg: '#0E1113', fg: '#A8E05F', type: 'flight', code: 'HKG', city: 'Hong Kong', window: 'HKG · 8 Oct, 14:35 – 9 Oct, 21:15', h: 30.7, tags: ['Coffee', 'Hiking'] },
-      { id: 'ar', name: 'Aisha Rahman', role: 'Cabin crew', base: 'DXB', ini: 'AR', bg: '#A8E05F', fg: '#0E1113', type: 'route', code: 'BKK', city: 'Bangkok', window: 'BKK · 3 Oct, 13:40 – 4 Oct, 19:40', h: 30, tags: ['Gym'] },
-      { id: 'wc', name: 'Wei Chen', role: 'Pilot', base: 'HKG', ini: 'WC', bg: '#A8E05F', fg: '#0E1113', type: 'city', code: 'HKG', city: 'Hong Kong', window: 'HKG · 8 Oct, 18:00 – 9 Oct, 20:30', h: 26.5, tags: ['Running'] },
-      { id: 'ys', name: 'Yuki Sato', role: 'Cabin crew', base: 'NRT', ini: 'YS', bg: '#DDE1D6', fg: '#0E1113', type: 'city', code: 'NRT', city: 'Tokyo', window: 'NRT · 14 Oct, 19:00 – 15 Oct, 21:00', h: 26, tags: ['Coffee', 'Travel'] },
-      { id: 'lp', name: 'Lena Park', role: 'Cabin crew', base: 'ICN', ini: 'LP', bg: '#DDE1D6', fg: '#0E1113', type: 'city', code: 'HKG', city: 'Hong Kong', window: 'HKG · 9 Oct, 06:00 – 10:00', h: 4, tags: [] },
-      { id: 'am', name: 'Arjun Mehta', role: 'Ground ops', base: 'SIN', ini: 'AM', bg: '#0E1113', fg: '#A8E05F', type: 'city', code: 'SIN', city: 'Singapore', window: 'SIN · 22 Oct, 08:10 – 08:40', h: 0.5, tags: [] }
+      { id: 'hk', air: 'CX', airName: 'Cathay Pacific', flight: 'CX746 · DXB → HKG · 8 Oct', name: 'Hana Kim', role: 'Cabin crew', base: 'DXB', ini: 'HK', bg: '#0E1113', fg: '#A8E05F', type: 'flight', code: 'HKG', city: 'Hong Kong', window: 'HKG · 8 Oct, 14:35 – 9 Oct, 21:15', h: 30.7, tags: ['Coffee', 'Hiking'] },
+      { id: 'ar', air: 'EK', airName: 'Emirates', name: 'Aisha Rahman', role: 'Cabin crew', base: 'DXB', ini: 'AR', bg: '#A8E05F', fg: '#0E1113', type: 'route', code: 'BKK', city: 'Bangkok', window: 'BKK · 3 Oct, 13:40 – 4 Oct, 19:40', h: 30, tags: ['Gym'] },
+      { id: 'wc', air: 'CX', airName: 'Cathay Pacific', name: 'Wei Chen', role: 'Pilot', base: 'HKG', ini: 'WC', bg: '#A8E05F', fg: '#0E1113', type: 'city', code: 'HKG', city: 'Hong Kong', window: 'HKG · 8 Oct, 18:00 – 9 Oct, 20:30', h: 26.5, tags: ['Running'] },
+      { id: 'ys', air: 'JL', airName: 'Japan Airlines', name: 'Yuki Sato', role: 'Cabin crew', base: 'NRT', ini: 'YS', bg: '#DDE1D6', fg: '#0E1113', type: 'city', code: 'NRT', city: 'Tokyo', window: 'NRT · 14 Oct, 19:00 – 15 Oct, 21:00', h: 26, tags: ['Coffee', 'Travel'] },
+      { id: 'lp', air: 'KE', airName: 'Korean Air', name: 'Lena Park', role: 'Cabin crew', base: 'ICN', ini: 'LP', bg: '#DDE1D6', fg: '#0E1113', type: 'city', code: 'HKG', city: 'Hong Kong', window: 'HKG · 9 Oct, 06:00 – 10:00', h: 4, tags: [] },
+      { id: 'am', air: 'SQ', airName: 'Singapore Airlines', name: 'Arjun Mehta', role: 'Ground ops', base: 'SIN', ini: 'AM', bg: '#0E1113', fg: '#A8E05F', type: 'city', code: 'SIN', city: 'Singapore', window: 'SIN · 22 Oct, 08:10 – 08:40', h: 0.5, tags: [] }
     ];
     const durTxt = h => h < 1 ? Math.round(h * 60) + 'M OVERLAP' : Math.floor(h) + 'H' + (h % 1 ? ' ' + Math.round((h % 1) * 60) + 'M' : '') + ' OVERLAP';
-    const rows = list => list.map(p => { const r = RS[p.type]; const w = s.waved.includes(p.id); return { ...p, reason: r[0] || 'ALSO IN ' + p.city.toUpperCase(), rBg: r[1], rFg: r[2], dur: durTxt(p.h), durFg: p.h >= 8 ? '#4F6E19' : '#9B5B00', hasTags: p.tags.length > 0, waveLabel: w ? 'Waved' : 'Wave', waveBg: w ? '#EAECE5' : '#A8E05F', waveFg: w ? '#545a50' : '#0E1113', wave: () => { if (w) return; this.setState(st => ({ waved: [...st.waved, p.id] })); this.flash('Request sent.'); } }; });
+    const rows = list => list.map(p => { const r = RS[p.type]; const w = s.waved.includes(p.id); return { ...p, reason: r[0] || 'ALSO IN ' + p.city.toUpperCase(), rBg: r[1], rFg: r[2], dur: durTxt(p.h), durFg: p.h >= 8 ? '#4F6E19' : '#9B5B00', hasTags: p.tags.length > 0, isCX: p.air === 'CX', notCX: p.air !== 'CX', isFlight: p.type === 'flight', waveLabel: w ? 'Waved' : 'Wave', waveBg: w ? '#EAECE5' : '#A8E05F', waveFg: w ? '#545a50' : '#0E1113', wave: () => { if (w) return; this.setState(st => ({ waved: [...st.waved, p.id] })); this.flash('Request sent.'); } }; });
     const lq = s.lq.trim().toLowerCase();
     const found = rows(M.filter(p => (!lq || p.code.toLowerCase().includes(lq) || p.city.toLowerCase().includes(lq)) && s.close.includes(p.type) && (!s.longOnly || p.h >= 8)).sort((a, b) => RS[a.type][3] - RS[b.type][3] || b.h - a.h));
     const evs = EV.filter(e => s.filter === 'All' || (s.filter === 'CrewUp Events' ? e.hosted : !e.hosted))
@@ -1257,6 +1759,27 @@ class Component extends DCLogic {
       attending: s.rsvp ? 13 : 12,
       rsvpLabel: s.rsvp ? 'Going ✓' : 'RSVP', rsvpBg: s.rsvp ? '#0E1113' : '#A8E05F', rsvpFg: s.rsvp ? '#A8E05F' : '#0E1113',
       onRsvp: () => this.setState({ rsvp: true }),
+      evTitle: s.hTitle, onTitle: e => this.setState({ hTitle: e.target.value }),
+      evTime: TIMES[s.hTime], evWhen: 'Thu 8 Oct, ' + TIMES[s.hTime],
+      cycleTime: () => this.setState(st => ({ hTime: (st.hTime + 1) % TIMES.length })),
+      onSaveEdit: () => this.flash('Changes saved. ' + going + ' attendees notified.'),
+      goingCount: going, cap: s.cap, spotsLeft: Math.max(0, s.cap - going), capPct: Math.min(100, going / s.cap * 100).toFixed(1) + '%',
+      capInc: () => this.setState(st => ({ cap: Math.min(50, st.cap + 1) })),
+      capDec: () => this.setState(st => ({ cap: Math.max(going, st.cap - 1) })),
+      attList: ATT.filter(a => !s.removed.includes(a.ini)).map(a => ({ ...a, remove: () => { this.setState(st => ({ removed: [...st.removed, a.ini] })); this.flash(a.name.split(' ')[0] + ' removed from the meet.'); } })),
+      hostCloseOpts: [['rsvp', 'Stop new RSVPs', 'Everyone going keeps their spot. You can reopen any time.'], ['cancel', 'Cancel the meet', 'Everyone is notified and the event chat closes. This can’t be undone.']].map(([k, title, body]) => { const on = s.closeMode === k; const red = k === 'cancel'; return { title, body, titleFg: red ? '#9B2C1F' : '#0E1113', bg: on ? (red ? '#FBEDEA' : '#F2F4EE') : '#FFFFFF', border: on ? (red ? '#9B2C1F' : '#0E1113') : '#E3E6DD', ring: on ? (red ? '#9B2C1F' : '#0E1113') : '#C9CEC1', fill: on ? (red ? '#F7E3DF' : '#A8E05F') : 'transparent', dot: on ? (red ? '#9B2C1F' : '#0E1113') : 'transparent', onClick: () => this.setState({ closeMode: k, reopened: false }) }; }),
+      cBtnLabel: s.closeMode === 'cancel' ? 'Cancel meet' : 'Close RSVPs', cBtnBg: s.closeMode === 'cancel' ? '#9B2C1F' : '#0E1113', cBtnFg: s.closeMode === 'cancel' ? '#FFFFFF' : '#A8E05F',
+      onConfirmClose: () => { this.setState({ reopened: false }); this.flash(s.closeMode === 'cancel' ? 'Meet cancelled. ' + going + ' crew notified.' : 'RSVPs closed.'); },
+      isRsvpClosed: s.closeMode === 'rsvp',
+      stLabel: s.reopened ? 'OPEN' : s.closeMode === 'cancel' ? 'CANCELLED' : 'RSVPS CLOSED',
+      stBg: s.reopened ? '#2c3134' : s.closeMode === 'cancel' ? '#9B2C1F' : '#E8C25A', stFg: s.reopened ? '#EDF1F2' : s.closeMode === 'cancel' ? '#FFFFFF' : '#0E1113',
+      evStrike: s.closeMode === 'cancel' && !s.reopened ? 'line-through' : 'none',
+      banBg: s.reopened ? '#EEF7DF' : s.closeMode === 'cancel' ? '#FBEDEA' : '#FBEFD0', banDot: s.reopened ? '#4F6E19' : s.closeMode === 'cancel' ? '#9B2C1F' : '#6B4E00',
+      banTitle: s.reopened ? 'RSVPs are open again' : s.closeMode === 'cancel' ? 'You cancelled this meet' : 'RSVPs are closed',
+      banBody: s.reopened ? (Math.max(0, s.cap - going)) + ' spots are available.' : s.closeMode === 'cancel' ? going + ' crew were notified. The meet stays here, read-only, until its date passes.' : 'No one new can join. The ' + going + ' going keep their spot.',
+      attSub: s.closeMode === 'cancel' && !s.reopened ? going + ' were going · notified' : going + ' going',
+      attBorder: s.closeMode === 'rsvp' ? '' : '',
+      onReopen: () => { this.setState({ reopened: true }); this.flash('RSVPs reopened.'); },
       onConnectFriend: () => this.flash('You are already connected.'),
       msgs: s.msgs.map(m => ({ t: m.t, align: m.me ? 'flex-end' : 'flex-start', bg: m.me ? '#A8E05F' : '#FFFFFF', border: m.me ? '#A8E05F' : '#E3E6DD', radius: m.me ? '18px 18px 6px 18px' : '18px 18px 18px 6px' })),
       draft: s.draft, onDraft: e => this.setState({ draft: e.target.value }),
@@ -1269,7 +1792,10 @@ class Component extends DCLogic {
         { name: 'Priya Nair', last: 'No messages yet.', ini: 'PN', bg: '#0E1113', fg: '#A8E05F', shape: '50%', subFg: '#9aa092' },
         { name: 'Event chat', last: 'Tom: Court 3 is ours from 20:00', ini: 'EV', bg: '#DDE1D6', fg: '#0E1113', shape: '14px', subFg: '#545a50' }
       ],
-      homeMatches: rows(M), homeMatchCount: M.length,
+      homeMatches: rows(s.cxOnly ? M.filter(p => p.air === 'CX') : M), homeMatchCount: s.cxOnly ? M.filter(p => p.air === 'CX').length : M.length,
+      cxCount: M.filter(p => p.air === 'CX').length,
+      toggleCx: () => this.setState(st => ({ cxOnly: !st.cxOnly })),
+      cxLabel: s.cxOnly ? 'Showing Cathay' : 'Cathay only', cxBg: s.cxOnly ? '#0E1113' : '#A8E05F', cxFg: s.cxOnly ? '#A8E05F' : '#0E1113',
       searchMatches: found, noMatches: found.length === 0,
       resultLabel: found.length + (found.length === 1 ? ' PERSON' : ' PEOPLE') + (lq ? ' · ' + lq.toUpperCase() : ''),
       lq: s.lq, onLq: e => this.setState({ lq: e.target.value }), clearLq: () => this.setState({ lq: '' }),

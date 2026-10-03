@@ -1,21 +1,19 @@
 import { useMemo, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import {
-  BodyText,
-  Button,
-  DateTimeField,
-  Input,
-  NumericText,
-  Screen,
-  combineDateAndTime,
-} from '@/components/ui';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { WhenTiles } from '@/components/events/WhenTiles';
+import { FlowFooter, FlowHeader, FlowTopBar } from '@/components/roster/flowKit';
+import { Screen, combineDateAndTime } from '@/components/ui';
+import { FilledField, MonoLabel, MonoTag } from '@/features/onboarding/components/kit';
 import { findAirportByIata } from '@/constants/airports';
 import { SCREENS } from '@/constants/screens';
 import { airportLocalToUtc } from '@/lib/airportTime';
 import { formatFlightDateLabel, fromFlightDateKey, toFlightDateKey } from '@/lib/flightDateKey';
-import { useThemedStyles } from '@/theme';
+import { fontFamily, useTheme } from '@/theme';
+
+const DATE_FORMAT: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
 
 /**
  * Fallback for routes a schedule provider does not cover. Values are entered in
@@ -44,30 +42,8 @@ export default function AddTripManualFlightScreen() {
   const [arrivalTime, setArrivalTime] = useState(flightDate ?? new Date());
   const [error, setError] = useState('');
 
-  const styles = useThemedStyles((theme) => ({
-    scroll: { flexGrow: 1, paddingBottom: theme.spacing.xxxl },
-    header: {
-      paddingHorizontal: theme.spacing.lg,
-      paddingTop: theme.spacing.lg,
-      paddingBottom: theme.spacing.xl,
-      alignItems: 'center',
-      gap: theme.spacing.xs,
-    },
-    title: {
-      ...theme.typography.headline,
-      color: theme.colors.textPrimary,
-      textAlign: 'center',
-    },
-    route: { color: theme.colors.textPrimary, textAlign: 'center' },
-    hint: { textAlign: 'center', maxWidth: 320, marginTop: theme.spacing.sm },
-    form: { paddingHorizontal: theme.spacing.lg },
-    footer: {
-      paddingHorizontal: theme.spacing.lg,
-      paddingTop: theme.spacing.md,
-      gap: theme.spacing.sm,
-    },
-    error: { color: theme.colors.statusOnDuty, textAlign: 'center' },
-  }));
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const onContinue = () => {
     if (!origin || !destination || !date) return;
@@ -121,94 +97,87 @@ export default function AddTripManualFlightScreen() {
   if (!paramsValid || !origin || !destination || !date) {
     return (
       <Screen style={{ padding: 0 }}>
-        <View style={[styles.header, styles.footer]}>
-          <BodyText style={styles.error}>{t('addTrip.invalidSearchParams')}</BodyText>
-          <Button label={t('common.back')} onPress={() => router.back()} noTopMargin />
+        <View style={{ paddingTop: insets.top }}>
+          <FlowTopBar backLabel={t('common.back')} onBack={() => router.back()} />
         </View>
+        <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, color: theme.colors.statusOnDuty, textAlign: 'center', marginTop: 60, paddingHorizontal: 24 }}>
+          {t('addTrip.invalidSearchParams')}
+        </Text>
       </Screen>
     );
   }
 
   return (
     <Screen style={{ padding: 0 }}>
-      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-        <View style={styles.header}>
-          <Text style={styles.title}>{t('addTrip.enterFlightManually')}</Text>
-          <NumericText style={styles.route}>
-            {origin.iata} → {destination.iata}
-          </NumericText>
-          <BodyText muted>{formatFlightDateLabel(date)}</BodyText>
-          <BodyText muted style={styles.hint}>
-            {t('addTrip.manualFlightHint', {
-              origin: origin.iata,
-              destination: destination.iata,
-            })}
-          </BodyText>
-        </View>
-
-        <View style={styles.form}>
-          <Input
-            label={t('addTrip.manualFlightNumber')}
-            value={flightNumber}
-            onChangeText={setFlightNumber}
-            placeholder={t('addTrip.manualFlightNumberPlaceholder')}
-            autoCapitalize="characters"
-            autoCorrect={false}
+      <View style={{ paddingTop: insets.top }}>
+        <FlowTopBar backLabel={t('common.back')} onBack={() => router.back()} />
+      </View>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 16 }} keyboardShouldPersistTaps="handled">
+          <FlowHeader
+            title={t('addTrip.enterFlightManually')}
+            chip={`${origin.iata} → ${destination.iata}`}
+            date={formatFlightDateLabel(date)}
+            hint={t('addTrip.manualFlightHint', { origin: origin.iata, destination: destination.iata })}
           />
-          <Input
-            label={t('addTrip.manualAirline')}
-            value={airlineIata}
-            onChangeText={setAirlineIata}
-            placeholder={t('addTrip.manualAirlinePlaceholder')}
-            autoCapitalize="characters"
-            autoCorrect={false}
-          />
-          <DateTimeField
-            dateLabel={t('addTrip.manualDepartureDate', {
-              airport: origin.iata,
-            })}
-            timeLabel={t('addTrip.manualDepartureTime', {
-              airport: origin.iata,
-            })}
-            date={departureDate}
-            time={departureTime}
-            onDateChange={setDepartureDate}
-            onTimeChange={setDepartureTime}
-            datePlaceholder={t('addTrip.selectFlightDate')}
-            timePlaceholder={t('addTrip.manualDepartureTime', {
-              airport: origin.iata,
-            })}
-          />
-          <DateTimeField
-            dateLabel={t('addTrip.manualArrivalDate', {
-              airport: destination.iata,
-            })}
-            timeLabel={t('addTrip.manualArrivalTime', {
-              airport: destination.iata,
-            })}
-            date={arrivalDate}
-            time={arrivalTime}
-            onDateChange={setArrivalDate}
-            onTimeChange={setArrivalTime}
-            datePlaceholder={t('addTrip.selectFlightDate')}
-            timePlaceholder={t('addTrip.manualArrivalTime', {
-              airport: destination.iata,
-            })}
-            minimumDate={departureDate}
-          />
-        </View>
-
-        <View style={styles.footer}>
-          {error ? <BodyText style={styles.error}>{error}</BodyText> : null}
-          <Button label={t('common.continue')} onPress={onContinue} noTopMargin />
-          <Button
-            label={t('common.back')}
-            onPress={() => router.back()}
-            variant="ghost"
-            noTopMargin
-          />
-        </View>
-      </ScrollView>
+          <View style={{ paddingTop: 22, paddingHorizontal: 24 }}>
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+              <FilledField
+                style={{ flex: 1.4 }}
+                label={t('addTrip.manualFlightNumber')}
+                value={flightNumber}
+                onChangeText={(value) => setFlightNumber(value.toUpperCase())}
+                placeholder={t('addTrip.manualFlightNumberPlaceholder')}
+                autoCapitalize="characters"
+                autoCorrect={false}
+              />
+              <FilledField
+                style={{ flex: 1 }}
+                label={t('addTrip.manualAirlineShort')}
+                value={airlineIata}
+                onChangeText={(value) => setAirlineIata(value.toUpperCase())}
+                placeholder={t('addTrip.manualAirlinePlaceholder')}
+                autoCapitalize="characters"
+                autoCorrect={false}
+                maxLength={3}
+                trailing={<MonoTag label={t('addTrip.optShort')} />}
+              />
+            </View>
+            <MonoLabel style={{ fontSize: 10.5, marginTop: 10, marginBottom: 10 }}>{t('addTrip.departsLocal', { airport: origin.iata })}</MonoLabel>
+            <WhenTiles
+              date={departureDate}
+              time={departureTime}
+              onDateChange={setDepartureDate}
+              onTimeChange={setDepartureTime}
+              dateLabel={t('addTrip.manualDepartureDate', { airport: origin.iata })}
+              timeLabel={t('addTrip.manualDepartureTime', { airport: origin.iata })}
+              dateFormat={DATE_FORMAT}
+              hour12={false}
+            />
+            <MonoLabel style={{ fontSize: 10.5, marginTop: 20, marginBottom: 10 }}>{t('addTrip.arrivesLocal', { airport: destination.iata })}</MonoLabel>
+            <WhenTiles
+              date={arrivalDate}
+              time={arrivalTime}
+              onDateChange={setArrivalDate}
+              onTimeChange={setArrivalTime}
+              minimumDate={departureDate}
+              dateLabel={t('addTrip.manualArrivalDate', { airport: destination.iata })}
+              timeLabel={t('addTrip.manualArrivalTime', { airport: destination.iata })}
+              dateFormat={DATE_FORMAT}
+              hour12={false}
+              error={error === t('addTrip.manualArrivalError') ? error : undefined}
+            />
+            {error ? (
+              <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: theme.colors.statusOnDuty, marginTop: 12 }}>{error}</Text>
+            ) : null}
+          </View>
+        </ScrollView>
+        <FlowFooter
+          bottomInset={insets.bottom}
+          primary={{ label: t('common.continue'), onPress: onContinue }}
+          tertiary={{ label: t('common.back'), onPress: () => router.back() }}
+        />
+      </KeyboardAvoidingView>
     </Screen>
   );
 }
