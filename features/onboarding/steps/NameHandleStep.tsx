@@ -14,14 +14,16 @@ import { useAvatarPicker } from '../components/PhotoSourceSheet';
 import { StepScaffold } from '../components/StepScaffold';
 import { UsernameField, type UsernameStatus } from '../components/UsernameField';
 import {
+  DISPLAY_NAME_STYLES,
+  displayNameOptions,
   displayNameSample,
   displayStyleFromSaved,
   splitFullName,
   type DisplayNameStyle,
 } from '../displayName';
-import { useStepSave } from '../hooks/useStepForm';
+import { useStepNavigation, useStepSave } from '../hooks/useStepForm';
 import type { StepContext } from '../navigation';
-import { OnboardingRequestError, saveStep } from '../services/onboardingService';
+import { OnboardingRequestError, savePreferredName, saveStep } from '../services/onboardingService';
 
 const NamePartSchema = z
   .string()
@@ -34,7 +36,7 @@ const NameFormSchema = z.object({
   username: UsernameSchema,
   firstName: NamePartSchema,
   lastName: NamePartSchema,
-  displayStyle: z.enum(['full', 'initial', 'last']),
+  displayStyle: z.enum(DISPLAY_NAME_STYLES),
   fullNameNative: z.string().trim().max(100).optional(),
 });
 
@@ -44,6 +46,8 @@ const STYLE_LABELS: Record<DisplayNameStyle, string> = {
   full: 'onboarding.nameHandle.displayFull',
   initial: 'onboarding.nameHandle.displayInitial',
   last: 'onboarding.nameHandle.displayLast',
+  native: 'onboarding.nameHandle.displayNative',
+  fullNative: 'onboarding.nameHandle.displayFullNative',
 };
 
 export function NameHandleStep({ context }: { context: StepContext }) {
@@ -60,6 +64,7 @@ export function NameHandleStep({ context }: { context: StepContext }) {
   const photo = useAvatarPicker(profile?.avatar_file_id ?? null);
   const avatarFileId = photo.fileId;
   const { save, saving, formError } = useStepSave('name_handle', context);
+  const navigate = useStepNavigation('name_handle', context);
   const saved = splitFullName(profile?.full_name ?? '');
   const form = useForm<NameForm>({
     resolver: zodResolver(NameFormSchema),
@@ -67,7 +72,12 @@ export function NameHandleStep({ context }: { context: StepContext }) {
       username: profile?.username ?? '',
       firstName: saved.firstName,
       lastName: saved.lastName,
-      displayStyle: displayStyleFromSaved(saved.firstName, saved.lastName, profile?.preferred_name),
+      displayStyle: displayStyleFromSaved(
+        saved.firstName,
+        saved.lastName,
+        profile?.preferred_name,
+        profile?.full_name_native,
+      ),
       fullNameNative: profile?.full_name_native ?? '',
     },
     mode: 'onTouched',
@@ -75,17 +85,24 @@ export function NameHandleStep({ context }: { context: StepContext }) {
   const { control, watch, handleSubmit, setError } = form;
   const firstName = watch('firstName');
   const lastName = watch('lastName');
+  const otherName = watch('fullNameNative');
   const displayStyle = watch('displayStyle');
   const inFlow = context === 'flow';
   const showDisplay = inFlow && phase === 'display';
 
   const samples = useMemo(
     () => ({
-      full: displayNameSample(firstName ?? '', lastName ?? '', 'full'),
-      initial: displayNameSample(firstName ?? '', lastName ?? '', 'initial'),
-      last: displayNameSample(firstName ?? '', lastName ?? '', 'last'),
+      full: displayNameSample(firstName ?? '', lastName ?? '', 'full', otherName),
+      initial: displayNameSample(firstName ?? '', lastName ?? '', 'initial', otherName),
+      last: displayNameSample(firstName ?? '', lastName ?? '', 'last', otherName),
+      native: displayNameSample(firstName ?? '', lastName ?? '', 'native', otherName),
+      fullNative: displayNameSample(firstName ?? '', lastName ?? '', 'fullNative', otherName),
     }),
-    [firstName, lastName],
+    [firstName, lastName, otherName],
+  );
+  const options = useMemo(
+    () => displayNameOptions(firstName ?? '', lastName ?? '', otherName),
+    [firstName, lastName, otherName],
   );
 
   const detailsPayload = (values: NameForm) => {
@@ -141,12 +158,6 @@ export function NameHandleStep({ context }: { context: StepContext }) {
       setDetailsError(t('onboarding.genericError'));
       return;
     }
-    const parsed = NameHandlePatchSchema.safeParse({ preferredName });
-    if (!parsed.success) {
-      hapticError();
-      setDetailsError(parsed.error.issues[0]?.message ?? t('onboarding.genericError'));
-      return;
-    }
     if (avatarFileId && avatarFileId !== (profile?.avatar_file_id ?? null)) {
       try {
         await saveStep('photo', { avatarFileId }, { advance: false });
@@ -156,7 +167,27 @@ export function NameHandleStep({ context }: { context: StepContext }) {
         return;
       }
     }
-    await save(parsed.data, applyFieldError);
+    setSavingDetails(true);
+    setDetailsError('');
+    try {
+      await savePreferredName(
+        preferredName,
+        {
+          full_name: displayNameSample(values.firstName, values.lastName, 'full'),
+          full_name_native: values.fullNameNative || null,
+          username: values.username,
+        },
+        { advance: inFlow },
+      );
+      await refreshProfile();
+      hapticSuccess();
+      navigate();
+    } catch (error) {
+      hapticError();
+      setDetailsError(error instanceof OnboardingRequestError ? error.message : t('onboarding.genericError'));
+    } finally {
+      setSavingDetails(false);
+    }
   });
 
   if (showDisplay) {
@@ -172,7 +203,7 @@ export function NameHandleStep({ context }: { context: StepContext }) {
         title={t('onboarding.nameHandle.displayPrompt')}
         primaryLabel={t('onboarding.next')}
         onPrimary={onDisplayNext}
-        primaryLoading={saving}
+        primaryLoading={saving || savingDetails}
         primaryDisabled={photo.uploading}
         footerNote={
           photo.uploading
@@ -216,7 +247,7 @@ export function NameHandleStep({ context }: { context: StepContext }) {
           name="displayStyle"
           render={({ field }) => (
             <View style={{ gap: 8, marginTop: 24 }}>
-              {(['full', 'initial', 'last'] as const).map((style) => (
+              {options.map((style) => (
                 <RadioPill
                   key={style}
                   label={samples[style]}

@@ -1,39 +1,57 @@
 import { useMemo, useState } from 'react';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { NameHandlePatchSchema } from '@crewup/shared';
 import { Text, View } from 'react-native';
-import { hapticError } from '@/lib/haptics';
-import { useAuth } from '@/hooks/useSession';
+import { SCREENS } from '@/constants/screens';
+import { hapticError, hapticSuccess } from '@/lib/haptics';
+import { useAuth, useSession } from '@/hooks/useSession';
 import { fontFamily, useTheme } from '@/theme';
 import { RadioPill } from '../components/kit';
 import { StepScaffold } from '../components/StepScaffold';
-import { displayNameSample, displayStyleFromSaved, splitFullName, type DisplayNameStyle } from '../displayName';
-import { useStepSave } from '../hooks/useStepForm';
+import {
+  displayNameOptions,
+  displayNameSample,
+  displayStyleFromSaved,
+  splitFullName,
+  type DisplayNameStyle,
+} from '../displayName';
+import { OnboardingRequestError, savePreferredName } from '../services/onboardingService';
 
 const STYLE_LABELS: Record<DisplayNameStyle, string> = {
   full: 'onboarding.nameHandle.displayFull',
   initial: 'onboarding.nameHandle.displayInitial',
   last: 'onboarding.nameHandle.displayLast',
+  native: 'onboarding.nameHandle.displayNative',
+  fullNative: 'onboarding.nameHandle.displayFullNative',
 };
 
 /** Edit profile: choose the name other crew see, without changing the legal name. */
 export function DisplayNameStep() {
   const { t } = useTranslation();
   const theme = useTheme();
+  const router = useRouter();
   const { profile } = useAuth();
-  const { save, saving, formError } = useStepSave('name_handle', 'edit');
+  const { refreshProfile } = useSession();
+  const [saving, setSaving] = useState(false);
   const saved = splitFullName(profile?.full_name ?? '');
+  const otherName = profile?.full_name_native ?? '';
   const [style, setStyle] = useState<DisplayNameStyle>(() =>
-    displayStyleFromSaved(saved.firstName, saved.lastName, profile?.preferred_name),
+    displayStyleFromSaved(saved.firstName, saved.lastName, profile?.preferred_name, otherName),
   );
   const [error, setError] = useState('');
   const samples = useMemo(
     () => ({
-      full: displayNameSample(saved.firstName, saved.lastName, 'full'),
-      initial: displayNameSample(saved.firstName, saved.lastName, 'initial'),
-      last: displayNameSample(saved.firstName, saved.lastName, 'last'),
+      full: displayNameSample(saved.firstName, saved.lastName, 'full', otherName),
+      initial: displayNameSample(saved.firstName, saved.lastName, 'initial', otherName),
+      last: displayNameSample(saved.firstName, saved.lastName, 'last', otherName),
+      native: displayNameSample(saved.firstName, saved.lastName, 'native', otherName),
+      fullNative: displayNameSample(saved.firstName, saved.lastName, 'fullNative', otherName),
     }),
-    [saved.firstName, saved.lastName],
+    [otherName, saved.firstName, saved.lastName],
+  );
+  const options = useMemo(
+    () => displayNameOptions(saved.firstName, saved.lastName, otherName),
+    [otherName, saved.firstName, saved.lastName],
   );
 
   const onSave = async () => {
@@ -43,14 +61,24 @@ export function DisplayNameStep() {
       setError(t('onboarding.genericError'));
       return;
     }
-    const parsed = NameHandlePatchSchema.safeParse({ preferredName });
-    if (!parsed.success) {
-      hapticError();
-      setError(parsed.error.issues[0]?.message ?? t('onboarding.genericError'));
-      return;
-    }
+    setSaving(true);
     setError('');
-    await save(parsed.data);
+    try {
+      await savePreferredName(preferredName, profile, { advance: false });
+      await refreshProfile();
+      hapticSuccess();
+      if (router.canGoBack()) router.back();
+      else router.replace(SCREENS.profile.edit);
+    } catch (saveError) {
+      hapticError();
+      const message =
+        saveError instanceof OnboardingRequestError
+          ? Object.values(saveError.fields)[0] || saveError.message
+          : t('onboarding.genericError');
+      setError(message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -60,7 +88,7 @@ export function DisplayNameStep() {
       primaryLabel={t('onboarding.save')}
       onPrimary={() => void onSave()}
       primaryLoading={saving}
-      error={formError || error}>
+      error={error}>
       <Text
         numberOfLines={1}
         style={{
@@ -74,7 +102,7 @@ export function DisplayNameStep() {
         {samples[style]}
       </Text>
       <View style={{ gap: 8 }}>
-        {(['full', 'initial', 'last'] as const).map((option) => (
+        {options.map((option) => (
           <RadioPill
             key={option}
             label={samples[option] || t('onboarding.nameHandle.displayEmpty')}

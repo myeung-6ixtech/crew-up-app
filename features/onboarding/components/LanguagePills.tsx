@@ -24,12 +24,20 @@ export function LanguagePills({
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    if (!normalized) return LANGUAGES;
-    return LANGUAGES.filter(
-      ([code, name, native]) =>
-        name.toLowerCase().includes(normalized) || native.toLowerCase().includes(normalized) || code === normalized,
-    );
-  }, [query]);
+    const matches = !normalized
+      ? LANGUAGES
+      : LANGUAGES.filter(
+          ([code, name, native]) =>
+            name.toLowerCase().includes(normalized) || native.toLowerCase().includes(normalized) || code === normalized,
+        );
+    const selected = new Set(value);
+    return [...matches.filter(([code]) => selected.has(code)), ...matches.filter(([code]) => !selected.has(code))];
+  }, [query, value]);
+
+  const chosenNames = useMemo(() => {
+    const names = new Map(LANGUAGES.map(([code, name]) => [code, name]));
+    return value.map((code) => names.get(code) ?? code);
+  }, [value]);
 
   const toggle = (code: string) => {
     const has = value.includes(code);
@@ -51,6 +59,18 @@ export function LanguagePills({
           {`${value.length} / ${MAX_LANGUAGES}`}
         </Text>
       </View>
+      {chosenNames.length ? (
+        <Text
+          style={{
+            fontFamily: fontFamily.interMedium,
+            fontSize: 15,
+            lineHeight: 21,
+            color: theme.colors.textPrimary,
+            marginTop: 10,
+          }}>
+          {chosenNames.join(', ')}
+        </Text>
+      ) : null}
       <View
         style={{
           height: 48,

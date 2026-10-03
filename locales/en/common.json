@@ -80,6 +80,8 @@
       "displayFull": "First name and last name",
       "displayInitial": "Last name, first letter of first name",
       "displayLast": "Last name only",
+      "displayNative": "Other name",
+      "displayFullNative": "Full name with other name",
       "displayEmpty": "Fill in your name to see a sample",
       "fullNameNative": "Other names",
       "fullNameNativePlaceholder": "e.g. 陳大文, 김민수 (optional)",

@@ -1,6 +1,7 @@
-import { GUIDELINES_VERSION, type OnboardingStep } from '@crewup/shared';
+import { GUIDELINES_VERSION, NameHandlePatchSchema, NameHandleSchema, type OnboardingStep } from '@crewup/shared';
 import { apiEndpoints } from '@/lib/api/endpoints';
 import { nhost } from '@/lib/nhost';
+import type { Profile } from '@/types/domain';
 
 /** Error body shared by the onboarding Functions: `{ error: { code, message, fields? } }`. */
 export class OnboardingRequestError extends Error {
@@ -67,6 +68,49 @@ export function saveStep(
     method: 'PUT',
     body: JSON.stringify({ step, data, advance: options.advance }),
   });
+}
+
+const OTHER_NAME_FIELDS = new Set(['fullName', 'fullNameNative', 'username']);
+
+/**
+ * Saves the name other crew see. Sends only preferredName when the step endpoint
+ * accepts a patch. If it still requires the rest of the name, resends the stored
+ * full name and username unchanged so the display name can update.
+ */
+export async function savePreferredName(
+  preferredName: string,
+  profile: Pick<Profile, 'full_name' | 'full_name_native' | 'username'> | null | undefined,
+  options: { advance: boolean },
+): Promise<void> {
+  const patch = NameHandlePatchSchema.safeParse({ preferredName });
+  if (!patch.success) {
+    throw new OnboardingRequestError(422, 'ONBOARDING_INVALID_STEP', patch.error.issues[0]?.message ?? 'Invalid name', {
+      preferredName: patch.error.issues[0]?.message ?? 'Invalid name',
+    });
+  }
+
+  const stored = NameHandleSchema.safeParse({
+    fullName: profile?.full_name ?? '',
+    fullNameNative: profile?.full_name_native ?? null,
+    preferredName,
+    username: profile?.username ?? '',
+  });
+
+  try {
+    await saveStep('name_handle', patch.data, options);
+  } catch (error) {
+    const fields = error instanceof OnboardingRequestError ? error.fields : {};
+    const preferredNameProblem = Object.keys(fields).some(
+      (field) => field === 'preferredName' || field.startsWith('preferredName.'),
+    );
+    const needsStoredName =
+      error instanceof OnboardingRequestError &&
+      stored.success &&
+      !preferredNameProblem &&
+      (error.status === 422 || Object.keys(fields).some((field) => OTHER_NAME_FIELDS.has(field)));
+    if (!needsStoredName) throw error;
+    await saveStep('name_handle', stored.data, options);
+  }
 }
 
 export type UsernameAvailability =
