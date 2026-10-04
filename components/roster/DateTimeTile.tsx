@@ -71,8 +71,8 @@ export function DateTimeTile({
         </Text>
       </Pressable>
 
-      {step === 'datetime' ? (
-        <BottomSheet visible onClose={() => setStep('closed')} scrollable={false} heightRatio={0.48}>
+      {Platform.OS !== 'android' ? (
+        <BottomSheet visible={step === 'datetime'} onClose={() => setStep('closed')} scrollable={false} heightRatio={0.48}>
           <View style={{ alignItems: 'center' }}>
             <DateTimePicker
               value={draft}

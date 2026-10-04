@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useThemedStyles, useTheme } from '@/theme';
@@ -108,6 +108,9 @@ export function DateTimeField({
 }) {
   const theme = useTheme();
   const [activePicker, setActivePicker] = useState<ActivePicker>(null);
+  const modeRef = useRef<PickerMode>('date');
+  if (activePicker) modeRef.current = activePicker;
+  const pickerMode = activePicker ?? modeRef.current;
   const styles = useThemedStyles((t) => ({
     wrap: { marginBottom: t.spacing.md },
     row: {
@@ -120,22 +123,21 @@ export function DateTimeField({
     error: { ...t.typography.bodySm, color: t.colors.statusOnDuty, marginTop: t.spacing.xs },
   }));
 
-  const pickerValue =
-    activePicker === 'date' ? (date ?? new Date()) : (time ?? new Date());
+  const pickerValue = pickerMode === 'date' ? (date ?? new Date()) : (time ?? new Date());
   const showError = Boolean(error);
   const overlayPicker = Platform.OS !== 'android';
 
   const closePicker = () => setActivePicker(null);
 
   const pickerHandlers = createDatePickerHandlers((selectedDate) => {
-    if (activePicker === 'date') {
+    if (pickerMode === 'date') {
       onDateChange(selectedDate);
-    } else if (activePicker === 'time') {
+    } else {
       onTimeChange(selectedDate);
     }
   }, closePicker);
 
-  const pickerTitle = activePicker === 'date' ? dateLabel : timeLabel;
+  const pickerTitle = pickerMode === 'date' ? dateLabel : timeLabel;
 
   return (
     <View style={styles.wrap}>
@@ -158,9 +160,9 @@ export function DateTimeField({
         />
       </View>
 
-      {overlayPicker && activePicker ? (
+      {overlayPicker ? (
         <BottomSheet
-          visible
+          visible={activePicker !== null}
           onClose={closePicker}
           title={pickerTitle}
           scrollable={false}
@@ -168,7 +170,7 @@ export function DateTimeField({
           <View style={styles.pickerSheet}>
             <DateTimePicker
               value={pickerValue}
-              mode={activePicker}
+              mode={pickerMode}
               display="spinner"
               minimumDate={activePicker === 'date' ? minimumDate : undefined}
               themeVariant={theme.mode === 'dark' ? 'dark' : 'light'}

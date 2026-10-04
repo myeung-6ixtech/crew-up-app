@@ -12,6 +12,7 @@ export function createDatePickerHandlers(
         onClose();
       }
     },
-    onDismiss: onClose,
+    // iOS spinner wheels fire dismiss when they lose focus inside a modal, which closes the sheet as it opens.
+    ...(Platform.OS === 'android' ? { onDismiss: onClose } : {}),
   };
 }

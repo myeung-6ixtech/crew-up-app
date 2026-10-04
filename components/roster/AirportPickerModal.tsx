@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { searchAirports } from '@/constants/airports';
 import { BottomSheet } from '@/components/ui';
 import { CheckBadge, MonoLabel, SearchGlyph, TextAction } from '@/features/onboarding/components/kit';
 import { hapticSelection } from '@/lib/haptics';
-import { fontFamily, useTheme } from '@/theme';
+import { fontFamily, motion, useTheme } from '@/theme';
 import type { Airport } from '@/types/airport';
 
 type AirportPickerModalProps = {
@@ -22,7 +22,17 @@ type AirportPickerModalProps = {
 export function AirportPickerModal({ visible, title, selectedIata, excludeIata, preferIata, onClose, onSelect }: AirportPickerModalProps) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const inputRef = useRef<TextInput>(null);
   const [query, setQuery] = useState('');
+
+  useEffect(() => {
+    if (!visible) {
+      inputRef.current?.blur();
+      return;
+    }
+    const timer = setTimeout(() => inputRef.current?.focus(), motion.base);
+    return () => clearTimeout(timer);
+  }, [visible]);
   const filtered = useMemo(() => searchAirports(query, { excludeIata, preferIata }), [query, excludeIata, preferIata]);
 
   const close = () => {
@@ -60,9 +70,9 @@ export function AirportPickerModal({ visible, title, selectedIata, excludeIata, 
         }}>
         <SearchGlyph color={theme.colors.textPrimary} />
         <TextInput
+          ref={inputRef}
           value={query}
           onChangeText={setQuery}
-          autoFocus
           autoCorrect={false}
           autoCapitalize="characters"
           placeholder={t('airport.searchPlaceholder')}

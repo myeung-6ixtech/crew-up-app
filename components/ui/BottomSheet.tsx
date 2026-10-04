@@ -2,14 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
+  Keyboard,
+  LayoutAnimation,
   Modal,
-  Pressable,
-  View,
-  KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
-  Text,
   StyleSheet,
+  Text,
+  UIManager,
+  View,
+  type KeyboardEvent,
   type ViewStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -17,6 +20,17 @@ import { useThemedStyles, useTheme } from '@/theme';
 
 const SHEET_OFFSCREEN_Y = Dimensions.get('window').height;
 const DEFAULT_SHEET_HEIGHT_RATIO = 0.75;
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+function animateWithKeyboard(event: KeyboardEvent) {
+  const duration = event.duration || 250;
+  LayoutAnimation.configureNext(
+    LayoutAnimation.create(duration, LayoutAnimation.Types.keyboard, LayoutAnimation.Properties.opacity),
+  );
+}
 
 export function BottomSheet({
   visible,
@@ -40,8 +54,10 @@ export function BottomSheet({
 }) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const sheetHeight = Dimensions.get('window').height * heightRatio;
-  const sheetMaxHeight = `${Math.round(heightRatio * 100)}%`;
+  const windowHeight = Dimensions.get('window').height;
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const availableHeight = Math.max(windowHeight - keyboardHeight, 0);
+  const sheetHeight = Math.min(windowHeight * heightRatio, availableHeight);
   const [modalVisible, setModalVisible] = useState(visible);
   const scrimOpacity = useRef(new Animated.Value(0)).current;
   const sheetTranslateY = useRef(new Animated.Value(SHEET_OFFSCREEN_Y)).current;
@@ -93,6 +109,24 @@ export function BottomSheet({
   }, [visible, scrimOpacity, sheetTranslateY, theme.motion.base, theme.motion.fast]);
 
   useEffect(() => {
+    if (!visible && !modalVisible) return;
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const showSub = Keyboard.addListener(showEvent, (event) => {
+      animateWithKeyboard(event);
+      setKeyboardHeight(event.endCoordinates.height);
+    });
+    const hideSub = Keyboard.addListener(hideEvent, (event) => {
+      animateWithKeyboard(event);
+      setKeyboardHeight(0);
+    });
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, [visible, modalVisible]);
+
+  useEffect(() => {
     if (visible || modalVisible || !presentedRef.current || notifiedRef.current) return;
     // iOS reports the real dismiss via Modal.onDismiss. This covers Android, and iOS if that callback never arrives.
     const delay = Platform.OS === 'ios' ? 300 : 200;
@@ -105,20 +139,22 @@ export function BottomSheet({
     scrim: {
       ...StyleSheet.absoluteFill,
       backgroundColor: t.colors.scrim,
+      zIndex: 1,
     },
     sheet: {
       backgroundColor: t.colors.bgSurfaceRaised,
       borderTopLeftRadius: t.radius.sheet,
       borderTopRightRadius: t.radius.sheet,
       maxHeight: '90%',
+      zIndex: 2,
       ...t.shadow.raised,
     } as ViewStyle,
     sheetFlex: {
       backgroundColor: t.colors.bgSurfaceRaised,
       borderTopLeftRadius: t.radius.sheet,
       borderTopRightRadius: t.radius.sheet,
-      height: sheetHeight,
-      maxHeight: sheetMaxHeight,
+      width: '100%',
+      zIndex: 2,
       ...t.shadow.raised,
     } as ViewStyle,
     handle: {
@@ -154,10 +190,7 @@ export function BottomSheet({
       animationType="none"
       onRequestClose={onClose}
       onDismiss={notifyDismissed}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <View style={styles.root}>
+      <View style={[styles.root, { paddingBottom: keyboardHeight }]}>
           <Animated.View style={[styles.scrim, { opacity: scrimOpacity }]}>
             <Pressable
               style={StyleSheet.absoluteFill}
@@ -168,6 +201,7 @@ export function BottomSheet({
           <Animated.View
             style={[
               scrollable ? styles.sheet : styles.sheetFlex,
+              scrollable ? { maxHeight: availableHeight } : { height: sheetHeight },
               { transform: [{ translateY: sheetTranslateY }] },
             ]}>
             <View style={styles.handle} accessibilityElementsHidden />
@@ -187,7 +221,6 @@ export function BottomSheet({
             )}
           </Animated.View>
         </View>
-      </KeyboardAvoidingView>
     </Modal>
   );
 }

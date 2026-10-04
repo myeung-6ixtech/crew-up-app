@@ -80,9 +80,9 @@ export function DatePickerField({
         </Text>
       </Pressable>
 
-      {open && Platform.OS !== 'android' ? (
+      {Platform.OS !== 'android' ? (
         <BottomSheet
-          visible
+          visible={open}
           onClose={closePicker}
           title={label}
           scrollable={false}

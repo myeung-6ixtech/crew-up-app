@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Platform, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTranslation } from 'react-i18next';
@@ -37,9 +37,12 @@ export function WhenTiles({
   const { t } = useTranslation();
   const theme = useTheme();
   const [open, setOpen] = useState<Mode | null>(null);
+  const modeRef = useRef<Mode>('date');
+  if (open) modeRef.current = open;
+  const pickerMode = open ?? modeRef.current;
   const close = () => setOpen(null);
-  const value = open === 'time' ? time : date;
-  const onChange = open === 'time' ? onTimeChange : onDateChange;
+  const value = pickerMode === 'time' ? time : date;
+  const onChange = pickerMode === 'time' ? onTimeChange : onDateChange;
   const handlers = createDatePickerHandlers(onChange, close);
 
   return (
@@ -65,14 +68,14 @@ export function WhenTiles({
         />
       </View>
 
-      {open && Platform.OS !== 'android' ? (
-        <BottomSheet visible onClose={close} scrollable={false} heightRatio={0.46}>
+      {Platform.OS !== 'android' ? (
+        <BottomSheet visible={open !== null} onClose={close} scrollable={false} heightRatio={0.46}>
           <View style={{ alignItems: 'center' }}>
             <DateTimePicker
               value={value ?? new Date()}
-              mode={open}
+              mode={pickerMode}
               display="spinner"
-              minimumDate={open === 'date' ? minimumDate : undefined}
+              minimumDate={pickerMode === 'date' ? minimumDate : undefined}
               themeVariant={theme.mode === 'dark' ? 'dark' : 'light'}
               {...handlers}
             />

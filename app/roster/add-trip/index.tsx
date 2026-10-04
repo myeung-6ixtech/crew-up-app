@@ -176,8 +176,8 @@ export default function AddTripScreen() {
         }}
       />
 
-      {dateOpen && Platform.OS !== 'android' ? (
-        <BottomSheet visible onClose={closeDate} scrollable={false} heightRatio={0.46}>
+      {Platform.OS !== 'android' ? (
+        <BottomSheet visible={dateOpen} onClose={closeDate} scrollable={false} heightRatio={0.46}>
           <View style={{ alignItems: 'center' }}>
             <DateTimePicker
               value={flightDate ?? today}

@@ -84,8 +84,8 @@ export function DobField({
         </Text>
       ) : null}
 
-      {open && Platform.OS !== 'android' ? (
-        <BottomSheet visible onClose={close} title={label} scrollable={false} heightRatio={0.46}>
+      {Platform.OS !== 'android' ? (
+        <BottomSheet visible={open} onClose={close} title={label} scrollable={false} heightRatio={0.46}>
           <View style={{ alignItems: 'center' }}>
             <DateTimePicker
               value={initial}
