@@ -68,6 +68,7 @@
         <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; background: #0E1113; color: #F7F8F4; padding: 4px 8px; border-radius: 3px;">2B</div>
         <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Upload your roster</div>
         <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">FROM 1B · ROSTER UPLOAD</div>
+        <div style="margin-left: auto; display: flex; gap: 2px; background: #D4D8CD; border-radius: 12px; padding: 2px;"><sc-for list="{{ platOpts }}" as="p" hint-placeholder-count="2"><div onClick="{{ p.onClick }}" style="height: 22px; padding: 0 9px; border-radius: 10px; background: {{ p.bg }}; color: {{ p.fg }}; display: flex; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; cursor: pointer;">{{ p.label }}</div></sc-for></div>
       </div>
       <div data-screen-label="R2 Upload" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
         <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
@@ -81,25 +82,41 @@
         </div>
         <div style="flex: 1; display: flex; flex-direction: column; padding: 22px 24px 0;">
           <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 27px; letter-spacing: -0.025em; line-height: 1.1; color: #0E1113; text-wrap: balance;">Upload your roster</div>
-          <div style="font-size: 14px; line-height: 1.55; color: #545a50; text-wrap: pretty; margin-top: 10px;">Choose the roster PDF or screenshot from your airline. We read your flights and layovers so you can check them before anything is saved.</div>
-          <div onClick="{{ onChoose }}" style="margin-top: 24px; border: 2px dashed #b9beb2; border-radius: 24px; background: #FFFFFF; padding: 28px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; cursor: pointer;">
-            <div style="width: 64px; height: 64px; border-radius: 32px; background: #A8E05F; display: flex; align-items: center; justify-content: center;"><svg width="28" height="28" viewBox="0 0 24 24"><path d="M12 15V4M7 8.5L12 4l5 4.5" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><path d="M4 14v4.5A1.5 1.5 0 005.5 20h13a1.5 1.5 0 001.5-1.5V14" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round"></path></svg></div>
-            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">{{ rFileTitle }}</div>
-            <div style="font-size: 12.5px; color: #6f7569;">{{ rFileSub }}</div>
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 5px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 500; color: #0E1113; background: #EAECE5; padding: 4px 8px; border-radius: 8px;">PDF</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 500; color: #0E1113; background: #EAECE5; padding: 4px 8px; border-radius: 8px;">PNG</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 500; color: #0E1113; background: #EAECE5; padding: 4px 8px; border-radius: 8px;">JPEG</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 500; color: #0E1113; background: #EAECE5; padding: 4px 8px; border-radius: 8px;">HEIC</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 500; color: #0E1113; background: #EAECE5; padding: 4px 8px; border-radius: 8px;">WEBP</div></div>
+          <div style="font-size: 14px; line-height: 1.55; color: #545a50; text-wrap: pretty; margin-top: 10px;">Pick a screenshot from your photos or the PDF from your airline. You check everything before it’s saved.</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #545a50; margin-top: 24px;">WHERE IS YOUR ROSTER SAVED?</div>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+            <div onClick="{{ srcPhotos.onClick }}" style="background: #FFFFFF; border-radius: 22px; border: 2px solid {{ srcPhotos.border }}; padding: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer;">
+              <div style="width: 54px; height: 54px; border-radius: 16px; background: #A8E05F; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="24" height="24" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3" stroke="#0E1113" stroke-width="2" fill="none"></rect><circle cx="9" cy="9.5" r="1.8" fill="#0E1113"></circle><path d="M4 17l5-4.5 3.5 3 3-2.5L20 17" stroke="#0E1113" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></div>
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16.5px; color: #0E1113;">{{ srcPhotos.title }}</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #4F6E19;">SCREENSHOT</div></div>
+                <div style="font-size: 12.5px; line-height: 1.4; color: {{ srcPhotos.subFg }};">{{ srcPhotos.sub }}</div>
+                <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px;"><sc-for list="{{ srcPhotos.fmts }}" as="x" hint-placeholder-count="2"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; color: #0E1113; background: #EAECE5; padding: 3px 7px; border-radius: 7px;">{{ x }}</div></sc-for></div>
+              </div>
+              <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;"><div style="flex: 1; height: 1px; background: #DDE1D6;"></div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #9aa092;">OR</div><div style="flex: 1; height: 1px; background: #DDE1D6;"></div></div>
+            <div onClick="{{ srcFiles.onClick }}" style="background: #FFFFFF; border-radius: 22px; border: 2px solid {{ srcFiles.border }}; padding: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer;">
+              <div style="width: 54px; height: 54px; border-radius: 16px; background: #0E1113; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="22" height="24" viewBox="0 0 22 24"><path d="M4 2h9l5 5v14a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#A8E05F" stroke-width="2" fill="none" stroke-linejoin="round"></path><path d="M13 2v5h5" stroke="#A8E05F" stroke-width="2" fill="none" stroke-linejoin="round"></path><path d="M7 13h8M7 17h5" stroke="#A8E05F" stroke-width="2" stroke-linecap="round"></path></svg></div>
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px;"><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16.5px; color: #0E1113;">{{ srcFiles.title }}</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #4F6E19;">PDF</div></div>
+                <div style="font-size: 12.5px; line-height: 1.4; color: {{ srcFiles.subFg }};">{{ srcFiles.sub }}</div>
+                <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px;"><sc-for list="{{ srcFiles.fmts }}" as="x" hint-placeholder-count="2"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; color: #0E1113; background: #EAECE5; padding: 3px 7px; border-radius: 7px;">{{ x }}</div></sc-for></div>
+              </div>
+              <svg width="8" height="14" viewBox="0 0 8 14" style="flex-shrink: 0;"><path d="M1.5 1.5L6.5 7l-5 5.5" stroke="#9aa092" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
           </div>
           <div style="display: flex; gap: 10px; align-items: flex-start; background: #EAECE5; border-radius: 14px; padding: 13px 14px; margin-top: 14px;">
             <svg width="16" height="18" viewBox="0 0 16 18" style="flex-shrink: 0; margin-top: 1px;"><path d="M8 1l6 2.5v5c0 4-2.6 7-6 8.5-3.4-1.5-6-4.5-6-8.5v-5z" fill="#0E1113"></path><path d="M5 9l2 2 4-4" stroke="#A8E05F" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
             <div style="font-size: 12.5px; line-height: 1.5; color: #3d4239;">Names, staff numbers and hotels are removed before your roster is read.</div>
           </div>
         </div>
-        <div style="flex-shrink: 0; margin-top: auto; padding: 14px 24px 14px; display: flex; flex-direction: column; gap: 10px;"><div onClick="{{ onChoose }}" style="height: 56px; border-radius: 28px; background: {{ rChooseBg }}; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113; cursor: pointer;">{{ rChooseLabel }}</div>
+        <div style="flex-shrink: 0; margin-top: auto; padding: 14px 24px 14px; display: flex; flex-direction: column; gap: 10px;">
             <div style="height: 54px; box-sizing: border-box; border-radius: 27px; border: 1.5px solid #c9cec1; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #0E1113; cursor: pointer;">Enter manually</div>
             <div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center; margin-top: 6px;"></div>
           </div>
       </div>
       <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
-        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Opens from Roster upload on <a href="#1b">1B</a>. Tap the drop zone or Choose file to see “Reading your roster…”.</div>
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Opens from Roster upload on <a href="#1b">1B</a>. Two clearly separate sources: screenshots open the photo picker, PDFs open the file browser. Switch iOS / Android above the phone to see each platform’s wording. Tapping a source opens <a href="#2f">2F</a>.</div>
       </sc-if>
     </div>
 
@@ -273,54 +290,54 @@
         <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 17px; color: #0E1113;">Reading your roster</div>
         <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #6f7569;">PLANNED · §5.9</div>
       </div>
-      <div data-screen-label="R6 Processing" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #F7F8F4; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
-        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #0E1113;">
+      <div data-screen-label="R6 Processing" style="width: 390px; height: 844px; box-sizing: border-box; border-radius: 52px; border: 10px solid #0E1113; background: #0E1113; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(14,17,19,0.18);">
+        <div style="height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-weight: 600; font-size: 14px; color: #EDF1F2;">
           <div>9:41</div>
-          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7b8076;">DXB</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; color: #7d878b;">DXB</div>
         </div>
-        <div style="display: flex; align-items: center; gap: 14px; padding: 6px 20px 0; flex-shrink: 0;">
-          <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #EAECE5; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="10" height="16" viewBox="0 0 10 16"><path d="M8 2L2 8l6 6" stroke="#0E1113" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
-          <div style="flex: 1; text-align: center; font-size: 14px; font-weight: 600; color: #545a50;">Upload roster</div>
-          <div style="width: 40px; text-align: right; font-size: 14px; font-weight: 600; color: #0E1113;"></div>
+        <div style="text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #7d878b; padding-top: 6px;">ROSTER_OCT2026.PDF · PAGE {{ rdPage }} OF 3</div>
+        <div style="flex: 1; display: flex; flex-direction: column; padding: 0 28px;">
+          <div style="position: relative; width: 236px; height: 268px; align-self: center; margin-top: 22px; flex-shrink: 0;">
+            <div style="position: absolute; left: 16px; right: -16px; top: 14px; bottom: -14px; border-radius: 14px; background: #2c3134;"></div>
+            <div style="position: absolute; left: 8px; right: -8px; top: 7px; bottom: -7px; border-radius: 14px; background: #4A5256;"></div>
+            <div style="position: absolute; inset: 0; border-radius: 14px; background: #F7F8F4; padding: 16px 14px; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; overflow: hidden;">
+              <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 6px; border-bottom: 1px solid #DDE1D6;"><div style="width: 90px; height: 7px; border-radius: 4px; background: #0E1113;"></div><div style="width: 40px; height: 7px; border-radius: 4px; background: #C9CEC1;"></div></div>
+              <sc-for list="{{ docRows }}" as="r" hint-placeholder-count="9">
+                <div style="height: 18px; border-radius: 6px; background: {{ r.bg }}; display: flex; align-items: center; gap: 6px; padding: 0 6px; transition: background 300ms ease;">
+                  <div style="width: 22px; height: 5px; border-radius: 3px; background: {{ r.dateBar }};"></div>
+                  <div style="width: {{ r.w }}; height: 5px; border-radius: 3px; background: {{ r.bar }};"></div>
+                  <div style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; font-weight: 500; color: {{ r.tagFg }}; background: {{ r.tagBg }}; padding: 1px 5px; border-radius: 4px; opacity: {{ r.tagOp }}; transition: opacity 300ms ease;">{{ r.tag }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="position: absolute; left: -10px; right: -10px; top: {{ scanTop }}; height: 2px; border-radius: 1px; background: #A8E05F; box-shadow: 0 0 18px 4px rgba(168,224,95,0.55); opacity: {{ scanOp }}; transition: top 100ms linear, opacity 300ms ease;"></div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; margin-top: 34px;">
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 27px; letter-spacing: -0.025em; line-height: 1.1; color: #EDF1F2;">{{ rdTitle }}</div>
+            <div style="font-size: 14px; line-height: 1.5; color: #A7B1B5; max-width: 290px; text-wrap: balance;">{{ rdSub }}</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 22px;">
+            <div style="height: 6px; border-radius: 3px; background: #2c3134; overflow: hidden;"><div style="width: {{ rdPct }}; height: 100%; border-radius: 3px; background: #A8E05F; transition: width 100ms linear;"></div></div>
+            <div style="display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em;"><div style="color: #A8E05F;">{{ rdStage }}</div><div style="color: #7d878b;">{{ rdPct }}</div></div>
+          </div>
+          <div style="display: flex; gap: 10px; margin-top: 18px;">
+            <div style="flex: 1; background: #1C2124; border: 1px solid #2c3134; border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; color: #7d878b;">FLIGHTS FOUND</div><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 24px; color: #EDF1F2;">{{ rdFlights }}</div></div>
+            <div style="flex: 1; background: #1C2124; border: 1px solid #2c3134; border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; color: #7d878b;">LAYOVERS</div><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 24px; color: #EDF1F2;">{{ rdLayovers }}</div></div>
+          </div>
+          <div style="margin-top: auto; padding-bottom: 14px; display: flex; flex-direction: column; gap: 10px;">
+            <sc-if value="{{ rdReady }}" hint-placeholder-val="{{ false }}">
+              <div style="height: 56px; border-radius: 28px; background: #A8E05F; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 16px; color: #0E1113; cursor: pointer;">Review month</div>
+            </sc-if>
+            <sc-if value="{{ rdBusy }}" hint-placeholder-val="{{ true }}">
+              <div style="font-size: 12.5px; color: #7d878b; text-align: center;">Keep CrewUp open — this usually takes under 10 seconds.</div>
+              <div style="height: 44px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #A7B1B5; cursor: pointer;">Cancel import</div>
+            </sc-if>
+            <div style="width: 134px; height: 5px; border-radius: 3px; background: #EDF1F2; align-self: center; margin-top: 6px;"></div>
+          </div>
         </div>
-        <div style="flex: 1; display: flex; flex-direction: column; padding: 22px 24px 0;">
-          <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 27px; letter-spacing: -0.025em; line-height: 1.1; color: #0E1113; text-wrap: balance;">Reading your roster</div>
-          <div style="font-size: 14px; line-height: 1.55; color: #545a50; text-wrap: pretty; margin-top: 10px;">Usually under 10 seconds. You can leave — we'll tell you when it's ready to review.</div>
-          <div style="margin-top: 22px; background: #FFFFFF; border-radius: 18px; padding: 14px; display: flex; align-items: center; gap: 12px;">
-            <div style="width: 42px; height: 50px; border-radius: 8px; background: #0E1113; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; box-sizing: border-box; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 500; color: #A8E05F;">PDF</div>
-            <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 14.5px; font-weight: 600; color: #0E1113;">Roster_Oct2026.pdf</div><div style="font-size: 12px; color: #6f7569;">3 pages · 240 KB</div></div>
-          </div>
-          <div style="height: 6px; border-radius: 3px; background: #DDE1D6; margin-top: 18px; overflow: hidden;"><div style="width: 58%; height: 100%; border-radius: 3px; background: #A8E05F;"></div></div>
-          <div style="display: flex; flex-direction: column; margin-top: 8px;">
-            <div style="display: flex; align-items: center; gap: 14px; padding: 12px 0;">
-              <div style="width: 22px; height: 22px; border-radius: 11px; background: #0E1113; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l2.8 2.8L9 1.2" stroke="#A8E05F" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
-              <div style="font-size: 15px; font-weight: 600; color: #0E1113;">Uploading</div>
-              
-            </div>
-            <div style="display: flex; align-items: center; gap: 14px; padding: 12px 0;">
-              <div style="width: 22px; height: 22px; border-radius: 11px; background: #0E1113; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l2.8 2.8L9 1.2" stroke="#A8E05F" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
-              <div style="font-size: 15px; font-weight: 600; color: #0E1113;">Reading pages</div>
-              
-            </div>
-            <div style="display: flex; align-items: center; gap: 14px; padding: 12px 0;">
-              <div style="width: 22px; height: 22px; border-radius: 11px; border: 3px solid #A8E05F; border-top-color: #0E1113; box-sizing: border-box; flex-shrink: 0;"></div>
-              <div style="font-size: 15px; font-weight: 600; color: #0E1113;">Finding flights</div>
-              <div style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #4F6E19;">NOW</div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 14px; padding: 12px 0;">
-              <div style="width: 22px; height: 22px; border-radius: 11px; border: 2px solid #C9CEC1; box-sizing: border-box; flex-shrink: 0;"></div>
-              <div style="font-size: 15px; font-weight: 500; color: #6f7569;">Checking schedules</div>
-              
-            </div>
-          </div>
-        </div>
-        <div style="flex-shrink: 0; margin-top: auto; padding: 14px 24px 14px; display: flex; flex-direction: column; gap: 10px;"><div style="height: 54px; box-sizing: border-box; border-radius: 27px; border: 1.5px solid #c9cec1; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #0E1113; cursor: pointer;">Leave and notify me</div>
-            <div style="height: 44px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; color: #0E1113; cursor: pointer;">Cancel import</div>
-            <div style="width: 134px; height: 5px; border-radius: 3px; background: #0E1113; align-self: center; margin-top: 6px;"></div>
-          </div>
       </div>
       <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
-        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Four named stages, a real progress bar, and permission to leave — a Home banner says when it’s ready.</div>
+        <div style="font-size: 13px; line-height: 1.55; color: #4d534a; text-wrap: pretty;">Full-page, dark wait state. The roster is scanned page by page; flights light up in lime as they’re found and the counters climb. When it finishes, Review month opens <a href="#2g">2G</a>. Runs on a loop here.</div>
       </sc-if>
     </div>
 
@@ -1136,6 +1153,12 @@
 class Component extends DCLogic {
   componentDidMount() {
     this._lt = new WeakMap();
+    this._hold = 0;
+    this._pi = setInterval(() => {
+      const p = this.state.rProg;
+      if (p >= 100) { if (++this._hold > 28) { this._hold = 0; this.setState({ rProg: 0 }); } return; }
+      this.setState({ rProg: Math.min(100, p + (p < 40 ? 1.4 : 0.9)) });
+    }, 100);
     this._onS = e => {
       const el = e.target;
       if (!el || !el.getAttribute || el.getAttribute('data-scroll') !== 'true') return;
@@ -1151,8 +1174,8 @@ class Component extends DCLogic {
     };
     document.addEventListener('scroll', this._onS, true);
   }
-  componentWillUnmount() { document.removeEventListener('scroll', this._onS, true); }
-  state = { arr: 'LHR', dateSet: true, flight: 0, saved: false, swapped: false, rReading: false, rEntries: [{ city: 'Bangkok', range: '3 Oct 12:50 – 4 Oct 19:40' }], rNext: 0, showSkipped: false, vis: 'All verified crew', sameFlight: true };
+  componentWillUnmount() { document.removeEventListener('scroll', this._onS, true); clearInterval(this._pi); }
+  state = { arr: 'LHR', dateSet: true, flight: 0, saved: false, swapped: false, rReading: false, rSrc: null, plat: 'ios', rProg: 0, rEntries: [{ city: 'Bangkok', range: '3 Oct 12:50 – 4 Oct 19:40' }], rNext: 0, showSkipped: false, vis: 'All verified crew', sameFlight: true };
   renderVals() {
     const s = this.state;
     const AIR = [['LHR', 'Heathrow'], ['LGW', 'Gatwick'], ['LCY', 'London City'], ['STN', 'Stansted'], ['LTN', 'Luton']];
@@ -1163,6 +1186,9 @@ class Component extends DCLogic {
       { no: 'EK007', airline: 'Emirates', dep: '20:20', arr: '00:35', until: '08:35', arrDate: '9 Oct', nextDay: true }
     ];
     const f = s.flight == null ? FL[0] : FL[s.flight];
+    const rp = s.rProg;
+    const rf = Math.floor(Math.min(6, Math.max(0, (rp - 40) / 35 * 6.01)));
+    const pick = (k, title, sub, fmts, busy) => { const on = s.rReading && s.rSrc === k; return { title, sub: on ? busy : sub, subFg: on ? '#4F6E19' : '#545a50', fmts, border: on ? '#0E1113' : '#FFFFFF', onClick: () => { if (s.rReading) return; this.setState({ rReading: true, rSrc: k }); clearTimeout(this._r); this._r = setTimeout(() => this.setState({ rReading: false, rSrc: null }), 1800); } }; };
     const NEXT = [{ city: 'Hong Kong', start: '8 Oct 14:35', end: '9 Oct 21:15' }, { city: 'Tokyo', start: '14 Oct 17:35', end: '15 Oct 22:30' }, { city: 'Singapore', start: '22 Oct 08:10', end: '23 Oct 01:25' }, { city: 'Seoul', start: '27 Oct 15:20', end: '28 Oct 23:45' }];
     const VIS = ['Off', 'Friends', 'Friends of friends', 'Same airline', 'All verified crew'];
     const ok = s.dateSet;
@@ -1184,6 +1210,17 @@ class Component extends DCLogic {
       saveBg: s.saved ? '#B8EA74' : '#A8E05F',
       onSave: () => this.setState(st => ({ saved: !st.saved })),
       onChoose: () => { if (s.rReading) return; this.setState({ rReading: true }); clearTimeout(this._r); this._r = setTimeout(() => this.setState({ rReading: false }), 2400); },
+      platOpts: [['ios', 'iOS'], ['android', 'Android']].map(([k, label]) => ({ label, bg: s.plat === k ? '#0E1113' : 'transparent', fg: s.plat === k ? '#F7F8F4' : '#0E1113', onClick: () => this.setState({ plat: k }) })),
+      srcPhotos: pick('photos', s.plat === 'ios' ? 'Photo Library' : 'Gallery', 'A screenshot of your roster app', s.plat === 'ios' ? ['PNG', 'JPEG', 'HEIC'] : ['PNG', 'JPEG', 'WEBP'], s.plat === 'ios' ? 'Opening Photos…' : 'Opening Gallery…'),
+      srcFiles: pick('files', s.plat === 'ios' ? 'Files' : 'Files & Drive', s.plat === 'ios' ? 'The PDF from Files, Mail or iCloud Drive' : 'The PDF from Downloads or Google Drive', ['PDF'], s.plat === 'ios' ? 'Opening Files…' : 'Opening Files…'),
+      rdPct: Math.floor(rp) + '%', rdPage: Math.min(3, Math.floor(rp / 34) + 1),
+      scanTop: ((rp % 34) / 34 * 100).toFixed(1) + '%', scanOp: rp >= 100 ? 0 : 1,
+      rdStage: rp < 15 ? 'UPLOADING' : rp < 40 ? 'READING PAGES' : rp < 75 ? 'FINDING FLIGHTS' : rp < 100 ? 'CHECKING SCHEDULES' : 'DONE',
+      rdTitle: rp >= 100 ? 'Your month is ready' : 'Reading your roster',
+      rdSub: rp >= 100 ? '6 flights in 3 trips. Check them before anything is saved.' : rp < 40 ? 'Removing names, staff numbers and hotels first.' : 'Finding your flights and layovers.',
+      rdFlights: rf, rdLayovers: Math.floor(Math.min(3, Math.max(0, (rp - 55) / 45 * 3.01))),
+      rdReady: rp >= 100, rdBusy: rp < 100,
+      docRows: [['OFF',''],['EK384','f'],['EK385','f'],['OFF',''],['EK380','f'],['EK381','f'],['SBY',''],['EK318','f'],['EK319','f']].map(([tag, t]) => { const idx = ['EK384','EK385','EK380','EK381','EK318','EK319'].indexOf(tag); const on = t === 'f' && idx < rf; return { tag, w: t === 'f' ? '52%' : '30%', bg: on ? '#EEF7DF' : 'transparent', dateBar: on ? '#4F6E19' : '#C9CEC1', bar: on ? '#0E1113' : (t === 'f' ? '#B9BEB2' : '#DDE1D6'), tagBg: on ? '#A8E05F' : 'transparent', tagFg: on ? '#0E1113' : '#9aa092', tagOp: t === 'f' ? (on ? 1 : 0) : 1 }; }),
       rChooseLabel: s.rReading ? 'Reading your roster…' : 'Choose file',
       rChooseBg: s.rReading ? '#DDE1D6' : '#A8E05F',
       rFileTitle: s.rReading ? 'Roster_Oct2026.pdf' : 'Choose your roster',

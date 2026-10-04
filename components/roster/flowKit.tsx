@@ -98,7 +98,7 @@ export function FlowFooter({
   bottomInset,
   above,
 }: {
-  primary: FooterAction;
+  primary?: FooterAction;
   secondary?: FooterAction;
   tertiary?: FooterAction;
   bottomInset: number;
@@ -108,7 +108,7 @@ export function FlowFooter({
   return (
     <View style={{ paddingTop: 16, paddingHorizontal: 24, paddingBottom: Math.max(bottomInset, 14), gap: 10, backgroundColor: theme.colors.bgCanvas }}>
       {above}
-      <PillCta label={primary.label} onPress={primary.onPress} disabled={primary.disabled} loading={primary.loading} />
+      {primary ? <PillCta label={primary.label} onPress={primary.onPress} disabled={primary.disabled} loading={primary.loading} /> : null}
       {secondary ? (
         <Pressable
           accessibilityRole="button"

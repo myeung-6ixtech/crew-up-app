@@ -13,6 +13,8 @@ import type { ParsedRosterEntry, RosterEntry } from '@/types/domain';
 export async function uploadAndParseRoster(
   client: ApolloClient,
   params: { uri: string; name: string; mimeType: string },
+  /** Called once the file is stored, before it is read. */
+  onUploaded?: () => void,
 ) {
   const fileId = await uploadFile({
     uri: params.uri,
@@ -20,6 +22,7 @@ export async function uploadAndParseRoster(
     mimeType: params.mimeType,
     bucketId: STORAGE_BUCKETS.rosters,
   });
+  onUploaded?.();
   const parsed = await parseRoster(client, fileId);
   return { fileId, parsed };
 }
