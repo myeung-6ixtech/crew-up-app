@@ -1,13 +1,22 @@
 import type { ApolloClient } from '@apollo/client';
 import { PARSE_ROSTER, SUBMIT_REPORT } from '@/graphql/mutations/actions';
-import type { ParsedRosterEntry } from '@/types/domain';
+import type { ParsedRosterEntry, ParsedRosterTrip } from '@/types/domain';
+
+export interface ParsedRosterResult {
+  sourceFileId: string;
+  entries: ParsedRosterEntry[];
+  homeBase?: string | null;
+  /** Null from function builds that predate trip grouping. */
+  trips?: ParsedRosterTrip[] | null;
+  skippedDuties?: number | null;
+}
 
 export async function parseRoster(
   client: ApolloClient,
   fileId: string,
-) {
+): Promise<ParsedRosterResult | undefined> {
   const { data } = await client.mutate<{
-    parseRoster: { sourceFileId: string; entries: ParsedRosterEntry[] };
+    parseRoster: ParsedRosterResult;
   }>({
     mutation: PARSE_ROSTER,
     variables: { fileId },

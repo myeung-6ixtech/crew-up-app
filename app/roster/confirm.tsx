@@ -6,23 +6,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DateTimeTile, formatShortDateTime } from '@/components/roster/DateTimeTile';
 import { FlowFooter, FlowTitle, FlowTopBar, WarnChip } from '@/components/roster/flowKit';
 import { Screen } from '@/components/ui';
-import { AIRPORTS } from '@/constants/airports';
 import { SCREENS } from '@/constants/screens';
 import { MonoLabel, TextAction } from '@/features/onboarding/components/kit';
+import { formatAirportDate, formatAirportTimeWithZone } from '@/lib/airportTime';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
 import { insertRosters, mapParsedToRosterInsert } from '@/services/rosterService';
-import { createTripsFromRosterLayovers } from '@/services/tripService';
+import { createTripsFromRoster, createTripsFromRosterLayovers, rosterTripRoute } from '@/services/tripService';
 import { useRosterDraftStore } from '@/stores/rosterDraftStore';
 import { fontFamily, useTheme } from '@/theme';
-import type { ParsedRosterEntry } from '@/types/domain';
-
-function cityCode(city?: string | null) {
-  const needle = city?.trim().toLowerCase();
-  if (!needle) return null;
-  if (/^[a-z]{3}$/.test(needle)) return AIRPORTS.find((airport) => airport.iata.toLowerCase() === needle)?.iata ?? null;
-  return AIRPORTS.find((airport) => airport.city.toLowerCase() === needle)?.iata ?? null;
-}
+import type { ParsedRosterEntry, ParsedRosterLeg, ParsedRosterTrip } from '@/types/domain';
 
 function parseIso(value?: string | null) {
   if (!value) return null;
@@ -60,15 +53,129 @@ function CityInput({ label, value, onChangeText, height = 50 }: { label: string;
   );
 }
 
-/** Confirm layovers: correct what the roster found, or add layovers by hand. Nothing is saved before Save. */
+function shortDay(iso: string, code: string | null) {
+  return formatAirportDate(iso, code, { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
+function LegRow({ leg }: { leg: ParsedRosterLeg }) {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+      <Text style={{ width: 62, fontFamily: fontFamily.monoMedium, fontSize: 12.5, color: theme.colors.textPrimary }}>{leg.flightNumber ?? '—'}</Text>
+      <View style={{ flex: 1, gap: 1 }}>
+        <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 14, color: theme.colors.textPrimary }}>
+          {`${leg.departureAirport} → ${leg.arrivalAirport}`}
+        </Text>
+        <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textSecondary }}>
+          {`${shortDay(leg.scheduledDeparture, leg.departureAirport)} · ${formatAirportTimeWithZone(leg.scheduledDeparture, leg.departureAirport)}`}
+        </Text>
+      </View>
+      {leg.lowConfidence ? <WarnChip label={t('rosterFlow.checkLeg')} /> : null}
+      {leg.deadhead ? (
+        <Text style={{ fontFamily: fontFamily.monoMedium, fontSize: 10, color: theme.colors.textSecondary }}>{t('rosterFlow.deadhead')}</Text>
+      ) : null}
+    </View>
+  );
+}
+
+function LayoverEditor({ entry, onChange }: { entry: ParsedRosterEntry; onChange: (entry: ParsedRosterEntry) => void }) {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const start = parseIso(entry.layoverStart);
+  const end = parseIso(entry.layoverEnd);
+  const missingCity = !entry.layoverCity?.trim();
+  return (
+    <View style={{ backgroundColor: theme.colors.field, borderRadius: 14, padding: 10, gap: 8 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <MonoLabel style={{ fontSize: 10 }}>{t('rosterFlow.layoverIn')}</MonoLabel>
+        {missingCity ? <WarnChip label={t('rosterFlow.checkCity')} /> : null}
+      </View>
+      <CityInput label={t('rosterFlow.city')} value={entry.layoverCity ?? ''} onChangeText={(value) => onChange({ ...entry, layoverCity: value })} />
+      <View style={{ flexDirection: 'row', gap: 8 }}>
+        <DateTimeTile style={{ flex: 1 }} label={t('rosterFlow.start')} value={start} onChange={(value) => onChange({ ...entry, layoverStart: value.toISOString() })} />
+        <DateTimeTile
+          style={{ flex: 1 }}
+          label={t('rosterFlow.end')}
+          value={end}
+          minimumDate={start ?? undefined}
+          invalid={Boolean(start && end && end.getTime() < start.getTime())}
+          onChange={(value) => onChange({ ...entry, layoverEnd: value.toISOString() })}
+        />
+      </View>
+    </View>
+  );
+}
+
+/** The layover that follows a leg: it starts where and when that leg lands. */
+function layoverAfter(trip: ParsedRosterTrip, leg: ParsedRosterLeg) {
+  return trip.layovers.findIndex((layover) => layover.flightNumber === leg.flightNumber && layover.arrivalAirport === leg.arrivalAirport);
+}
+
+function TripReviewCard({
+  trip,
+  onLayoverChange,
+  onRemove,
+}: {
+  trip: ParsedRosterTrip;
+  onLayoverChange: (layoverIndex: number, entry: ParsedRosterEntry) => void;
+  onRemove: () => void;
+}) {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const first = trip.legs[0];
+  const last = trip.legs[trip.legs.length - 1];
+  const dates = first
+    ? [shortDay(first.scheduledDeparture, first.departureAirport), last && last !== first ? shortDay(last.scheduledArrival, last.arrivalAirport) : null]
+        .filter(Boolean)
+        .join(' – ')
+    : '';
+  const placed = new Set<number>();
+
+  return (
+    <View style={{ backgroundColor: theme.colors.card, borderRadius: 20, padding: 16, gap: 12 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+        <View style={{ flexShrink: 1, gap: 2 }}>
+          <Text numberOfLines={1} style={{ fontFamily: fontFamily.jakartaBold, fontSize: 17, letterSpacing: -0.3, color: theme.colors.textPrimary }}>
+            {rosterTripRoute(trip) || t('rosterFlow.cityTbd')}
+          </Text>
+          {dates ? <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, color: theme.colors.textSecondary }}>{dates}</Text> : null}
+        </View>
+        <TextAction label={t('rosterFlow.removeTrip')} onPress={onRemove} style={{ fontSize: 13, color: theme.colors.textSecondary }} />
+      </View>
+      {trip.legs.map((leg, legIndex) => {
+        const layoverIndex = layoverAfter(trip, leg);
+        if (layoverIndex >= 0) placed.add(layoverIndex);
+        const isLast = legIndex === trip.legs.length - 1;
+        return (
+          <View key={`${leg.flightNumber}-${leg.scheduledDeparture}`} style={{ gap: 10 }}>
+            <LegRow leg={leg} />
+            {layoverIndex >= 0 ? (
+              <LayoverEditor entry={trip.layovers[layoverIndex]} onChange={(entry) => onLayoverChange(layoverIndex, entry)} />
+            ) : !isLast ? (
+              <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textTertiary, marginLeft: 72 }}>{t('rosterFlow.noLayover')}</Text>
+            ) : null}
+          </View>
+        );
+      })}
+      {trip.layovers.map((layover, index) =>
+        placed.has(index) ? null : <LayoverEditor key={`layover-${index}`} entry={layover} onChange={(entry) => onLayoverChange(index, entry)} />,
+      )}
+    </View>
+  );
+}
+
+/** Confirm a roster: review the trips it found, or add layovers by hand. Nothing is saved before Save. */
 export default function RosterConfirmScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const client = useApolloClient();
-  const { entries, sourceFileId, updateEntry, removeEntry, addEntry, clear } = useRosterDraftStore();
+  const { entries, trips, sourceFileId, removeEntry, addEntry, updateTripLayover, removeTrip, clear } = useRosterDraftStore();
   const fromFile = Boolean(sourceFileId);
+  const flightCount = trips.reduce((sum, trip) => sum + trip.legs.length, 0);
+  const layoverCount = trips.reduce((sum, trip) => sum + trip.layovers.length, 0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [newCity, setNewCity] = useState('');
@@ -76,12 +183,15 @@ export default function RosterConfirmScreen() {
   const [newEnd, setNewEnd] = useState<Date | null>(null);
 
   const month = useMemo(() => {
-    const first = entries.map((entry) => parseIso(entry.layoverStart)).find(Boolean);
+    const first = trips
+      .flatMap((trip) => [trip.legs[0]?.scheduledDeparture, trip.layovers[0]?.layoverStart])
+      .map((value) => parseIso(value))
+      .find(Boolean);
     return first ? first.toLocaleDateString(undefined, { month: 'long' }) : null;
-  }, [entries]);
+  }, [trips]);
 
   const draftReady = Boolean(newCity.trim() && newStart);
-  const count = entries.length + (draftReady ? 1 : 0);
+  const count = fromFile ? trips.length : entries.length + (draftReady ? 1 : 0);
 
   const addDraft = () => {
     if (!draftReady || !newStart) return;
@@ -93,7 +203,37 @@ export default function RosterConfirmScreen() {
     setNewEnd(null);
   };
 
+  const saveTrips = async () => {
+    if (!trips.length) return;
+    const layovers = trips.flatMap((trip) => trip.layovers);
+    if (layovers.some((entry) => !entry.layoverCity?.trim())) {
+      hapticError();
+      setError(t('rosterFlow.cityMissing'));
+      return;
+    }
+    if (layovers.some((entry) => (parseIso(entry.layoverEnd)?.getTime() ?? 0) < (parseIso(entry.layoverStart)?.getTime() ?? 0))) {
+      hapticError();
+      setError(t('rosterFlow.endBeforeStart'));
+      return;
+    }
+    setSaving(true);
+    setError('');
+    try {
+      await createTripsFromRoster(trips, sourceFileId);
+      if (layovers.length) await insertRosters(client, mapParsedToRosterInsert(layovers, sourceFileId));
+      hapticSuccess();
+      clear();
+      router.replace(SCREENS.tabs.home);
+    } catch {
+      hapticError();
+      setError(t('addTrip.saveTripError'));
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const onSave = async () => {
+    if (fromFile) return saveTrips();
     const all: ParsedRosterEntry[] = [...entries];
     if (draftReady && newStart) {
       const end = newEnd && newEnd.getTime() > newStart.getTime() ? newEnd : newStart;
@@ -144,79 +284,25 @@ export default function RosterConfirmScreen() {
           <FlowTitle>{t('roster.confirm')}</FlowTitle>
           <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, lineHeight: 22, color: theme.colors.textSecondary, marginTop: 8 }}>
             {fromFile
-              ? month
-                ? t('rosterFlow.foundIn', { count: entries.length, month })
-                : t('rosterFlow.found', { count: entries.length })
+              ? t('rosterFlow.tripsIntro', {
+                  trips: t('rosterFlow.tripsCount', { count: trips.length }),
+                  flights: t('rosterFlow.flightsCount', { count: flightCount }),
+                  layovers: t('rosterFlow.layoversCount', { count: layoverCount }),
+                  month: month ? t('rosterFlow.inMonth', { month }) : '',
+                })
               : t('rosterFlow.manualIntro')}
           </Text>
 
           <View style={{ gap: 10, marginTop: 18 }}>
             {fromFile
-              ? entries.map((entry, index) => {
-                  const code = cityCode(entry.layoverCity);
-                  const start = parseIso(entry.layoverStart);
-                  const end = parseIso(entry.layoverEnd);
-                  const missingCity = !entry.layoverCity?.trim();
-                  return (
-                    <View key={index} style={{ backgroundColor: theme.colors.card, borderRadius: 20, padding: 16, gap: 10 }}>
-                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flexShrink: 1 }}>
-                          <Text
-                            numberOfLines={1}
-                            style={{ fontFamily: fontFamily.jakartaBold, fontSize: 19, letterSpacing: -0.3, color: missingCity ? theme.colors.textTertiary : theme.colors.textPrimary, flexShrink: 1 }}>
-                            {missingCity ? t('rosterFlow.cityTbd') : entry.layoverCity}
-                          </Text>
-                          {code ? (
-                            <Text
-                              style={{
-                                fontFamily: fontFamily.monoMedium,
-                                fontSize: 11,
-                                color: theme.colors.onFill,
-                                backgroundColor: theme.colors.fill,
-                                paddingHorizontal: 8,
-                                paddingVertical: 3,
-                                borderRadius: 8,
-                                overflow: 'hidden',
-                              }}>
-                              {code}
-                            </Text>
-                          ) : null}
-                        </View>
-                        {missingCity ? (
-                          <WarnChip label={t('rosterFlow.checkCity')} />
-                        ) : (
-                          <TextAction label={t('rosterFlow.remove')} onPress={() => removeEntry(index)} style={{ fontSize: 13, color: theme.colors.textSecondary }} />
-                        )}
-                      </View>
-                      <CityInput
-                        label={t('rosterFlow.city')}
-                        value={entry.layoverCity ?? ''}
-                        onChangeText={(value) => updateEntry(index, { ...entry, layoverCity: value })}
-                      />
-                      <View style={{ flexDirection: 'row', gap: 8 }}>
-                        <DateTimeTile
-                          style={{ flex: 1 }}
-                          label={t('rosterFlow.start')}
-                          value={start}
-                          onChange={(value) => updateEntry(index, { ...entry, layoverStart: value.toISOString() })}
-                        />
-                        <DateTimeTile
-                          style={{ flex: 1 }}
-                          label={t('rosterFlow.end')}
-                          value={end}
-                          minimumDate={start ?? undefined}
-                          invalid={Boolean(start && end && end.getTime() < start.getTime())}
-                          onChange={(value) => updateEntry(index, { ...entry, layoverEnd: value.toISOString() })}
-                        />
-                      </View>
-                      {missingCity ? (
-                        <View style={{ alignItems: 'flex-end' }}>
-                          <TextAction label={t('rosterFlow.remove')} onPress={() => removeEntry(index)} style={{ fontSize: 13, color: theme.colors.textSecondary }} />
-                        </View>
-                      ) : null}
-                    </View>
-                  );
-                })
+              ? trips.map((trip, tripIndex) => (
+                  <TripReviewCard
+                    key={`${tripIndex}-${trip.legs[0]?.scheduledDeparture ?? trip.layovers[0]?.layoverStart ?? ''}`}
+                    trip={trip}
+                    onLayoverChange={(layoverIndex, entry) => updateTripLayover(tripIndex, layoverIndex, entry)}
+                    onRemove={() => removeTrip(tripIndex)}
+                  />
+                ))
               : entries.map((entry, index) => {
                   const start = parseIso(entry.layoverStart);
                   const end = parseIso(entry.layoverEnd);
@@ -274,7 +360,7 @@ export default function RosterConfirmScreen() {
         <FlowFooter
           bottomInset={insets.bottom}
           primary={{
-            label: count ? t('rosterFlow.saveCount', { count }) : t('common.save'),
+            label: count ? t(fromFile ? 'rosterFlow.saveTrips' : 'rosterFlow.saveCount', { count }) : t('common.save'),
             disabled: !count,
             loading: saving,
             onPress: () => void onSave(),

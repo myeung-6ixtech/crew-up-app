@@ -37,6 +37,7 @@ export type ProcessingPhase = 'uploading' | 'reading' | 'done';
 export function RosterProcessing({
   fileName,
   phase,
+  trips,
   flights,
   layovers,
   onReview,
@@ -44,6 +45,7 @@ export function RosterProcessing({
 }: {
   fileName: string;
   phase: ProcessingPhase;
+  trips: number;
   flights: number;
   layovers: number;
   onReview: () => void;
@@ -142,7 +144,7 @@ export function RosterProcessing({
           </Text>
           <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, lineHeight: 21, color: MUTED, textAlign: 'center', maxWidth: 290 }}>
             {done
-              ? t('rosterFlow.readyBody', { count: layovers })
+              ? t('rosterFlow.readyBody', { count: trips })
               : progress < 40
                 ? t('rosterFlow.readingRedacting')
                 : t('rosterFlow.readingFinding')}
@@ -173,7 +175,7 @@ export function RosterProcessing({
 
         <View style={{ marginTop: 'auto', paddingBottom: Math.max(insets.bottom, 14), gap: 10 }}>
           {done ? (
-            <DarkLimePill label={t('rosterFlow.reviewLayovers')} onPress={onReview} />
+            <DarkLimePill label={t('rosterFlow.reviewTrips')} onPress={onReview} />
           ) : (
             <>
               <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, color: FAINT, textAlign: 'center' }}>{t('rosterFlow.keepOpen')}</Text>

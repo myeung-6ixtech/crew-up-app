@@ -12,6 +12,28 @@ export const PARSE_ROSTER = gql`
         layoverStart
         layoverEnd
       }
+      homeBase
+      skippedDuties
+      trips {
+        legs {
+          flightNumber
+          departureAirport
+          arrivalAirport
+          serviceDate
+          scheduledDeparture
+          scheduledArrival
+          deadhead
+          lowConfidence
+        }
+        layovers {
+          flightNumber
+          departureAirport
+          arrivalAirport
+          layoverCity
+          layoverStart
+          layoverEnd
+        }
+      }
     }
   }
 `;

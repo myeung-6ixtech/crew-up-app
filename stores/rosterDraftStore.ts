@@ -1,20 +1,26 @@
 import { create } from 'zustand';
-import type { ParsedRosterEntry } from '@/types/domain';
+import type { ParsedRosterEntry, ParsedRosterTrip } from '@/types/domain';
 
 interface RosterDraftState {
   sourceFileId?: string;
+  /** Layovers typed in by hand (no file). */
   entries: ParsedRosterEntry[];
-  setDraft: (sourceFileId: string | undefined, entries: ParsedRosterEntry[]) => void;
+  /** Pairings read from an uploaded roster. */
+  trips: ParsedRosterTrip[];
+  setDraft: (sourceFileId: string | undefined, entries: ParsedRosterEntry[], trips?: ParsedRosterTrip[]) => void;
   updateEntry: (index: number, entry: ParsedRosterEntry) => void;
   removeEntry: (index: number) => void;
   addEntry: (entry: ParsedRosterEntry) => void;
+  updateTripLayover: (tripIndex: number, layoverIndex: number, entry: ParsedRosterEntry) => void;
+  removeTrip: (tripIndex: number) => void;
   clear: () => void;
 }
 
 export const useRosterDraftStore = create<RosterDraftState>((set) => ({
   sourceFileId: undefined,
   entries: [],
-  setDraft: (sourceFileId, entries) => set({ sourceFileId, entries }),
+  trips: [],
+  setDraft: (sourceFileId, entries, trips = []) => set({ sourceFileId, entries, trips }),
   updateEntry: (index, entry) =>
     set((state) => ({
       entries: state.entries.map((e, i) => (i === index ? entry : e)),
@@ -22,5 +28,14 @@ export const useRosterDraftStore = create<RosterDraftState>((set) => ({
   removeEntry: (index) =>
     set((state) => ({ entries: state.entries.filter((_, i) => i !== index) })),
   addEntry: (entry) => set((state) => ({ entries: [...state.entries, entry] })),
-  clear: () => set({ sourceFileId: undefined, entries: [] }),
+  updateTripLayover: (tripIndex, layoverIndex, entry) =>
+    set((state) => ({
+      trips: state.trips.map((trip, i) =>
+        i === tripIndex
+          ? { ...trip, layovers: trip.layovers.map((layover, j) => (j === layoverIndex ? entry : layover)) }
+          : trip,
+      ),
+    })),
+  removeTrip: (tripIndex) => set((state) => ({ trips: state.trips.filter((_, i) => i !== tripIndex) })),
+  clear: () => set({ sourceFileId: undefined, entries: [], trips: [] }),
 }));

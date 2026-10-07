@@ -6,7 +6,10 @@ export const GET_HOME_DATA = gql`
       where: {
         user_id: { _eq: $userId }
         is_active: { _eq: true }
-        starts_at: { _gte: $now }
+        _or: [
+          { ends_at: { _gte: $now } }
+          { _and: [{ ends_at: { _is_null: true } }, { starts_at: { _gte: $now } }] }
+        ]
       }
       order_by: { starts_at: asc }
       limit: 10

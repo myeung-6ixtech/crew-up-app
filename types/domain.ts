@@ -69,6 +69,24 @@ export interface ParsedRosterEntry {
   layoverEnd?: string | null;
 }
 
+export interface ParsedRosterLeg {
+  flightNumber?: string | null;
+  departureAirport: string;
+  arrivalAirport: string;
+  /** Departure date as printed at the origin (YYYY-MM-DD). */
+  serviceDate: string;
+  scheduledDeparture: string;
+  scheduledArrival: string;
+  deadhead: boolean;
+  lowConfidence: boolean;
+}
+
+/** One pairing from a roster: its flights and the layovers between them. */
+export interface ParsedRosterTrip {
+  legs: ParsedRosterLeg[];
+  layovers: ParsedRosterEntry[];
+}
+
 export type ActivityKind = 'activity' | 'interest';
 
 export interface Activity {

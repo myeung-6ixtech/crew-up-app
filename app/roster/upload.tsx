@@ -18,7 +18,7 @@ import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
 import { uploadAndParseRoster } from '@/services/rosterService';
 import { useRosterDraftStore } from '@/stores/rosterDraftStore';
 import { fontFamily, useTheme } from '@/theme';
-import type { ParsedRosterEntry } from '@/types/domain';
+import type { ParsedRosterEntry, ParsedRosterTrip } from '@/types/domain';
 
 const ROSTER_FILE_TYPES = ['application/pdf', 'image/png', 'image/jpeg', 'image/heic', 'image/webp'];
 const IOS = Platform.OS === 'ios';
@@ -165,7 +165,7 @@ export default function RosterUploadScreen() {
   const [opening, setOpening] = useState<Source | null>(null);
   const [file, setFile] = useState<PickedFile | null>(null);
   const [phase, setPhase] = useState<ProcessingPhase | null>(null);
-  const [result, setResult] = useState<{ fileId: string; entries: ParsedRosterEntry[] } | null>(null);
+  const [result, setResult] = useState<{ fileId: string; entries: ParsedRosterEntry[]; trips: ParsedRosterTrip[] } | null>(null);
   const runRef = useRef(0);
 
   const describeError = (e: unknown) => {
@@ -185,14 +185,17 @@ export default function RosterUploadScreen() {
         if (runRef.current === run) setPhase('reading');
       });
       if (runRef.current !== run) return;
-      if (!parsed?.entries?.length) {
+      const entries = parsed?.entries ?? [];
+      // Older function builds only return layovers; each one becomes its own trip.
+      const trips = parsed?.trips ?? entries.map((entry) => ({ legs: [], layovers: [entry] }));
+      if (!trips.length) {
         hapticError();
         setPhase(null);
         setError(t('roster.errors.noLayovers'));
         return;
       }
       hapticSuccess();
-      setResult({ fileId, entries: parsed.entries });
+      setResult({ fileId, entries, trips });
       setPhase('done');
     } catch (e) {
       if (runRef.current !== run) return;
@@ -211,7 +214,7 @@ export default function RosterUploadScreen() {
 
   const review = () => {
     if (!result) return;
-    setDraft(result.fileId, result.entries);
+    setDraft(result.fileId, result.entries, result.trips);
     setPhase(null);
     router.push(SCREENS.roster.confirm);
   };
@@ -248,8 +251,9 @@ export default function RosterUploadScreen() {
       <RosterProcessing
         fileName={file.name}
         phase={phase}
-        flights={result?.entries.filter((entry) => entry.flightNumber).length ?? 0}
-        layovers={result?.entries.length ?? 0}
+        trips={result?.trips.length ?? 0}
+        flights={result?.trips.reduce((sum, trip) => sum + trip.legs.length, 0) ?? 0}
+        layovers={result?.trips.reduce((sum, trip) => sum + trip.layovers.length, 0) ?? 0}
         onReview={review}
         onCancel={cancel}
       />

@@ -2,6 +2,7 @@ import type { ApolloClient } from '@apollo/client';
 import { apiEndpoints } from '@/lib/api/endpoints';
 import { nhost } from '@/lib/nhost';
 import { DELETE_TRIP, GET_MY_TRIPS, GET_TRIP_HISTORY, GET_TRIP_MATCHES } from '@/graphql/queries/trips';
+import type { ParsedRosterLeg, ParsedRosterTrip } from '@/types/domain';
 import type { TripEntry, TripMatchEntry } from '@/types/trip';
 
 async function authHeaders(): Promise<Record<string, string>> {
@@ -193,8 +194,6 @@ export async function createTripsFromRosterLayovers(
 ): Promise<void> {
   for (const entry of entries) {
     if (!entry.layoverCity?.trim() || !entry.layoverStart) continue;
-    if (entry.notes?.includes('duty:flight')) continue;
-    if (entry.flightNumber && entry.departureAirport) continue;
     await createTrip({
       source: 'roster_upload',
       stays: [
@@ -206,4 +205,67 @@ export async function createTripsFromRosterLayovers(
       ],
     });
   }
+}
+
+/** Deterministic UUID-shaped key, so saving the same roster twice returns the trips it already made. */
+function stableUuid(seed: string): string {
+  let hex = '';
+  for (let round = 0; hex.length < 32; round += 1) {
+    let hash = 0x811c9dc5 ^ round;
+    for (let index = 0; index < seed.length; index += 1) {
+      hash ^= seed.charCodeAt(index);
+      hash = Math.imul(hash, 0x01000193);
+    }
+    hex += (hash >>> 0).toString(16).padStart(8, '0');
+  }
+  const variant = ((parseInt(hex[16], 16) & 0x3) | 0x8).toString(16);
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-${variant}${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
+}
+
+export function rosterTripRoute(trip: ParsedRosterTrip): string {
+  if (!trip.legs.length) return trip.layovers[0]?.layoverCity ?? '';
+  return [trip.legs[0].departureAirport, ...trip.legs.map((leg) => leg.arrivalAirport)].join(' → ');
+}
+
+/**
+ * One trip per pairing, holding its flights and the layovers between them. Legs
+ * without a flight number cannot become flight rows, so they are left out.
+ */
+export async function createTripsFromRoster(trips: ParsedRosterTrip[], sourceFileId?: string): Promise<number> {
+  let created = 0;
+  for (const trip of trips) {
+    const legs: TripLegInput[] = trip.legs
+      .filter((leg): leg is ParsedRosterLeg & { flightNumber: string } => Boolean(leg.flightNumber))
+      .map((leg) => ({
+        manual: {
+          flight_number: leg.flightNumber,
+          airline_iata: leg.flightNumber.slice(0, 2),
+          departure_airport: leg.departureAirport,
+          arrival_airport: leg.arrivalAirport,
+          service_date: leg.serviceDate,
+          scheduled_departure: leg.scheduledDeparture,
+          scheduled_arrival: leg.scheduledArrival,
+        },
+      }));
+    const stays = trip.layovers
+      .filter((layover) => layover.layoverCity?.trim() && layover.layoverStart)
+      .map((layover) => ({
+        city: layover.layoverCity!.trim().toUpperCase(),
+        airport_iata: layover.arrivalAirport ?? null,
+        starts_at: layover.layoverStart!,
+        ends_at: layover.layoverEnd ?? layover.layoverStart!,
+      }));
+    if (!legs.length && !stays.length) continue;
+
+    const signature = trip.legs.map((leg) => `${leg.flightNumber}:${leg.scheduledDeparture}`).join('|');
+    await createTrip({
+      title: rosterTripRoute(trip) || null,
+      source: 'roster_upload',
+      legs,
+      stays,
+      idempotencyKey: sourceFileId && signature ? stableUuid(`${sourceFileId}|${signature}`) : undefined,
+    });
+    created += 1;
+  }
+  return created;
 }
