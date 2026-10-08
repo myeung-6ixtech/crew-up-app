@@ -165,7 +165,7 @@ export default function RosterUploadScreen() {
   const [opening, setOpening] = useState<Source | null>(null);
   const [file, setFile] = useState<PickedFile | null>(null);
   const [phase, setPhase] = useState<ProcessingPhase | null>(null);
-  const [result, setResult] = useState<{ fileId: string; entries: ParsedRosterEntry[]; trips: ParsedRosterTrip[] } | null>(null);
+  const [result, setResult] = useState<{ fileId: string; entries: ParsedRosterEntry[]; trips: ParsedRosterTrip[]; skipped: number } | null>(null);
   const runRef = useRef(0);
 
   const describeError = (e: unknown) => {
@@ -195,7 +195,7 @@ export default function RosterUploadScreen() {
         return;
       }
       hapticSuccess();
-      setResult({ fileId, entries, trips });
+      setResult({ fileId, entries, trips, skipped: parsed?.skippedDuties ?? 0 });
       setPhase('done');
     } catch (e) {
       if (runRef.current !== run) return;
@@ -214,7 +214,7 @@ export default function RosterUploadScreen() {
 
   const review = () => {
     if (!result) return;
-    setDraft(result.fileId, result.entries, result.trips);
+    setDraft(result.fileId, result.entries, result.trips, result.skipped);
     setPhase(null);
     router.push(SCREENS.roster.confirm);
   };

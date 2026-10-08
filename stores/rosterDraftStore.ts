@@ -7,7 +7,9 @@ interface RosterDraftState {
   entries: ParsedRosterEntry[];
   /** Pairings read from an uploaded roster. */
   trips: ParsedRosterTrip[];
-  setDraft: (sourceFileId: string | undefined, entries: ParsedRosterEntry[], trips?: ParsedRosterTrip[]) => void;
+  /** Roster days the parser left out (off, standby, training). */
+  skippedDuties: number;
+  setDraft: (sourceFileId: string | undefined, entries: ParsedRosterEntry[], trips?: ParsedRosterTrip[], skippedDuties?: number) => void;
   updateEntry: (index: number, entry: ParsedRosterEntry) => void;
   removeEntry: (index: number) => void;
   addEntry: (entry: ParsedRosterEntry) => void;
@@ -20,7 +22,8 @@ export const useRosterDraftStore = create<RosterDraftState>((set) => ({
   sourceFileId: undefined,
   entries: [],
   trips: [],
-  setDraft: (sourceFileId, entries, trips = []) => set({ sourceFileId, entries, trips }),
+  skippedDuties: 0,
+  setDraft: (sourceFileId, entries, trips = [], skippedDuties = 0) => set({ sourceFileId, entries, trips, skippedDuties }),
   updateEntry: (index, entry) =>
     set((state) => ({
       entries: state.entries.map((e, i) => (i === index ? entry : e)),
@@ -37,5 +40,5 @@ export const useRosterDraftStore = create<RosterDraftState>((set) => ({
       ),
     })),
   removeTrip: (tripIndex) => set((state) => ({ trips: state.trips.filter((_, i) => i !== tripIndex) })),
-  clear: () => set({ sourceFileId: undefined, entries: [], trips: [] }),
+  clear: () => set({ sourceFileId: undefined, entries: [], trips: [], skippedDuties: 0 }),
 }));

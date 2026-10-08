@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Image, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -124,6 +124,20 @@ export default function HomeScreen() {
     .slice(0, 5);
   const noTrips = data !== null && !(data.allTrips ?? []).length;
   const discoveryOff = profile?.default_visibility === 'off';
+
+  const name = profile?.preferred_name || profile?.full_name || profile?.display_name || '';
+  const crewLine = [myAirline?.name, profile?.crew_role ? t(`onboarding.crewRoles.${profile.crew_role}`) : null].filter(Boolean).join(' · ');
+  const allTrips = data?.allTrips ?? [];
+  const stats = [
+    { key: 'trips', value: allTrips.length, label: t('home.statsTrips'), onPress: () => router.push(SCREENS.trips) },
+    {
+      key: 'cities',
+      value: new Set(allTrips.flatMap((trip) => trip.stays?.map((stay) => stay.city.toUpperCase()) ?? [])).size,
+      label: t('home.statsCities'),
+      onPress: undefined,
+    },
+    { key: 'connections', value: data?.connections?.length ?? 0, label: t('home.statsConnections'), onPress: () => router.navigate(SCREENS.tabs.friends) },
+  ];
 
   const tabs: { key: HomeTab; label: string }[] = [
     { key: 'next', label: t('home.whatsNext') },
@@ -316,42 +330,103 @@ export default function HomeScreen() {
     <Screen style={{ padding: 0 }}>
       {meetTypeOverlay}
       {addTripMethodOverlay}
-      <View style={{ paddingTop: insets.top }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, paddingHorizontal: 24 }}>
-          <Image
-            source={require('@/assets/logos/crewup-wordmark-ink-2400.png')}
-            accessibilityRole="header"
-            accessibilityLabel={t('appName')}
-            resizeMode="contain"
-            style={{ height: 26, width: 91, tintColor: theme.mode === 'dark' ? '#EDF1F2' : undefined }}
+      <ScrollView
+        {...tabScroll}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={async () => {
+              setRefreshing(true);
+              try {
+                await load();
+              } finally {
+                setRefreshing(false);
+              }
+            }}
           />
+        }>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, paddingTop: insets.top + 18 }}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('tabs.profile')}
+            onPress={() => router.navigate(SCREENS.tabs.profile)}>
+            <CrewAvatar name={name} fileId={profile?.avatar_file_id} size={68} tone="ink" />
+            {!discoveryOff ? (
+              <View
+                style={{
+                  position: 'absolute',
+                  right: 1,
+                  bottom: 1,
+                  width: 16,
+                  height: 16,
+                  borderRadius: 8,
+                  backgroundColor: theme.colors.fill,
+                  borderWidth: 3,
+                  borderColor: theme.colors.bgCanvas,
+                }}
+              />
+            ) : null}
+          </Pressable>
+          <View style={{ flex: 1, gap: 3 }}>
+            <Text
+              accessibilityRole="header"
+              numberOfLines={1}
+              style={{ fontFamily: fontFamily.jakartaBold, fontSize: 22, letterSpacing: -0.4, color: theme.colors.textPrimary }}>
+              {name}
+            </Text>
+            {crewLine ? (
+              <Text numberOfLines={1} style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textSecondary }}>
+                {crewLine}
+              </Text>
+            ) : null}
+          </View>
           <CircleButton accessibilityLabel={t('menu.open')} onPress={openMenu}>
             <MenuGlyph color={theme.colors.textPrimary} />
           </CircleButton>
         </View>
-        <View style={{ paddingTop: 16, paddingHorizontal: 24 }}>
-          <Pressable
-            accessibilityRole="button"
-            onPress={openAddTrip}
-            style={({ pressed }) => ({
-              height: 56,
-              borderRadius: 28,
-              backgroundColor: pressed ? theme.colors.accentPressed : theme.colors.fill,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-            })}>
-            <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 22, lineHeight: 24, color: theme.colors.onFill }}>+</Text>
-            <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 16, color: theme.colors.onFill }}>{t('discover.addTrip')}</Text>
-          </Pressable>
-          {noTrips ? (
-            <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: theme.colors.textSecondary, textAlign: 'center', marginTop: 10 }}>
-              {t('home.addTripHint')}
-            </Text>
-          ) : null}
+        <View style={{ flexDirection: 'row', marginTop: 22, backgroundColor: theme.colors.card, borderRadius: 18, paddingVertical: 14 }}>
+          {stats.map((item, index) => (
+            <Pressable
+              key={item.key}
+              accessibilityRole={item.onPress ? 'button' : undefined}
+              accessibilityLabel={`${item.value} ${item.label}`}
+              disabled={!item.onPress}
+              onPress={item.onPress}
+              style={({ pressed }) => ({
+                flex: 1,
+                alignItems: 'center',
+                gap: 2,
+                borderLeftWidth: index === 0 ? 0 : 1,
+                borderLeftColor: '#EEF0EA',
+                opacity: pressed ? 0.6 : 1,
+              })}>
+              <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 22, color: theme.colors.textPrimary }}>{data ? item.value : '–'}</Text>
+              <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textSecondary }}>{item.label}</Text>
+            </Pressable>
+          ))}
         </View>
-        <View accessibilityRole="tablist" style={{ flexDirection: 'row', gap: 8, paddingTop: 18, paddingHorizontal: 24 }}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={openAddTrip}
+          style={({ pressed }) => ({
+            height: 56,
+            borderRadius: 28,
+            marginTop: 16,
+            backgroundColor: pressed ? theme.colors.accentPressed : theme.colors.fill,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+          })}>
+          <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 22, lineHeight: 24, color: theme.colors.onFill }}>+</Text>
+          <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 16, color: theme.colors.onFill }}>{t('discover.addTrip')}</Text>
+        </Pressable>
+        {noTrips ? (
+          <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: theme.colors.textSecondary, textAlign: 'center', marginTop: 10 }}>
+            {t('home.addTripHint')}
+          </Text>
+        ) : null}
+        <View accessibilityRole="tablist" style={{ flexDirection: 'row', gap: 8, marginTop: 22 }}>
           {tabs.map((item) => {
             const selected = tab === item.key;
             return (
@@ -377,22 +452,6 @@ export default function HomeScreen() {
             );
           })}
         </View>
-      </View>
-      <ScrollView
-        {...tabScroll}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={async () => {
-              setRefreshing(true);
-              try {
-                await load();
-              } finally {
-                setRefreshing(false);
-              }
-            }}
-          />
-        }>
         {tab === 'next' ? (
           <View style={{ gap: 10, marginTop: 16 }}>
             {(data?.upcomingTrips ?? []).length ? (

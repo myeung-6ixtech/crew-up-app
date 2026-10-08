@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import Svg, { Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DateTimeTile, formatShortDateTime } from '@/components/roster/DateTimeTile';
@@ -8,9 +9,9 @@ import { FlowFooter, FlowTitle, FlowTopBar, WarnChip } from '@/components/roster
 import { Screen } from '@/components/ui';
 import { SCREENS } from '@/constants/screens';
 import { MonoLabel, TextAction } from '@/features/onboarding/components/kit';
-import { formatAirportDate, formatAirportTimeWithZone } from '@/lib/airportTime';
+import { airportDayOffset, formatAirportDate, formatAirportTime } from '@/lib/airportTime';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
+import { hapticError, hapticImpact, hapticSelection, hapticSuccess } from '@/lib/haptics';
 import { insertRosters, mapParsedToRosterInsert } from '@/services/rosterService';
 import { createTripsFromRoster, createTripsFromRosterLayovers, rosterTripRoute } from '@/services/tripService';
 import { useRosterDraftStore } from '@/stores/rosterDraftStore';
@@ -53,27 +54,89 @@ function CityInput({ label, value, onChangeText, height = 50 }: { label: string;
   );
 }
 
-function shortDay(iso: string, code: string | null) {
-  return formatAirportDate(iso, code, { weekday: 'short', day: 'numeric', month: 'short' });
+const HAIRLINE = '#EEF0EA';
+
+function dayMonth(iso: string, code: string | null | undefined) {
+  return formatAirportDate(iso, code ?? null, { day: 'numeric', month: 'short' });
 }
 
+/** "3 Oct 12:50" in the airport's own clock; device time when the airport is unknown. */
+function localWhen(iso: string | null | undefined, code: string | null | undefined) {
+  const date = parseIso(iso);
+  if (!date || !iso) return '';
+  return code ? `${dayMonth(iso, code)} ${formatAirportTime(iso, code)}` : formatShortDateTime(date);
+}
+
+/** "3 – 4 OCT", or "30 SEP – 2 OCT" across a month. */
+function tripDates(trip: ParsedRosterTrip) {
+  const first = trip.legs[0];
+  const last = trip.legs[trip.legs.length - 1];
+  const startIso = first?.scheduledDeparture ?? trip.layovers[0]?.layoverStart;
+  const endIso = last?.scheduledArrival ?? trip.layovers[trip.layovers.length - 1]?.layoverEnd;
+  if (!startIso) return '';
+  const startCode = first?.departureAirport ?? trip.layovers[0]?.arrivalAirport;
+  const endCode = last?.arrivalAirport ?? trip.layovers[trip.layovers.length - 1]?.arrivalAirport;
+  const start = dayMonth(startIso, startCode);
+  const end = endIso ? dayMonth(endIso, endCode) : start;
+  if (start === end) return start.toUpperCase();
+  const startMonth = formatAirportDate(startIso, startCode ?? null, { month: 'short' });
+  const endMonth = endIso ? formatAirportDate(endIso, endCode ?? null, { month: 'short' }) : startMonth;
+  const startLabel = startMonth === endMonth ? formatAirportDate(startIso, startCode ?? null, { day: 'numeric' }) : start;
+  return `${startLabel} – ${end}`.toUpperCase();
+}
+
+function CountChip({ label, strong }: { label: string; strong?: boolean }) {
+  const theme = useTheme();
+  return (
+    <Text
+      style={{
+        fontFamily: fontFamily.monoMedium,
+        fontSize: 11,
+        color: strong ? '#A8E05F' : theme.colors.textPrimary,
+        backgroundColor: strong ? '#0E1113' : theme.colors.field,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderRadius: 10,
+        overflow: 'hidden',
+      }}>
+      {label.toUpperCase()}
+    </Text>
+  );
+}
+
+function CheckBadge() {
+  return (
+    <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: '#0E1113', alignItems: 'center', justifyContent: 'center' }}>
+      <Svg width={10} height={8} viewBox="0 0 10 8">
+        <Path d="M1 4l2.8 2.8L9 1.2" stroke="#A8E05F" strokeWidth={1.8} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </Svg>
+    </View>
+  );
+}
+
+/** One flight: number, both ends in local time, and the day it leaves. */
 function LegRow({ leg }: { leg: ParsedRosterLeg }) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const nextDay = airportDayOffset(leg.scheduledDeparture, leg.departureAirport, leg.scheduledArrival, leg.arrivalAirport) > 0;
+  const strong = { fontFamily: fontFamily.interMedium, color: theme.colors.textPrimary };
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-      <Text style={{ width: 62, fontFamily: fontFamily.monoMedium, fontSize: 12.5, color: theme.colors.textPrimary }}>{leg.flightNumber ?? '—'}</Text>
-      <View style={{ flex: 1, gap: 1 }}>
-        <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 14, color: theme.colors.textPrimary }}>
-          {`${leg.departureAirport} → ${leg.arrivalAirport}`}
+    <View style={{ paddingVertical: 10, borderTopWidth: 1, borderTopColor: HAIRLINE, gap: 6 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <Text style={{ width: 50, fontFamily: fontFamily.monoMedium, fontSize: 12, color: theme.colors.textPrimary }}>{leg.flightNumber ?? '—'}</Text>
+        <Text style={{ flex: 1, fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textPrimary }}>
+          <Text style={strong}>{`${leg.departureAirport} ${formatAirportTime(leg.scheduledDeparture, leg.departureAirport)}`}</Text>
+          {' → '}
+          <Text style={strong}>{`${leg.arrivalAirport} ${formatAirportTime(leg.scheduledArrival, leg.arrivalAirport)}`}</Text>
         </Text>
-        <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textSecondary }}>
-          {`${shortDay(leg.scheduledDeparture, leg.departureAirport)} · ${formatAirportTimeWithZone(leg.scheduledDeparture, leg.departureAirport)}`}
-        </Text>
+        <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textSecondary }}>{dayMonth(leg.scheduledDeparture, leg.departureAirport)}</Text>
       </View>
-      {leg.lowConfidence ? <WarnChip label={t('rosterFlow.checkLeg')} /> : null}
-      {leg.deadhead ? (
-        <Text style={{ fontFamily: fontFamily.monoMedium, fontSize: 10, color: theme.colors.textSecondary }}>{t('rosterFlow.deadhead')}</Text>
+      {leg.lowConfidence || nextDay || leg.deadhead ? (
+        <View style={{ paddingLeft: 60, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
+          {leg.lowConfidence ? <WarnChip label={t('rosterFlow.checkFlight')} /> : null}
+          {nextDay ? <MonoLabel style={{ fontSize: 10, color: theme.colors.accentText }}>{t('rosterFlow.arrivesNextDay')}</MonoLabel> : null}
+          {leg.deadhead ? <MonoLabel style={{ fontSize: 10, color: theme.colors.textSecondary }}>{t('rosterFlow.deadhead')}</MonoLabel> : null}
+        </View>
       ) : null}
     </View>
   );
@@ -84,13 +147,8 @@ function LayoverEditor({ entry, onChange }: { entry: ParsedRosterEntry; onChange
   const theme = useTheme();
   const start = parseIso(entry.layoverStart);
   const end = parseIso(entry.layoverEnd);
-  const missingCity = !entry.layoverCity?.trim();
   return (
-    <View style={{ backgroundColor: theme.colors.field, borderRadius: 14, padding: 10, gap: 8 }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <MonoLabel style={{ fontSize: 10 }}>{t('rosterFlow.layoverIn')}</MonoLabel>
-        {missingCity ? <WarnChip label={t('rosterFlow.checkCity')} /> : null}
-      </View>
+    <View style={{ backgroundColor: theme.colors.field, borderRadius: 12, padding: 10, gap: 8, marginBottom: 4 }}>
       <CityInput label={t('rosterFlow.city')} value={entry.layoverCity ?? ''} onChangeText={(value) => onChange({ ...entry, layoverCity: value })} />
       <View style={{ flexDirection: 'row', gap: 8 }}>
         <DateTimeTile style={{ flex: 1 }} label={t('rosterFlow.start')} value={start} onChange={(value) => onChange({ ...entry, layoverStart: value.toISOString() })} />
@@ -107,11 +165,51 @@ function LayoverEditor({ entry, onChange }: { entry: ParsedRosterEntry; onChange
   );
 }
 
+/** The lime band between two legs. Tap it to fix the city or times; a missing city opens it in amber. */
+function LayoverBand({ entry, onChange }: { entry: ParsedRosterEntry; onChange: (entry: ParsedRosterEntry) => void }) {
+  const { t } = useTranslation();
+  const missingCity = !entry.layoverCity?.trim();
+  const [open, setOpen] = useState(missingCity);
+  const when = [localWhen(entry.layoverStart, entry.arrivalAirport), localWhen(entry.layoverEnd, entry.arrivalAirport)].filter(Boolean).join(' – ');
+  return (
+    <View style={{ marginVertical: 2, gap: 6 }}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={{ expanded: open }}
+        accessibilityHint={t('rosterFlow.editLayover')}
+        onPress={() => {
+          hapticSelection();
+          setOpen((value) => !value);
+        }}
+        style={({ pressed }) => ({
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 8,
+          backgroundColor: missingCity ? '#FBEFD0' : '#EEF7DF',
+          borderRadius: 10,
+          paddingVertical: 8,
+          paddingHorizontal: 10,
+          opacity: pressed ? 0.75 : 1,
+        })}>
+        <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: missingCity ? '#6B4E00' : '#4F6E19' }} />
+        <Text style={{ flex: 1, fontFamily: fontFamily.interRegular, fontSize: 12.5, lineHeight: 17, color: missingCity ? '#3A2C00' : '#2F4210' }}>
+          {[t('rosterFlow.layoverAt', { city: missingCity ? t('rosterFlow.cityTbd') : entry.layoverCity }), when].filter(Boolean).join(' · ')}
+        </Text>
+        <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 12, color: missingCity ? '#6B4E00' : '#4F6E19' }}>
+          {open ? t('rosterFlow.done') : t('rosterFlow.edit')}
+        </Text>
+      </Pressable>
+      {open ? <LayoverEditor entry={entry} onChange={onChange} /> : null}
+    </View>
+  );
+}
+
 /** The layover that follows a leg: it starts where and when that leg lands. */
 function layoverAfter(trip: ParsedRosterTrip, leg: ParsedRosterLeg) {
   return trip.layovers.findIndex((layover) => layover.flightNumber === leg.flightNumber && layover.arrivalAirport === leg.arrivalAirport);
 }
 
+/** One pairing: dates and route, each flight, and its layovers in lime between the legs. */
 function TripReviewCard({
   trip,
   onLayoverChange,
@@ -123,44 +221,37 @@ function TripReviewCard({
 }) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const first = trip.legs[0];
-  const last = trip.legs[trip.legs.length - 1];
-  const dates = first
-    ? [shortDay(first.scheduledDeparture, first.departureAirport), last && last !== first ? shortDay(last.scheduledArrival, last.arrivalAirport) : null]
-        .filter(Boolean)
-        .join(' – ')
-    : '';
   const placed = new Set<number>();
+  const missingCity = trip.layovers.some((layover) => !layover.layoverCity?.trim());
+  const unsure = trip.legs.some((leg) => leg.lowConfidence);
 
   return (
-    <View style={{ backgroundColor: theme.colors.card, borderRadius: 20, padding: 16, gap: 12 }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+    <View style={{ backgroundColor: theme.colors.card, borderRadius: 20, paddingTop: 14, paddingHorizontal: 16, paddingBottom: 6 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8, paddingBottom: 10 }}>
         <View style={{ flexShrink: 1, gap: 2 }}>
-          <Text numberOfLines={1} style={{ fontFamily: fontFamily.jakartaBold, fontSize: 17, letterSpacing: -0.3, color: theme.colors.textPrimary }}>
+          <Text style={{ fontFamily: fontFamily.monoMedium, fontSize: 10.5, letterSpacing: 0.6, color: theme.colors.textSecondary }}>{tripDates(trip)}</Text>
+          <Text numberOfLines={1} style={{ fontFamily: fontFamily.jakartaBold, fontSize: 16, color: theme.colors.textPrimary }}>
             {rosterTripRoute(trip) || t('rosterFlow.cityTbd')}
           </Text>
-          {dates ? <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, color: theme.colors.textSecondary }}>{dates}</Text> : null}
         </View>
-        <TextAction label={t('rosterFlow.removeTrip')} onPress={onRemove} style={{ fontSize: 13, color: theme.colors.textSecondary }} />
+        {missingCity ? <WarnChip label={t('rosterFlow.checkCity')} /> : unsure ? <WarnChip label={t('rosterFlow.checkLeg')} /> : <CheckBadge />}
       </View>
-      {trip.legs.map((leg, legIndex) => {
+      {trip.legs.map((leg) => {
         const layoverIndex = layoverAfter(trip, leg);
         if (layoverIndex >= 0) placed.add(layoverIndex);
-        const isLast = legIndex === trip.legs.length - 1;
         return (
-          <View key={`${leg.flightNumber}-${leg.scheduledDeparture}`} style={{ gap: 10 }}>
+          <View key={`${leg.flightNumber}-${leg.scheduledDeparture}`}>
             <LegRow leg={leg} />
-            {layoverIndex >= 0 ? (
-              <LayoverEditor entry={trip.layovers[layoverIndex]} onChange={(entry) => onLayoverChange(layoverIndex, entry)} />
-            ) : !isLast ? (
-              <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textTertiary, marginLeft: 72 }}>{t('rosterFlow.noLayover')}</Text>
-            ) : null}
+            {layoverIndex >= 0 ? <LayoverBand entry={trip.layovers[layoverIndex]} onChange={(entry) => onLayoverChange(layoverIndex, entry)} /> : null}
           </View>
         );
       })}
       {trip.layovers.map((layover, index) =>
-        placed.has(index) ? null : <LayoverEditor key={`layover-${index}`} entry={layover} onChange={(entry) => onLayoverChange(index, entry)} />,
+        placed.has(index) ? null : <LayoverBand key={`layover-${index}`} entry={layover} onChange={(entry) => onLayoverChange(index, entry)} />,
       )}
+      <View style={{ borderTopWidth: 1, borderTopColor: HAIRLINE, marginTop: 4, alignItems: 'flex-end' }}>
+        <TextAction label={t('rosterFlow.removeTrip')} onPress={onRemove} style={{ fontSize: 13, color: theme.colors.textSecondary, paddingVertical: 10 }} />
+      </View>
     </View>
   );
 }
@@ -172,7 +263,7 @@ export default function RosterConfirmScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const client = useApolloClient();
-  const { entries, trips, sourceFileId, removeEntry, addEntry, updateTripLayover, removeTrip, clear } = useRosterDraftStore();
+  const { entries, trips, sourceFileId, skippedDuties, removeEntry, addEntry, updateTripLayover, removeTrip, clear } = useRosterDraftStore();
   const fromFile = Boolean(sourceFileId);
   const flightCount = trips.reduce((sum, trip) => sum + trip.legs.length, 0);
   const layoverCount = trips.reduce((sum, trip) => sum + trip.layovers.length, 0);
@@ -182,12 +273,12 @@ export default function RosterConfirmScreen() {
   const [newStart, setNewStart] = useState<Date | null>(null);
   const [newEnd, setNewEnd] = useState<Date | null>(null);
 
-  const month = useMemo(() => {
+  const monthTitle = useMemo(() => {
     const first = trips
       .flatMap((trip) => [trip.legs[0]?.scheduledDeparture, trip.layovers[0]?.layoverStart])
       .map((value) => parseIso(value))
       .find(Boolean);
-    return first ? first.toLocaleDateString(undefined, { month: 'long' }) : null;
+    return first ? first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' }) : null;
   }, [trips]);
 
   const allPast = useMemo(() => {
@@ -305,17 +396,23 @@ export default function RosterConfirmScreen() {
       </View>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 18, paddingBottom: 16 }}>
-          <FlowTitle>{fromFile ? t('rosterFlow.reviewTrips') : t('roster.confirm')}</FlowTitle>
-          <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, lineHeight: 22, color: theme.colors.textSecondary, marginTop: 8 }}>
-            {fromFile
-              ? t('rosterFlow.tripsIntro', {
-                  trips: t('rosterFlow.tripsCount', { count: trips.length }),
-                  flights: t('rosterFlow.flightsCount', { count: flightCount }),
-                  layovers: t('rosterFlow.layoversCount', { count: layoverCount }),
-                  month: month ? t('rosterFlow.inMonth', { month }) : '',
-                })
-              : t('rosterFlow.manualIntro')}
-          </Text>
+          <FlowTitle>{fromFile ? (monthTitle ?? t('rosterFlow.reviewTrips')) : t('roster.confirm')}</FlowTitle>
+          {fromFile ? (
+            <>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
+                <CountChip strong label={t('rosterFlow.flightsCount', { count: flightCount })} />
+                <CountChip label={t('rosterFlow.tripsCount', { count: trips.length })} />
+                <CountChip label={t('rosterFlow.layoversCount', { count: layoverCount })} />
+              </View>
+              <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, lineHeight: 18, color: theme.colors.textSecondary, marginTop: 10 }}>
+                {t('rosterFlow.reviewHint')}
+              </Text>
+            </>
+          ) : (
+            <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, lineHeight: 22, color: theme.colors.textSecondary, marginTop: 8 }}>
+              {t('rosterFlow.manualIntro')}
+            </Text>
+          )}
           {fromFile && allPast ? (
             <View style={{ marginTop: 12, backgroundColor: '#FBEFD0', borderRadius: 14, padding: 12, gap: 6 }}>
               <WarnChip label={t('rosterFlow.pastTitle')} />
@@ -351,6 +448,15 @@ export default function RosterConfirmScreen() {
                   );
                 })}
           </View>
+
+          {fromFile && skippedDuties > 0 ? (
+            <View style={{ marginTop: 12, backgroundColor: theme.colors.field, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 16 }}>
+              <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, lineHeight: 19, color: theme.colors.textPrimary }}>
+                <Text style={{ fontFamily: fontFamily.interMedium }}>{t('rosterFlow.notImported')}</Text>
+                {` ${t('rosterFlow.skippedDuties', { count: skippedDuties })}`}
+              </Text>
+            </View>
+          ) : null}
 
           {!fromFile ? (
             <View style={{ backgroundColor: theme.colors.card, borderWidth: 2, borderColor: theme.colors.ink, borderRadius: 20, padding: 16, marginTop: 12, gap: 10 }}>
