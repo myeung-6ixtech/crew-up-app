@@ -1,6 +1,8 @@
 import { Pressable, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { showsVerifiedBadge } from '@crewup/shared';
+import { useAppMode } from '@/hooks/useAppMode';
 import { AppIcon, Avatar, Badge, BodyText, Card, DisplaySmText } from '@/components/ui';
 import { useThemedStyles, useTheme } from '@/theme';
 import { SCREENS } from '@/constants/screens';
@@ -16,6 +18,7 @@ export function ProfileSummaryCard({
   const { t } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
+  const showBadge = showsVerifiedBadge(useAppMode().mode);
   const styles = useThemedStyles((t) => ({
     headerRow: { flexDirection: 'row', alignItems: 'flex-start', gap: t.spacing.md },
     headerCopy: { flex: 1 },
@@ -43,18 +46,20 @@ export function ProfileSummaryCard({
         <View style={styles.headerCopy}>
           <DisplaySmText>{profile?.display_name ?? 'Your profile'}</DisplaySmText>
           <BodyText muted>{subtitle}</BodyText>
-          <View style={styles.badgeRow}>
-            <AppIcon
-              name={isVerified ? 'verified' : 'pending'}
-              size={16}
-              color={isVerified ? theme.colors.statusVerified : theme.colors.textTertiary}
-            />
-            {isVerified ? (
-              <Badge label={t('verification.verified')} tone="verified" />
-            ) : (
-              <Badge label={t('verification.pending')} tone="status" />
-            )}
-          </View>
+          {showBadge ? (
+            <View style={styles.badgeRow}>
+              <AppIcon
+                name={isVerified ? 'verified' : 'pending'}
+                size={16}
+                color={isVerified ? theme.colors.statusVerified : theme.colors.textTertiary}
+              />
+              {isVerified ? (
+                <Badge label={t('verification.verified')} tone="verified" />
+              ) : (
+                <Badge label={t('verification.pending')} tone="status" />
+              )}
+            </View>
+          ) : null}
         </View>
         <Pressable
           onPress={() => router.push(SCREENS.profile.edit)}

@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES } from '@crewup/shared';
 import { AppIcon } from '@/components/ui';
 import { findAirportByIata } from '@/constants/airports';
+import { SCREENS } from '@/constants/screens';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { useAuth } from '@/hooks/useSession';
+import { useAuth, useSession } from '@/hooks/useSession';
 import { hapticError } from '@/lib/haptics';
+import { refreshSessionClaims } from '@/lib/sessionAuth';
 import { fetchActivityPreferences } from '@/services/activityService';
 import { fetchAirlines } from '@/services/profileService';
 import { fontFamily, shouldUppercaseLabels, useTheme, useThemedStyles } from '@/theme';
@@ -18,6 +21,7 @@ import { useOnboardingState } from '../hooks/useOnboardingState';
 import { useStepSave } from '../hooks/useStepForm';
 import { memberSinceWhen } from '../memberSince';
 import { incompleteFields } from '../profileInput';
+import { completeOnboarding, OnboardingRequestError } from '../services/onboardingService';
 
 const LANGUAGE_NAMES = new Map(LANGUAGES.map(([code, name]) => [code, name]));
 
@@ -39,8 +43,11 @@ export function ReviewStep() {
   const theme = useTheme();
   const client = useApolloClient();
   const { profile, userId } = useAuth();
-  const { prefilledFromBeta } = useOnboardingState();
+  const router = useRouter();
+  const { refreshProfile } = useSession();
+  const { prefilledFromBeta, mode } = useOnboardingState();
   const { save, saving, formError, setFormError } = useStepSave('review', 'flow');
+  const [completing, setCompleting] = useState(false);
   const [airlineName, setAirlineName] = useState<string | null>(null);
   const [preferences, setPreferences] = useState<ActivityPreference[]>([]);
   const styles = useThemedStyles((th) => ({
@@ -123,6 +130,22 @@ export function ReviewStep() {
     interestNames.length ? { key: 'interests', label: t('onboarding.review.interestsSection'), pills: interestNames } : null,
   ].filter((section): section is NonNullable<typeof section> => section !== null);
 
+  const finishAlpha = async () => {
+    setCompleting(true);
+    try {
+      await completeOnboarding();
+      await refreshSessionClaims();
+      if (router.canDismiss()) router.dismissAll();
+      router.replace(SCREENS.onboarding.rosterIntro);
+      await refreshProfile();
+    } catch (error) {
+      hapticError();
+      setFormError(error instanceof OnboardingRequestError ? error.message : t('onboarding.genericError'));
+    } finally {
+      setCompleting(false);
+    }
+  };
+
   const onContinue = async () => {
     if (missing.size) {
       hapticError();
@@ -130,7 +153,8 @@ export function ReviewStep() {
       setFormError(t('onboarding.review.incomplete', { items: items.join(', ') }));
       return;
     }
-    await save({});
+    const saved = await save({});
+    if (saved && mode === 'alpha') await finishAlpha();
   };
 
   return (
@@ -143,7 +167,7 @@ export function ReviewStep() {
       headerLabel={prefilledFromBeta ? t('onboarding.review.betaEnded') : undefined}
       primaryLabel={prefilledFromBeta ? t('onboarding.review.looksGood') : t('onboarding.review.done')}
       onPrimary={() => void onContinue()}
-      primaryLoading={saving}
+      primaryLoading={saving || completing}
       error={formError}>
       <View style={styles.card}>
         <View style={styles.header}>

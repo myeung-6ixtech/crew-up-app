@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 const { resolveEntryRoute } = await import('../src/onboarding/resolveEntryRoute.ts');
-const { nextStep, previousStep } = await import('../src/onboarding/steps.ts');
+const { nextStep, previousStep, showsVerifiedBadge } = await import('../src/onboarding/steps.ts');
 
 const AT = '2026-09-01T00:00:00Z';
 const state = (overrides = {}) => ({
@@ -77,6 +77,21 @@ test('launched + onboarding completed goes to the main app', () => {
   );
 });
 
+test('alpha runs the profile steps only and never shows the holding screen', () => {
+  assert.deepEqual(resolveEntryRoute('alpha', null), { kind: 'onboarding', variant: 'fresh', step: 'name_handle' });
+  assert.deepEqual(resolveEntryRoute('alpha', state({ currentStep: 'photo' })), {
+    kind: 'onboarding',
+    variant: 'fresh',
+    step: 'photo',
+  });
+  assert.equal(resolveEntryRoute('alpha', state({ currentStep: 'beta_notify', betaSignupCompletedAt: AT })).step, 'review');
+  assert.equal(resolveEntryRoute('alpha', state({ currentStep: 'launch_guidelines' })).step, 'review');
+  assert.equal(resolveEntryRoute('alpha', state({ currentStep: 'bogus' })).step, 'name_handle');
+  assert.deepEqual(resolveEntryRoute('alpha', state({ onboardingCompletedAt: AT })), { kind: 'main' });
+  assert.equal(showsVerifiedBadge('alpha'), false);
+  assert.equal(showsVerifiedBadge('beta'), true);
+});
+
 test('unknown mode never defaults to launched', () => {
   assert.deepEqual(resolveEntryRoute(null, null), { kind: 'mode_unavailable' });
   assert.deepEqual(resolveEntryRoute(null, state({ onboardingCompletedAt: AT })), { kind: 'main' });
@@ -93,6 +108,8 @@ test('step sequence per mode', () => {
   assert.equal(nextStep('beta', 'beta_notify'), null);
   assert.equal(nextStep('launched', 'review'), 'launch_privacy');
   assert.equal(nextStep('launched', 'launch_notifications'), null);
+  assert.equal(nextStep('alpha', 'photo'), 'review');
+  assert.equal(nextStep('alpha', 'review'), null);
   assert.equal(previousStep('launched', 'name_handle'), null);
   assert.equal(previousStep('launched', 'about'), 'name_handle');
 });
