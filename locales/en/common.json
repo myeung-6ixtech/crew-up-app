@@ -913,6 +913,10 @@
     "deadhead": "Deadhead",
     "checkLeg": "Check",
     "removeTrip": "Remove trip",
+    "someTripsFailed_one": "Saved {{saved}}. {{count}} trip couldn't be saved — fix it or remove it, then tap Save again.\n{{reason}}",
+    "someTripsFailed_other": "Saved {{saved}}. {{count}} trips couldn't be saved — fix or remove them, then tap Save again.\n{{reason}}",
+    "pastTitle": "These dates have passed",
+    "pastBody": "Every trip in this roster has already ended, so they'll be saved to past trips, not Home. If the year looks wrong, your roster may not print it.",
     "saveTrips_one": "Save {{count}} trip",
     "saveTrips_other": "Save {{count}} trips",
     "cancelImport": "Cancel import"

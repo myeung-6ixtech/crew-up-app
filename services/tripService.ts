@@ -227,15 +227,41 @@ export function rosterTripRoute(trip: ParsedRosterTrip): string {
   return [trip.legs[0].departureAirport, ...trip.legs.map((leg) => leg.arrivalAirport)].join(' → ');
 }
 
+const FLIGHT_NUMBER = /^[A-Z0-9]{2,8}$/;
+const AIRPORT_CODE = /^[A-Z]{3}$/;
+const SERVICE_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** The same checks trips/create applies to a manual leg, so one misread flight cannot fail the whole trip. */
+function isSavableLeg(leg: ParsedRosterLeg): leg is ParsedRosterLeg & { flightNumber: string } {
+  const departure = Date.parse(leg.scheduledDeparture);
+  const arrival = Date.parse(leg.scheduledArrival);
+  return (
+    FLIGHT_NUMBER.test(leg.flightNumber ?? '') &&
+    AIRPORT_CODE.test(leg.departureAirport) &&
+    AIRPORT_CODE.test(leg.arrivalAirport) &&
+    leg.departureAirport !== leg.arrivalAirport &&
+    SERVICE_DATE.test(leg.serviceDate) &&
+    Number.isFinite(departure) &&
+    Number.isFinite(arrival) &&
+    arrival >= departure
+  );
+}
+
+export interface RosterSaveResult {
+  /** Indexes into the input that were saved (or already existed). */
+  saved: number[];
+  failures: Array<{ index: number; route: string; message: string }>;
+}
+
 /**
- * One trip per pairing, holding its flights and the layovers between them. Legs
- * without a flight number cannot become flight rows, so they are left out.
+ * One trip per pairing, holding its flights and the layovers between them. A trip
+ * that fails is reported and the rest still save.
  */
-export async function createTripsFromRoster(trips: ParsedRosterTrip[], sourceFileId?: string): Promise<number> {
-  let created = 0;
-  for (const trip of trips) {
+export async function createTripsFromRoster(trips: ParsedRosterTrip[], sourceFileId?: string): Promise<RosterSaveResult> {
+  const result: RosterSaveResult = { saved: [], failures: [] };
+  for (const [index, trip] of trips.entries()) {
     const legs: TripLegInput[] = trip.legs
-      .filter((leg): leg is ParsedRosterLeg & { flightNumber: string } => Boolean(leg.flightNumber))
+      .filter(isSavableLeg)
       .map((leg) => ({
         manual: {
           flight_number: leg.flightNumber,
@@ -251,21 +277,29 @@ export async function createTripsFromRoster(trips: ParsedRosterTrip[], sourceFil
       .filter((layover) => layover.layoverCity?.trim() && layover.layoverStart)
       .map((layover) => ({
         city: layover.layoverCity!.trim().toUpperCase(),
-        airport_iata: layover.arrivalAirport ?? null,
+        airport_iata: layover.arrivalAirport && AIRPORT_CODE.test(layover.arrivalAirport) ? layover.arrivalAirport : null,
         starts_at: layover.layoverStart!,
         ends_at: layover.layoverEnd ?? layover.layoverStart!,
       }));
-    if (!legs.length && !stays.length) continue;
+    const route = rosterTripRoute(trip);
+    if (!legs.length && !stays.length) {
+      result.failures.push({ index, route, message: 'No flight or layover in this trip could be read fully.' });
+      continue;
+    }
 
     const signature = trip.legs.map((leg) => `${leg.flightNumber}:${leg.scheduledDeparture}`).join('|');
-    await createTrip({
-      title: rosterTripRoute(trip) || null,
-      source: 'roster_upload',
-      legs,
-      stays,
-      idempotencyKey: sourceFileId && signature ? stableUuid(`${sourceFileId}|${signature}`) : undefined,
-    });
-    created += 1;
+    try {
+      await createTrip({
+        title: route || null,
+        source: 'roster_upload',
+        legs,
+        stays,
+        idempotencyKey: sourceFileId && signature ? stableUuid(`${sourceFileId}|${signature}`) : undefined,
+      });
+      result.saved.push(index);
+    } catch (error) {
+      result.failures.push({ index, route, message: error instanceof Error ? error.message : 'Failed to create trip' });
+    }
   }
-  return created;
+  return result;
 }

@@ -190,6 +190,14 @@ export default function RosterConfirmScreen() {
     return first ? first.toLocaleDateString(undefined, { month: 'long' }) : null;
   }, [trips]);
 
+  const allPast = useMemo(() => {
+    const ends = trips.flatMap((trip) => [
+      ...trip.legs.map((leg) => Date.parse(leg.scheduledArrival)),
+      ...trip.layovers.map((layover) => Date.parse(layover.layoverEnd ?? layover.layoverStart ?? '')),
+    ]).filter(Number.isFinite);
+    return ends.length > 0 && Math.max(...ends) < Date.now();
+  }, [trips]);
+
   const draftReady = Boolean(newCity.trim() && newStart);
   const count = fromFile ? trips.length : entries.length + (draftReady ? 1 : 0);
 
@@ -219,14 +227,30 @@ export default function RosterConfirmScreen() {
     setSaving(true);
     setError('');
     try {
-      await createTripsFromRoster(trips, sourceFileId);
-      if (layovers.length) await insertRosters(client, mapParsedToRosterInsert(layovers, sourceFileId));
+      const { saved, failures } = await createTripsFromRoster(trips, sourceFileId);
+      const savedLayovers = saved.flatMap((index) => trips[index].layovers);
+      if (savedLayovers.length) {
+        await insertRosters(client, mapParsedToRosterInsert(savedLayovers, sourceFileId)).catch(() => undefined);
+      }
+      if (failures.length) {
+        // Saved trips leave the list, so tapping Save again only retries the ones that failed.
+        [...saved].sort((a, b) => b - a).forEach((index) => removeTrip(index));
+        hapticError();
+        setError(
+          t('rosterFlow.someTripsFailed', {
+            saved: saved.length,
+            count: failures.length,
+            reason: failures.map((failure) => `${failure.route}: ${failure.message}`).join('\n'),
+          }),
+        );
+        return;
+      }
       hapticSuccess();
       clear();
       router.replace(SCREENS.tabs.home);
-    } catch {
+    } catch (e) {
       hapticError();
-      setError(t('addTrip.saveTripError'));
+      setError(e instanceof Error && e.message ? `${t('addTrip.saveTripError')}\n${e.message}` : t('addTrip.saveTripError'));
     } finally {
       setSaving(false);
     }
@@ -277,11 +301,11 @@ export default function RosterConfirmScreen() {
   return (
     <Screen style={{ padding: 0 }}>
       <View style={{ paddingTop: insets.top }}>
-        <FlowTopBar title={t('roster.confirm')} backLabel={t('common.back')} onBack={() => router.back()} />
+        <FlowTopBar title={fromFile ? t('rosterFlow.reviewTrips') : t('roster.confirm')} backLabel={t('common.back')} onBack={() => router.back()} />
       </View>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 18, paddingBottom: 16 }}>
-          <FlowTitle>{t('roster.confirm')}</FlowTitle>
+          <FlowTitle>{fromFile ? t('rosterFlow.reviewTrips') : t('roster.confirm')}</FlowTitle>
           <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, lineHeight: 22, color: theme.colors.textSecondary, marginTop: 8 }}>
             {fromFile
               ? t('rosterFlow.tripsIntro', {
@@ -292,6 +316,12 @@ export default function RosterConfirmScreen() {
                 })
               : t('rosterFlow.manualIntro')}
           </Text>
+          {fromFile && allPast ? (
+            <View style={{ marginTop: 12, backgroundColor: '#FBEFD0', borderRadius: 14, padding: 12, gap: 6 }}>
+              <WarnChip label={t('rosterFlow.pastTitle')} />
+              <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, lineHeight: 19, color: '#3A2C00' }}>{t('rosterFlow.pastBody')}</Text>
+            </View>
+          ) : null}
 
           <View style={{ gap: 10, marginTop: 18 }}>
             {fromFile
