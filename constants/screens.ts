@@ -9,12 +9,13 @@ export const SCREENS = {
   },
   auth: {
     welcome: '/auth/welcome',
-    email: (mode: 'signup' | 'signin' = 'signup') =>
-      `/auth/email?mode=${mode}` as const,
-    login: '/auth/login',
-    register: '/auth/register',
-    forgotPassword: '/auth/forgot-password',
-    resetPassword: '/auth/reset-password',
+    /** 4A → 4B: email, then password. */
+    signUp: '/auth/sign-up',
+    signUpPassword: '/auth/sign-up-password',
+    /** 4C after sign up, 4K after a reset request. */
+    checkInbox: (kind: 'verify' | 'reset') => ({ pathname: '/auth/check-inbox' as const, params: { kind } }),
+    login: (email?: string) => ({ pathname: '/auth/login' as const, params: email ? { email } : {} }),
+    forgotPassword: (email?: string) => ({ pathname: '/auth/forgot-password' as const, params: email ? { email } : {} }),
   },
   onboarding: {
     /** Profile steps 1–7 and beta_notify use the dynamic route; launch steps have their own. */

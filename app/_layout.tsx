@@ -56,11 +56,13 @@ function RootNavigator() {
       }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="auth/welcome" options={{ headerShown: false }} />
-      <Stack.Screen name="auth/email" options={{ headerShown: false }} />
+      <Stack.Screen name="auth/sign-up" options={{ headerShown: false }} />
+      <Stack.Screen name="auth/sign-up-password" options={{ headerShown: false }} />
+      <Stack.Screen name="auth/check-inbox" options={{ headerShown: false, gestureEnabled: false }} />
+      <Stack.Screen name="auth/verified" options={{ headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="auth/login" options={{ headerShown: false }} />
-      <Stack.Screen name="auth/register" options={{ headerShown: false }} />
-      <Stack.Screen name="auth/forgot-password" options={{ title: 'Forgot password' }} />
-      <Stack.Screen name="auth/reset-password" options={{ title: 'Reset password' }} />
+      <Stack.Screen name="auth/forgot-password" options={{ headerShown: false }} />
+      <Stack.Screen name="auth/reset" options={{ headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="roster/upload" options={{ headerShown: false }} />
       <Stack.Screen name="roster/confirm" options={{ headerShown: false }} />

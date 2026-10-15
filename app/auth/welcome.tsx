@@ -83,14 +83,14 @@ export default function WelcomeScreen() {
           {error ? (
             <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: '#FF5B60', textAlign: 'center' }}>{error}</Text>
           ) : null}
-          <DarkLimePill label={t('auth.signUpFree')} onPress={() => router.push(SCREENS.auth.email('signup'))} />
+          <DarkLimePill label={t('auth.signUpFree')} onPress={() => router.push(SCREENS.auth.signUp)} />
           <DarkOutlinePill
             label={t('auth.continueWithGoogle')}
             icon={<GoogleIcon />}
             loading={googleLoading}
             onPress={() => void onGoogle()}
           />
-          <TextPillAction label={t('auth.logIn')} color={DARK.ink} onPress={() => router.push(SCREENS.auth.email('signin'))} />
+          <TextPillAction label={t('auth.logIn')} color={DARK.ink} onPress={() => router.push(SCREENS.auth.login())} />
           <Text
             style={{
               fontFamily: fontFamily.interRegular,

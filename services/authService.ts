@@ -49,31 +49,52 @@ export async function signInWithGoogle() {
   await nhost.refreshSession(0);
 }
 
+/** Where Nhost sends a tapped verify or reset link. Must be on auth.redirections.allowedUrls. */
+function appUrl(path: 'auth/verified' | 'auth/reset') {
+  return Linking.createURL(`/${path}`);
+}
+
+/** Nhost's error code (unverified-user, invalid-email-password, user-already-exists, …) from a failed call. */
+export function authErrorCode(error: unknown): string | null {
+  const body = (error as { body?: { error?: unknown } } | null)?.body;
+  return typeof body?.error === 'string' ? body.error : null;
+}
+
+/** Turns the refresh token from a verify or reset redirect into a session. */
+export async function exchangeRefreshToken(refreshToken: string) {
+  await nhost.auth.refreshToken({ refreshToken });
+  await nhost.refreshSession(0);
+}
+
 export async function signIn(email: string, password: string) {
   const result = await nhost.auth.signInEmailPassword({ email, password });
   await nhost.refreshSession(0);
   return result.body;
 }
 
+/** With email verification required there is no session until the link is tapped; `verify` says so. */
 export async function signUp(email: string, password: string) {
   const result = await nhost.auth.signUpEmailPassword({
     email,
     password,
-    options: { allowedRoles: ['user', 'me'] },
+    options: { allowedRoles: ['user', 'me'], redirectTo: appUrl('auth/verified') },
   });
-  await nhost.refreshSession(0);
-  return result.body;
+  if (result.body.session) {
+    await nhost.refreshSession(0);
+    return { verify: false };
+  }
+  return { verify: true };
+}
+
+export async function sendVerificationEmail(email: string) {
+  return nhost.auth.sendVerificationEmail({ email, options: { redirectTo: appUrl('auth/verified') } });
 }
 
 export async function sendPasswordResetEmail(email: string) {
-  const redirectTo = `${process.env.EXPO_PUBLIC_APP_SCHEME ?? 'crewup'}://reset-password`;
-  return nhost.auth.sendPasswordResetEmail({ email, options: { redirectTo } });
+  return nhost.auth.sendPasswordResetEmail({ email, options: { redirectTo: appUrl('auth/reset') } });
 }
 
-export async function resetPassword(newPassword: string, ticket: string) {
-  return nhost.auth.changeUserPassword({ newPassword, ticket });
-}
-
+/** The reset link signs the user in, so the new password is set on the current session. */
 export async function changePassword(newPassword: string) {
   return nhost.auth.changeUserPassword({ newPassword });
 }

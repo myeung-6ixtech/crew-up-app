@@ -6,6 +6,9 @@ import { useHouseRulesStore } from '@/features/onboarding/houseRulesStore';
 import { useOnboardingState } from '@/features/onboarding/hooks/useOnboardingState';
 import { FLOW_SEGMENTS, onboardingHref } from '@/features/onboarding/navigation';
 
+/** Deep-link landings that create a session and must stay put until the user taps on: 4E verified, 4L new password. */
+const HELD_AUTH_SEGMENTS = new Set(['verified', 'reset']);
+
 /** Profile screens a beta-holding user may open (edit only — no social surfaces). */
 const BETA_ALLOWED_PROFILE_SEGMENTS = new Set(['edit', 'edit-section']);
 
@@ -38,6 +41,8 @@ export function useAuthGuard() {
       if (!inAuth) router.replace(SCREENS.auth.welcome);
       return;
     }
+
+    if (inAuth && HELD_AUTH_SEGMENTS.has(child ?? '')) return;
 
     if (status === 'idle' || status === 'loading') return;
 
