@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client';
 
-const EVENT_FIELDS = `
+/** `event_listings` fields: no notes or venue, so private meets can be listed before they are unlocked. */
+const EVENT_LISTING_FIELDS = `
   id
   title
-  description
   city
   starts_at
   ends_at
@@ -30,19 +30,38 @@ const EVENT_FIELDS = `
 
 export const GET_EVENTS = gql`
   query GetEvents($now: timestamptz!) {
-    events(where: { starts_at: { _gte: $now } }, order_by: { starts_at: asc }) {
-      ${EVENT_FIELDS}
+    event_listings(where: { starts_at: { _gte: $now } }, order_by: { starts_at: asc }) {
+      ${EVENT_LISTING_FIELDS}
     }
   }
 `;
 
 export const GET_EVENTS_BY_CITY = gql`
   query GetEventsByCity($now: timestamptz!, $city: String!) {
-    events(
+    event_listings(
       where: { starts_at: { _gte: $now }, city: { _eq: $city } }
       order_by: { starts_at: asc }
     ) {
-      ${EVENT_FIELDS}
+      ${EVENT_LISTING_FIELDS}
+    }
+  }
+`;
+
+/** What a locked private meet shows behind the PIN prompt. */
+export const GET_EVENT_PREVIEW = gql`
+  query GetEventPreview($id: uuid!) {
+    event_listings(where: { id: { _eq: $id } }, limit: 1) {
+      ${EVENT_LISTING_FIELDS}
+    }
+  }
+`;
+
+/** Host only (Hasura returns null to anyone else). */
+export const GET_EVENT_PIN = gql`
+  query GetEventPin($eventId: uuid!) {
+    event_access_codes_by_pk(event_id: $eventId) {
+      pin
+      rotated_at
     }
   }
 `;

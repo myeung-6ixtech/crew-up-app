@@ -1,12 +1,14 @@
 import '@/lib/i18n';
 import { useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
+import { AppSplash } from '@/components/AppSplash';
 import { AppProviders } from '@/contexts/AppProviders';
+import { useOnboardingState } from '@/features/onboarding/hooks/useOnboardingState';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useSession } from '@/hooks/useSession';
 import { fontAssets } from '@/theme';
@@ -15,9 +17,12 @@ import { useTheme } from '@/theme';
 SplashScreen.preventAutoHideAsync();
 
 function RootNavigator() {
-  const { loading } = useSession();
+  const { loading, session } = useSession();
   const theme = useTheme();
+  const { status } = useOnboardingState();
   useAuthGuard();
+  // Signed in: stay on the splash until the guard knows where to send them, so Home never flashes first.
+  const routing = Boolean(session?.user?.id) && (status === 'idle' || status === 'loading');
 
   useEffect(() => {
     if (!loading) {
@@ -25,20 +30,7 @@ function RootNavigator() {
     }
   }, [loading]);
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: theme.colors.bgCanvas,
-        }}>
-        <StatusBar style={theme.mode === 'dark' ? 'light' : 'dark'} />
-        <ActivityIndicator size="large" color={theme.colors.accentText} />
-      </View>
-    );
-  }
+  if (loading) return <AppSplash />;
 
   return (
     <>
@@ -83,12 +75,17 @@ function RootNavigator() {
       <Stack.Screen name="discover/layover/[tripId]" options={{ headerShown: false }} />
       <Stack.Screen name="profile/edit" options={{ headerShown: false }} />
       <Stack.Screen name="profile/edit-section/[step]" options={{ title: '' }} />
-      <Stack.Screen name="profile/privacy" options={{ title: 'Privacy Settings' }} />
+      <Stack.Screen name="profile/privacy" options={{ headerShown: false }} />
       <Stack.Screen name="profile/verification-status" options={{ title: 'Verification' }} />
-      <Stack.Screen name="profile/settings/language" options={{ title: 'Language' }} />
-      <Stack.Screen name="profile/settings/account-security" options={{ title: 'Account security' }} />
+      <Stack.Screen name="profile/settings/language" options={{ headerShown: false }} />
+      <Stack.Screen name="profile/settings/account-security" options={{ headerShown: false }} />
       <Stack.Screen name="dev/ui-kit" options={{ title: 'UI Kit' }} />
     </Stack>
+    {routing ? (
+      <View style={StyleSheet.absoluteFill}>
+        <AppSplash />
+      </View>
+    ) : null}
     </>
   );
 }
@@ -96,13 +93,7 @@ function RootNavigator() {
 function RootWithFonts() {
   const [fontsLoaded] = useFonts(fontAssets);
 
-  if (!fontsLoaded) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator />
-      </View>
-    );
-  }
+  if (!fontsLoaded) return <AppSplash />;
 
   return <RootNavigator />;
 }

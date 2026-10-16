@@ -16,15 +16,17 @@ import {
   meetState,
   stateChipTone,
 } from '@/components/events/host';
+import { EventPinCard, EventPinGate, PrivateEventBadge } from '@/components/events/pin';
 import { NAV_PILL_HEIGHT, StandaloneNavPill } from '@/components/navigation/FloatingTabBar';
 import { ReportSheet } from '@/components/ReportSheet';
 import { Screen, Toast } from '@/components/ui';
+import { isPrivateEvent } from '@/constants/events';
 import { SCREENS } from '@/constants/screens';
 import { MonoLabel } from '@/features/onboarding/components/kit';
 import { useAuth } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
-import { fetchEvent, rsvpEvent, setEventClosure } from '@/services/eventService';
+import { fetchEvent, fetchEventPreview, rsvpEvent, setEventClosure } from '@/services/eventService';
 import { reportUser } from '@/services/safetyService';
 import { fontFamily, useTheme } from '@/theme';
 import type { EventItem } from '@/types/domain';
@@ -91,6 +93,7 @@ function AvatarStack({ attendees, size, ring }: { attendees: Attendee[]; size: n
 /**
  * The meet. Guests read it, RSVP, or report it; Going does not let them leave here.
  * The host sees Host controls instead of RSVP: edit, attendees, and close (stop RSVPs or cancel).
+ * A private meet stays a locked title card with a PIN prompt until the guest unlocks it; its host also sees the PIN.
  */
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -101,6 +104,8 @@ export default function EventDetailScreen() {
   const client = useApolloClient();
   const { userId } = useAuth();
   const [event, setEvent] = useState<EventDetail | null>(null);
+  const [preview, setPreview] = useState<EventItem | null>(null);
+  const [missing, setMissing] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [closeOpen, setCloseOpen] = useState(false);
   const [joining, setJoining] = useState(false);
@@ -110,7 +115,17 @@ export default function EventDetailScreen() {
 
   const load = useCallback(async () => {
     if (!id) return;
-    setEvent(await fetchEvent(client, id));
+    const full = await fetchEvent(client, id);
+    if (full) {
+      setEvent(full);
+      setPreview(null);
+      setMissing(false);
+      return;
+    }
+    const listed = await fetchEventPreview(client, id);
+    setEvent(null);
+    setPreview(listed);
+    setMissing(!listed || !isPrivateEvent(listed));
   }, [client, id]);
 
   useEffect(() => {
@@ -129,6 +144,7 @@ export default function EventDetailScreen() {
   const hostName = personName(event?.creator?.profile);
   const hostId = event?.creator?.id ?? event?.creator_id;
   const platform = event?.host_type === 'platform';
+  const privateMeet = !platform && isPrivateEvent(event);
   const isHost = Boolean(event && userId && event.creator_id === userId && !platform);
   const state = event ? meetState(event) : 'open';
   const { activities, interests } = event ? eventTagNames(event) : { activities: [], interests: [] };
@@ -152,8 +168,11 @@ export default function EventDetailScreen() {
             ? t('eventHost.guestCancelled')
             : message.includes('ATTENDEE_REMOVED')
               ? t('eventHost.youWereRemoved')
-              : t('onboarding.genericError'),
+              : message.includes('EVENT_PIN_REQUIRED')
+                ? t('eventPin.required')
+                : t('onboarding.genericError'),
       );
+      if (message.includes('EVENT_PIN_REQUIRED')) await load();
     } finally {
       setJoining(false);
     }
@@ -278,7 +297,22 @@ export default function EventDetailScreen() {
           }
         />
       </View>
-      {!event ? (
+      {!event && preview && !missing ? (
+        <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: insets.bottom + NAV_PILL_HEIGHT + 40 }}>
+          <View style={{ backgroundColor: '#0E1113', borderRadius: 24, padding: 20, marginTop: 14, gap: 10 }}>
+            <PrivateEventBadge tone="dark" />
+            <Text accessibilityRole="header" style={{ fontFamily: fontFamily.jakartaBold, fontSize: 27, lineHeight: 29, letterSpacing: -0.7, color: '#EDF1F2' }}>
+              {preview.title}
+            </Text>
+            <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, color: '#A7B1B5' }}>{`${preview.city} · ${formatWhen(preview.starts_at)}`}</Text>
+          </View>
+          <EventPinGate eventId={preview.id} onUnlocked={() => void load()} />
+        </ScrollView>
+      ) : !event && missing ? (
+        <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, color: theme.colors.textSecondary, textAlign: 'center', marginTop: 80, paddingHorizontal: 24 }}>
+          {t('eventPin.unavailable')}
+        </Text>
+      ) : !event ? (
         <ActivityIndicator color={theme.colors.accentText} style={{ marginTop: 80 }} />
       ) : (
         <>
@@ -288,13 +322,16 @@ export default function EventDetailScreen() {
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                   <StateChip tone="lime" label={t('eventHost.youreHosting')} />
                   <StateChip tone={stateChipTone(state)} label={t(`eventHost.state.${state}`)} />
+                  {privateMeet ? <PrivateEventBadge tone="dark" /> : null}
                 </View>
-              ) : platform || state !== 'open' ? (
+              ) : platform || privateMeet || state !== 'open' ? (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                   {state !== 'open' ? (
                     <StateChip tone={stateChipTone(state)} label={t(`eventHost.state.${state}`)} />
-                  ) : (
+                  ) : platform ? (
                     <CrewUpEventBadge tone="lime" />
+                  ) : (
+                    <PrivateEventBadge tone="dark" />
                   )}
                   <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, color: '#A7B1B5' }}>
                     {platform ? t('events.hostedByCrewUp') : hostName ? t('eventHost.hostedBy', { name: shortName(hostName) }) : ''}
@@ -330,6 +367,10 @@ export default function EventDetailScreen() {
                 onClose={() => setCloseOpen(true)}
                 onReopen={() => void reopen()}
               />
+            ) : null}
+
+            {isHost && privateMeet && state !== 'cancelled' ? (
+              <EventPinCard eventId={event.id} title={event.title} when={formatWhen(event.starts_at)} onToast={setToast} />
             ) : null}
 
             {event.description ? (

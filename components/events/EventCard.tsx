@@ -1,6 +1,8 @@
 import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { LimePills } from '@/components/crew/kit';
+import { PrivateEventBadge } from '@/components/events/pin';
+import { isPrivateEvent } from '@/constants/events';
 import { MonoLabel } from '@/features/onboarding/components/kit';
 import { formatDateTime } from '@/lib/utils';
 import { fontFamily, useTheme } from '@/theme';
@@ -40,7 +42,7 @@ export function CrewUpEventBadge({ tone = 'ink' }: { tone?: 'ink' | 'lime' }) {
   );
 }
 
-/** Discovery card: badge when hosted by CrewUp, title, city · time, then activity and interest pills. */
+/** Discovery card: CrewUp or Private badge, title, city · time, then activity and interest pills. */
 export function EventCard({ event, onPress }: { event: EventItem; onPress: () => void }) {
   const theme = useTheme();
   const { activities, interests } = eventTagNames(event);
@@ -56,7 +58,7 @@ export function EventCard({ event, onPress }: { event: EventItem; onPress: () =>
         gap: 8,
         opacity: pressed ? 0.85 : 1,
       })}>
-      {isPlatformEvent(event) ? <CrewUpEventBadge /> : null}
+      {isPlatformEvent(event) ? <CrewUpEventBadge /> : isPrivateEvent(event) ? <PrivateEventBadge /> : null}
       <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 16.5, letterSpacing: -0.2, color: theme.colors.textPrimary }}>{event.title}</Text>
       <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: theme.colors.textSecondary }}>
         {`${event.city} · ${formatDateTime(event.starts_at)}`}

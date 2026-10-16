@@ -542,7 +542,7 @@
     "publicMeet": "Public Meet",
     "publicMeetBody": "Create a meet for everyone in the community to join.",
     "privateMeet": "Private Meeting",
-    "privateMeetBody": "Create a meet for your invited friends only.",
+    "privateMeetBody": "Crew need a PIN to see the details and join. You get the PIN to share.",
     "selectDate": "Select date",
     "selectTime": "Select time",
     "selectCity": "Select city",
@@ -588,7 +588,7 @@
     },
     "searchPlaceholder": "Search meets, cities, activities",
     "publicMeetNote": "Visible to verified crew",
-    "privateMeetNote": "Friends only",
+    "privateMeetNote": "PIN to join",
     "activitiesTitle": "Activities",
     "activitiesHint": "Optional. Pick as many as fit.",
     "interestsTitle": "Interests",
@@ -603,7 +603,7 @@
     "address": "Address",
     "attendees": "Attendees",
     "whoPublic": "Public · verified crew can join",
-    "whoPrivate": "Private · invited friends only",
+    "whoPrivate": "Private · anyone with the PIN",
     "titleError": "Give your meet a title.",
     "tag": {
       "alcohol_free": "alcohol-free",
@@ -649,7 +649,8 @@
     "back": "Back",
     "continue": "Continue",
     "dismiss": "Dismiss",
-    "clear": "Clear"
+    "clear": "Clear",
+    "close": "Close"
   },
   "settings": {
     "languages": {
@@ -660,12 +661,21 @@
     "open": "Open menu",
     "privacy": "Privacy Settings",
     "language": "Language",
-    "accountSecurity": "Account security",
+    "accountSecurity": "Account Security",
     "appearance": "Appearance",
-    "themeLight": "Light",
-    "themeDark": "Dark",
     "signOutTitle": "Sign out?",
-    "signOutMessage": "You will need to sign in again to access your account."
+    "signOutMessage": "You will need to sign in again to access your account.",
+    "title": "Menu",
+    "account": "Account",
+    "editProfile": "Edit Profile",
+    "editProfileBody": "Photo, name, airline and base",
+    "privacyBody": "Who can see your trips",
+    "accountSecurityBody": "Password, email and sign-in",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode",
+    "verified": "Verified",
+    "base": "{{code}} BASE",
+    "languageIntro": "Choose the language CrewUp uses. More are coming soon."
   },
   "airline": {
     "select": "Select airline",
@@ -837,6 +847,34 @@
     "airlineOnly": "{{airline}} only",
     "showingAirline": "Showing {{airline}}"
   },
+  "eventPin": {
+    "badge": "Private",
+    "lockedTitle": "Private meet",
+    "lockedBody": "Enter the PIN from the host to see the details, RSVP and join the chat.",
+    "pinLabel": "PIN",
+    "pinA11y": "Meet PIN, 6 letters and numbers",
+    "paste": "Paste",
+    "unlock": "Unlock",
+    "invalid_one": "That PIN doesn't match. {{count}} try left.",
+    "invalid_other": "That PIN doesn't match. {{count}} tries left.",
+    "invalidNoCount": "That PIN doesn't match. Check it with the host.",
+    "locked_one": "Too many wrong PINs. Try again in {{count}} minute.",
+    "locked_other": "Too many wrong PINs. Try again in {{count}} minutes.",
+    "unavailable": "This meet is no longer available.",
+    "required": "Enter the meet's PIN first.",
+    "cardTitle": "Meet PIN",
+    "cardBody": "Anyone with this PIN can see this meet and join it.",
+    "copy": "Copy",
+    "copied": "PIN copied",
+    "share": "Share",
+    "shareMessage": "Join my CrewUp meet “{{title}}” on {{when}}. Open it in CrewUp and enter PIN {{pin}}.",
+    "change": "Change PIN",
+    "changeTitle": "Change the PIN?",
+    "changeBody": "The old PIN stops working. Crew who already unlocked this meet keep access.",
+    "changeConfirm": "Change PIN",
+    "changed": "New PIN ready to share",
+    "loadFailed": "Couldn't load the PIN. Try again."
+  },
   "eventHost": {
     "youreHosting": "You're hosting",
     "state": {
@@ -987,5 +1025,28 @@
     "notImported": "Not imported:",
     "skippedDuties_one": "{{count}} day off, standby or training day",
     "skippedDuties_other": "{{count}} days off, standby or training days"
+  },
+  "privacy": {
+    "intro": "Nothing changes until you save.",
+    "statusHint": "When you have no active trip.",
+    "audienceLabel": "Who can see your profile and presence",
+    "audience": {
+      "friends": "Friends",
+      "friends_of_friends": "Friends of friends",
+      "same_airline": "Same airline",
+      "all_verified": "All verified crew"
+    },
+    "audienceHint": "Crew outside this group can’t see you.",
+    "hiddenHint": "Hidden: saved as off. Pick an audience to become available again.",
+    "realtime": "Real time",
+    "digest": "Digest",
+    "save": "Save changes",
+    "saved": "Saved"
+  },
+  "security": {
+    "intro": "Change the password you use to sign in.",
+    "change": "Change password",
+    "changed": "Password changed. Use it next time you sign in.",
+    "changedButton": "Password changed"
   }
 }

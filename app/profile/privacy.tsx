@@ -1,151 +1,132 @@
-import { useEffect, useState } from 'react';
-import { View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
+import { Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useApolloClient } from '@/lib/apolloHooks';
-import {
-  Screen,
-  Button,
-  Subtitle,
-  BodyText,
-  SelectionOption,
-  SectionLabel,
-  PillSelectorGroup,
-} from '@/components/ui';
+import { RadioRow, SettingsHint, SettingsPage, SettingsSection } from '@/components/settings/settingsKit';
 import { type VisibilityLevel } from '@/constants/screens';
-import { formatOptionLabel } from '@/lib/formatOptionLabel';
-import {
-  normalizeVisibilityForAffiliation,
-  visibilityLevelsForAffiliation,
-} from '@/lib/visibilityOptions';
+import { PillCta } from '@/features/onboarding/components/kit';
+import { useApolloClient } from '@/lib/apolloHooks';
 import { formatApolloError } from '@/lib/graphqlError';
+import { hapticError, hapticSuccess } from '@/lib/haptics';
+import { normalizeVisibilityForAffiliation, visibilityLevelsForAffiliation } from '@/lib/visibilityOptions';
 import { useAuth, useSession } from '@/hooks/useSession';
 import { updateProfile } from '@/services/profileService';
-import { useThemedStyles, useTheme } from '@/theme';
+import { fontFamily, useTheme } from '@/theme';
 
+type Audience = Exclude<VisibilityLevel, 'off'>;
+type NotificationMode = 'realtime' | 'digest';
+
+/**
+ * 3E — status and audience depend on each other: Hidden clears the audience (saved as `off`), and picking an
+ * audience switches status back to Available. Same airline only shows with an airline. Save stays grey until
+ * something changes.
+ */
 export default function PrivacySettingsScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
-  const client = useApolloClient();
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const client = useApolloClient();
   const { profile, userId } = useAuth();
   const { refreshProfile, refreshSession } = useSession();
-  const styles = useThemedStyles((t) => ({
-    scroll: { padding: t.spacing.lg, paddingBottom: t.spacing.xxxl + 80 },
-    section: { marginBottom: t.spacing.xl },
-    footer: {
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      bottom: 0,
-      paddingHorizontal: t.spacing.lg,
-      paddingTop: t.spacing.md,
-      paddingBottom: Math.max(insets.bottom, t.spacing.lg),
-      backgroundColor: t.colors.bgCanvas,
-      borderTopWidth: 1,
-      borderTopColor: t.colors.hairline,
-      gap: t.spacing.xs,
-    },
-  }));
-
   const airlineId = profile?.airline_id ?? undefined;
-  const [visibility, setVisibility] = useState<VisibilityLevel>(profile?.default_visibility ?? 'friends');
-  const [statusDefaultHidden, setStatusDefaultHidden] = useState(profile?.default_visibility === 'off');
-  const [notificationMode, setNotificationMode] = useState(profile?.notification_mode ?? 'realtime');
-  const [loading, setLoading] = useState(false);
+
+  const saved = useMemo(() => {
+    const visibility = profile?.default_visibility ?? 'friends';
+    return {
+      hidden: visibility === 'off',
+      audience: (visibility === 'off' ? null : normalizeVisibilityForAffiliation(visibility, airlineId)) as Audience | null,
+      notifications: (profile?.notification_mode ?? 'realtime') as NotificationMode,
+    };
+  }, [airlineId, profile?.default_visibility, profile?.notification_mode]);
+
+  const [hidden, setHidden] = useState(saved.hidden);
+  const [audience, setAudience] = useState<Audience | null>(saved.audience);
+  const [notifications, setNotifications] = useState<NotificationMode>(saved.notifications);
+  const [lastAudience, setLastAudience] = useState<Audience>(saved.audience ?? 'all_verified');
+  const [saving, setSaving] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!profile) return;
-    setVisibility(profile.default_visibility ?? 'friends');
-    setStatusDefaultHidden(profile.default_visibility === 'off');
-    setNotificationMode(profile.notification_mode ?? 'realtime');
-  }, [profile]);
+    setHidden(saved.hidden);
+    setAudience(saved.audience);
+    setNotifications(saved.notifications);
+    if (saved.audience) setLastAudience(saved.audience);
+  }, [saved]);
 
-  useEffect(() => {
-    if (!airlineId && visibility === 'same_airline') {
-      setVisibility('friends');
-    }
-  }, [airlineId, visibility]);
+  const dirty = hidden !== saved.hidden || (!hidden && audience !== saved.audience) || notifications !== saved.notifications;
+  const audiences = visibilityLevelsForAffiliation(airlineId) as Audience[];
+
+  const pickStatus = (nextHidden: boolean) => {
+    setJustSaved(false);
+    setHidden(nextHidden);
+    setAudience(nextHidden ? null : (audience ?? lastAudience));
+  };
+
+  const pickAudience = (next: Audience) => {
+    setJustSaved(false);
+    setHidden(false);
+    setAudience(next);
+    setLastAudience(next);
+  };
 
   const onSave = async () => {
-    if (!userId) return;
-    setLoading(true);
+    if (!userId || !dirty) return;
+    setSaving(true);
     setError('');
     try {
-      const resolvedVisibility: VisibilityLevel = statusDefaultHidden
-        ? 'off'
-        : normalizeVisibilityForAffiliation(visibility, airlineId);
       await updateProfile(client, userId, {
-        default_visibility: resolvedVisibility,
-        notification_mode: notificationMode,
+        default_visibility: hidden || !audience ? 'off' : normalizeVisibilityForAffiliation(audience, airlineId),
+        notification_mode: notifications,
       });
       await refreshSession();
       await refreshProfile();
-      router.back();
+      hapticSuccess();
+      setJustSaved(true);
     } catch (e) {
+      hapticError();
       setError(formatApolloError(e));
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
   return (
-    <Screen style={{ padding: 0 }}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          <View style={styles.section}>
-            <SectionLabel>{t('home.statusDefault')}</SectionLabel>
-            <SelectionOption
-              label={t('home.statusAvailableDefault')}
-              selected={!statusDefaultHidden}
-              onPress={() => setStatusDefaultHidden(false)}
-            />
-            <SelectionOption
-              label={t('home.statusHiddenDefault')}
-              selected={statusDefaultHidden}
-              onPress={() => setStatusDefaultHidden(true)}
-            />
-          </View>
+    <SettingsPage
+      title={t('menu.privacy')}
+      subtitle={t('privacy.intro')}
+      footer={
+        <PillCta
+          label={justSaved && !dirty ? t('privacy.saved') : t('privacy.save')}
+          disabled={!dirty && !justSaved}
+          loading={saving}
+          onPress={() => void onSave()}
+        />
+      }>
+      <SettingsSection label={t('home.statusDefault')}>
+        <RadioRow label={t('home.statusAvailableDefault')} selected={!hidden} onPress={() => pickStatus(false)} />
+        <RadioRow label={t('home.statusHiddenDefault')} selected={hidden} onPress={() => pickStatus(true)} last />
+      </SettingsSection>
+      <SettingsHint>{t('privacy.statusHint')}</SettingsHint>
 
-          <View style={styles.section}>
-            <SectionLabel>{t('home.editPrivacy')}</SectionLabel>
-            <Subtitle>{t('home.presencePrivacyHint')}</Subtitle>
-            <PillSelectorGroup
-              label={t('onboarding.visibility')}
-              options={visibilityLevelsForAffiliation(airlineId).map((v) => ({
-                value: v,
-                label: formatOptionLabel(v),
-              }))}
-              value={statusDefaultHidden ? undefined : visibility}
-              onChange={(v) => {
-                setStatusDefaultHidden(false);
-                setVisibility(v);
-              }}
-            />
-            <Subtitle>{t('home.notifications')}</Subtitle>
-            {(['realtime', 'digest'] as const).map((mode) => (
-              <SelectionOption
-                key={mode}
-                label={mode}
-                selected={notificationMode === mode}
-                onPress={() => setNotificationMode(mode)}
-              />
-            ))}
-          </View>
+      <SettingsSection label={t('privacy.audienceLabel')}>
+        {audiences.map((level, index) => (
+          <RadioRow
+            key={level}
+            label={t(`privacy.audience.${level}`)}
+            selected={!hidden && audience === level}
+            dim={hidden}
+            onPress={() => pickAudience(level)}
+            last={index === audiences.length - 1}
+          />
+        ))}
+      </SettingsSection>
+      <SettingsHint>{hidden ? t('privacy.hiddenHint') : t('privacy.audienceHint')}</SettingsHint>
 
-          {error ? <BodyText style={{ color: theme.colors.statusOnDuty }}>{error}</BodyText> : null}
-        </ScrollView>
+      <SettingsSection label={t('home.notifications')}>
+        <RadioRow label={t('privacy.realtime')} selected={notifications === 'realtime'} onPress={() => setNotifications('realtime')} />
+        <RadioRow label={t('privacy.digest')} selected={notifications === 'digest'} onPress={() => setNotifications('digest')} last />
+      </SettingsSection>
 
-        <View style={styles.footer}>
-          <Button label={t('home.saveChanges')} onPress={onSave} loading={loading} noTopMargin />
-          <Button label={t('common.cancel')} onPress={() => router.back()} variant="ghost" noTopMargin />
-        </View>
-      </KeyboardAvoidingView>
-    </Screen>
+      {error ? <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: theme.colors.statusOnDuty }}>{error}</Text> : null}
+    </SettingsPage>
   );
 }

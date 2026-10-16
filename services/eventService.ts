@@ -1,6 +1,10 @@
 import type { ApolloClient } from '@apollo/client';
+import { apiEndpoints } from '@/lib/api/endpoints';
+import { nhost } from '@/lib/nhost';
 import {
   GET_EVENT,
+  GET_EVENT_PIN,
+  GET_EVENT_PREVIEW,
   GET_EVENTS,
   GET_EVENTS_BY_CITY,
   INSERT_ATTENDEE,
@@ -31,22 +35,90 @@ export async function fetchEvents(client: ApolloClient, city?: string) {
       query: GET_EVENTS_BY_CITY,
       variables: { now, city },
     });
-    return (data as any)?.events ?? [];
+    return (data as any)?.event_listings ?? [];
   }
   const { data } = await client.query({
     query: GET_EVENTS,
     variables: { now },
   });
-  return (data as any)?.events ?? [];
+  return (data as any)?.event_listings ?? [];
 }
 
+/** Full meet, or null when the caller can't see it yet (a private meet they haven't unlocked). */
 export async function fetchEvent(client: ApolloClient, id: string) {
   const { data } = await client.query({
     query: GET_EVENT,
     variables: { id },
     fetchPolicy: 'network-only',
   });
-  return (data as any)?.events_by_pk;
+  return (data as any)?.events_by_pk ?? null;
+}
+
+/** List-card fields for a meet, including a private one that is still locked. */
+export async function fetchEventPreview(client: ApolloClient, id: string) {
+  const { data } = await client.query({
+    query: GET_EVENT_PREVIEW,
+    variables: { id },
+    fetchPolicy: 'network-only',
+  });
+  return (data as any)?.event_listings?.[0] ?? null;
+}
+
+/** Host only. */
+export async function fetchEventPin(
+  client: ApolloClient,
+  eventId: string,
+): Promise<{ pin: string; rotated_at: string | null } | null> {
+  const { data } = await client.query({
+    query: GET_EVENT_PIN,
+    variables: { eventId },
+    fetchPolicy: 'network-only',
+  });
+  return (data as any)?.event_access_codes_by_pk ?? null;
+}
+
+export class EventPinError extends Error {
+  readonly code: string;
+  readonly attemptsLeft?: number;
+  readonly retryAfterSeconds?: number;
+
+  constructor(code: string, message: string, extra?: { attemptsLeft?: number; retryAfterSeconds?: number }) {
+    super(message);
+    this.name = 'EventPinError';
+    this.code = code;
+    this.attemptsLeft = extra?.attemptsLeft;
+    this.retryAfterSeconds = extra?.retryAfterSeconds;
+  }
+}
+
+async function postEventFunction<T>(path: string, body: Record<string, unknown>): Promise<T> {
+  const session = await nhost.refreshSession(60);
+  if (!session?.accessToken) throw new EventPinError('UNAUTHORIZED', 'Not authenticated');
+  const response = await fetch(`${apiEndpoints.functions}/client/events/${path}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${session.accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const payload = (await response.json().catch(() => ({}))) as {
+    error?: { code?: string; message?: string; attemptsLeft?: number; retryAfterSeconds?: number };
+  } & T;
+  if (!response.ok) {
+    throw new EventPinError(payload.error?.code ?? 'UNKNOWN', payload.error?.message ?? 'Something went wrong', {
+      attemptsLeft: payload.error?.attemptsLeft,
+      retryAfterSeconds: payload.error?.retryAfterSeconds,
+    });
+  }
+  return payload;
+}
+
+/** Enter a private meet's PIN. Throws `EventPinError` (EVENT_PIN_INVALID, EVENT_PIN_LOCKED, …). */
+export async function unlockEvent(eventId: string, pin: string): Promise<void> {
+  await postEventFunction('unlock', { eventId, pin });
+}
+
+/** Host only: replace the PIN. People who already unlocked keep access. */
+export async function rotateEventPin(eventId: string): Promise<{ pin: string; rotatedAt: string }> {
+  return postEventFunction('rotate-pin', { eventId });
 }
 
 export async function createEvent(
