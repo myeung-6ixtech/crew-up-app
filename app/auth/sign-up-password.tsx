@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import { Redirect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { AuthPage, ERROR_RED, FieldStatus, PasswordChecklist, PasswordField, useShowPassword } from '@/components/auth/authKit';
+import { LegalNotice } from '@/components/legal/LegalNotice';
 import { SCREENS } from '@/constants/screens';
 import { PillCta, StepSubtitle, StepTitle } from '@/features/onboarding/components/kit';
 import { useSession } from '@/hooks/useSession';
@@ -75,9 +76,11 @@ export default function SignUpPasswordScreen() {
       onBack={() => router.back()}
       footer={
         <>
-          <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 11.5, lineHeight: 17, color: theme.colors.textTertiary, textAlign: 'center' }}>
-            {t('auth.agreeOnCreate')}
-          </Text>
+          <LegalNotice
+            i18nKey="auth.agreeOnCreate"
+            linkColor={theme.colors.accentText}
+            style={{ fontFamily: fontFamily.interRegular, fontSize: 11.5, lineHeight: 17, color: theme.colors.textTertiary, textAlign: 'center' }}
+          />
           <PillCta label={t('auth.register')} disabled={!ready} loading={loading} onPress={() => void create()} />
         </>
       }>

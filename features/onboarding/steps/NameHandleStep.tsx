@@ -317,6 +317,7 @@ export function NameHandleStep({ context }: { context: StepContext }) {
             autoComplete="family-name"
             textContentType="familyName"
             error={fieldState.error?.message}
+            hint={t('onboarding.nameHandle.nameReason')}
           />
         )}
       />

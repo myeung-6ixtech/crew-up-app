@@ -12,8 +12,10 @@ import { EVENT_TAGS, SCREENS } from '@/constants/screens';
 import { FilledField, MonoLabel, PillCta, TogglePill } from '@/features/onboarding/components/kit';
 import { useAuth } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
+import { contentBlockedMessage } from '@/lib/contentErrors';
 import { hapticError, hapticSelection } from '@/lib/haptics';
 import { fetchActivities, fetchActivityPreferences } from '@/services/activityService';
+import { useGuidelinesGate } from '@/features/legal/guidelinesGate';
 import { createEventWithThread, insertEventActivities } from '@/services/eventService';
 import { fontFamily, useTheme } from '@/theme';
 import type { Activity } from '@/types/domain';
@@ -78,6 +80,7 @@ export default function CreateEventScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const client = useApolloClient();
+  const ensureGuidelines = useGuidelinesGate();
   const { userId, profile } = useAuth();
   const { visibility_scope: visibilityScopeParam } = useLocalSearchParams<{ visibility_scope?: string }>();
   const [kind, setKind] = useState<EventMeetType>(meetTypeFromVisibilityScope(visibilityScopeParam));
@@ -149,6 +152,7 @@ export default function CreateEventScreen() {
       hapticError();
       return;
     }
+    if (!(await ensureGuidelines())) return;
     setSaving(true);
     setSaveError('');
     try {
@@ -173,9 +177,9 @@ export default function CreateEventScreen() {
         await insertEventActivities(client, event.id, selectedIds);
         router.replace(SCREENS.events.detail(event.id));
       }
-    } catch {
+    } catch (e) {
       hapticError();
-      setSaveError(t('onboarding.genericError'));
+      setSaveError(contentBlockedMessage(e, t) ?? t('onboarding.genericError'));
     } finally {
       setSaving(false);
     }

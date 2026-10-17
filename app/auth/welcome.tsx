@@ -4,7 +4,9 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AppleSignInButton } from '@/components/auth/AppleSignInButton';
 import { GoogleIcon } from '@/components/auth/GoogleIcon';
+import { LegalNotice } from '@/components/legal/LegalNotice';
 import { SCREENS } from '@/constants/screens';
 import { DARK, DarkLimePill, DarkOutlinePill, TextPillAction } from '@/features/onboarding/components/kit';
 import { useSession } from '@/hooks/useSession';
@@ -84,6 +86,7 @@ export default function WelcomeScreen() {
             <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: '#FF5B60', textAlign: 'center' }}>{error}</Text>
           ) : null}
           <DarkLimePill label={t('auth.signUpFree')} onPress={() => router.push(SCREENS.auth.signUp)} />
+          <AppleSignInButton variant="white" onError={(message) => setError(message || t('common.error'))} />
           <DarkOutlinePill
             label={t('auth.continueWithGoogle')}
             icon={<GoogleIcon />}
@@ -91,7 +94,9 @@ export default function WelcomeScreen() {
             onPress={() => void onGoogle()}
           />
           <TextPillAction label={t('auth.logIn')} color={DARK.ink} onPress={() => router.push(SCREENS.auth.login())} />
-          <Text
+          <LegalNotice
+            i18nKey="auth.termsNotice"
+            linkColor={DARK.muted}
             style={{
               fontFamily: fontFamily.interRegular,
               fontSize: 11,
@@ -100,9 +105,8 @@ export default function WelcomeScreen() {
               textAlign: 'center',
               paddingHorizontal: 12,
               paddingTop: 4,
-            }}>
-            {t('auth.termsNotice')}
-          </Text>
+            }}
+          />
         </View>
       </ScrollView>
     </View>

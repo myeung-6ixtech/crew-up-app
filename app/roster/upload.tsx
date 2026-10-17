@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { RowChevron } from '@/components/crew/kit';
+import { LegalNotice } from '@/components/legal/LegalNotice';
 import { FlowFooter, FlowTitle, FlowTopBar, WarnChip } from '@/components/roster/flowKit';
 import { RosterProcessing, type ProcessingPhase } from '@/components/roster/RosterProcessing';
 import { Screen } from '@/components/ui';
@@ -15,7 +16,7 @@ import { MonoLabel } from '@/features/onboarding/components/kit';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { formatApolloError, graphQLErrorCode } from '@/lib/graphqlError';
 import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
-import { uploadAndParseRoster } from '@/services/rosterService';
+import { acceptRosterConsent, fetchRosterConsent, uploadAndParseRoster } from '@/services/rosterService';
 import { useRosterDraftStore } from '@/stores/rosterDraftStore';
 import { fontFamily, useTheme } from '@/theme';
 import type { ParsedRosterEntry, ParsedRosterTrip } from '@/types/domain';
@@ -150,6 +151,70 @@ function SourceCard({
   );
 }
 
+type ConsentState =
+  | { status: 'checking' }
+  | { status: 'disabled' }
+  | { status: 'needed'; providerName: string; version: string }
+  | { status: 'ok' };
+
+/** Apple 5.1.2(i): before the first upload, say which AI service reads the file and what happens to it. */
+function RosterConsent({
+  providerName,
+  saving,
+  error,
+  onAgree,
+  onManual,
+  onBack,
+}: {
+  providerName: string;
+  saving: boolean;
+  error: string;
+  onAgree: () => void;
+  onManual: () => void;
+  onBack: () => void;
+}) {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
+  const points = t('roster.consent.points', { returnObjects: true, provider: providerName }) as string[];
+  return (
+    <Screen style={{ padding: 0 }}>
+      <View style={{ paddingTop: insets.top }}>
+        <FlowTopBar title={t('rosterFlow.uploadStackTitle')} backLabel={t('common.back')} onBack={onBack} />
+      </View>
+      <ScrollView contentContainerStyle={{ paddingTop: 22, paddingHorizontal: 24, paddingBottom: 16 }}>
+        <FlowTitle>{t('roster.consent.title')}</FlowTitle>
+        <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14.5, lineHeight: 22, color: theme.colors.textSecondary, marginTop: 10 }}>
+          {t('roster.consent.lead', { provider: providerName })}
+        </Text>
+        <View style={{ backgroundColor: theme.colors.card, borderRadius: 18, padding: 16, gap: 12, marginTop: 20 }}>
+          {points.map((point) => (
+            <View key={point} style={{ flexDirection: 'row', gap: 10 }}>
+              <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: theme.colors.accentText, marginTop: 8 }} />
+              <Text style={{ flex: 1, fontFamily: fontFamily.interRegular, fontSize: 14.5, lineHeight: 22, color: theme.colors.textPrimary }}>{point}</Text>
+            </View>
+          ))}
+        </View>
+        <LegalNotice
+          i18nKey="roster.consent.privacy"
+          linkColor={theme.colors.accentText}
+          style={{ fontFamily: fontFamily.interRegular, fontSize: 13, lineHeight: 20, color: theme.colors.textSecondary, marginTop: 14 }}
+        />
+        {error ? (
+          <Text accessibilityLiveRegion="polite" style={{ fontFamily: fontFamily.interMedium, fontSize: 14, color: theme.colors.statusOnDuty, marginTop: 14 }}>
+            {error}
+          </Text>
+        ) : null}
+      </ScrollView>
+      <FlowFooter
+        bottomInset={insets.bottom}
+        primary={{ label: t('roster.consent.agree'), onPress: onAgree, loading: saving }}
+        secondary={{ label: t('roster.consent.manual'), onPress: onManual }}
+      />
+    </Screen>
+  );
+}
+
 /**
  * Upload your roster: two clearly separate sources — a screenshot from Photos, or the PDF from Files.
  * Reading happens on a full-page dark wait screen; errors come back here and point at manual entry.
@@ -167,6 +232,45 @@ export default function RosterUploadScreen() {
   const [phase, setPhase] = useState<ProcessingPhase | null>(null);
   const [result, setResult] = useState<{ fileId: string; entries: ParsedRosterEntry[]; trips: ParsedRosterTrip[]; skipped: number } | null>(null);
   const runRef = useRef(0);
+  const [consent, setConsent] = useState<ConsentState>({ status: 'checking' });
+  const [consentSaving, setConsentSaving] = useState(false);
+  const [consentError, setConsentError] = useState('');
+
+  const checkConsent = async () => {
+    try {
+      const info = await fetchRosterConsent();
+      if (!info.enabled) setConsent({ status: 'disabled' });
+      else if (!info.consented) setConsent({ status: 'needed', providerName: info.providerName, version: info.version });
+      else setConsent({ status: 'ok' });
+    } catch {
+      // The server still refuses to read a roster without consent, so an offline check can fall through.
+      setConsent({ status: 'ok' });
+    }
+  };
+
+  useEffect(() => {
+    void checkConsent();
+  }, []);
+
+  const agreeToConsent = async () => {
+    if (consent.status !== 'needed') return;
+    setConsentSaving(true);
+    setConsentError('');
+    try {
+      await acceptRosterConsent(consent.version);
+      setConsent({ status: 'ok' });
+    } catch {
+      setConsentError(t('roster.consent.saveFailed'));
+      void checkConsent();
+    } finally {
+      setConsentSaving(false);
+    }
+  };
+
+  const enterManually = () => {
+    setDraft(undefined, []);
+    router.push(SCREENS.roster.confirm);
+  };
 
   const describeError = (e: unknown) => {
     const code = graphQLErrorCode(e);
@@ -201,6 +305,11 @@ export default function RosterUploadScreen() {
       if (runRef.current !== run) return;
       hapticError();
       setPhase(null);
+      if (graphQLErrorCode(e) === 'ROSTER_CONSENT_REQUIRED') {
+        setFile(null);
+        void checkConsent();
+        return;
+      }
       setError(describeError(e));
     }
   };
@@ -220,6 +329,7 @@ export default function RosterUploadScreen() {
   };
 
   const pickFile = async () => {
+    if (consent.status !== 'ok') return;
     setOpening('files');
     try {
       const picked = await DocumentPicker.getDocumentAsync({ type: ROSTER_FILE_TYPES });
@@ -234,6 +344,7 @@ export default function RosterUploadScreen() {
   };
 
   const pickPhoto = async () => {
+    if (consent.status !== 'ok') return;
     setOpening('photos');
     try {
       const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: false, quality: 1 });
@@ -245,6 +356,19 @@ export default function RosterUploadScreen() {
       setOpening(null);
     }
   };
+
+  if (consent.status === 'needed') {
+    return (
+      <RosterConsent
+        providerName={consent.providerName}
+        saving={consentSaving}
+        error={consentError}
+        onAgree={() => void agreeToConsent()}
+        onManual={enterManually}
+        onBack={() => router.back()}
+      />
+    );
+  }
 
   if (phase && file) {
     return (
@@ -268,7 +392,11 @@ export default function RosterUploadScreen() {
       <ScrollView contentContainerStyle={{ paddingTop: 22, paddingHorizontal: 24, paddingBottom: 16 }}>
         <FlowTitle>{t('roster.uploadTitle')}</FlowTitle>
 
-        {error && file ? (
+        {consent.status === 'disabled' ? (
+          <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, lineHeight: 22, color: theme.colors.textSecondary, marginTop: 10 }}>
+            {t('roster.consent.manualOnly')}
+          </Text>
+        ) : error && file ? (
           <>
             <View style={{ marginTop: 22, backgroundColor: theme.colors.card, borderRadius: 18, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               <View style={{ width: 42, height: 50, borderRadius: 8, backgroundColor: theme.colors.field, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 6 }}>
@@ -294,54 +422,49 @@ export default function RosterUploadScreen() {
           </Text>
         )}
 
-        <MonoLabel style={{ fontSize: 10.5, marginTop: 24 }}>{error ? t('rosterFlow.tryAnother') : t('rosterFlow.whereSaved')}</MonoLabel>
-        <View style={{ gap: 10, marginTop: 10 }}>
-          <SourceCard
-            title={IOS ? t('rosterFlow.photosIos') : t('rosterFlow.photosAndroid')}
-            tag={t('rosterFlow.screenshotTag')}
-            subtitle={opening === 'photos' ? (IOS ? t('rosterFlow.openingPhotos') : t('rosterFlow.openingGallery')) : t('rosterFlow.photosBody')}
-            formats={IOS ? ['PNG', 'JPEG', 'HEIC'] : ['PNG', 'JPEG', 'WEBP']}
-            icon={<PhotosGlyph color={theme.colors.onFill} />}
-            iconBg={theme.colors.fill}
-            opening={opening === 'photos'}
-            onPress={() => void pickPhoto()}
-          />
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-            <View style={{ flex: 1, height: 1, backgroundColor: theme.colors.track }} />
-            <Text style={{ fontFamily: fontFamily.monoMedium, fontSize: 10, color: theme.colors.textTertiary }}>{t('rosterFlow.or')}</Text>
-            <View style={{ flex: 1, height: 1, backgroundColor: theme.colors.track }} />
-          </View>
-          <SourceCard
-            title={IOS ? t('rosterFlow.filesIos') : t('rosterFlow.filesAndroid')}
-            tag="PDF"
-            subtitle={opening === 'files' ? t('rosterFlow.openingFiles') : IOS ? t('rosterFlow.filesBodyIos') : t('rosterFlow.filesBodyAndroid')}
-            formats={['PDF']}
-            icon={<FileGlyph color="#A8E05F" />}
-            iconBg="#0E1113"
-            opening={opening === 'files'}
-            onPress={() => void pickFile()}
-          />
-        </View>
+        {consent.status !== 'disabled' ? (
+          <>
+            <MonoLabel style={{ fontSize: 10.5, marginTop: 24 }}>{error ? t('rosterFlow.tryAnother') : t('rosterFlow.whereSaved')}</MonoLabel>
+            <View style={{ gap: 10, marginTop: 10 }}>
+              <SourceCard
+                title={IOS ? t('rosterFlow.photosIos') : t('rosterFlow.photosAndroid')}
+                tag={t('rosterFlow.screenshotTag')}
+                subtitle={opening === 'photos' ? (IOS ? t('rosterFlow.openingPhotos') : t('rosterFlow.openingGallery')) : t('rosterFlow.photosBody')}
+                formats={IOS ? ['PNG', 'JPEG', 'HEIC'] : ['PNG', 'JPEG', 'WEBP']}
+                icon={<PhotosGlyph color={theme.colors.onFill} />}
+                iconBg={theme.colors.fill}
+                opening={opening === 'photos'}
+                onPress={() => void pickPhoto()}
+              />
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+                <View style={{ flex: 1, height: 1, backgroundColor: theme.colors.track }} />
+                <Text style={{ fontFamily: fontFamily.monoMedium, fontSize: 10, color: theme.colors.textTertiary }}>{t('rosterFlow.or')}</Text>
+                <View style={{ flex: 1, height: 1, backgroundColor: theme.colors.track }} />
+              </View>
+              <SourceCard
+                title={IOS ? t('rosterFlow.filesIos') : t('rosterFlow.filesAndroid')}
+                tag="PDF"
+                subtitle={opening === 'files' ? t('rosterFlow.openingFiles') : IOS ? t('rosterFlow.filesBodyIos') : t('rosterFlow.filesBodyAndroid')}
+                formats={['PDF']}
+                icon={<FileGlyph color="#A8E05F" />}
+                iconBg="#0E1113"
+                opening={opening === 'files'}
+                onPress={() => void pickFile()}
+              />
+            </View>
 
-        <View style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start', backgroundColor: theme.colors.field, borderRadius: 14, paddingVertical: 13, paddingHorizontal: 14, marginTop: 14 }}>
-          <View style={{ marginTop: 1 }}>
-            <LockGlyph color={theme.colors.textPrimary} />
-          </View>
-          <Text style={{ flex: 1, fontFamily: fontFamily.interRegular, fontSize: 12.5, lineHeight: 19, color: theme.colors.textSecondary }}>
-            {t('roster.uploadPrivacy')}
-          </Text>
-        </View>
+            <View style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start', backgroundColor: theme.colors.field, borderRadius: 14, paddingVertical: 13, paddingHorizontal: 14, marginTop: 14 }}>
+              <View style={{ marginTop: 1 }}>
+                <LockGlyph color={theme.colors.textPrimary} />
+              </View>
+              <Text style={{ flex: 1, fontFamily: fontFamily.interRegular, fontSize: 12.5, lineHeight: 19, color: theme.colors.textSecondary }}>
+                {t('roster.uploadPrivacy')}
+              </Text>
+            </View>
+          </>
+        ) : null}
       </ScrollView>
-      <FlowFooter
-        bottomInset={insets.bottom}
-        secondary={{
-          label: t('roster.manual'),
-          onPress: () => {
-            setDraft(undefined, []);
-            router.push(SCREENS.roster.confirm);
-          },
-        }}
-      />
+      <FlowFooter bottomInset={insets.bottom} secondary={{ label: t('roster.manual'), onPress: enterManually }} />
     </Screen>
   );
 }

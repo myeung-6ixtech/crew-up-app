@@ -38,6 +38,12 @@
         "EXPO_PUBLIC_NHOST_SUBDOMAIN": "tvxoufuvglucgbdftsns",
         "EXPO_PUBLIC_NHOST_REGION": "ap-southeast-1",
         "EXPO_PUBLIC_APP_SCHEME": "crewup"
+      },
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "ios": {
+        "simulator": false
       }
     },
     "testflight": {

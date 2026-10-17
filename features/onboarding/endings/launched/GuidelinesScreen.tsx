@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { LegalNotice } from '@/components/legal/LegalNotice';
 import { AppIcon, BodyText, HeadlineText } from '@/components/ui';
-import { useTheme } from '@/theme';
+import { fontFamily, useTheme } from '@/theme';
 import { BulletList } from '../../components/BulletList';
 import { StepScaffold } from '../../components/StepScaffold';
 import { useStepSave } from '../../hooks/useStepForm';
@@ -27,6 +28,7 @@ export function GuidelinesScreen() {
       error={formError}>
       <HeadlineText style={{ marginBottom: theme.spacing.md }}>{t('onboarding.guidelines.lead')}</HeadlineText>
       <BulletList items={points} />
+      <BodyText style={{ marginTop: theme.spacing.md, fontFamily: fontFamily.interMedium }}>{t('onboarding.guidelines.zeroTolerance')}</BodyText>
       <Pressable
         accessibilityRole="checkbox"
         accessibilityState={{ checked: accepted }}
@@ -38,7 +40,11 @@ export function GuidelinesScreen() {
           color={accepted ? theme.colors.accentText : theme.colors.textTertiary}
         />
         <View style={{ flex: 1 }}>
-          <BodyText>{t('onboarding.guidelines.accept')}</BodyText>
+          <LegalNotice
+            i18nKey="onboarding.guidelines.acceptWithTerms"
+            linkColor={theme.colors.accentText}
+            style={{ fontFamily: fontFamily.interRegular, fontSize: 15, lineHeight: 22, color: theme.colors.textPrimary }}
+          />
         </View>
       </Pressable>
     </StepScaffold>

@@ -1,7 +1,9 @@
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import { BottomSheet } from '@/components/ui';
+import { SCREENS } from '@/constants/screens';
 import { PillCta } from '@/features/onboarding/components/kit';
 import { fontFamily, useTheme } from '@/theme';
 
@@ -18,6 +20,7 @@ function ShieldGlyph({ color }: { color: string }) {
 export function SafetyNudgeModal({ visible, onDismiss }: { visible: boolean; onDismiss: () => void }) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const router = useRouter();
   return (
     <BottomSheet visible={visible} onClose={onDismiss}>
       <View style={{ gap: 14, paddingHorizontal: 8, paddingBottom: 4 }}>
@@ -39,6 +42,15 @@ export function SafetyNudgeModal({ visible, onDismiss }: { visible: boolean; onD
         <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14.5, lineHeight: 22, color: theme.colors.textSecondary }}>
           {t('safety.nudgeBody')}
         </Text>
+        <Pressable
+          accessibilityRole="link"
+          hitSlop={8}
+          onPress={() => {
+            onDismiss();
+            router.push(SCREENS.legal.safety);
+          }}>
+          <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 14.5, color: theme.colors.accentText }}>{t('safety.readTips')}</Text>
+        </Pressable>
         <View style={{ marginTop: 6 }}>
           <PillCta label={t('safety.gotIt')} onPress={onDismiss} />
         </View>

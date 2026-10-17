@@ -6,13 +6,16 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DateTimeTile, formatShortDateTime } from '@/components/roster/DateTimeTile';
 import { FlowFooter, FlowTitle, FlowTopBar, WarnChip } from '@/components/roster/flowKit';
+import { ReportSheet } from '@/components/ReportSheet';
 import { Screen } from '@/components/ui';
 import { SCREENS } from '@/constants/screens';
+import { useAuth } from '@/hooks/useSession';
 import { MonoLabel, TextAction } from '@/features/onboarding/components/kit';
 import { airportDayOffset, formatAirportDate, formatAirportTime } from '@/lib/airportTime';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticError, hapticImpact, hapticSelection, hapticSuccess } from '@/lib/haptics';
 import { insertRosters, mapParsedToRosterInsert } from '@/services/rosterService';
+import { reportUser } from '@/services/safetyService';
 import { createTripsFromRoster, createTripsFromRosterLayovers, rosterTripRoute } from '@/services/tripService';
 import { useRosterDraftStore } from '@/stores/rosterDraftStore';
 import { fontFamily, useTheme } from '@/theme';
@@ -263,6 +266,8 @@ export default function RosterConfirmScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const client = useApolloClient();
+  const { userId } = useAuth();
+  const [flagOpen, setFlagOpen] = useState(false);
   const { entries, trips, sourceFileId, skippedDuties, removeEntry, addEntry, updateTripLayover, removeTrip, clear } = useRosterDraftStore();
   const fromFile = Boolean(sourceFileId);
   const flightCount = trips.reduce((sum, trip) => sum + trip.legs.length, 0);
@@ -492,6 +497,11 @@ export default function RosterConfirmScreen() {
             </View>
           ) : null}
           {error ? <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: theme.colors.statusOnDuty, marginTop: 12 }}>{error}</Text> : null}
+          {fromFile && userId ? (
+            <Pressable accessibilityRole="button" hitSlop={8} onPress={() => setFlagOpen(true)} style={{ marginTop: 18, alignSelf: 'flex-start' }}>
+              <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 13.5, color: theme.colors.accentText }}>{t('rosterFlow.flagResult')}</Text>
+            </Pressable>
+          ) : null}
         </ScrollView>
         <FlowFooter
           bottomInset={insets.bottom}
@@ -503,6 +513,21 @@ export default function RosterConfirmScreen() {
           }}
         />
       </KeyboardAvoidingView>
+      {userId ? (
+        <ReportSheet
+          visible={flagOpen}
+          onClose={() => setFlagOpen(false)}
+          title={t('rosterFlow.flagTitle')}
+          intro={t('rosterFlow.flagIntro')}
+          thanks={t('rosterFlow.flagThanks')}
+          fixedReason="roster_parse_issue"
+          onSubmit={async (reason, details) => {
+            // No roster content is attached; the file is already deleted on the server.
+            const summary = `Trips: ${trips.length}, flights: ${flightCount}, layovers: ${layoverCount}, skipped duties: ${skippedDuties}`;
+            await reportUser(client, { reason, details: details ? `${details}\n\n${summary}` : summary, reportedUserId: userId });
+          }}
+        />
+      ) : null}
     </Screen>
   );
 }

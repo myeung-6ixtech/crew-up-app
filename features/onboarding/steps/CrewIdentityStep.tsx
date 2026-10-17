@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { CREW_ROLES, CrewIdentitySchema, type CrewRole } from '@crewup/shared';
@@ -7,6 +7,7 @@ import { AirlinePickerField, type AirlineOption } from '@/components/profile/Air
 import { AirportPickerField } from '@/components/profile/AirportPickerField';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { formatApolloError } from '@/lib/graphqlError';
+import { openSupportEmail } from '@/lib/legal';
 import { useAuth } from '@/hooks/useSession';
 import { fetchAirlines } from '@/services/profileService';
 import { fontFamily, useTheme } from '@/theme';
@@ -131,7 +132,7 @@ export function CrewIdentityStep({ context }: { context: StepContext }) {
         {t('onboarding.crew.airlineMissingLead')}{' '}
         <Text
           accessibilityRole="link"
-          onPress={() => Alert.alert(t('onboarding.crew.airlineMissing'), t('onboarding.crew.airlineMissingBody'))}
+          onPress={() => void openSupportEmail(t('onboarding.crew.airlineMissingSubject'))}
           style={{ fontFamily: fontFamily.interMedium, color: theme.colors.accentText }}>
           {t('onboarding.crew.contactSupport')}
         </Text>{' '}

@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { SCREENS } from '@/constants/screens';
 import { ERROR_RED, FieldStatus, PasswordChecklist, PasswordField, useShowPassword } from '@/components/auth/authKit';
 import { SettingsPage } from '@/components/settings/settingsKit';
 import { PillCta } from '@/features/onboarding/components/kit';
@@ -12,11 +14,12 @@ import { fontFamily, useTheme } from '@/theme';
 
 /**
  * 3F — password only: the same rules, meter and confirm field as sign up (4B) and reset (4L).
- * Change password unlocks once every rule passes and both fields match. No 2FA, sessions or delete account.
+ * Change password unlocks once every rule passes and both fields match. Delete account sits below.
  */
 export default function AccountSecurityScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
+  const router = useRouter();
   const { user, profile } = useAuth();
   const { shown, toggle } = useShowPassword();
   const [password, setPassword] = useState('');
@@ -92,6 +95,21 @@ export default function AccountSecurityScreen() {
         </View>
         {error ? <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 13, lineHeight: 19, color: ERROR_RED, paddingLeft: 4 }}>{error}</Text> : null}
       </View>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityHint={t('accountDelete.rowBody')}
+        onPress={() => router.push(SCREENS.account.delete)}
+        style={({ pressed }) => ({
+          marginTop: 28,
+          backgroundColor: theme.colors.card,
+          borderRadius: 18,
+          padding: 16,
+          gap: 4,
+          opacity: pressed ? 0.8 : 1,
+        })}>
+        <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 15, color: ERROR_RED }}>{t('accountDelete.title')}</Text>
+        <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, lineHeight: 19, color: theme.colors.textSecondary }}>{t('accountDelete.rowBody')}</Text>
+      </Pressable>
     </SettingsPage>
   );
 }

@@ -1,4 +1,5 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import i18n from '@/lib/i18n';
 
 const DEPLOY_HINT =
   'Deploy the backend: cd crew-up-nhost && cp .env.deploy.example .env.deploy (add Hasura admin secret) && npm run deploy:cloud';
@@ -46,6 +47,7 @@ export function formatApolloError(error: unknown): string {
   const message = graphQLErrorMessage(error);
 
   if (message) {
+    if (message.includes('CONTENT_BLOCKED')) return i18n.t('moderation.contentBlocked');
     if (message.includes('not found in type') || message.includes('no_queries_available')) {
       return `Backend schema is not deployed (${message}). ${DEPLOY_HINT}`;
     }

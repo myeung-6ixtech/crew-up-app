@@ -10,6 +10,7 @@ import { SCREENS } from '@/constants/screens';
 import { FilledField, MonoLabel, PillCta, TextAction, TogglePill } from '@/features/onboarding/components/kit';
 import { useAuth } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
+import { contentBlockedMessage } from '@/lib/contentErrors';
 import { hapticError, hapticSelection, hapticSuccess } from '@/lib/haptics';
 import { fetchActivities, fetchActivityPreferences } from '@/services/activityService';
 import { fetchEvent, replaceEventActivities, updateEvent } from '@/services/eventService';
@@ -151,9 +152,9 @@ export default function EditEventScreen() {
       await replaceEventActivities(client, id, selectedIds);
       hapticSuccess();
       router.back();
-    } catch {
+    } catch (e) {
       hapticError();
-      setError(t('onboarding.genericError'));
+      setError(contentBlockedMessage(e, t) ?? t('onboarding.genericError'));
     } finally {
       setSaving(false);
     }

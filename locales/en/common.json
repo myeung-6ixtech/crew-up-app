@@ -23,7 +23,7 @@
     "confirmPassword": "Confirm password",
     "forgotPassword": "Forgot password?",
     "signOut": "Sign out",
-    "termsNotice": "By continuing you agree to CrewUp's Terms and Privacy Policy.",
+    "termsNotice": "By continuing you agree to CrewUp's <terms>Terms of Use</terms> and <privacy>Privacy Policy</privacy>.",
     "emailTitle": "What's your email?",
     "emailSubtitle": "Use one you can open on this phone. We'll send a link to confirm it.",
     "emailHint": "Personal email works best. Airline inboxes often block links.",
@@ -55,7 +55,7 @@
       "good": "Good",
       "strong": "Strong"
     },
-    "agreeOnCreate": "By creating an account you agree to CrewUp's Terms and Privacy Policy.",
+    "agreeOnCreate": "By creating an account you agree to CrewUp's <terms>Terms of Use</terms> and <privacy>Privacy Policy</privacy>.",
     "passwordBreached": "This password has shown up in a data breach. Pick a different one.",
     "checkInbox": "Check your inbox",
     "sentVerifyTo": "We sent a verification link to",
@@ -137,6 +137,7 @@
       "firstNamePlaceholder": "e.g. Tai Man",
       "lastName": "Last name",
       "lastNamePlaceholder": "e.g. Chan",
+      "nameReason": "Your real name builds trust so crew know who they're meeting. Crew see only the display name you pick below.",
       "displayName": "Display name",
       "displayFull": "First name and last name",
       "displayInitial": "Last name, first letter of first name",
@@ -222,7 +223,7 @@
       "base": "Base airport",
       "baseHint": "Search by code, city or airport name.",
       "airlineMissing": "My airline isn't listed",
-      "airlineMissingBody": "We're adding airlines as CrewUp grows. Contact support and we'll let you know when yours is available.",
+      "airlineMissingSubject": "My airline isn't listed on CrewUp",
       "airlineAndBase": "Airline & base",
       "airlineMissingLead": "Airline not listed?",
       "contactSupport": "Contact support",
@@ -336,7 +337,9 @@
         "Never share another crew member's roster or location.",
         "Report anything that feels wrong. We review every report."
       ],
+      "zeroTolerance": "CrewUp has zero tolerance for abusive content or users. We review reports within 24 hours and remove content or accounts that break these rules.",
       "accept": "I agree to the CrewUp community guidelines",
+      "acceptWithTerms": "I agree to the community guidelines and CrewUp's <terms>Terms of Use</terms>, and I've read the <privacy>Privacy Policy</privacy>.",
       "cta": "Continue"
     },
     "notifications": {
@@ -466,7 +469,7 @@
     "manual": "Enter manually",
     "uploadTitle": "Upload your roster",
     "uploadBody": "Pick a screenshot from your photos or the PDF from your airline. You check everything before it's saved.",
-    "uploadPrivacy": "Names, staff numbers and hotels are removed before your roster is read.",
+    "uploadPrivacy": "Names, staff numbers and hotels are removed from PDFs before reading, and your file is deleted right after.",
     "chooseFile": "Choose file",
     "choosePhoto": "Choose from library",
     "reading": "Reading your roster…",
@@ -478,7 +481,23 @@
       "ROSTER_PARSE_INVALID": "We couldn't read this roster. You can add your trip manually.",
       "ROSTER_TEXT_UNAVAILABLE": "This file has no readable text. Try the PDF from your airline instead of a scan or screenshot.",
       "ROSTER_FILE_TOO_LARGE": "This file is too large. Rosters up to 10 MB and 20 pages are supported.",
-      "ROSTER_FILE_UNSUPPORTED": "This file type isn't supported. Upload a PDF, PNG or JPEG."
+      "ROSTER_FILE_UNSUPPORTED": "This file type isn't supported. Upload a PDF, PNG or JPEG.",
+      "ROSTER_CONSENT_REQUIRED": "Review how we read rosters, then try again."
+    },
+    "consent": {
+      "title": "Before we read your roster",
+      "lead": "CrewUp uses {{provider}}, an AI service, to find the flights and layovers in your roster.",
+      "points": [
+        "Your file is sent to {{provider}} only to read your flights.",
+        "From PDFs, we remove names, staff numbers and hotel names first. Screenshots are sent as they are, so crop out anything you'd rather not share.",
+        "We delete your file right after it's read. Only the trips you confirm are saved.",
+        "Prefer not to? You can enter your trips manually instead."
+      ],
+      "privacy": "Read more in our <privacy>Privacy Policy</privacy>.",
+      "agree": "Agree and continue",
+      "manual": "Enter manually",
+      "saveFailed": "We couldn't save your choice. Try again.",
+      "manualOnly": "Roster import is off right now. You can add your trips manually."
     }
   },
   "addTripMethod": {
@@ -629,7 +648,11 @@
     "eventChat": "Event chat",
     "directMessage": "Direct message",
     "noMessagesYet": "No messages yet.",
-    "friendsWith": "You and {{name}} are friends"
+    "friendsWith": "You and {{name}} are friends",
+    "cantSend": "You can't message this person."
+  },
+  "moderation": {
+    "contentBlocked": "That includes words we don't allow. Edit and try again."
   },
   "safety": {
     "report": "Report",
@@ -638,7 +661,41 @@
     "nudgeBody": "Prefer a public place or a group meetup. You can share plans with a friend outside the app.",
     "blockConfirmTitle": "Block {{name}}?",
     "blockConfirmBody": "They won't be able to find you, message you, or send you requests. They aren't told.",
-    "gotIt": "Got it"
+    "gotIt": "Got it",
+    "readTips": "Read safety tips",
+    "tips": {
+      "title": "Safety tips",
+      "lead": "Most crew meetups are easy and fun. A few habits keep them that way.",
+      "sections": [
+        {
+          "title": "Meet in public",
+          "body": "Pick a busy café, bar or a group meet for a first hangout. Avoid going to someone's hotel room or home until you know them."
+        },
+        {
+          "title": "Tell a friend",
+          "body": "Share where you're going, who you're meeting and when you expect to be back. Keep your phone charged."
+        },
+        {
+          "title": "Get yourself there and back",
+          "body": "Arrange your own transport and keep enough local currency or a card for a ride back to your hotel."
+        },
+        {
+          "title": "Trust your instincts",
+          "body": "If something feels off, leave. You never owe anyone an explanation. Keep an eye on your drink."
+        },
+        {
+          "title": "Report or block",
+          "body": "Report and Block are at the bottom of every profile and under ••• at the top of a chat. Press and hold a message to report it. Blocking is instant and the other person isn't told."
+        },
+        {
+          "title": "We review every report",
+          "body": "Our team reviews reports within 24 hours and removes people who break our guidelines."
+        }
+      ],
+      "emergencyTitle": "In an emergency",
+      "emergencyBody": "Contact local emergency services first, then your company's crew control. 112 works on mobile phones in many countries.",
+      "emergencyLink": "Find local emergency numbers"
+    }
   },
   "common": {
     "loading": "Loading…",
@@ -650,7 +707,83 @@
     "continue": "Continue",
     "dismiss": "Dismiss",
     "clear": "Clear",
-    "close": "Close"
+    "close": "Close",
+    "send": "Send"
+  },
+  "report": {
+    "intro": "Tell us what's wrong. The person isn't told who reported them. We review reports within 24 hours.",
+    "reasons": {
+      "harassment": "Harassment or bullying",
+      "inappropriate": "Sexual or offensive content",
+      "spam": "Spam or scam",
+      "fake_profile": "Fake profile or not crew",
+      "safety": "Safety concern",
+      "underage": "Under 18",
+      "other": "Something else"
+    },
+    "details": "Details (optional)",
+    "detailsPlaceholder": "What happened?",
+    "thanks": "Thanks for telling us. Our team reviews every report within 24 hours. You can also block this person so they can't contact you.",
+    "failed": "Couldn't send your report. Check your connection and try again.",
+    "message": "Report message",
+    "messageTitle": "Report this message",
+    "meet": "Report meet",
+    "person": "Report {{name}}",
+    "chatActions": "Chat options"
+  },
+  "guidelinesGate": {
+    "title": "Before you post",
+    "intro": "Please agree to CrewUp's community guidelines and Terms of Use to message crew, create meets and RSVP.",
+    "agree": "Agree and continue",
+    "updateApp": "There's a newer version of the guidelines. Update CrewUp from the store, then try again."
+  },
+  "blocked": {
+    "title": "Blocked people",
+    "intro": "People you block can't find you, see your trips, or message you. They aren't told.",
+    "empty": "You haven't blocked anyone.",
+    "someone": "Crew member",
+    "unblock": "Unblock",
+    "unblockTitle": "Unblock {{name}}?",
+    "unblockBody": "They'll be able to find you and send you a request again. Your old friendship isn't restored.",
+    "loadFailed": "Couldn't load your blocked list. Try again."
+  },
+  "about": {
+    "title": "About and support",
+    "guidelines": "Community guidelines",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms of Use",
+    "contactSupport": "Contact support",
+    "licenses": "Open-source licenses",
+    "licensesIntro": "CrewUp is built with these open-source packages. Tap one to see its project.",
+    "notAffiliated": "CrewUp is not affiliated with or endorsed by any airline.",
+    "version": "Version {{version}}",
+    "guidelinesTerms": "These guidelines are part of CrewUp's <terms>Terms of Use</terms>. Read how we handle your data in our <privacy>Privacy Policy</privacy>.",
+    "safetyTips": "Safety tips"
+  },
+  "accountDelete": {
+    "title": "Delete account",
+    "rowBody": "Erase your profile, trips and messages. You have 30 days to change your mind.",
+    "intro": "Your account is hidden and signed out straight away, then erased after {{days}} days.",
+    "points": [
+      "Your profile, photos, trips and crew details are erased.",
+      "Meets you host and upcoming RSVPs are cancelled now.",
+      "Messages you sent show as removed for everyone else.",
+      "Sign in within {{days}} days to keep your account instead."
+    ],
+    "password": "Your password",
+    "typeToConfirm": "Type {{word}} to confirm",
+    "cta": "Delete my account",
+    "doneTitle": "Account scheduled for deletion",
+    "doneBody": "Your account will be erased on {{date}}. Sign in before then if you change your mind.",
+    "badPassword": "That password isn't right.",
+    "signInAgain": "Sign in again, then try deleting your account.",
+    "loadFailed": "Couldn't load this page. Check your connection and try again.",
+    "pendingTitle": "Your account is scheduled for deletion",
+    "pendingBody": "It will be erased on {{date}}.",
+    "pendingNote": "Keep your account to cancel the deletion and turn your profile back on. Meets and RSVPs that were cancelled stay cancelled.",
+    "keep": "Keep my account",
+    "expired": "The 30 days have passed, so this account can't be restored.",
+    "messageRemoved": "Message removed"
   },
   "settings": {
     "languages": {
@@ -675,7 +808,12 @@
     "darkMode": "Dark mode",
     "verified": "Verified",
     "base": "{{code}} BASE",
-    "languageIntro": "Choose the language CrewUp uses. More are coming soon."
+    "languageIntro": "Choose the language CrewUp uses."
+  },
+  "presence": {
+    "emptyTitle": "No crew visible here yet",
+    "emptyBody": "Crew show up here once they add a trip to this city and choose who can see them.",
+    "crewFallback": "Crew"
   },
   "airline": {
     "select": "Select airline",
@@ -953,7 +1091,7 @@
     "found_one": "We found {{count}} layover. Fix anything that looks off — nothing is saved until you tap Save.",
     "found_other": "We found {{count}} layovers. Fix anything that looks off — nothing is saved until you tap Save.",
     "manualIntro": "Add each layover from your roster. Local time in the layover city.",
-    "cityTbd": "City TBD",
+    "cityTbd": "Add a city",
     "checkCity": "Check city",
     "remove": "Remove",
     "city": "City",
@@ -1024,7 +1162,11 @@
     "done": "Done",
     "notImported": "Not imported:",
     "skippedDuties_one": "{{count}} day off, standby or training day",
-    "skippedDuties_other": "{{count}} days off, standby or training days"
+    "skippedDuties_other": "{{count}} days off, standby or training days",
+    "flagResult": "Something's wrong with this result",
+    "flagTitle": "What looks wrong?",
+    "flagIntro": "Tell us what we got wrong, like a missing flight or the wrong city. We only see the counts below and your note, not your roster file.",
+    "flagThanks": "Thanks. This helps us read rosters better. You can still fix trips here before saving."
   },
   "privacy": {
     "intro": "Nothing changes until you save.",

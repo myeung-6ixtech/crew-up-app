@@ -17,9 +17,11 @@
     "@shopify/flash-list": "2.0.2",
     "clsx": "^2.1.1",
     "expo": "~57.0.9",
+    "expo-apple-authentication": "~57.0.2",
     "expo-blur": "~57.0.2",
     "expo-clipboard": "~57.0.2",
     "expo-constants": "~57.0.8",
+    "expo-crypto": "~57.0.4",
     "expo-document-picker": "^57.0.1",
     "expo-font": "~57.0.1",
     "expo-haptics": "~57.0.3",
@@ -63,7 +65,9 @@
     "web": "expo start --web",
     "sync:shared": "node scripts/sync-shared.mjs",
     "typecheck": "tsc --noEmit",
-    "test:timezone": "node --experimental-strip-types --test scripts/timezone.test.mjs"
+    "check:store": "node scripts/check-store-build.mjs",
+    "test:timezone": "node --experimental-strip-types --test scripts/timezone.test.mjs",
+    "licenses": "node scripts/generate-licenses.mjs"
   },
   "private": true
 }

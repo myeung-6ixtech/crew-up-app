@@ -3,6 +3,7 @@ import { Pressable, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { AuthPage, ERROR_RED, InlineLink, MailGlyph, OrDivider, OutlinePill, PasswordField, useShowPassword } from '@/components/auth/authKit';
+import { AppleSignInButton } from '@/components/auth/AppleSignInButton';
 import { GoogleIcon } from '@/components/auth/GoogleIcon';
 import { SCREENS } from '@/constants/screens';
 import { FilledField, PillCta, StepTitle } from '@/features/onboarding/components/kit';
@@ -120,6 +121,13 @@ export default function LoginScreen() {
             {problem !== 'invalid' ? (
               <>
                 <OrDivider />
+                <AppleSignInButton
+                  variant={theme.mode === 'dark' ? 'white' : 'black'}
+                  onError={(text) => {
+                    setProblem('other');
+                    setMessage(text || t('common.error'));
+                  }}
+                />
                 <Pressable
                   accessibilityRole="button"
                   disabled={googleLoading}

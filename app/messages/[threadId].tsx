@@ -1,19 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Circle, Path } from 'react-native-svg';
 import { BackGlyph, CircleButton, CrewAvatar } from '@/components/crew/kit';
 import { personName, personRoleBase, type PersonProfile } from '@/components/crew/people';
 import { ReportSheet } from '@/components/ReportSheet';
 import { Screen } from '@/components/ui';
 import { SCREENS } from '@/constants/screens';
+import { useGuidelinesGate } from '@/features/legal/guidelinesGate';
 import { INSERT_THREAD_PARTICIPANT } from '@/graphql/mutations/messaging';
 import { useAuth } from '@/hooks/useSession';
 import { useApolloClient, useSubscription } from '@/lib/apolloHooks';
-import { hapticImpact } from '@/lib/haptics';
-import { fetchPublicProfile } from '@/services/connectionService';
+import { messageSendError } from '@/lib/contentErrors';
+import { hapticImpact, hapticWarning } from '@/lib/haptics';
+import { blockUser, fetchPublicProfile } from '@/services/connectionService';
 import { fetchMessages, fetchThreads, markThreadRead, MESSAGES_SUBSCRIPTION, sendMessage } from '@/services/messagingService';
 import { reportUser } from '@/services/safetyService';
 import { fontFamily, useTheme } from '@/theme';
@@ -21,10 +23,23 @@ import type { MessageItem } from '@/types/domain';
 
 type ThreadInfo = {
   type: string;
+  eventId?: string | null;
   eventTitle?: string | null;
   otherId: string | null;
   other: (PersonProfile & { user_id?: string }) | null;
 };
+
+type ReportTarget = { kind: 'person' } | { kind: 'meet' } | { kind: 'message'; messageId: string; senderId: string | null };
+
+function MoreGlyph({ color }: { color: string }) {
+  return (
+    <Svg width={18} height={18} viewBox="0 0 24 24">
+      <Circle cx={5} cy={12} r={1.9} fill={color} />
+      <Circle cx={12} cy={12} r={1.9} fill={color} />
+      <Circle cx={19} cy={12} r={1.9} fill={color} />
+    </Svg>
+  );
+}
 
 /** Direct thread or event chat. Yours on the right in lime, theirs on white cards. No timestamps, no read receipts. */
 export default function ChatScreen() {
@@ -35,10 +50,12 @@ export default function ChatScreen() {
   const insets = useSafeAreaInsets();
   const client = useApolloClient();
   const { userId } = useAuth();
+  const ensureGuidelines = useGuidelinesGate();
   const [messages, setMessages] = useState<MessageItem[] | null>(null);
   const [info, setInfo] = useState<ThreadInfo>({ type: 'direct', otherId: withUserId ?? null, other: null });
   const [body, setBody] = useState('');
-  const [reportOpen, setReportOpen] = useState(false);
+  const [sendError, setSendError] = useState('');
+  const [reportTarget, setReportTarget] = useState<ReportTarget | null>(null);
   const listRef = useRef<FlatList<MessageItem>>(null);
 
   const load = useCallback(async () => {
@@ -54,6 +71,7 @@ export default function ChatScreen() {
       const otherId = participant?.user_id ?? withUserId ?? null;
       setInfo({
         type: mine.thread.type,
+        eventId: mine.thread.event_id,
         eventTitle: mine.thread.event?.title,
         otherId,
         other: participant?.user?.profile ?? null,
@@ -82,14 +100,74 @@ export default function ChatScreen() {
   const onSend = async () => {
     const text = body.trim();
     if (!threadId || !text) return;
+    if (!(await ensureGuidelines())) return;
     hapticImpact();
     setBody('');
-    await sendMessage(client, threadId, text);
+    setSendError('');
+    try {
+      await sendMessage(client, threadId, text);
+    } catch (e) {
+      setBody(text);
+      setSendError(messageSendError(e, t));
+      return;
+    }
     await load();
   };
 
   const isEvent = info.type === 'event_group';
   const title = isEvent ? info.eventTitle || t('messages.eventChat') : personName(info.other, t('messages.directMessage'));
+
+  const block = () => {
+    if (!info.otherId) return;
+    const otherId = info.otherId;
+    Alert.alert(t('safety.blockConfirmTitle', { name: title }), t('safety.blockConfirmBody'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('safety.block'),
+        style: 'destructive',
+        onPress: async () => {
+          hapticWarning();
+          await blockUser(client, otherId).catch(() => undefined);
+          router.back();
+        },
+      },
+    ]);
+  };
+
+  const openActions = () => {
+    if (isEvent) {
+      Alert.alert(title, undefined, [
+        { text: t('report.meet'), onPress: () => setReportTarget({ kind: 'meet' }) },
+        { text: t('common.cancel'), style: 'cancel' },
+      ]);
+      return;
+    }
+    Alert.alert(title, undefined, [
+      { text: t('report.person', { name: title }), onPress: () => setReportTarget({ kind: 'person' }) },
+      { text: t('safety.block'), style: 'destructive', onPress: block },
+      { text: t('common.cancel'), style: 'cancel' },
+    ]);
+  };
+
+  const onLongPressMessage = (item: MessageItem) => {
+    if (item.sender_id === userId || item.removed_at) return;
+    hapticImpact();
+    Alert.alert(t('report.messageTitle'), item.body ?? undefined, [
+      { text: t('report.message'), onPress: () => setReportTarget({ kind: 'message', messageId: item.id, senderId: item.sender_id }) },
+      { text: t('common.cancel'), style: 'cancel' },
+    ]);
+  };
+
+  const submitReport = async (reason: string, details: string) => {
+    if (!reportTarget) return;
+    if (reportTarget.kind === 'message') {
+      await reportUser(client, { reason, details, reportedMessageId: reportTarget.messageId, reportedUserId: reportTarget.senderId ?? undefined });
+    } else if (reportTarget.kind === 'meet') {
+      if (info.eventId) await reportUser(client, { reason, details, reportedEventId: info.eventId });
+    } else if (info.otherId) {
+      await reportUser(client, { reason, details, reportedUserId: info.otherId });
+    }
+  };
   const subtitle = isEvent ? null : personRoleBase(info.other, t);
   const firstName = title.split(' ')[0];
   const canSend = Boolean(body.trim());
@@ -133,6 +211,11 @@ export default function ChatScreen() {
             ) : null}
           </View>
         </Pressable>
+        {(isEvent ? info.eventId : info.otherId) ? (
+          <CircleButton accessibilityLabel={t('report.chatActions')} onPress={openActions}>
+            <MoreGlyph color={theme.colors.textPrimary} />
+          </CircleButton>
+        ) : null}
       </View>
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -155,8 +238,13 @@ export default function ChatScreen() {
             onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
             renderItem={({ item }) => {
               const mine = item.sender_id === userId;
+              const removed = Boolean(item.removed_at);
               return (
-                <View style={{ flexDirection: 'row', justifyContent: mine ? 'flex-end' : 'flex-start' }}>
+                <Pressable
+                  onLongPress={() => onLongPressMessage(item)}
+                  disabled={mine || removed}
+                  accessibilityHint={mine || removed ? undefined : t('report.message')}
+                  style={{ flexDirection: 'row', justifyContent: mine ? 'flex-end' : 'flex-start' }}>
                   <View
                     style={{
                       maxWidth: '76%',
@@ -169,11 +257,17 @@ export default function ChatScreen() {
                       borderWidth: 1,
                       borderColor: mine ? theme.colors.fill : theme.colors.hairline,
                     }}>
-                    <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14.5, lineHeight: 20, color: mine ? theme.colors.onFill : theme.colors.textPrimary }}>
-                      {item.body}
-                    </Text>
+                    {removed ? (
+                      <Text style={{ fontFamily: fontFamily.interRegular, fontStyle: 'italic', fontSize: 14, lineHeight: 20, color: theme.colors.textTertiary }}>
+                        {t('accountDelete.messageRemoved')}
+                      </Text>
+                    ) : (
+                      <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14.5, lineHeight: 20, color: mine ? theme.colors.onFill : theme.colors.textPrimary }}>
+                        {item.body}
+                      </Text>
+                    )}
                   </View>
-                </View>
+                </Pressable>
               );
             }}
           />
@@ -237,22 +331,18 @@ export default function ChatScreen() {
               </Svg>
             </Pressable>
           </View>
-          {info.otherId ? (
-            <Text
-              accessibilityRole="button"
-              onPress={() => setReportOpen(true)}
-              style={{ fontFamily: fontFamily.interMedium, fontSize: 12, color: theme.colors.textTertiary, textAlign: 'center', paddingVertical: 4 }}>
-              {t('safety.report')}
+          {sendError ? (
+            <Text accessibilityLiveRegion="polite" style={{ fontFamily: fontFamily.interMedium, fontSize: 12.5, lineHeight: 18, color: theme.colors.statusOnDuty, textAlign: 'center' }}>
+              {sendError}
             </Text>
           ) : null}
         </View>
       </KeyboardAvoidingView>
       <ReportSheet
-        visible={reportOpen}
-        onClose={() => setReportOpen(false)}
-        onSubmit={async (reason, details) => {
-          if (info.otherId) await reportUser(client, { reason, details, reportedUserId: info.otherId });
-        }}
+        visible={reportTarget !== null}
+        title={reportTarget?.kind === 'message' ? t('report.messageTitle') : reportTarget?.kind === 'meet' ? t('report.meet') : undefined}
+        onClose={() => setReportTarget(null)}
+        onSubmit={submitReport}
       />
     </Screen>
   );

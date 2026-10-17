@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { showsVerifiedBadge } from '@crewup/shared';
 import { useAppMode } from '@/hooks/useAppMode';
 import { useApolloClient } from '@/lib/apolloHooks';
@@ -9,6 +10,7 @@ import { fetchPresenceByCity } from '@/services/presenceService';
 
 export default function PresenceCityScreen() {
   const { city } = useLocalSearchParams<{ city: string }>();
+  const { t } = useTranslation();
   const client = useApolloClient();
   const showBadge = showsVerifiedBadge(useAppMode().mode);
   const [crew, setCrew] = useState<
@@ -29,13 +31,13 @@ export default function PresenceCityScreen() {
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         <Title>{decodeURIComponent(city ?? '')}</Title>
         {crew.length === 0 ? (
-          <EmptyState title="No crew visible here yet" body="Presence updates after roster uploads and privacy settings." />
+          <EmptyState title={t('presence.emptyTitle')} body={t('presence.emptyBody')} />
         ) : (
           crew.map((p) => (
             <Card key={p.id}>
-              <BodyText strong>{p.user?.profile?.display_name ?? 'Crew'}</BodyText>
+              <BodyText strong>{p.user?.profile?.display_name ?? t('presence.crewFallback')}</BodyText>
               <BodyText muted>{[p.user?.profile?.role_type, p.user?.profile?.base_airport].filter(Boolean).join(' · ')}</BodyText>
-              {showBadge && p.user?.profile?.is_verified ? <Badge label="Verified" tone="verified" /> : null}
+              {showBadge && p.user?.profile?.is_verified ? <Badge label={t('menu.verified')} tone="verified" /> : null}
             </Card>
           ))
         )}

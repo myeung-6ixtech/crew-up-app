@@ -12,6 +12,7 @@ import { SCREENS } from '@/constants/screens';
 import { useAuth } from '@/hooks/useSession';
 import { useTabBarScroll } from '@/hooks/useTabBarScroll';
 import { useApolloClient } from '@/lib/apolloHooks';
+import { fetchBlocks } from '@/services/connectionService';
 import { fetchThreads } from '@/services/messagingService';
 import { useSafetyStore } from '@/stores/safetyStore';
 import { fontFamily, useTheme } from '@/theme';
@@ -51,9 +52,16 @@ export default function MessagesTab() {
 
   const load = useCallback(async () => {
     if (!userId) return;
-    const rows: ThreadRow[] = await fetchThreads(client, userId);
+    const [rows, blocks]: [ThreadRow[], { blocked_id: string }[]] = await Promise.all([
+      fetchThreads(client, userId),
+      fetchBlocks(client, userId).catch(() => []),
+    ]);
+    const blocked = new Set(blocks.map((block) => block.blocked_id));
+    const visible = rows.filter(
+      (row) => row.thread.type !== 'direct' || !row.thread.participants?.some((p) => p.user_id !== userId && blocked.has(p.user_id)),
+    );
     const latest = (row: ThreadRow) => row.thread.messages?.[0]?.created_at ?? row.thread.updated_at ?? '';
-    setThreads(rows.slice().sort((a, b) => (latest(a) < latest(b) ? 1 : -1)));
+    setThreads(visible.sort((a, b) => (latest(a) < latest(b) ? 1 : -1)));
     void checkNudge();
   }, [client, userId, checkNudge]);
 

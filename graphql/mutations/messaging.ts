@@ -51,6 +51,7 @@ export const GET_THREAD_MESSAGES = gql`
       thread_id
       sender_id
       body
+      removed_at
       created_at
     }
   }
@@ -110,6 +111,7 @@ export const MESSAGES_SUBSCRIPTION = gql`
       thread_id
       sender_id
       body
+      removed_at
       created_at
     }
   }

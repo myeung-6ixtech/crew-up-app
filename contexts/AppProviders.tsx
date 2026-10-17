@@ -8,6 +8,7 @@ import type { OnboardingStateRow, Profile } from '@/types/domain';
 import { GET_MY_PROFILE } from '@/graphql/mutations/profile';
 import { GET_MY_ONBOARDING_STATE } from '@/graphql/queries/onboarding';
 import { isBackendSchemaError } from '@/lib/graphqlError';
+import { fetchPendingDeletion, type PendingDeletion } from '@/services/accountService';
 import { ThemeProvider } from '@/theme';
 
 /** `error` = never loaded successfully this session; routing must not guess onboarding status. */
@@ -19,6 +20,8 @@ interface SessionContextValue {
   profile: Profile | null;
   onboarding: OnboardingStateRow | null;
   onboardingStatus: OnboardingStatus;
+  /** Set while the account is inside its 30-day deletion grace period. */
+  pendingDeletion: PendingDeletion | null;
   loading: boolean;
   refreshSession: () => Promise<Profile | null>;
   refreshProfile: () => Promise<Profile | null>;
@@ -32,6 +35,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [onboarding, setOnboarding] = useState<OnboardingStateRow | null>(null);
   const [onboardingStatus, setOnboardingStatus] = useState<OnboardingStatus>('idle');
+  const [pendingDeletion, setPendingDeletion] = useState<PendingDeletion | null>(null);
   const [loading, setLoading] = useState(true);
   const [client] = useState(() => createApolloClient());
   const profileRef = useRef<Profile | null>(null);
@@ -43,6 +47,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     setProfile(null);
     setOnboarding(null);
     setOnboardingStatus('idle');
+    setPendingDeletion(null);
   }, []);
 
   const refreshProfile = useCallback(async (): Promise<Profile | null> => {
@@ -54,7 +59,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     const variables = { userId: current.user.id };
     if (!onboardingLoadedRef.current) setOnboardingStatus('loading');
 
-    const [profileResult, onboardingResult] = await Promise.allSettled([
+    const [profileResult, onboardingResult, deletionResult] = await Promise.allSettled([
       client.query<{ profiles_by_pk: Profile | null }>({
         query: GET_MY_PROFILE,
         variables,
@@ -65,7 +70,10 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         variables,
         fetchPolicy: 'network-only',
       }),
+      fetchPendingDeletion(client, current.user.id),
     ]);
+
+    if (deletionResult.status === 'fulfilled') setPendingDeletion(deletionResult.value);
 
     if (onboardingResult.status === 'fulfilled') {
       onboardingLoadedRef.current = true;
@@ -156,12 +164,13 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       profile,
       onboarding,
       onboardingStatus,
+      pendingDeletion,
       loading,
       refreshSession,
       refreshProfile,
       signOut,
     }),
-    [session, profile, onboarding, onboardingStatus, loading, refreshSession, refreshProfile, signOut],
+    [session, profile, onboarding, onboardingStatus, pendingDeletion, loading, refreshSession, refreshProfile, signOut],
   );
 
   return (

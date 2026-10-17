@@ -1,4 +1,5 @@
 import type { ApolloClient } from '@apollo/client';
+import { callClientFunction } from '@/lib/api/functions';
 import { parseRoster } from '@/services/actionService';
 import { STORAGE_BUCKETS } from '@/constants/storage';
 import { uploadFile } from '@/services/uploadService';
@@ -78,4 +79,15 @@ export async function updateRosterEntry(
   set: Partial<RosterEntry>,
 ) {
   await client.mutate({ mutation: UPDATE_ROSTER, variables: { id, set } });
+}
+
+export type RosterConsentInfo = { enabled: boolean; providerName: string; version: string; consented: boolean };
+
+/** Whether roster AI reading is on, which provider the consent screen names, and whether the user agreed to it. */
+export function fetchRosterConsent() {
+  return callClientFunction<RosterConsentInfo>('roster/consent', { method: 'GET' });
+}
+
+export function acceptRosterConsent(version: string) {
+  return callClientFunction<{ consented: true; version: string }>('roster/consent', { body: { version } });
 }

@@ -67,9 +67,18 @@ export const SCREENS = {
     edit: '/profile/edit',
     editSection: (step: string) => `/profile/edit-section/${step}` as const,
     privacy: '/profile/privacy',
-    verification: '/profile/verification-status',
     language: '/profile/settings/language',
     security: '/profile/settings/account-security',
+    blocked: '/profile/settings/blocked',
+  },
+  account: {
+    delete: '/account/delete',
+    deletionPending: '/account/deletion-pending',
+  },
+  legal: {
+    guidelines: '/legal/guidelines',
+    licenses: '/legal/licenses',
+    safety: '/legal/safety',
   },
 } as const;
 

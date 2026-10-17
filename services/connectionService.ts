@@ -1,7 +1,9 @@
 import type { ApolloClient } from '@apollo/client';
 import { apiEndpoints } from '@/lib/api/endpoints';
+import { callClientFunction } from '@/lib/api/functions';
 import { nhost } from '@/lib/nhost';
 import {
+  DELETE_BLOCK,
   DISCOVER_PROFILES,
   GET_BLOCKS,
   GET_CONNECTIONS,
@@ -209,6 +211,25 @@ export async function blockUser(
   return (data as any)?.insert_user_blocks_one;
 }
 
+export async function unblockUser(client: ApolloClient, blockId: string) {
+  await client.mutate({ mutation: DELETE_BLOCK, variables: { id: blockId } });
+}
+
+export type BlockedPerson = {
+  id: string;
+  userId: string;
+  createdAt: string;
+  name: string | null;
+  username: string | null;
+  avatarFileId: string | null;
+};
+
+/** Names come from a function: profile permissions hide blocked people from the blocker as well. */
+export async function fetchBlockedPeople(): Promise<BlockedPerson[]> {
+  const { blocks } = await callClientFunction<{ blocks: BlockedPerson[] }>('blocks/list', { method: 'GET' });
+  return blocks;
+}
+
 export async function fetchBlocks(
   client: ApolloClient,
   userId: string,
@@ -216,6 +237,7 @@ export async function fetchBlocks(
   const { data } = await client.query({
     query: GET_BLOCKS,
     variables: { userId },
+    fetchPolicy: 'network-only',
   });
   return (data as any)?.user_blocks ?? [];
 }

@@ -1,3 +1,6 @@
+import { Platform } from 'react-native';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import * as Crypto from 'expo-crypto';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 import { nhost } from '@/lib/nhost';
@@ -47,6 +50,35 @@ export async function signInWithGoogle() {
 
   await nhost.auth.refreshToken({ refreshToken });
   await nhost.refreshSession(0);
+}
+
+/** iOS only. Apple gets the SHA-256 of the nonce; Nhost gets the raw value and checks it against the token. */
+export async function signInWithApple() {
+  const rawNonce = Crypto.randomUUID();
+  const hashedNonce = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, rawNonce);
+  let credential: AppleAuthentication.AppleAuthenticationCredential;
+  try {
+    credential = await AppleAuthentication.signInAsync({
+      requestedScopes: [AppleAuthentication.AppleAuthenticationScope.EMAIL, AppleAuthentication.AppleAuthenticationScope.FULL_NAME],
+      nonce: hashedNonce,
+    });
+  } catch (error) {
+    if ((error as { code?: string }).code === 'ERR_REQUEST_CANCELED') throw new Error('Apple sign-in was cancelled');
+    throw error;
+  }
+  if (!credential.identityToken) throw new Error('No identity token returned from Apple sign-in');
+
+  await nhost.auth.signInIdToken({
+    provider: 'apple',
+    idToken: credential.identityToken,
+    nonce: rawNonce,
+    options: { allowedRoles: ['user', 'me'] },
+  });
+  await nhost.refreshSession(0);
+}
+
+export async function isAppleSignInAvailable() {
+  return Platform.OS === 'ios' && (await AppleAuthentication.isAvailableAsync());
 }
 
 /** Where Nhost sends a tapped verify or reset link. Must be on auth.redirections.allowedUrls. */

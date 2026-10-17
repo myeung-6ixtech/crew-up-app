@@ -137,8 +137,11 @@ export interface ThreadItem {
 export interface MessageItem {
   id: string;
   thread_id: string;
-  sender_id: string;
+  /** Null once the sender's account has been deleted. */
+  sender_id: string | null;
   body?: string | null;
+  /** Set when moderation or account deletion cleared the message. */
+  removed_at?: string | null;
   created_at: string;
 }
 

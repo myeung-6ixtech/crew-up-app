@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useRouter, useSegments } from 'expo-router';
-import { useAuth } from '@/hooks/useSession';
+import { useAuth, useSession } from '@/hooks/useSession';
 import { SCREENS } from '@/constants/screens';
 import { useHouseRulesStore } from '@/features/onboarding/houseRulesStore';
 import { useOnboardingState } from '@/features/onboarding/hooks/useOnboardingState';
@@ -15,6 +15,7 @@ const BETA_ALLOWED_PROFILE_SEGMENTS = new Set(['edit', 'edit-section']);
 /** Single routing authority: session → app mode + onboarding_state → `resolveEntryRoute`. */
 export function useAuthGuard() {
   const { isAuthenticated, loading, userId } = useAuth();
+  const { pendingDeletion } = useSession();
   const { route, status, modeStatus } = useOnboardingState();
   const houseRulesStatus = useHouseRulesStore((state) => state.status);
   const loadHouseRules = useHouseRulesStore((state) => state.load);
@@ -46,6 +47,16 @@ export function useAuthGuard() {
 
     if (status === 'idle' || status === 'loading') return;
 
+    // Inside the deletion grace period nothing else opens until they keep the account or sign out.
+    if (pendingDeletion) {
+      if (!(root === 'account' && child === 'deletion-pending')) router.replace(SCREENS.account.deletionPending);
+      return;
+    }
+    if (root === 'account' && child === 'deletion-pending') {
+      router.replace(SCREENS.tabs.home);
+      return;
+    }
+
     const unavailable = status === 'error' || (route.kind === 'mode_unavailable' && modeStatus !== 'loading');
     if (unavailable) {
       if (!(inOnboarding && child === 'unavailable')) router.replace(SCREENS.onboarding.unavailable);
@@ -62,7 +73,8 @@ export function useAuthGuard() {
       case 'beta_holding': {
         const allowed =
           (inOnboarding && child === 'beta-holding') ||
-          (root === 'profile' && BETA_ALLOWED_PROFILE_SEGMENTS.has(child ?? ''));
+          (root === 'profile' && BETA_ALLOWED_PROFILE_SEGMENTS.has(child ?? '')) ||
+          (root === 'account' && child === 'delete');
         if (!allowed) router.replace(SCREENS.onboarding.betaHolding);
         return;
       }
@@ -80,5 +92,5 @@ export function useAuthGuard() {
         return;
       }
     }
-  }, [houseRulesStatus, isAuthenticated, loading, modeStatus, route, router, segments, status]);
+  }, [houseRulesStatus, isAuthenticated, loading, modeStatus, pendingDeletion, route, router, segments, status]);
 }

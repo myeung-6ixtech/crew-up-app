@@ -26,6 +26,7 @@ import { MonoLabel } from '@/features/onboarding/components/kit';
 import { useAuth } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
+import { useGuidelinesGate } from '@/features/legal/guidelinesGate';
 import { fetchEvent, fetchEventPreview, rsvpEvent, setEventClosure } from '@/services/eventService';
 import { reportUser } from '@/services/safetyService';
 import { fontFamily, useTheme } from '@/theme';
@@ -102,6 +103,7 @@ export default function EventDetailScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const client = useApolloClient();
+  const ensureGuidelines = useGuidelinesGate();
   const { userId } = useAuth();
   const [event, setEvent] = useState<EventDetail | null>(null);
   const [preview, setPreview] = useState<EventItem | null>(null);
@@ -153,6 +155,7 @@ export default function EventDetailScreen() {
 
   const rsvp = async () => {
     if (!userId || !event) return;
+    if (!(await ensureGuidelines())) return;
     setJoining(true);
     try {
       await rsvpEvent(client, event.id, userId);
@@ -413,6 +416,14 @@ export default function EventDetailScreen() {
                 </View>
               </View>
             ) : null}
+
+            <Pressable
+              accessibilityRole="link"
+              hitSlop={8}
+              onPress={() => router.push(SCREENS.legal.safety)}
+              style={{ marginTop: 24, alignSelf: 'flex-start' }}>
+              <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 13.5, color: theme.colors.accentText }}>{t('safety.readTips')}</Text>
+            </Pressable>
           </ScrollView>
 
           {!isHost ? (

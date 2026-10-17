@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Text } from 'react-native';
+import { Pressable, Text } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { RadioRow, SettingsHint, SettingsPage, SettingsSection } from '@/components/settings/settingsKit';
-import { type VisibilityLevel } from '@/constants/screens';
+import { SCREENS, type VisibilityLevel } from '@/constants/screens';
 import { PillCta } from '@/features/onboarding/components/kit';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { formatApolloError } from '@/lib/graphqlError';
@@ -23,6 +24,7 @@ type NotificationMode = 'realtime' | 'digest';
 export default function PrivacySettingsScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
+  const router = useRouter();
   const client = useApolloClient();
   const { profile, userId } = useAuth();
   const { refreshProfile, refreshSession } = useSession();
@@ -125,6 +127,22 @@ export default function PrivacySettingsScreen() {
         <RadioRow label={t('privacy.realtime')} selected={notifications === 'realtime'} onPress={() => setNotifications('realtime')} />
         <RadioRow label={t('privacy.digest')} selected={notifications === 'digest'} onPress={() => setNotifications('digest')} last />
       </SettingsSection>
+
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => router.push(SCREENS.profile.blocked)}
+        style={({ pressed }) => ({
+          minHeight: 56,
+          backgroundColor: pressed ? theme.colors.field : theme.colors.card,
+          borderRadius: 18,
+          paddingHorizontal: 16,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        })}>
+        <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 15, color: theme.colors.textPrimary }}>{t('blocked.title')}</Text>
+        <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 18, color: theme.colors.textTertiary }}>›</Text>
+      </Pressable>
 
       {error ? <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: theme.colors.statusOnDuty }}>{error}</Text> : null}
     </SettingsPage>

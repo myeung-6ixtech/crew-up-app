@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Alert, Animated, Easing, Modal, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import Constants from 'expo-constants';
 import { useRouter, type Href } from 'expo-router';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +11,7 @@ import { useAppMenu } from '@/contexts/AppMenuContext';
 import { SCREENS } from '@/constants/screens';
 import { useAuth, useSession } from '@/hooks/useSession';
 import { hapticSelection, hapticWarning } from '@/lib/haptics';
+import { legal, openPrivacyPolicy, openSupportEmail, openTerms } from '@/lib/legal';
 import { fontFamily, useTheme, useThemeControls } from '@/theme';
 
 /**
@@ -19,6 +21,8 @@ import { fontFamily, useTheme, useThemeControls } from '@/theme';
  */
 
 const DRAWER_WIDTH = 322;
+
+const appVersion = Constants.expoConfig?.version;
 
 const PALETTE = {
   light: {
@@ -55,11 +59,30 @@ const PALETTE = {
 
 type Palette = (typeof PALETTE)[keyof typeof PALETTE];
 
-function Glyph({ name, color }: { name: 'profile' | 'eye' | 'globe' | 'lock' | 'sun' | 'moon'; color: string }) {
+type GlyphName = 'profile' | 'eye' | 'globe' | 'lock' | 'sun' | 'moon' | 'doc' | 'shield' | 'mail' | 'code';
+
+function Glyph({ name, color }: { name: GlyphName; color: string }) {
   const stroke = { stroke: color, strokeWidth: 1.8, fill: 'none' } as const;
   return (
     <Svg width={20} height={20} viewBox="0 0 24 24">
-      {name === 'profile' ? (
+      {name === 'doc' ? (
+        <>
+          <Path d="M7 3h7l5 5v11.5A1.5 1.5 0 0117.5 21h-10A1.5 1.5 0 016 19.5v-15A1.5 1.5 0 017.5 3z" {...stroke} strokeLinejoin="round" />
+          <Path d="M14 3v5h5M9.5 13h5M9.5 16.5h5" {...stroke} strokeLinecap="round" />
+        </>
+      ) : name === 'shield' ? (
+        <>
+          <Path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6L12 3z" {...stroke} strokeLinejoin="round" />
+          <Path d="M8.8 12.2l2.2 2.2 4.2-4.4" {...stroke} strokeLinecap="round" strokeLinejoin="round" />
+        </>
+      ) : name === 'mail' ? (
+        <>
+          <Rect x={3} y={5.5} width={18} height={13} rx={2.5} {...stroke} />
+          <Path d="M4 7l8 6 8-6" {...stroke} strokeLinecap="round" strokeLinejoin="round" />
+        </>
+      ) : name === 'code' ? (
+        <Path d="M8.5 7.5L4 12l4.5 4.5M15.5 7.5L20 12l-4.5 4.5M13.5 5l-3 14" {...stroke} strokeLinecap="round" strokeLinejoin="round" />
+      ) : name === 'profile' ? (
         <>
           <Circle cx={12} cy={8} r={4} {...stroke} />
           <Path d="M4.5 20.5c.8-3.7 3.9-6 7.5-6s6.7 2.3 7.5 6" {...stroke} strokeLinecap="round" />
@@ -101,7 +124,45 @@ function SectionLabel({ children, palette }: { children: string; palette: Palett
   );
 }
 
-type Row = { id: string; icon: 'profile' | 'eye' | 'globe' | 'lock'; title: string; body?: string; value?: string; route: Href };
+type Row = { id: string; icon: GlyphName; title: string; body?: string; value?: string; onPress: () => void };
+
+function RowCard({ rows, palette }: { rows: Row[]; palette: Palette }) {
+  return (
+    <View style={{ backgroundColor: palette.card, borderRadius: 18, overflow: 'hidden' }}>
+      {rows.map((row, index) => (
+        <Pressable
+          key={row.id}
+          accessibilityRole="button"
+          accessibilityLabel={[row.title, row.value].filter(Boolean).join(', ')}
+          accessibilityHint={row.body}
+          onPress={row.onPress}
+          style={({ pressed }) => ({
+            minHeight: 62,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+            paddingHorizontal: 14,
+            paddingVertical: 10,
+            backgroundColor: pressed ? palette.pressed : 'transparent',
+            borderBottomWidth: index === rows.length - 1 ? 0 : 1,
+            borderBottomColor: palette.line,
+          })}>
+          <IconTile palette={palette}>
+            <Glyph name={row.icon} color={palette.ink} />
+          </IconTile>
+          <View style={{ flex: 1, gap: 2 }}>
+            <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 15, color: palette.ink }}>{row.title}</Text>
+            {row.body ? <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, color: palette.muted }}>{row.body}</Text> : null}
+          </View>
+          {row.value ? <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: palette.muted }}>{row.value}</Text> : null}
+          <Svg width={16} height={16} viewBox="0 0 24 24">
+            <Path d="M9 5l7 7-7 7" stroke={palette.chevron} strokeWidth={2} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          </Svg>
+        </Pressable>
+      ))}
+    </View>
+  );
+}
 
 /** 50×30 switch: grey with a white knob off, lime with an ink knob on. */
 function ModeSwitch({ on, onToggle, label, palette }: { on: boolean; onToggle: () => void; label: string; palette: Palette }) {
@@ -180,17 +241,32 @@ export function AppSideMenu() {
   const language = i18n.resolvedLanguage ?? i18n.language ?? 'en';
   const discoverable = profile?.default_visibility !== 'off';
 
-  const rows: Row[] = [
-    { id: 'edit', icon: 'profile', title: t('menu.editProfile'), body: t('menu.editProfileBody'), route: SCREENS.profile.edit },
-    { id: 'privacy', icon: 'eye', title: t('menu.privacy'), body: t('menu.privacyBody'), route: SCREENS.profile.privacy },
-    { id: 'language', icon: 'globe', title: t('menu.language'), value: t(`settings.languages.${language}`, { defaultValue: language.toUpperCase() }), route: SCREENS.profile.language },
-    { id: 'security', icon: 'lock', title: t('menu.accountSecurity'), body: t('menu.accountSecurityBody'), route: SCREENS.profile.security },
-  ];
-
   const go = (route: Href) => {
     close();
     router.push(route);
   };
+
+  const rows: Row[] = [
+    { id: 'edit', icon: 'profile', title: t('menu.editProfile'), body: t('menu.editProfileBody'), onPress: () => go(SCREENS.profile.edit) },
+    { id: 'privacy', icon: 'eye', title: t('menu.privacy'), body: t('menu.privacyBody'), onPress: () => go(SCREENS.profile.privacy) },
+    {
+      id: 'language',
+      icon: 'globe',
+      title: t('menu.language'),
+      value: t(`settings.languages.${language}`, { defaultValue: language.toUpperCase() }),
+      onPress: () => go(SCREENS.profile.language),
+    },
+    { id: 'security', icon: 'lock', title: t('menu.accountSecurity'), body: t('menu.accountSecurityBody'), onPress: () => go(SCREENS.profile.security) },
+  ];
+
+  const aboutRows: Row[] = [
+    { id: 'guidelines', icon: 'shield', title: t('about.guidelines'), onPress: () => go(SCREENS.legal.guidelines) },
+    { id: 'safetyTips', icon: 'shield', title: t('about.safetyTips'), onPress: () => go(SCREENS.legal.safety) },
+    { id: 'privacyPolicy', icon: 'doc', title: t('about.privacyPolicy'), onPress: () => void openPrivacyPolicy() },
+    { id: 'terms', icon: 'doc', title: t('about.terms'), onPress: () => void openTerms() },
+    { id: 'support', icon: 'mail', title: t('about.contactSupport'), body: legal.supportEmail, onPress: () => void openSupportEmail() },
+    { id: 'licenses', icon: 'code', title: t('about.licenses'), onPress: () => go(SCREENS.legal.licenses) },
+  ];
 
   const confirmSignOut = () => {
     Alert.alert(t('menu.signOutTitle'), t('menu.signOutMessage'), [
@@ -291,39 +367,7 @@ export function AppSideMenu() {
 
             <View style={{ gap: 8 }}>
               <SectionLabel palette={palette}>{t('menu.account')}</SectionLabel>
-              <View style={{ backgroundColor: palette.card, borderRadius: 18, overflow: 'hidden' }}>
-                {rows.map((row, index) => (
-                  <Pressable
-                    key={row.id}
-                    accessibilityRole="button"
-                    accessibilityLabel={[row.title, row.value].filter(Boolean).join(', ')}
-                    accessibilityHint={row.body}
-                    onPress={() => go(row.route)}
-                    style={({ pressed }) => ({
-                      minHeight: 62,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 12,
-                      paddingHorizontal: 14,
-                      paddingVertical: 10,
-                      backgroundColor: pressed ? palette.pressed : 'transparent',
-                      borderBottomWidth: index === rows.length - 1 ? 0 : 1,
-                      borderBottomColor: palette.line,
-                    })}>
-                    <IconTile palette={palette}>
-                      <Glyph name={row.icon} color={palette.ink} />
-                    </IconTile>
-                    <View style={{ flex: 1, gap: 2 }}>
-                      <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 15, color: palette.ink }}>{row.title}</Text>
-                      {row.body ? <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, color: palette.muted }}>{row.body}</Text> : null}
-                    </View>
-                    {row.value ? <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: palette.muted }}>{row.value}</Text> : null}
-                    <Svg width={16} height={16} viewBox="0 0 24 24">
-                      <Path d="M9 5l7 7-7 7" stroke={palette.chevron} strokeWidth={2} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                    </Svg>
-                  </Pressable>
-                ))}
-              </View>
+              <RowCard rows={rows} palette={palette} />
             </View>
 
             <View style={{ gap: 8 }}>
@@ -343,6 +387,19 @@ export function AppSideMenu() {
                   }}
                 />
               </View>
+            </View>
+
+            <View style={{ gap: 8 }}>
+              <SectionLabel palette={palette}>{t('about.title')}</SectionLabel>
+              <RowCard rows={aboutRows} palette={palette} />
+              <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 11.5, lineHeight: 17, color: palette.muted, paddingHorizontal: 4, paddingTop: 2 }}>
+                {t('about.notAffiliated')}
+              </Text>
+              {appVersion ? (
+                <Text style={{ fontFamily: fontFamily.monoMedium, fontSize: 10.5, color: palette.chevron, paddingHorizontal: 4 }}>
+                  {t('about.version', { version: appVersion })}
+                </Text>
+              ) : null}
             </View>
 
             <View style={{ flex: 1 }} />

@@ -8,6 +8,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import { AppSplash } from '@/components/AppSplash';
 import { AppProviders } from '@/contexts/AppProviders';
+import { GuidelinesGateSheet } from '@/features/legal/guidelinesGate';
 import { useOnboardingState } from '@/features/onboarding/hooks/useOnboardingState';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useSession } from '@/hooks/useSession';
@@ -76,11 +77,17 @@ function RootNavigator() {
       <Stack.Screen name="profile/edit" options={{ headerShown: false }} />
       <Stack.Screen name="profile/edit-section/[step]" options={{ title: '' }} />
       <Stack.Screen name="profile/privacy" options={{ headerShown: false }} />
-      <Stack.Screen name="profile/verification-status" options={{ title: 'Verification' }} />
       <Stack.Screen name="profile/settings/language" options={{ headerShown: false }} />
       <Stack.Screen name="profile/settings/account-security" options={{ headerShown: false }} />
+      <Stack.Screen name="profile/settings/blocked" options={{ headerShown: false }} />
+      <Stack.Screen name="account/delete" options={{ headerShown: false }} />
+      <Stack.Screen name="legal/guidelines" options={{ headerShown: false }} />
+      <Stack.Screen name="legal/licenses" options={{ headerShown: false }} />
+      <Stack.Screen name="legal/safety" options={{ headerShown: false }} />
+      <Stack.Screen name="account/deletion-pending" options={{ headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="dev/ui-kit" options={{ title: 'UI Kit' }} />
     </Stack>
+    {session?.user?.id ? <GuidelinesGateSheet /> : null}
     {routing ? (
       <View style={StyleSheet.absoluteFill}>
         <AppSplash />

@@ -115,6 +115,14 @@ export const INSERT_BLOCK = gql`
   }
 `;
 
+export const DELETE_BLOCK = gql`
+  mutation DeleteBlock($id: uuid!) {
+    delete_user_blocks_by_pk(id: $id) {
+      id
+    }
+  }
+`;
+
 export const GET_BLOCKS = gql`
   query GetBlocks($userId: uuid!) {
     user_blocks(where: { blocker_id: { _eq: $userId } }) {
