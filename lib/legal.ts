@@ -12,12 +12,23 @@ export const legal: LegalConfig = (Constants.expoConfig?.extra as { legal?: Lega
   deletionUrl: 'https://crewup.app/delete-account',
 };
 
+/** In-app browser as a sheet over the current screen, with Done (design 6F). */
+function openSheet(url: string) {
+  return WebBrowser.openBrowserAsync(url, {
+    presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
+    controlsColor: '#4F6E19',
+    toolbarColor: '#F7F8F4',
+    dismissButtonStyle: 'done',
+    enableBarCollapsing: true,
+  });
+}
+
 export function openPrivacyPolicy() {
-  return WebBrowser.openBrowserAsync(legal.privacyUrl);
+  return openSheet(legal.privacyUrl);
 }
 
 export function openTerms() {
-  return WebBrowser.openBrowserAsync(legal.termsUrl);
+  return openSheet(legal.termsUrl);
 }
 
 export function openSupportEmail(subject = 'CrewUp support') {

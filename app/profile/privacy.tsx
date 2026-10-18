@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, Text } from 'react-native';
+import { Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { RadioRow, SettingsHint, SettingsPage, SettingsSection } from '@/components/settings/settingsKit';
+import { useAirlines } from '@/components/crew/airline';
+import { RadioRow, SettingsHint, SettingsPage, SettingsRow, SettingsSection } from '@/components/settings/settingsKit';
 import { SCREENS, type VisibilityLevel } from '@/constants/screens';
 import { PillCta } from '@/features/onboarding/components/kit';
 import { useApolloClient } from '@/lib/apolloHooks';
@@ -29,6 +30,8 @@ export default function PrivacySettingsScreen() {
   const { profile, userId } = useAuth();
   const { refreshProfile, refreshSession } = useSession();
   const airlineId = profile?.airline_id ?? undefined;
+  const airlines = useAirlines();
+  const airlineName = airlineId ? airlines.get(airlineId)?.name : undefined;
 
   const saved = useMemo(() => {
     const visibility = profile?.default_visibility ?? 'friends';
@@ -103,21 +106,20 @@ export default function PrivacySettingsScreen() {
           onPress={() => void onSave()}
         />
       }>
-      <SettingsSection label={t('home.statusDefault')}>
-        <RadioRow label={t('home.statusAvailableDefault')} selected={!hidden} onPress={() => pickStatus(false)} />
-        <RadioRow label={t('home.statusHiddenDefault')} selected={hidden} onPress={() => pickStatus(true)} last />
+      <SettingsSection label={t('home.statusDefault')} sub={t('privacy.statusHint')}>
+        <RadioRow label={t('privacy.status.available')} detail={t('privacy.statusSub.available')} selected={!hidden} onPress={() => pickStatus(false)} />
+        <RadioRow label={t('privacy.status.hidden')} detail={t('privacy.statusSub.hidden')} selected={hidden} onPress={() => pickStatus(true)} />
       </SettingsSection>
-      <SettingsHint>{t('privacy.statusHint')}</SettingsHint>
 
-      <SettingsSection label={t('privacy.audienceLabel')}>
-        {audiences.map((level, index) => (
+      <SettingsSection label={t('privacy.whoCanSee')}>
+        {audiences.map((level) => (
           <RadioRow
             key={level}
-            label={t(`privacy.audience.${level}`)}
+            label={t(`privacy.audienceTitle.${level}`)}
+            detail={level === 'same_airline' && airlineName ? t('privacy.audienceSub.same_airline_named', { airline: airlineName }) : t(`privacy.audienceSub.${level}`)}
             selected={!hidden && audience === level}
             dim={hidden}
             onPress={() => pickAudience(level)}
-            last={index === audiences.length - 1}
           />
         ))}
       </SettingsSection>
@@ -125,24 +127,12 @@ export default function PrivacySettingsScreen() {
 
       <SettingsSection label={t('home.notifications')}>
         <RadioRow label={t('privacy.realtime')} selected={notifications === 'realtime'} onPress={() => setNotifications('realtime')} />
-        <RadioRow label={t('privacy.digest')} selected={notifications === 'digest'} onPress={() => setNotifications('digest')} last />
+        <RadioRow label={t('privacy.digest')} selected={notifications === 'digest'} onPress={() => setNotifications('digest')} />
       </SettingsSection>
 
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => router.push(SCREENS.profile.blocked)}
-        style={({ pressed }) => ({
-          minHeight: 56,
-          backgroundColor: pressed ? theme.colors.field : theme.colors.card,
-          borderRadius: 18,
-          paddingHorizontal: 16,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        })}>
-        <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 15, color: theme.colors.textPrimary }}>{t('blocked.title')}</Text>
-        <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 18, color: theme.colors.textTertiary }}>›</Text>
-      </Pressable>
+      <SettingsSection>
+        <SettingsRow label={t('blocked.title')} onPress={() => router.push(SCREENS.profile.blocked)} />
+      </SettingsSection>
 
       {error ? <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: theme.colors.statusOnDuty }}>{error}</Text> : null}
     </SettingsPage>

@@ -71,6 +71,13 @@ export const SCREENS = {
     security: '/profile/settings/account-security',
     blocked: '/profile/settings/blocked',
   },
+  /** Settings & Privacy (6C) and the pages it pushes; Language and Privacy keep their profile routes. */
+  settings: {
+    index: '/settings',
+    account: '/settings/account',
+    appearance: '/settings/appearance',
+    about: '/settings/about',
+  },
   account: {
     delete: '/account/delete',
     deletionPending: '/account/deletion-pending',

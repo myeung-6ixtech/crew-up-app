@@ -80,6 +80,10 @@ function RootNavigator() {
       <Stack.Screen name="profile/settings/language" options={{ headerShown: false }} />
       <Stack.Screen name="profile/settings/account-security" options={{ headerShown: false }} />
       <Stack.Screen name="profile/settings/blocked" options={{ headerShown: false }} />
+      <Stack.Screen name="settings/index" options={{ headerShown: false }} />
+      <Stack.Screen name="settings/account" options={{ headerShown: false }} />
+      <Stack.Screen name="settings/appearance" options={{ headerShown: false }} />
+      <Stack.Screen name="settings/about" options={{ headerShown: false }} />
       <Stack.Screen name="account/delete" options={{ headerShown: false }} />
       <Stack.Screen name="legal/guidelines" options={{ headerShown: false }} />
       <Stack.Screen name="legal/licenses" options={{ headerShown: false }} />

@@ -14,8 +14,12 @@ import type { Theme, ThemeMode } from './types';
 
 const THEME_PREFERENCE_KEY = 'crewup.color-scheme';
 
+export type ThemePreference = ThemeMode | 'system';
+
 type ThemeControls = {
-  setColorScheme: (mode: ThemeMode) => void;
+  /** What the user picked in Appearance; `system` follows the device. */
+  preference: ThemePreference;
+  setColorScheme: (mode: ThemePreference) => void;
   toggleColorScheme: () => void;
 };
 
@@ -51,13 +55,16 @@ async function readStoredMode(): Promise<ThemeMode | null> {
   }
 }
 
-async function writeStoredMode(mode: ThemeMode): Promise<void> {
+/** `null` clears the stored choice so the app follows the device again. */
+async function writeStoredMode(mode: ThemeMode | null): Promise<void> {
   try {
     if (Platform.OS === 'web') {
-      globalThis.localStorage?.setItem(THEME_PREFERENCE_KEY, mode);
+      if (mode) globalThis.localStorage?.setItem(THEME_PREFERENCE_KEY, mode);
+      else globalThis.localStorage?.removeItem(THEME_PREFERENCE_KEY);
       return;
     }
-    await SecureStore.setItemAsync(THEME_PREFERENCE_KEY, mode);
+    if (mode) await SecureStore.setItemAsync(THEME_PREFERENCE_KEY, mode);
+    else await SecureStore.deleteItemAsync(THEME_PREFERENCE_KEY);
   } catch {
     // Preference still applies for this session if storage is unavailable.
   }
@@ -80,9 +87,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const setColorScheme = useCallback((next: ThemeMode) => {
-    setPreference(next);
-    void writeStoredMode(next);
+  const setColorScheme = useCallback((next: ThemePreference) => {
+    const stored = next === 'system' ? null : next;
+    setPreference(stored);
+    void writeStoredMode(stored);
   }, []);
 
   const toggleColorScheme = useCallback(() => {
@@ -90,8 +98,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [mode, setColorScheme]);
 
   const controls = useMemo(
-    () => ({ setColorScheme, toggleColorScheme }),
-    [setColorScheme, toggleColorScheme],
+    () => ({ preference: preference ?? ('system' as const), setColorScheme, toggleColorScheme }),
+    [preference, setColorScheme, toggleColorScheme],
   );
 
   return (

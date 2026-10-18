@@ -11,12 +11,14 @@ import { fontFamily, useTheme } from '@/theme';
 
 /** Shown greyed with SOON until a `locales/<code>/` bundle ships; each in its own name first. */
 const COMING_SOON = [
-  { code: 'zh-Hant', native: '繁體中文', english: 'Chinese (Traditional)' },
-  { code: 'zh-Hans', native: '简体中文', english: 'Chinese (Simplified)' },
-  { code: 'ja', native: '日本語', english: 'Japanese' },
-  { code: 'ko', native: '한국어', english: 'Korean' },
-  { code: 'de', native: 'Deutsch', english: 'German' },
+  { code: 'ar', native: 'العربية', english: 'Arabic' },
   { code: 'fr', native: 'Français', english: 'French' },
+  { code: 'es', native: 'Español', english: 'Spanish' },
+  { code: 'de', native: 'Deutsch', english: 'German' },
+  { code: 'pt', native: 'Português', english: 'Portuguese' },
+  { code: 'hi', native: 'हिन्दी', english: 'Hindi' },
+  { code: 'zh', native: '中文', english: 'Chinese' },
+  { code: 'ja', native: '日本語', english: 'Japanese' },
 ];
 
 function SoonTag() {
@@ -71,7 +73,7 @@ export default function LanguageSettingsScreen() {
   );
 
   return (
-    <SettingsPage title={t('menu.language')} subtitle={t('menu.languageIntro')}>
+    <SettingsPage title={t('menu.language')} subtitle={t('settings.languageIntro')}>
       <View>
         <SettingsSection>
           {SUPPORTED_LANGUAGES.map(({ code, labelKey }) => (
@@ -79,13 +81,14 @@ export default function LanguageSettingsScreen() {
               key={code}
               minHeight={64}
               label={t(labelKey)}
+              detail={t(`settings.languagesEnglish.${code}`)}
               selected={current === code}
               disabled={Boolean(savingCode)}
               onPress={() => void onSelect(code)}
               trailing={savingCode === code ? <ActivityIndicator color={theme.colors.textSecondary} /> : undefined}
             />
           ))}
-          {COMING_SOON.map((language, index) => (
+          {COMING_SOON.map((language) => (
             <RadioRow
               key={language.code}
               minHeight={64}
@@ -93,7 +96,6 @@ export default function LanguageSettingsScreen() {
               detail={language.english}
               selected={false}
               disabled
-              last={index === COMING_SOON.length - 1}
               trailing={<SoonTag />}
             />
           ))}

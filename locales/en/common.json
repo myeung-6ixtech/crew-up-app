@@ -752,11 +752,9 @@
     "guidelines": "Community guidelines",
     "privacyPolicy": "Privacy Policy",
     "terms": "Terms of Use",
-    "contactSupport": "Contact support",
     "licenses": "Open-source licenses",
     "licensesIntro": "CrewUp is built with these open-source packages. Tap one to see its project.",
     "notAffiliated": "CrewUp is not affiliated with or endorsed by any airline.",
-    "version": "Version {{version}}",
     "guidelinesTerms": "These guidelines are part of CrewUp's <terms>Terms of Use</terms>. Read how we handle your data in our <privacy>Privacy Policy</privacy>.",
     "safetyTips": "Safety tips"
   },
@@ -788,27 +786,70 @@
   "settings": {
     "languages": {
       "en": "English"
-    }
+    },
+    "languagesEnglish": {
+      "en": "English"
+    },
+    "groupAccount": "Account",
+    "groupApp": "App",
+    "groupSupport": "Support",
+    "account": "Account",
+    "accountSub": "Crew ID, email and password",
+    "privacyVisibleTo": "Visible to {{audience}}",
+    "privacyHidden": "Hidden when you have no active trip",
+    "appearance": "Appearance",
+    "appearanceSub": "Light or dark",
+    "appearanceIntro": "Choose how CrewUp looks. Changes apply right away.",
+    "theme": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "Match device"
+    },
+    "themeSub": {
+      "light": "Bright surfaces for daytime",
+      "dark": "Easier on the eyes on night flights",
+      "system": "Follow your phone’s setting"
+    },
+    "languageSub": "App language",
+    "languageIntro": "Menus, buttons and messages will use this language. More are coming soon.",
+    "about": "About",
+    "aboutSub": "Version, legal and support",
+    "version": "Version",
+    "licensesSub": "Open-source software in CrewUp",
+    "support": "Support",
+    "accountDetails": "Account details",
+    "crewId": "Crew ID",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copyCrewId": "Copy Crew ID",
+    "emailVerified": "Used to sign in · Verified",
+    "emailUnverified": "Used to sign in · Not verified yet",
+    "memberSince": "Member since",
+    "signIn": "Sign-in",
+    "password": "Password",
+    "passwordSub": "Change the password you sign in with",
+    "closeLead": "To delete your data permanently,",
+    "closeLink": "close your account",
+    "closeTitle": "Close your account?",
+    "closeIntro": "Here’s what happens:",
+    "closePoints": [
+      "You’re signed out and your profile is hidden from other crew straight away. Meets you host and upcoming RSVPs are cancelled.",
+      "You have {{days}} days to change your mind. Sign in to keep your account.",
+      "After {{days}} days, your profile, photos, trips and crew details are erased, and messages you sent show as removed."
+    ],
+    "closeConfirm": "Close account",
+    "closeKeep": "Keep my account"
   },
   "menu": {
     "open": "Open menu",
     "privacy": "Privacy Settings",
     "language": "Language",
     "accountSecurity": "Account Security",
-    "appearance": "Appearance",
     "signOutTitle": "Sign out?",
     "signOutMessage": "You will need to sign in again to access your account.",
-    "title": "Menu",
-    "account": "Account",
     "editProfile": "Edit Profile",
-    "editProfileBody": "Photo, name, airline and base",
-    "privacyBody": "Who can see your trips",
-    "accountSecurityBody": "Password, email and sign-in",
-    "lightMode": "Light mode",
-    "darkMode": "Dark mode",
     "verified": "Verified",
-    "base": "{{code}} BASE",
-    "languageIntro": "Choose the language CrewUp uses."
+    "settings": "Settings & Privacy"
   },
   "presence": {
     "emptyTitle": "No crew visible here yet",
@@ -1171,7 +1212,6 @@
   "privacy": {
     "intro": "Nothing changes until you save.",
     "statusHint": "When you have no active trip.",
-    "audienceLabel": "Who can see your profile and presence",
     "audience": {
       "friends": "Friends",
       "friends_of_friends": "Friends of friends",
@@ -1183,7 +1223,29 @@
     "realtime": "Real time",
     "digest": "Digest",
     "save": "Save changes",
-    "saved": "Saved"
+    "saved": "Saved",
+    "whoCanSee": "Who can see you",
+    "status": {
+      "available": "Available",
+      "hidden": "Hidden"
+    },
+    "statusSub": {
+      "available": "Crew in your base city can find you",
+      "hidden": "Stay invisible until you add a trip"
+    },
+    "audienceTitle": {
+      "friends": "Friends only",
+      "friends_of_friends": "Friends of friends",
+      "same_airline": "Same airline",
+      "all_verified": "All verified crew"
+    },
+    "audienceSub": {
+      "friends": "People you’ve connected with",
+      "friends_of_friends": "Your connections and theirs",
+      "same_airline": "Verified crew at your airline",
+      "same_airline_named": "Verified {{airline}} crew",
+      "all_verified": "Anyone who passed crew ID checks"
+    }
   },
   "security": {
     "intro": "Change the password you use to sign in.",
