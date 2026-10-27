@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -52,15 +52,17 @@ export default function FriendsTab() {
     setConnections(await fetchConnections(client, userId));
   }, [client, userId]);
 
-  useEffect(() => {
-    let cancelled = false;
-    void load().finally(() => {
-      if (!cancelled) setLoading(false);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [load]);
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      void load().finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+      return () => {
+        cancelled = true;
+      };
+    }, [load]),
+  );
 
   const other = (c: Connection) => (c.requester_id === userId ? c.addressee?.profile : c.requester?.profile);
   const otherId = (c: Connection) => (c.requester_id === userId ? c.addressee_id : c.requester_id);

@@ -209,7 +209,7 @@ export default function PublicProfileScreen() {
     if (!userId || !profile) return;
     setOpening(true);
     try {
-      const threadId = await ensureDirectThread(client, userId, profile.user_id);
+      const threadId = await ensureDirectThread(profile.user_id);
       router.push(SCREENS.messages.thread(threadId, profile.user_id));
     } catch {
       hapticError();

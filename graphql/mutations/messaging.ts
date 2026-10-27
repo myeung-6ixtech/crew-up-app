@@ -42,10 +42,11 @@ export const GET_MY_THREADS = gql`
 `;
 
 export const GET_THREAD_MESSAGES = gql`
-  query GetThreadMessages($threadId: uuid!) {
+  query GetThreadMessages($threadId: uuid!, $before: timestamptz!, $limit: Int!) {
     messages(
-      where: { thread_id: { _eq: $threadId } }
-      order_by: { created_at: asc }
+      where: { thread_id: { _eq: $threadId }, created_at: { _lt: $before } }
+      order_by: { created_at: desc }
+      limit: $limit
     ) {
       id
       thread_id
@@ -53,6 +54,7 @@ export const GET_THREAD_MESSAGES = gql`
       body
       removed_at
       created_at
+      updated_at
     }
   }
 `;
@@ -102,9 +104,12 @@ export const UPDATE_LAST_READ = gql`
 `;
 
 export const MESSAGES_SUBSCRIPTION = gql`
-  subscription MessagesSubscription($threadId: uuid!) {
+  subscription MessagesSubscription($threadId: uuid!, $since: timestamptz!) {
     messages(
-      where: { thread_id: { _eq: $threadId } }
+      where: {
+        thread_id: { _eq: $threadId }
+        _or: [{ created_at: { _gte: $since } }, { updated_at: { _gte: $since } }]
+      }
       order_by: { created_at: asc }
     ) {
       id
@@ -113,6 +118,7 @@ export const MESSAGES_SUBSCRIPTION = gql`
       body
       removed_at
       created_at
+      updated_at
     }
   }
 `;

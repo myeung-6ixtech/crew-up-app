@@ -265,7 +265,12 @@ export default function AddFriendScreen() {
           <SearchGlyph />
           <TextInput
             value={code}
-            onChangeText={setCode}
+            onChangeText={(value) => {
+              const normalized = normalizeFriendId(value);
+              const formatted = normalized ? formatFriendId(normalized) : null;
+              const compact = value.toUpperCase().replace(/[^0-9A-Z]/g, '');
+              setCode(formatted && (compact !== normalized || value !== formatted) ? formatted : value);
+            }}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             onSubmitEditing={() => void runLookup(code)}
@@ -275,7 +280,9 @@ export default function AddFriendScreen() {
             accessibilityLabel={t('friends.addByCrewId')}
             autoCapitalize="characters"
             autoCorrect={false}
+            autoComplete="off"
             spellCheck={false}
+            textContentType="none"
             style={{ flex: 1, fontFamily: fontFamily.monoMedium, fontSize: 15, letterSpacing: 0.6, color: theme.colors.textPrimary, padding: 0 }}
           />
           {lookupLoading ? <ActivityIndicator color={theme.colors.accentText} /> : null}

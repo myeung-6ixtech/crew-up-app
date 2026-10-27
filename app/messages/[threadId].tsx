@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +31,26 @@ type ThreadInfo = {
 
 type ReportTarget = { kind: 'person' } | { kind: 'meet' } | { kind: 'message'; messageId: string; senderId: string | null };
 
+/** Apply live rows onto the open page. New rows append. A removal updates a row already on screen. */
+function mergeLive(current: MessageItem[], incoming: MessageItem[], since: string): MessageItem[] {
+  const sinceMs = Date.parse(since);
+  const known = new Map(current.map((message) => [message.id, message]));
+  const appended: MessageItem[] = [];
+  let changed = false;
+  for (const row of incoming) {
+    if (known.has(row.id)) {
+      known.set(row.id, row);
+      changed = true;
+    } else if (Date.parse(row.created_at) >= sinceMs) {
+      appended.push(row);
+      changed = true;
+    }
+  }
+  if (!changed) return current;
+  appended.sort((a, b) => Date.parse(a.created_at) - Date.parse(b.created_at));
+  return [...current.map((message) => known.get(message.id) ?? message), ...appended];
+}
+
 function MoreGlyph({ color }: { color: string }) {
   return (
     <Svg width={18} height={18} viewBox="0 0 24 24">
@@ -52,18 +72,24 @@ export default function ChatScreen() {
   const { userId } = useAuth();
   const ensureGuidelines = useGuidelinesGate();
   const [messages, setMessages] = useState<MessageItem[] | null>(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingEarlier, setLoadingEarlier] = useState(false);
+  const [liveSince, setLiveSince] = useState<string | null>(null);
   const [info, setInfo] = useState<ThreadInfo>({ type: 'direct', otherId: withUserId ?? null, other: null });
   const [body, setBody] = useState('');
   const [sendError, setSendError] = useState('');
   const [reportTarget, setReportTarget] = useState<ReportTarget | null>(null);
-  const listRef = useRef<FlatList<MessageItem>>(null);
 
   const load = useCallback(async () => {
     if (!threadId || !userId) return;
     await client
       .mutate({ mutation: INSERT_THREAD_PARTICIPANT, variables: { object: { thread_id: threadId, user_id: userId } } })
       .catch(() => undefined);
-    setMessages(await fetchMessages(client, threadId));
+    const page = await fetchMessages(client, threadId);
+    setMessages(page.messages);
+    setHasMore(page.hasMore);
+    const newest = page.messages[page.messages.length - 1]?.created_at;
+    setLiveSince(newest ?? new Date(Date.now() - 5000).toISOString());
     const rows = await fetchThreads(client, userId);
     const mine = rows.find((row: { thread_id: string }) => row.thread_id === threadId);
     if (mine) {
@@ -88,30 +114,55 @@ export default function ChatScreen() {
     void load();
   }, [load]);
 
+  const loadEarlier = async () => {
+    if (!threadId || !messages?.length || !hasMore || loadingEarlier) return;
+    setLoadingEarlier(true);
+    try {
+      const page = await fetchMessages(client, threadId, messages[0].created_at);
+      setHasMore(page.hasMore);
+      setMessages((current) => {
+        const ids = new Set((current ?? []).map((message) => message.id));
+        return [...page.messages.filter((message) => !ids.has(message.id)), ...(current ?? [])];
+      });
+    } finally {
+      setLoadingEarlier(false);
+    }
+  };
+
   useSubscription(MESSAGES_SUBSCRIPTION, {
-    variables: { threadId },
-    skip: !threadId,
+    variables: { threadId, since: liveSince },
+    skip: !threadId || !liveSince,
     onData: (result) => {
-      const next = (result.data.data as { messages?: MessageItem[] } | undefined)?.messages;
-      if (next) setMessages(next);
+      const incoming = (result.data.data as { messages?: MessageItem[] } | undefined)?.messages;
+      if (!incoming || !liveSince) return;
+      setMessages((current) => mergeLive(current ?? [], incoming, liveSince));
     },
   });
 
   const onSend = async () => {
     const text = body.trim();
-    if (!threadId || !text) return;
+    if (!threadId || !text || !userId) return;
     if (!(await ensureGuidelines())) return;
     hapticImpact();
     setBody('');
     setSendError('');
     try {
-      await sendMessage(client, threadId, text);
+      const sent = await sendMessage(client, threadId, text);
+      if (sent?.id) {
+        const row: MessageItem = {
+          id: sent.id,
+          thread_id: threadId,
+          sender_id: userId,
+          body: text,
+          removed_at: null,
+          created_at: sent.created_at,
+        };
+        setMessages((current) => (current?.some((message) => message.id === row.id) ? current : [...(current ?? []), row]));
+      }
     } catch (e) {
       setBody(text);
       setSendError(messageSendError(e, t));
-      return;
     }
-    await load();
   };
 
   const isEvent = info.type === 'event_group';
@@ -231,11 +282,19 @@ export default function ChatScreen() {
           </View>
         ) : (
           <FlatList
-            ref={listRef}
-            data={messages ?? []}
+            inverted
+            data={[...(messages ?? [])].reverse()}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', gap: 6, paddingHorizontal: 16, paddingTop: 16, paddingBottom: 12 }}
-            onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
+            contentContainerStyle={{ flexGrow: 1, gap: 6, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 16 }}
+            ListFooterComponent={
+              hasMore ? (
+                <Pressable accessibilityRole="button" disabled={loadingEarlier} onPress={() => void loadEarlier()} style={{ alignItems: 'center', paddingVertical: 8 }}>
+                  <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 13, color: theme.colors.accentText }}>
+                    {loadingEarlier ? t('messages.loadingEarlier') : t('messages.earlier')}
+                  </Text>
+                </Pressable>
+              ) : null
+            }
             renderItem={({ item }) => {
               const mine = item.sender_id === userId;
               const removed = Boolean(item.removed_at);
@@ -286,6 +345,7 @@ export default function ChatScreen() {
             <TextInput
               value={body}
               onChangeText={setBody}
+              maxLength={2000}
               placeholder={t('messages.placeholder')}
               placeholderTextColor={theme.colors.textTertiary}
               accessibilityLabel={t('messages.placeholder')}

@@ -649,6 +649,10 @@
     "directMessage": "Direct message",
     "noMessagesYet": "No messages yet.",
     "friendsWith": "You and {{name}} are friends",
+    "earlier": "Earlier messages",
+    "loadingEarlier": "Loading…",
+    "tooLong": "Messages can be up to 2,000 characters.",
+    "tooFast": "You're sending too fast. Wait a moment and try again.",
     "cantSend": "You can't message this person."
   },
   "moderation": {

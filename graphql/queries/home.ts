@@ -101,6 +101,7 @@ export const GET_HOME_DATA = gql`
       }
     ) {
       id
+      status
       created_at
       requester_id
       addressee_id

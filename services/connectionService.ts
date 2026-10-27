@@ -143,6 +143,7 @@ export async function fetchConnections(
   const { data } = await client.query({
     query: GET_CONNECTIONS,
     variables: { userId },
+    fetchPolicy: 'network-only',
   });
   return (data as any)?.connections ?? [];
 }

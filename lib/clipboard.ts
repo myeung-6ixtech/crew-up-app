@@ -1,10 +1,11 @@
-import { Platform, Share } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+import { Platform } from 'react-native';
 
+/** Puts text on the system clipboard. Share is a separate action. */
 export async function copyToClipboard(text: string): Promise<void> {
   if (Platform.OS === 'web' && typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
     await navigator.clipboard.writeText(text);
     return;
   }
-
-  await Share.share({ message: text });
+  await Clipboard.setStringAsync(text);
 }
