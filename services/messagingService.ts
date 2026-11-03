@@ -2,10 +2,12 @@ import type { ApolloClient } from '@apollo/client';
 import { callClientFunction } from '@/lib/api/functions';
 import type { MessageItem } from '@/types/domain';
 import {
+  DIRECT_MESSAGE_WAKE,
   GET_MY_THREADS,
   GET_THREAD_MESSAGES,
   INSERT_MESSAGE,
   MESSAGES_SUBSCRIPTION,
+  UNREAD_DIRECT,
   UPDATE_LAST_READ,
 } from '@/graphql/mutations/messaging';
 
@@ -57,6 +59,48 @@ export async function sendMessage(
   return (data as any)?.insert_messages_one;
 }
 
+const unreadRefreshers = new Set<() => void>();
+
+/** The nav dot listens, because marking a thread read does not wake the message subscription. */
+export function onDirectUnreadRefresh(listener: () => void) {
+  unreadRefreshers.add(listener);
+  return () => {
+    unreadRefreshers.delete(listener);
+  };
+}
+
+function refreshDirectUnread() {
+  unreadRefreshers.forEach((listener) => listener());
+}
+
+export type DirectThreadUnread = {
+  last_read_at?: string | null;
+  thread: {
+    participants?: { user_id: string }[];
+    messages?: { sender_id?: string | null; created_at: string }[];
+  };
+};
+
+export function hasUnreadDirect(rows: DirectThreadUnread[], userId: string, blocked: Set<string>): boolean {
+  return rows.some((row) => {
+    const others = row.thread.participants?.filter((person) => person.user_id !== userId) ?? [];
+    if (others.some((person) => blocked.has(person.user_id))) return false;
+    const latest = row.thread.messages?.[0];
+    if (!latest || !latest.sender_id || latest.sender_id === userId) return false;
+    if (!row.last_read_at) return true;
+    return Date.parse(latest.created_at) > Date.parse(row.last_read_at);
+  });
+}
+
+export async function fetchUnreadDirect(client: ApolloClient, userId: string): Promise<DirectThreadUnread[]> {
+  const { data } = await client.query({
+    query: UNREAD_DIRECT,
+    variables: { userId },
+    fetchPolicy: 'network-only',
+  });
+  return (data as { thread_participants?: DirectThreadUnread[] } | undefined)?.thread_participants ?? [];
+}
+
 export async function markThreadRead(
   client: ApolloClient,
   participantId: string,
@@ -65,7 +109,10 @@ export async function markThreadRead(
     mutation: UPDATE_LAST_READ,
     variables: { id: participantId, lastReadAt: new Date().toISOString() },
   });
+  refreshDirectUnread();
 }
+
+export { DIRECT_MESSAGE_WAKE };
 
 /** Opens the direct thread with a friend. The function adds both people; the app cannot. */
 export async function ensureDirectThread(otherUserId: string) {

@@ -29,7 +29,8 @@
       "env": {
         "EXPO_PUBLIC_NHOST_SUBDOMAIN": "tvxoufuvglucgbdftsns",
         "EXPO_PUBLIC_NHOST_REGION": "ap-southeast-1",
-        "EXPO_PUBLIC_APP_SCHEME": "crewup"
+        "EXPO_PUBLIC_APP_SCHEME": "crewup",
+        "EXPO_PUBLIC_ENABLE_PUSH_NOTIFICATIONS": "true"
       }
     },
     "production": {
@@ -37,7 +38,8 @@
       "env": {
         "EXPO_PUBLIC_NHOST_SUBDOMAIN": "tvxoufuvglucgbdftsns",
         "EXPO_PUBLIC_NHOST_REGION": "ap-southeast-1",
-        "EXPO_PUBLIC_APP_SCHEME": "crewup"
+        "EXPO_PUBLIC_APP_SCHEME": "crewup",
+        "EXPO_PUBLIC_ENABLE_PUSH_NOTIFICATIONS": "true"
       },
       "android": {
         "buildType": "app-bundle"

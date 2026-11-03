@@ -83,6 +83,12 @@
       "@react-native-community/datetimepicker",
       "expo-apple-authentication",
       [
+        "expo-notifications",
+        {
+          "color": "#A8E05F"
+        }
+      ],
+      [
         "expo-image-picker",
         {
           "photosPermission": "CrewUp uses your photos so you can choose a profile picture or import a screenshot of your roster.",

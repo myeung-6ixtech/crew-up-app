@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SCREENS } from '@/constants/screens';
 import { TAB_BAR_FLOAT_OFFSET } from '@/constants/tabBar';
 import { useTabBarScrollContext } from '@/contexts/TabBarScrollContext';
+import { useDirectMessageBadge } from '@/hooks/useDirectMessageBadge';
 import { useAuth } from '@/hooks/useSession';
 import { useStorageFileUri } from '@/hooks/useStorageFileUri';
 import { hapticSelection } from '@/lib/haptics';
@@ -205,7 +206,14 @@ export function NavPill({
 /** The same pill on pushed screens (Add friend, someone's profile, a meet). Navigates back into the tabs. */
 export function StandaloneNavPill({ active = null }: { active?: NavTab | null }) {
   const router = useRouter();
-  return <NavPill active={active} onSelect={(tab) => router.navigate(TAB_HREFS[tab])} />;
+  const directUnread = useDirectMessageBadge();
+  return (
+    <NavPill
+      active={active}
+      badges={directUnread ? { messages: true } : undefined}
+      onSelect={(tab) => router.navigate(TAB_HREFS[tab])}
+    />
+  );
 }
 
 export const FloatingTabBar = memo(function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
@@ -216,10 +224,12 @@ export const FloatingTabBar = memo(function FloatingTabBar({ state, descriptors,
   }, [state.index, resetToExpanded]);
 
   const focused = state.routes[state.index]?.name as NavTab | undefined;
+  const directUnread = useDirectMessageBadge();
   const badges: Partial<Record<NavTab, boolean>> = {};
   state.routes.forEach((route) => {
     if (descriptors[route.key]?.options.tabBarBadge) badges[route.name as NavTab] = true;
   });
+  if (directUnread) badges.messages = true;
 
   return (
     <NavPill

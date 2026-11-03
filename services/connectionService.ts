@@ -10,6 +10,7 @@ import {
   GET_MY_FRIEND_ID,
   GET_PUBLIC_PROFILE,
   INSERT_BLOCK,
+  DELETE_CONNECTION,
   UPDATE_CONNECTION,
 } from '@/graphql/queries/network';
 
@@ -158,6 +159,15 @@ export async function updateConnectionStatus(
     variables: { id, status },
   });
   return (data as any)?.update_connections_by_pk;
+}
+
+/** Removes a request the caller sent, while it is still pending. */
+export async function cancelConnection(client: ApolloClient, id: string) {
+  const { data } = await client.mutate({
+    mutation: DELETE_CONNECTION,
+    variables: { id },
+  });
+  return (data as { delete_connections_by_pk?: { id: string } | null })?.delete_connections_by_pk;
 }
 
 export async function discoverProfiles(

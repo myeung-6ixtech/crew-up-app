@@ -103,6 +103,41 @@ export const UPDATE_LAST_READ = gql`
   }
 `;
 
+export const UNREAD_DIRECT = gql`
+  query UnreadDirect($userId: uuid!) {
+    thread_participants(
+      where: { user_id: { _eq: $userId }, thread: { type: { _eq: direct } } }
+    ) {
+      last_read_at
+      thread {
+        participants {
+          user_id
+        }
+        messages(limit: 1, order_by: { created_at: desc }) {
+          sender_id
+          created_at
+        }
+      }
+    }
+  }
+`;
+
+/** Wakes the nav dot. Hasura does not replay this when a thread is only marked read. */
+export const DIRECT_MESSAGE_WAKE = gql`
+  subscription DirectMessageWake($userId: uuid!) {
+    messages(
+      where: {
+        sender_id: { _neq: $userId }
+        thread: { type: { _eq: direct }, participants: { user_id: { _eq: $userId } } }
+      }
+      limit: 1
+      order_by: { created_at: desc }
+    ) {
+      id
+    }
+  }
+`;
+
 export const MESSAGES_SUBSCRIPTION = gql`
   subscription MessagesSubscription($threadId: uuid!, $since: timestamptz!) {
     messages(

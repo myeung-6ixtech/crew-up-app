@@ -540,6 +540,7 @@
     "selfInvite": "You cannot add yourself.",
     "sentRequests": "Sent requests",
     "cancelRequest": "Cancel request",
+    "requestCancelled": "Request cancelled.",
     "suggested": "Suggested friends",
     "suggestedHint": "Crew on CrewUp you may know.",
     "sendRequest": "Send request",

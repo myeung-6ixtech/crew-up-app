@@ -65,6 +65,14 @@ export const UPDATE_CONNECTION = gql`
   }
 `;
 
+export const DELETE_CONNECTION = gql`
+  mutation DeleteConnection($id: uuid!) {
+    delete_connections_by_pk(id: $id) {
+      id
+    }
+  }
+`;
+
 export const DISCOVER_PROFILES = gql`
   query DiscoverProfiles($where: profiles_bool_exp!, $limit: Int!, $offset: Int!) {
     profiles(where: $where, limit: $limit, offset: $offset, order_by: { display_name: asc }) {

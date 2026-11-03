@@ -12,6 +12,8 @@ import { GuidelinesGateSheet } from '@/features/legal/guidelinesGate';
 import { useOnboardingState } from '@/features/onboarding/hooks/useOnboardingState';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useSession } from '@/hooks/useSession';
+import { hasCompletedOnboarding } from '@/lib/profileCompletion';
+import { registerForPushNotifications } from '@/services/notificationService';
 import { fontAssets } from '@/theme';
 import { useTheme } from '@/theme';
 
@@ -20,8 +22,13 @@ SplashScreen.preventAutoHideAsync();
 function RootNavigator() {
   const { loading, session } = useSession();
   const theme = useTheme();
-  const { status } = useOnboardingState();
+  const { status, state: onboarding } = useOnboardingState();
   useAuthGuard();
+  useEffect(() => {
+    if (session?.user?.id && hasCompletedOnboarding(onboarding)) {
+      void registerForPushNotifications();
+    }
+  }, [session?.user?.id, onboarding]);
   // Signed in: stay on the splash until the guard knows where to send them, so Home never flashes first.
   const routing = Boolean(session?.user?.id) && (status === 'idle' || status === 'loading');
 

@@ -20,7 +20,7 @@ import { useAuth } from '@/hooks/useSession';
 import { useTabBarScroll } from '@/hooks/useTabBarScroll';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticError, hapticSuccess } from '@/lib/haptics';
-import { blockUser, fetchConnections, updateConnectionStatus } from '@/services/connectionService';
+import { blockUser, cancelConnection, fetchConnections, updateConnectionStatus } from '@/services/connectionService';
 import { fontFamily, useTheme } from '@/theme';
 
 type Connection = {
@@ -32,7 +32,7 @@ type Connection = {
   addressee?: { profile?: PersonProfile };
 };
 
-/** Requests show only when someone asked. Accept moves them into Your friends; Decline blocks — heavier than a no. */
+/** Incoming requests can be accepted. Ones you sent stay listed as requested until they accept. */
 export default function FriendsTab() {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -71,6 +71,10 @@ export default function FriendsTab() {
     () => connections.filter((c) => c.status === 'pending' && c.addressee_id === userId),
     [connections, userId],
   );
+  const sent = useMemo(
+    () => connections.filter((c) => c.status === 'pending' && c.requester_id === userId),
+    [connections, userId],
+  );
   const friends = useMemo(() => connections.filter((c) => c.status === 'accepted'), [connections]);
 
   const respond = async (c: Connection, accept: boolean) => {
@@ -83,6 +87,20 @@ export default function FriendsTab() {
         hapticSuccess();
         setToast(t('friends.nowFriends', { name: personName(other(c), t('home.crewMember')).split(' ')[0] }));
       }
+    } catch {
+      hapticError();
+      setToast(t('onboarding.genericError'));
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const cancel = async (c: Connection) => {
+    setBusyId(c.id);
+    try {
+      await cancelConnection(client, c.id);
+      await load();
+      setToast(t('friends.requestCancelled'));
     } catch {
       hapticError();
       setToast(t('onboarding.genericError'));
@@ -170,6 +188,55 @@ export default function FriendsTab() {
                           onPress={() => void respond(c, false)}
                         />
                       </View>
+                    </View>
+                  );
+                })}
+              </View>
+            </>
+          ) : null}
+
+          {sent.length ? (
+            <>
+              <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8, marginTop: 24 }}>
+                <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 17, color: theme.colors.textPrimary }}>
+                  {t('friends.sentRequests')}
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: fontFamily.monoMedium,
+                    fontSize: 11,
+                    color: theme.colors.textSecondary,
+                    backgroundColor: theme.colors.field,
+                    paddingHorizontal: 7,
+                    paddingVertical: 2,
+                    borderRadius: 9,
+                    overflow: 'hidden',
+                  }}>
+                  {sent.length}
+                </Text>
+              </View>
+              <View style={{ gap: 8, marginTop: 10 }}>
+                {sent.map((c) => {
+                  const person = other(c);
+                  return (
+                    <View key={c.id} style={{ backgroundColor: theme.colors.card, borderRadius: 18, paddingTop: 4, paddingHorizontal: 14, paddingBottom: 14 }}>
+                      <PersonRow
+                        name={personName(person, t('home.crewMember'))}
+                        subtitle={personRoleBase(person, t)}
+                        fileId={person?.avatar_file_id}
+                        seed={otherId(c)}
+                        onPress={() => router.push(SCREENS.network.user(otherId(c)))}
+                        trailing={
+                          <Text style={{ fontFamily: fontFamily.monoMedium, fontSize: 11, color: theme.colors.textSecondary }}>
+                            {t('friends.requestSent')}
+                          </Text>
+                        }
+                      />
+                      <SmallPillButton
+                        label={t('friends.cancelRequest')}
+                        loading={busyId === c.id}
+                        onPress={() => void cancel(c)}
+                      />
                     </View>
                   );
                 })}
