@@ -1,9 +1,9 @@
-import { Pressable, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { LimePills } from '@/components/crew/kit';
-import { PrivateEventBadge } from '@/components/events/pin';
+import { LockGlyph } from '@/components/events/pin';
 import { isPrivateEvent } from '@/constants/events';
 import { MonoLabel } from '@/features/onboarding/components/kit';
+import { useStorageFileUri } from '@/hooks/useStorageFileUri';
 import { formatDateTime } from '@/lib/utils';
 import { fontFamily, useTheme } from '@/theme';
 import type { EventItem } from '@/types/domain';
@@ -42,29 +42,79 @@ export function CrewUpEventBadge({ tone = 'ink' }: { tone?: 'ink' | 'lime' }) {
   );
 }
 
-/** Discovery card: CrewUp or Private badge, title, city · time, then activity and interest pills. */
-export function EventCard({ event, onPress }: { event: EventItem; onPress: () => void }) {
+/** How the viewer stands with a meet: their own, a private one still behind its PIN, one they've unlocked, or public. */
+export type EventAccess = 'hosting' | 'locked' | 'unlocked' | 'open';
+
+type Badge = { label: string; bg: string; fg: string; lock?: boolean };
+
+function badgesFor(event: EventItem, access: EventAccess, t: (key: string) => string): Badge[] {
+  const badges: Badge[] = [];
+  if (access === 'hosting') badges.push({ label: t('events.badge.hosting'), bg: '#0E1113', fg: '#A8E05F' });
+  if (isPlatformEvent(event)) badges.push({ label: t('events.badge.event'), bg: '#A8E05F', fg: '#0E1113' });
+  if (isPrivateEvent(event)) {
+    if (access === 'locked') badges.push({ label: t('events.badge.private'), bg: '#0E1113', fg: '#F7F8F4', lock: true });
+    else badges.push({ label: access === 'hosting' ? t('events.badge.private') : t('events.badge.privateUnlocked'), bg: '#EEF7DF', fg: '#2F4210', lock: access === 'hosting' });
+  } else if (!isPlatformEvent(event)) {
+    badges.push({ label: t('events.badge.public'), bg: '', fg: '' });
+  }
+  return badges;
+}
+
+/**
+ * List card — design/…/CrewUp Events Prototype.dc.html, 6A. A 16:9 photo when the meet has one, otherwise a plain
+ * listing; badges, title, city · time. A locked private meet shows nothing past that.
+ */
+export function EventCard({ event, access = 'open', onPress }: { event: EventItem; access?: EventAccess; onPress: () => void }) {
+  const { t } = useTranslation();
   const theme = useTheme();
-  const { activities, interests } = eventTagNames(event);
+  const { uri, headers } = useStorageFileUri(event.featured_image_file_id);
+  const badges = badgesFor(event, access, t);
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={event.title}
+      accessibilityLabel={[badges.map((badge) => badge.label).join(', '), event.title, event.city, formatDateTime(event.starts_at)].filter(Boolean).join('. ')}
       onPress={onPress}
       style={({ pressed }) => ({
         backgroundColor: theme.colors.card,
         borderRadius: 20,
-        padding: 16,
-        gap: 8,
+        overflow: 'hidden',
         opacity: pressed ? 0.85 : 1,
       })}>
-      {isPlatformEvent(event) ? <CrewUpEventBadge /> : isPrivateEvent(event) ? <PrivateEventBadge /> : null}
-      <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 16.5, letterSpacing: -0.2, color: theme.colors.textPrimary }}>{event.title}</Text>
-      <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: theme.colors.textSecondary }}>
-        {`${event.city} · ${formatDateTime(event.starts_at)}`}
-      </Text>
-      <LimePills names={activities} />
-      <LimePills names={interests} />
+      {uri ? (
+        <Image
+          source={headers ? { uri, headers } : { uri }}
+          style={{ width: '100%', aspectRatio: 16 / 9, backgroundColor: '#0E1113' }}
+          resizeMode="cover"
+          accessibilityIgnoresInvertColors
+        />
+      ) : null}
+      <View style={{ paddingTop: 14, paddingHorizontal: 16, paddingBottom: 16, gap: 6 }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 5 }}>
+          {badges.map((badge) => (
+            <View
+              key={badge.label}
+              style={{
+                height: 20,
+                paddingHorizontal: 7,
+                borderRadius: 6,
+                backgroundColor: badge.bg || theme.colors.field,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 4,
+              }}>
+              {badge.lock ? <LockGlyph color={badge.fg || theme.colors.textPrimary} size={8} /> : null}
+              <MonoLabel style={{ fontSize: 9.5, letterSpacing: 0.8, color: badge.fg || theme.colors.textPrimary }}>{badge.label}</MonoLabel>
+            </View>
+          ))}
+        </View>
+        <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 16.5, letterSpacing: -0.2, color: theme.colors.textPrimary }}>{event.title}</Text>
+        <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: theme.colors.textSecondary }}>
+          {`${event.city} · ${formatDateTime(event.starts_at)}`}
+        </Text>
+        {access === 'locked' ? (
+          <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, color: theme.colors.textSecondary }}>{t('events.lockedLine')}</Text>
+        ) : null}
+      </View>
     </Pressable>
   );
 }

@@ -6,6 +6,7 @@ import {
   GET_EVENT_PIN,
   GET_EVENT_PREVIEW,
   GET_EVENTS,
+  GET_MY_EVENT_UNLOCKS,
   GET_EVENTS_BY_CITY,
   INSERT_ATTENDEE,
   INSERT_EVENT,
@@ -45,6 +46,12 @@ export async function fetchEvents(client: ApolloClient, city?: string) {
 }
 
 /** Full meet, or null when the caller can't see it yet (a private meet they haven't unlocked). */
+/** Ids of private meets the user has unlocked, so the list can show them as open. */
+export async function fetchMyEventUnlocks(client: ApolloClient): Promise<Set<string>> {
+  const { data } = await client.query({ query: GET_MY_EVENT_UNLOCKS, fetchPolicy: 'network-only' });
+  return new Set(((data as { event_unlocks?: { event_id: string }[] })?.event_unlocks ?? []).map((row) => row.event_id));
+}
+
 export async function fetchEvent(client: ApolloClient, id: string) {
   const { data } = await client.query({
     query: GET_EVENT,

@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 export const GET_ACTIVITIES = gql`
   query GetActivities {
     activities(
-      where: { is_active: { _eq: true } }
+      where: { is_active: { _eq: true }, parent_id: { _is_null: false } }
       order_by: [{ sort_order: asc }, { name: asc }]
     ) {
       id
@@ -14,6 +14,10 @@ export const GET_ACTIVITIES = gql`
       kind
       icon
       sort_order
+      parent {
+        name
+        sort_order
+      }
     }
   }
 `;

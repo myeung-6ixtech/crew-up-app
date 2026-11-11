@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActionSheetIOS, ActivityIndicator, Alert, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActionSheetIOS, ActivityIndicator, Alert, Image, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import Svg, { Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CircleButton, CrewAvatar, PillGroup, PushedTopBar } from '@/components/crew/kit';
@@ -16,13 +17,14 @@ import {
   meetState,
   stateChipTone,
 } from '@/components/events/host';
-import { EventPinCard, EventPinGate, PrivateEventBadge } from '@/components/events/pin';
+import { EventPinCard, EventPinGate, LockGlyph, PrivateEventBadge } from '@/components/events/pin';
 import { NAV_PILL_HEIGHT, StandaloneNavPill } from '@/components/navigation/FloatingTabBar';
 import { ReportSheet } from '@/components/ReportSheet';
 import { Screen, Toast } from '@/components/ui';
 import { isPrivateEvent } from '@/constants/events';
 import { SCREENS } from '@/constants/screens';
 import { MonoLabel } from '@/features/onboarding/components/kit';
+import { useStorageFileUri } from '@/hooks/useStorageFileUri';
 import { useAuth } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
@@ -91,6 +93,45 @@ function AvatarStack({ attendees, size, ring }: { attendees: Attendee[]; size: n
   );
 }
 
+/** Locked private meet: the venue and notes exist but stay behind the PIN (6G). */
+function HiddenDetailsCard() {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const rows = [t('events.where'), t('events.notes')];
+  return (
+    <View style={{ backgroundColor: theme.colors.card, borderRadius: 18, paddingVertical: 4, paddingHorizontal: 16, marginTop: 12 }}>
+      {rows.map((label, index) => (
+        <View
+          key={label}
+          accessible
+          accessibilityLabel={`${label}: ${t('eventPin.hiddenUntilPin')}`}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, borderBottomWidth: index === 0 ? 1 : 0, borderBottomColor: theme.mode === 'dark' ? '#262C30' : '#EEF0EA' }}>
+          <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: theme.colors.field, alignItems: 'center', justifyContent: 'center' }}>
+            <LockGlyph color={theme.colors.textSecondary} size={11} />
+          </View>
+          <View style={{ flex: 1, gap: 6 }}>
+            <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textSecondary }}>{label}</Text>
+            <View style={{ height: 10, width: index === 0 ? '70%' : '85%', borderRadius: 5, backgroundColor: theme.colors.field }} />
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+/** Right after a guest unlocks (6H). */
+function UnlockedNote() {
+  const { t } = useTranslation();
+  return (
+    <View accessibilityLiveRegion="polite" style={{ marginTop: 12, borderRadius: 14, backgroundColor: '#EEF7DF', paddingVertical: 10, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+      <Svg width={14} height={12} viewBox="0 0 10 8">
+        <Path d="M1 4l2.8 2.8L9 1.2" stroke="#2F4210" strokeWidth={1.8} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </Svg>
+      <Text style={{ flex: 1, fontFamily: fontFamily.interMedium, fontSize: 13, color: '#2F4210' }}>{t('eventPin.unlockedNote')}</Text>
+    </View>
+  );
+}
+
 /**
  * The meet. Guests read it, RSVP, or report it; Going does not let them leave here.
  * The host sees Host controls instead of RSVP: edit, attendees, and close (stop RSVPs or cancel).
@@ -114,6 +155,7 @@ export default function EventDetailScreen() {
   const [closing, setClosing] = useState(false);
   const [reopened, setReopened] = useState(false);
   const [toast, setToast] = useState('');
+  const [justUnlocked, setJustUnlocked] = useState(false);
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -152,6 +194,9 @@ export default function EventDetailScreen() {
   const { activities, interests } = event ? eventTagNames(event) : { activities: [], interests: [] };
   const venue = [event?.venue_name, event?.venue_address].filter(Boolean).join(' · ');
   const spots = event?.capacity ? Math.max(0, event.capacity - going.length) : null;
+  const { uri: featuredUri, headers: featuredHeaders } = useStorageFileUri(
+    event?.featured_image_file_id ?? preview?.featured_image_file_id,
+  );
 
   const rsvp = async () => {
     if (!userId || !event) return;
@@ -302,14 +347,29 @@ export default function EventDetailScreen() {
       </View>
       {!event && preview && !missing ? (
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: insets.bottom + NAV_PILL_HEIGHT + 40 }}>
-          <View style={{ backgroundColor: '#0E1113', borderRadius: 24, padding: 20, marginTop: 14, gap: 10 }}>
+          {featuredUri ? (
+            <Image
+              source={featuredHeaders ? { uri: featuredUri, headers: featuredHeaders } : { uri: featuredUri }}
+              style={{ width: '100%', aspectRatio: 16 / 9, borderRadius: 22, marginTop: 14, backgroundColor: '#0E1113' }}
+              resizeMode="cover"
+              accessibilityIgnoresInvertColors
+            />
+          ) : null}
+          <View style={{ backgroundColor: '#0E1113', borderRadius: 24, padding: 20, marginTop: featuredUri ? 12 : 14, gap: 10 }}>
             <PrivateEventBadge tone="dark" />
             <Text accessibilityRole="header" style={{ fontFamily: fontFamily.jakartaBold, fontSize: 27, lineHeight: 29, letterSpacing: -0.7, color: '#EDF1F2' }}>
               {preview.title}
             </Text>
             <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, color: '#A7B1B5' }}>{`${preview.city} · ${formatWhen(preview.starts_at)}`}</Text>
           </View>
-          <EventPinGate eventId={preview.id} onUnlocked={() => void load()} />
+          <HiddenDetailsCard />
+          <EventPinGate
+            eventId={preview.id}
+            onUnlocked={() => {
+              setJustUnlocked(true);
+              void load();
+            }}
+          />
         </ScrollView>
       ) : !event && missing ? (
         <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, color: theme.colors.textSecondary, textAlign: 'center', marginTop: 80, paddingHorizontal: 24 }}>
@@ -320,7 +380,15 @@ export default function EventDetailScreen() {
       ) : (
         <>
           <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: isHost ? insets.bottom + NAV_PILL_HEIGHT + 40 : 24 }}>
-            <View style={{ backgroundColor: '#0E1113', borderRadius: 24, padding: 20, marginTop: 14, gap: 10 }}>
+            {featuredUri ? (
+              <Image
+                source={featuredHeaders ? { uri: featuredUri, headers: featuredHeaders } : { uri: featuredUri }}
+                style={{ width: '100%', aspectRatio: 16 / 9, borderRadius: 22, marginTop: 14, backgroundColor: '#0E1113' }}
+                resizeMode="cover"
+                accessibilityIgnoresInvertColors
+              />
+            ) : null}
+            <View style={{ backgroundColor: '#0E1113', borderRadius: 24, padding: 20, marginTop: featuredUri ? 12 : 14, gap: 10 }}>
               {isHost ? (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                   <StateChip tone="lime" label={t('eventHost.youreHosting')} />
@@ -371,6 +439,8 @@ export default function EventDetailScreen() {
                 onReopen={() => void reopen()}
               />
             ) : null}
+
+            {justUnlocked && privateMeet && !isHost ? <UnlockedNote /> : null}
 
             {isHost && privateMeet && state !== 'cancelled' ? (
               <EventPinCard eventId={event.id} title={event.title} when={formatWhen(event.starts_at)} onToast={setToast} />

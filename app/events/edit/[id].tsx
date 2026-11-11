@@ -3,11 +3,13 @@ import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollVie
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ActivityPickerField } from '@/components/events/ActivityPickerField';
+import { EventCoverField, uploadEventCover, type EventCoverPick } from '@/components/events/EventCoverField';
 import { MeetWhereFields } from '@/components/events/MeetWhereFields';
 import { WhenTiles } from '@/components/events/WhenTiles';
 import { Screen, combineDateAndTime } from '@/components/ui';
 import { SCREENS } from '@/constants/screens';
-import { FilledField, MonoLabel, PillCta, TextAction, TogglePill } from '@/features/onboarding/components/kit';
+import { FilledField, MonoLabel, PillCta, TextAction } from '@/features/onboarding/components/kit';
 import { useAuth } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { contentBlockedMessage } from '@/lib/contentErrors';
@@ -26,6 +28,7 @@ type EventDetail = {
   venue_name?: string | null;
   venue_address?: string | null;
   capacity?: number | null;
+  featured_image_file_id?: string | null;
   creator_id: string;
   host_type?: string | null;
   cancelled_at?: string | null;
@@ -51,6 +54,8 @@ export default function EditEventScreen() {
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
   const [capacity, setCapacity] = useState(1);
+  const [coverFileId, setCoverFileId] = useState<string | null>(null);
+  const [cover, setCover] = useState<EventCoverPick | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [catalog, setCatalog] = useState<Activity[]>([]);
   const [mineIds, setMineIds] = useState<string[]>([]);
@@ -74,6 +79,8 @@ export default function EditEventScreen() {
     setAddress(next.venue_address ?? '');
     setNotes(next.description ?? '');
     setCapacity(next.capacity ?? 1);
+    setCoverFileId(next.featured_image_file_id ?? null);
+    setCover(null);
     setSelectedIds(
       (next.eventActivities ?? []).flatMap((row) => (row.activity?.id ? [row.activity.id] : [])),
     );
@@ -93,19 +100,13 @@ export default function EditEventScreen() {
     };
   }, [client, userId]);
 
-  const { mine, others, interests } = useMemo(() => {
-    const activities = catalog.filter((item) => (item.kind ?? 'activity') === 'activity');
-    return {
-      mine: activities.filter((item) => mineIds.includes(item.id)),
-      others: activities.filter((item) => !mineIds.includes(item.id)),
+  const { activities, interests } = useMemo(
+    () => ({
+      activities: catalog.filter((item) => (item.kind ?? 'activity') === 'activity'),
       interests: catalog.filter((item) => item.kind === 'interest'),
-    };
-  }, [catalog, mineIds]);
-
-  const toggle = (activityId: string) =>
-    setSelectedIds((current) =>
-      current.includes(activityId) ? current.filter((item) => item !== activityId) : [...current, activityId],
-    );
+    }),
+    [catalog],
+  );
 
   useEffect(() => {
     void load();
@@ -135,6 +136,7 @@ export default function EditEventScreen() {
     setSaving(true);
     setError('');
     try {
+      const featuredImageFileId = cover ? await uploadEventCover(cover) : coverFileId;
       await updateEvent(
         client,
         id,
@@ -146,6 +148,7 @@ export default function EditEventScreen() {
           venue_address: address.trim() || null,
           description: notes.trim(),
           capacity,
+          featured_image_file_id: featuredImageFileId,
         },
         profile?.airline_id,
       );
@@ -190,7 +193,21 @@ export default function EditEventScreen() {
                 </Text>
               </View>
             ) : null}
-            <View style={{ marginTop: 16 }}>
+            <View style={{ marginTop: 16, gap: 10 }}>
+              <EventCoverField
+                cover={cover}
+                fileId={coverFileId}
+                hint={t('events.coverHintEdit')}
+                onChange={(next) => {
+                  setError('');
+                  setCover(next);
+                }}
+                onClear={() => {
+                  setCover(null);
+                  setCoverFileId(null);
+                }}
+                onError={setError}
+              />
               <FilledField label={t('events.meetTitle')} value={title} onChangeText={setTitle} placeholder={t('events.meetTitlePlaceholder')} />
               <View style={{ marginBottom: 10 }}>
                 <WhenTiles date={date} time={time} minimumDate={new Date()} onDateChange={setDate} onTimeChange={setTime} />
@@ -208,48 +225,15 @@ export default function EditEventScreen() {
             <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textTertiary, marginBottom: 10 }}>
               {t('events.activitiesHint')}
             </Text>
-            {mine.length ? (
-              <>
-                <MonoLabel style={{ fontSize: 10.5, marginBottom: 8 }}>{t('events.yourActivities')}</MonoLabel>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
-                  {mine.map((item) => (
-                    <TogglePill
-                      key={item.id}
-                      size="sm"
-                      label={item.name}
-                      selected={selectedIds.includes(item.id)}
-                      onPress={() => toggle(item.id)}
-                    />
-                  ))}
-                </View>
-              </>
-            ) : null}
-            <MonoLabel style={{ fontSize: 10.5, marginBottom: 8 }}>{t('events.allActivities')}</MonoLabel>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-              {others.map((item) => (
-                <TogglePill
-                  key={item.id}
-                  size="sm"
-                  label={item.name}
-                  selected={selectedIds.includes(item.id)}
-                  onPress={() => toggle(item.id)}
-                />
-              ))}
+            <View style={{ marginTop: -10, marginBottom: 6 }}>
+              <ActivityPickerField kind="activity" items={activities} mineIds={mineIds} selectedIds={selectedIds} onChange={setSelectedIds} />
             </View>
             <MonoLabel style={{ fontSize: 10.5, marginTop: 18, marginBottom: 8 }}>{t('events.interestsTitle')}</MonoLabel>
             <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textTertiary, marginBottom: 10 }}>
               {t('events.interestsHint')}
             </Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
-              {interests.map((item) => (
-                <TogglePill
-                  key={item.id}
-                  size="sm"
-                  label={item.name}
-                  selected={selectedIds.includes(item.id)}
-                  onPress={() => toggle(item.id)}
-                />
-              ))}
+            <View style={{ marginTop: -10, marginBottom: 16 }}>
+              <ActivityPickerField kind="interest" items={interests} selectedIds={selectedIds} onChange={setSelectedIds} />
             </View>
             <View
               style={{

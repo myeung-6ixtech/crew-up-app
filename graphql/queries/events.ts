@@ -15,6 +15,7 @@ const EVENT_LISTING_FIELDS = `
   host_type
   is_published
   featured_until
+  featured_image_file_id
   rsvp_closed_at
   cancelled_at
   eventActivities {
@@ -56,6 +57,15 @@ export const GET_EVENT_PREVIEW = gql`
   }
 `;
 
+/** Private meets this user has unlocked with a PIN (Hasura only returns their own rows). */
+export const GET_MY_EVENT_UNLOCKS = gql`
+  query GetMyEventUnlocks {
+    event_unlocks {
+      event_id
+    }
+  }
+`;
+
 /** Host only (Hasura returns null to anyone else). */
 export const GET_EVENT_PIN = gql`
   query GetEventPin($eventId: uuid!) {
@@ -85,6 +95,7 @@ export const GET_EVENT = gql`
       host_type
       is_published
       featured_until
+      featured_image_file_id
       rsvp_closed_at
       cancelled_at
       creator {

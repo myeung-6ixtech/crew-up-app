@@ -98,6 +98,8 @@ export interface Activity {
   kind?: ActivityKind | null;
   icon?: string | null;
   sort_order: number;
+  /** The group it sits in (Food & drink, Outdoors, …). */
+  parent?: { name: string; sort_order: number } | null;
 }
 
 export interface ActivityPreference {
@@ -120,6 +122,7 @@ export interface EventItem {
   host_type?: 'user' | 'platform';
   is_published?: boolean;
   featured_until?: string | null;
+  featured_image_file_id?: string | null;
   rsvp_closed_at?: string | null;
   cancelled_at?: string | null;
   eventActivities?: Array<{

@@ -149,6 +149,7 @@ export const GET_HOME_DATA = gql`
       host_type
       is_published
       featured_until
+      featured_image_file_id
       eventActivities {
         activity {
           slug

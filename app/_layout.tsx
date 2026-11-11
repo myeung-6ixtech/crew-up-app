@@ -75,6 +75,7 @@ function RootNavigator() {
       <Stack.Screen name="network/[userId]" options={{ headerShown: false }} />
       <Stack.Screen name="events/[id]" options={{ headerShown: false }} />
       <Stack.Screen name="events/create" options={{ headerShown: false }} />
+      <Stack.Screen name="events/pin/[id]" options={{ headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="events/edit/[id]" options={{ headerShown: false, presentation: 'modal' }} />
       <Stack.Screen name="events/attendees/[id]" options={{ headerShown: false }} />
       <Stack.Screen name="messages/[threadId]" options={{ headerShown: false }} />

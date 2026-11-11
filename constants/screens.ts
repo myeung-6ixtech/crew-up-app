@@ -55,6 +55,8 @@ export const SCREENS = {
     create: '/events/create',
     edit: (id: string) => `/events/edit/${id}` as const,
     attendees: (id: string) => `/events/attendees/${id}` as const,
+    /** Straight after creating a private meet. */
+    pinReady: (id: string) => `/events/pin/${id}` as const,
   },
   messages: {
     thread: (threadId: string, withUserId?: string) =>
@@ -103,8 +105,5 @@ export const VISIBILITY_LEVELS: VisibilityLevel[] = [
   'same_airline',
   'all_verified',
 ];
-
-/** Quick tags are practical notes only. Dinner, coffee, hiking and karaoke are activities now. */
-export const EVENT_TAGS = ['alcohol_free', 'halal_friendly', 'women_only'] as const;
 
 export const ROLE_TYPES = ['cabin_crew', 'pilot', 'ground_ops'] as const;
