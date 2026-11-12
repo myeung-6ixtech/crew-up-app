@@ -11,8 +11,13 @@ const PUSH_TOKEN_KEY = 'expoPushToken';
 export async function registerForPushNotifications() {
   if (!pushNotificationsEnabled) return null;
 
-  const { registerForPushNotificationsImpl } = await import('./notificationService.push');
-  return registerForPushNotificationsImpl(PUSH_TOKEN_KEY);
+  try {
+    const { registerForPushNotificationsImpl } = await import('./notificationService.push');
+    return await registerForPushNotificationsImpl(PUSH_TOKEN_KEY);
+  } catch (error) {
+    if (__DEV__) console.warn('[notifications] Push setup failed:', error);
+    return null;
+  }
 }
 
 export async function getStoredPushToken() {

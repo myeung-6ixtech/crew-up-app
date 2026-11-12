@@ -17,7 +17,7 @@ import { registerForPushNotifications } from '@/services/notificationService';
 import { fontAssets } from '@/theme';
 import { useTheme } from '@/theme';
 
-SplashScreen.preventAutoHideAsync();
+void SplashScreen.preventAutoHideAsync().catch(() => {});
 
 function RootNavigator() {
   const { loading, session } = useSession();

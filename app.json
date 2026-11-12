@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "CrewUp",
+    "name": "crew-up",
     "slug": "crew-up-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -11,7 +11,14 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.banamedia.crewup",
       "usesAppleSignIn": true,
+      "icon": {
+        "light": "./assets/ios/AppIcon-1024.png",
+        "dark": "./assets/ios/AppIcon-1024.png",
+        "tinted": "./assets/ios/AppIcon-1024-tinted-source.png"
+      },
       "infoPlist": {
+        "CFBundleDisplayName": "crew-up",
+        "CFBundleName": "crew-up",
         "ITSAppUsesNonExemptEncryption": false
       },
       "privacyManifests": {
@@ -74,7 +81,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/logos/crewup-wordmark-lime-2400.png",
+          "image": "./assets/images/splash-wordmark-lime.png",
           "resizeMode": "contain",
           "backgroundColor": "#0E1113",
           "imageWidth": 210
