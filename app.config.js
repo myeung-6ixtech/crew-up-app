@@ -13,6 +13,7 @@ module.exports = () => {
     }
     return plugin;
   });
+  expo.plugins.push('./plugins/withIosNodeBinary');
 
   return { expo };
 };

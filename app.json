@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "crew-up",
+    "name": "CrewUp",
     "slug": "crew-up-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,8 +17,8 @@
         "tinted": "./assets/ios/AppIcon-1024-tinted-source.png"
       },
       "infoPlist": {
-        "CFBundleDisplayName": "crew-up",
-        "CFBundleName": "crew-up",
+        "CFBundleDisplayName": "CrewUp",
+        "CFBundleName": "CrewUp",
         "ITSAppUsesNonExemptEncryption": false
       },
       "privacyManifests": {
