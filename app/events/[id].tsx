@@ -3,7 +3,7 @@ import { ActionSheetIOS, ActivityIndicator, Alert, Image, Platform, Pressable, S
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { CircleButton, CrewAvatar, PillGroup, PushedTopBar } from '@/components/crew/kit';
 import { CrewUpEventBadge, eventTagNames } from '@/components/events/EventCard';
 import {
@@ -142,7 +142,7 @@ export default function EventDetailScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const ensureGuidelines = useGuidelinesGate();
   const { userId } = useAuth();
@@ -379,7 +379,7 @@ export default function EventDetailScreen() {
         <ActivityIndicator color={theme.colors.accentText} style={{ marginTop: 80 }} />
       ) : (
         <>
-          <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: isHost ? insets.bottom + NAV_PILL_HEIGHT + 40 : 24 }}>
+          <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: insets.bottom + NAV_PILL_HEIGHT + (isHost ? 40 : 96) }}>
             {featuredUri ? (
               <Image
                 source={featuredHeaders ? { uri: featuredUri, headers: featuredHeaders } : { uri: featuredUri }}

@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import {
   CircleButton,
   PersonPlusGlyph,
@@ -37,7 +37,7 @@ export default function FriendsTab() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const { userId } = useAuth();
   const tabScroll = useTabBarScroll({ contentContainerStyle: { paddingHorizontal: 24 } });
@@ -80,7 +80,7 @@ export default function FriendsTab() {
   const respond = async (c: Connection, accept: boolean) => {
     setBusyId(c.id);
     try {
-      if (accept) await updateConnectionStatus(client, c.id, 'accepted');
+      if (accept) await updateConnectionStatus(client, c.id, 'accepted', c.requester_id);
       else await blockUser(client, c.requester_id);
       await load();
       if (accept) {

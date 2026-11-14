@@ -4,7 +4,6 @@ import {
   Easing,
   KeyboardAvoidingView,
   Modal,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -15,7 +14,7 @@ import {
 } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { PillCta } from '@/features/onboarding/components/kit';
 import { hapticSelection } from '@/lib/haptics';
 import { fontFamily, useTheme } from '@/theme';
@@ -90,7 +89,7 @@ export function ActivityPickerField({
 }) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const { height } = useWindowDimensions();
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -196,7 +195,7 @@ export function ActivityPickerField({
               overflow: 'hidden',
               transform: [{ translateY: slide }],
             }}>
-            <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+            <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
               <View style={{ width: 38, height: 5, borderRadius: 3, backgroundColor: theme.colors.track, alignSelf: 'center', marginTop: 8 }} />
               <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 8, paddingHorizontal: 16 }}>
                 <View style={{ width: 56 }}>

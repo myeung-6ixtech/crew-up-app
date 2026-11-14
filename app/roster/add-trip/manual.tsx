@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { WhenTiles } from '@/components/events/WhenTiles';
 import { FlowFooter, FlowHeader, FlowTopBar } from '@/components/roster/flowKit';
 import { Screen, combineDateAndTime } from '@/components/ui';
@@ -43,7 +43,7 @@ export default function AddTripManualFlightScreen() {
   const [error, setError] = useState('');
 
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
 
   const onContinue = () => {
     if (!origin || !destination || !date) return;
@@ -112,7 +112,7 @@ export default function AddTripManualFlightScreen() {
       <View style={{ paddingTop: insets.top }}>
         <FlowTopBar backLabel={t('common.back')} onBack={() => router.back()} />
       </View>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={Platform.OS === 'android' ? -insets.bottom : 0}>
         <ScrollView contentContainerStyle={{ paddingBottom: 16 }} keyboardShouldPersistTaps="handled">
           <FlowHeader
             title={t('addTrip.enterFlightManually')}

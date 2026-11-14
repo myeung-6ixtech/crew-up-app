@@ -20,6 +20,7 @@ export const GET_MY_THREADS = gql`
         }
         messages(limit: 1, order_by: { created_at: desc }) {
           body
+          sender_id
           created_at
         }
         participants {

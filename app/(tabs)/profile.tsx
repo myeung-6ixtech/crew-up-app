@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { LANGUAGES } from '@crewup/shared';
 import { CrewAvatar, CircleButton, MenuGlyph, PillGroup, SmallPillButton } from '@/components/crew/kit';
 import { CrewIdDarkCard, useCrewIdActions } from '@/components/crew/CrewIdDarkCard';
@@ -29,7 +29,7 @@ export default function ProfileTab() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const { open: openMenu } = useAppMenu();
   const { profile, userId } = useAuth();

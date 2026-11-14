@@ -3,7 +3,7 @@ import { Image, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { AppleSignInButton } from '@/components/auth/AppleSignInButton';
 import { GoogleIcon } from '@/components/auth/GoogleIcon';
 import { LegalNotice } from '@/components/legal/LegalNotice';
@@ -17,7 +17,7 @@ import { fontFamily } from '@/theme';
 export default function WelcomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const { refreshSession } = useSession();
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');

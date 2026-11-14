@@ -7,7 +7,7 @@ import React, {
   useState,
   type ReactNode,
 } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import {
   TAB_BAR_CONTENT_EXTRA,
   TAB_BAR_EXPANDED_HEIGHT,
@@ -28,7 +28,7 @@ type TabBarScrollContextValue = {
 const TabBarScrollContext = createContext<TabBarScrollContextValue | null>(null);
 
 export function TabBarScrollProvider({ children }: { children: ReactNode }) {
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const [compact, setCompact] = useState(false);
   const downAccumRef = useRef(0);
   const restTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);

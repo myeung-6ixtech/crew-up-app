@@ -3,7 +3,7 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput,
 import { useRouter } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { DateTimeTile, formatShortDateTime } from '@/components/roster/DateTimeTile';
 import { FlowFooter, FlowTitle, FlowTopBar, WarnChip } from '@/components/roster/flowKit';
 import { ReportSheet } from '@/components/ReportSheet';
@@ -264,7 +264,7 @@ export default function RosterConfirmScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const { userId } = useAuth();
   const [flagOpen, setFlagOpen] = useState(false);
@@ -399,7 +399,7 @@ export default function RosterConfirmScreen() {
       <View style={{ paddingTop: insets.top }}>
         <FlowTopBar title={fromFile ? t('rosterFlow.reviewTrips') : t('roster.confirm')} backLabel={t('common.back')} onBack={() => router.back()} />
       </View>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={Platform.OS === 'android' ? -insets.bottom : 0}>
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 18, paddingBottom: 16 }}>
           <FlowTitle>{fromFile ? (monthTitle ?? t('rosterFlow.reviewTrips')) : t('roster.confirm')}</FlowTitle>
           {fromFile ? (

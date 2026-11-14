@@ -15,7 +15,7 @@ import {
   type KeyboardEvent,
   type ViewStyle,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { useThemedStyles, useTheme } from '@/theme';
 
 const SHEET_OFFSCREEN_Y = Dimensions.get('window').height;
@@ -53,7 +53,7 @@ export function BottomSheet({
   heightRatio?: number;
 }) {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const windowHeight = Dimensions.get('window').height;
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const availableHeight = Math.max(windowHeight - keyboardHeight, 0);
@@ -114,7 +114,8 @@ export function BottomSheet({
     const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
     const showSub = Keyboard.addListener(showEvent, (event) => {
       animateWithKeyboard(event);
-      setKeyboardHeight(event.endCoordinates.height);
+      const coveredByKeyboard = Platform.OS === 'android' ? insets.bottom : 0;
+      setKeyboardHeight(Math.max(0, event.endCoordinates.height - coveredByKeyboard));
     });
     const hideSub = Keyboard.addListener(hideEvent, (event) => {
       animateWithKeyboard(event);
@@ -124,7 +125,7 @@ export function BottomSheet({
       showSub.remove();
       hideSub.remove();
     };
-  }, [visible, modalVisible]);
+  }, [visible, modalVisible, insets.bottom]);
 
   useEffect(() => {
     if (visible || modalVisible || !presentedRef.current || notifiedRef.current) return;

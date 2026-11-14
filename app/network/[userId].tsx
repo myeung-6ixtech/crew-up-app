@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import Svg, { Path, Rect } from 'react-native-svg';
 import { LANGUAGES } from '@crewup/shared';
 import { CrewAvatar, FactRow, PillGroup, PushedTopBar, WhiteCard } from '@/components/crew/kit';
@@ -134,7 +134,7 @@ export default function PublicProfileScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const { userId, profile: me } = useAuth();
   const airlines = useAirlines();

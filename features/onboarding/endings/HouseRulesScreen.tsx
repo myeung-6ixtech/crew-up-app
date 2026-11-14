@@ -3,7 +3,7 @@ import { BackHandler, ScrollView, Text, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { HapticPressable } from '@/components/ui';
 import { useAuth } from '@/hooks/useSession';
 import { darkColors, fontFamily } from '@/theme';
@@ -20,7 +20,7 @@ const CTA_PRESSED = '#B8EA74';
 /** Shown once before step 1, agreement stored on the device. The only dark screen — a curtain-up before the light flow. */
 export function HouseRulesScreen() {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const { userId } = useAuth();
   const accept = useHouseRulesStore((state) => state.accept);
   const confirmSignOut = useConfirmSignOut();

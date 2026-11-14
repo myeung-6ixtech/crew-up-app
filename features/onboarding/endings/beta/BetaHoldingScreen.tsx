@@ -3,7 +3,7 @@ import { Image, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { findAirportByIata } from '@/constants/airports';
 import { SCREENS } from '@/constants/screens';
 import { useAuth, useSession } from '@/hooks/useSession';
@@ -16,7 +16,7 @@ import { useOnboardingState } from '../../hooks/useOnboardingState';
 export function BetaHoldingScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const { profile } = useAuth();
   const { signOut } = useSession();
   const { mode, retryMode, refresh } = useOnboardingState();

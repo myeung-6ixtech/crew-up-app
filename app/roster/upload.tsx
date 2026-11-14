@@ -4,7 +4,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { RowChevron } from '@/components/crew/kit';
 import { LegalNotice } from '@/components/legal/LegalNotice';
@@ -175,7 +175,7 @@ function RosterConsent({
 }) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const points = t('roster.consent.points', { returnObjects: true, provider: providerName }) as string[];
   return (
     <Screen style={{ padding: 0 }}>
@@ -223,7 +223,7 @@ export default function RosterUploadScreen() {
   const { t, i18n } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const setDraft = useRosterDraftStore((s) => s.setDraft);
   const [error, setError] = useState('');

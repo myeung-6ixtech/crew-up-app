@@ -18,6 +18,7 @@ export async function fetchThreads(
   const { data } = await client.query({
     query: GET_MY_THREADS,
     variables: { userId },
+    fetchPolicy: 'network-only',
   });
   return (data as any)?.thread_participants ?? [];
 }
@@ -81,14 +82,22 @@ export type DirectThreadUnread = {
   };
 };
 
+/** A thread is unread when the newest message is from someone else and newer than last_read_at. */
+export function isThreadUnread(
+  row: { last_read_at?: string | null; thread: { messages?: { sender_id?: string | null; created_at?: string }[] } },
+  userId: string,
+): boolean {
+  const latest = row.thread.messages?.[0];
+  if (!latest?.created_at || !latest.sender_id || latest.sender_id === userId) return false;
+  if (!row.last_read_at) return true;
+  return Date.parse(latest.created_at) > Date.parse(row.last_read_at);
+}
+
 export function hasUnreadDirect(rows: DirectThreadUnread[], userId: string, blocked: Set<string>): boolean {
   return rows.some((row) => {
     const others = row.thread.participants?.filter((person) => person.user_id !== userId) ?? [];
     if (others.some((person) => blocked.has(person.user_id))) return false;
-    const latest = row.thread.messages?.[0];
-    if (!latest || !latest.sender_id || latest.sender_id === userId) return false;
-    if (!row.last_read_at) return true;
-    return Date.parse(latest.created_at) > Date.parse(row.last_read_at);
+    return isThreadUnread(row, userId);
   });
 }
 

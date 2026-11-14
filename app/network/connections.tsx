@@ -48,7 +48,7 @@ export default function ConnectionsScreen() {
             <BodyText muted>{c.status}</BodyText>
             {c.status === 'pending' && c.addressee_id === userId ? (
               <>
-                <Button label={t('network.accept')} onPress={async () => { await updateConnectionStatus(client, c.id, 'accepted'); await load(); }} />
+                <Button label={t('network.accept')} onPress={async () => { await updateConnectionStatus(client, c.id, 'accepted', c.requester_id); await load(); }} />
                 <Button label={t('network.decline')} variant="secondary" onPress={async () => { await blockUser(client, c.requester_id); await load(); }} />
               </>
             ) : null}

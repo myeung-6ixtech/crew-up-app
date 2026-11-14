@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { FlightOptionCard } from '@/components/roster/FlightOptionCard';
 import { FlightSearchResultsSkeleton } from '@/components/roster/FlightSearchResultsSkeleton';
 import { CloudOffGlyph, FlowFooter, FlowHeader, FlowNotice, FlowTopBar, PlaneGlyph } from '@/components/roster/flowKit';
@@ -20,7 +20,7 @@ export default function AddTripFlightsScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const { depIata, arrIata, date } = useLocalSearchParams<{ depIata?: string; arrIata?: string; date?: string }>();
   const origin = useMemo(() => findAirportByIata(depIata), [depIata]);
   const destination = useMemo(() => findAirportByIata(arrIata), [arrIata]);

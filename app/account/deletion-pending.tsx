@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { ERROR_RED } from '@/components/auth/authKit';
 import { Screen } from '@/components/ui';
 import { PillCta, TextAction } from '@/features/onboarding/components/kit';
@@ -15,7 +15,7 @@ import { fontFamily, useTheme } from '@/theme';
 export default function DeletionPendingScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const { pendingDeletion, refreshProfile, signOut } = useSession();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');

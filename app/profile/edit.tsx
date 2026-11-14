@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import Svg, { Path } from 'react-native-svg';
 import { LANGUAGES } from '@crewup/shared';
@@ -48,7 +48,7 @@ export default function EditProfileScreen() {
   const router = useRouter();
   const client = useApolloClient();
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const { profile, userId } = useAuth();
   const { refreshProfile } = useSession();
   const styles = useThemedStyles((th) => ({

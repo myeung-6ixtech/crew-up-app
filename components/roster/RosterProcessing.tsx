@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { DarkLimePill, MonoLabel, TextPillAction } from '@/features/onboarding/components/kit';
 import { fontFamily } from '@/theme';
 
@@ -52,7 +52,7 @@ export function RosterProcessing({
   onCancel: () => void;
 }) {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const [progress, setProgress] = useState(0);
   const phaseRef = useRef(phase);
   phaseRef.current = phase;

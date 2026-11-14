@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { CrewAvatar, PushedTopBar } from '@/components/crew/kit';
 import { personName } from '@/components/crew/people';
 import { isCurrent, overlapLabel } from '@/components/discover/matches';
@@ -26,7 +26,7 @@ export default function SavedLayoverScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const { userId } = useAuth();
   const [trip, setTrip] = useState<TripEntry | null | undefined>(undefined);

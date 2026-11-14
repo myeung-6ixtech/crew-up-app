@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { ActivityPickerField } from '@/components/events/ActivityPickerField';
 import { EventCoverField, uploadEventCover, type EventCoverPick } from '@/components/events/EventCoverField';
 import { MeetWhereFields } from '@/components/events/MeetWhereFields';
@@ -42,7 +42,7 @@ export default function EditEventScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const { userId, profile } = useAuth();
   const [event, setEvent] = useState<EventDetail | null>(null);
@@ -183,7 +183,7 @@ export default function EditEventScreen() {
       {!event ? (
         <ActivityIndicator color={theme.colors.accentText} style={{ marginTop: 80 }} />
       ) : (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={Platform.OS === 'android' ? -insets.bottom : 0}>
           <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 16 }}>
             {going ? (
               <View style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start', backgroundColor: '#F6E7B8', borderRadius: 14, paddingVertical: 12, paddingHorizontal: 14, marginTop: 16 }}>

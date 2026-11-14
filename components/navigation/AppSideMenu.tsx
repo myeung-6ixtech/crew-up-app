@@ -4,7 +4,7 @@ import Constants from 'expo-constants';
 import { useRouter, type Href } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { useAirlines } from '@/components/crew/airline';
 import { CrewAvatar } from '@/components/crew/kit';
 import { SettingsGlyph, VersionStamp, useRowTint, type SettingsIcon } from '@/components/settings/settingsKit';
@@ -25,7 +25,7 @@ export function AppSideMenu() {
   const { t } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const tint = useRowTint();
   const { width: screenWidth } = useWindowDimensions();
   const width = Math.min(DRAWER_WIDTH, screenWidth - 48);

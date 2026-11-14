@@ -3,7 +3,7 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } fro
 import { useRouter } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { hapticSelection } from '@/lib/haptics';
 import { fontFamily, useTheme } from '@/theme';
 
@@ -80,11 +80,11 @@ export function SettingsTopBar({ title, onBack }: { title: string; onBack?: () =
 
 export function SettingsPage({ title, subtitle, children, footer }: { title: string; subtitle?: string; children: ReactNode; footer?: ReactNode }) {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.bgCanvas, paddingTop: insets.top }}>
       <SettingsTopBar title={title} />
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={Platform.OS === 'android' ? -insets.bottom : 0}>
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingTop: 6, paddingHorizontal: GUTTER, paddingBottom: 40, gap: 22 }}>
           {subtitle ? <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, lineHeight: 21, color: theme.colors.textSecondary }}>{subtitle}</Text> : null}
           {children}

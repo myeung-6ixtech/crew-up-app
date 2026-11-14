@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { FlowTitle, FlowTopBar, PlaneGlyph } from '@/components/roster/flowKit';
 import { NoTripsCard, TripCard } from '@/components/roster/TripCard';
 import { Screen, Toast } from '@/components/ui';
@@ -21,7 +21,7 @@ export default function TripsScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const { userId } = useAuth();
   const { openAddTrip, addTripMethodOverlay } = useAddTripFlow();

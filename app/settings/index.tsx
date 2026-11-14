@@ -3,7 +3,7 @@ import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { OutlineButton, SettingsRow, SettingsSection, SettingsTopBar, VersionStamp } from '@/components/settings/settingsKit';
 import { SCREENS } from '@/constants/screens';
 import { useAuth, useSession } from '@/hooks/useSession';
@@ -17,7 +17,7 @@ export default function SettingsScreen() {
   const { t, i18n } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const { preference } = useThemeControls();
   const { profile } = useAuth();
   const { signOut } = useSession();

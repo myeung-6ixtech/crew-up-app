@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import Svg, { Path } from 'react-native-svg';
 import { CrewAvatar, TabTitle } from '@/components/crew/kit';
 import { personName, type PersonProfile } from '@/components/crew/people';
@@ -12,19 +12,23 @@ import { SCREENS } from '@/constants/screens';
 import { useAuth } from '@/hooks/useSession';
 import { useTabBarScroll } from '@/hooks/useTabBarScroll';
 import { useApolloClient } from '@/lib/apolloHooks';
+import { hapticSelection } from '@/lib/haptics';
 import { fetchBlocks } from '@/services/connectionService';
-import { fetchThreads } from '@/services/messagingService';
+import { fetchThreads, isThreadUnread } from '@/services/messagingService';
 import { useSafetyStore } from '@/stores/safetyStore';
 import { fontFamily, useTheme } from '@/theme';
+
+type InboxTab = 'unread' | 'read';
 
 type ThreadRow = {
   id: string;
   thread_id: string;
+  last_read_at?: string | null;
   thread: {
     type: string;
     updated_at?: string;
     event?: { title?: string | null } | null;
-    messages?: { body?: string | null; created_at?: string }[];
+    messages?: { body?: string | null; sender_id?: string | null; created_at?: string }[];
     participants?: { user_id: string; user?: { profile?: PersonProfile } }[];
   };
 };
@@ -42,11 +46,12 @@ export default function MessagesTab() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const { userId } = useAuth();
   const { nudgeVisible, checkNudge, dismissNudge } = useSafetyStore();
   const [threads, setThreads] = useState<ThreadRow[] | null>(null);
+  const [tab, setTab] = useState<InboxTab>('read');
   const [refreshing, setRefreshing] = useState(false);
   const tabScroll = useTabBarScroll({ contentContainerStyle: { paddingHorizontal: 24 } });
 
@@ -72,11 +77,42 @@ export default function MessagesTab() {
   );
 
   const other = (row: ThreadRow) => row.thread.participants?.find((participant) => participant.user_id !== userId);
+  const shown = (threads ?? []).filter((row) => (userId ? isThreadUnread(row, userId) : false) === (tab === 'unread'));
+  const tabs: { key: InboxTab; label: string }[] = [
+    { key: 'read', label: t('messages.read') },
+    { key: 'unread', label: t('messages.unread') },
+  ];
 
   return (
     <Screen style={{ padding: 0 }}>
       <View style={{ paddingTop: insets.top }}>
         <TabTitle title={t('messages.title')} />
+        <View accessibilityRole="tablist" style={{ flexDirection: 'row', gap: 8, marginTop: 16, paddingHorizontal: 24 }}>
+          {tabs.map((item) => {
+            const selected = tab === item.key;
+            return (
+              <Pressable
+                key={item.key}
+                accessibilityRole="tab"
+                accessibilityState={{ selected }}
+                onPress={() => {
+                  hapticSelection();
+                  setTab(item.key);
+                }}
+                style={{
+                  height: 36,
+                  paddingHorizontal: 16,
+                  borderRadius: 18,
+                  backgroundColor: selected ? theme.colors.ink : theme.colors.field,
+                  justifyContent: 'center',
+                }}>
+                <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 13.5, color: selected ? theme.colors.ground : theme.colors.textPrimary }}>
+                  {item.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
       </View>
       {threads && !threads.length ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, paddingHorizontal: 40, paddingBottom: 120 }}>
@@ -133,8 +169,13 @@ export default function MessagesTab() {
               }}
             />
           }>
+          {shown.length ? null : (
+            <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, lineHeight: 21, color: theme.colors.textSecondary, textAlign: 'center', marginTop: 48 }}>
+              {tab === 'unread' ? t('messages.emptyUnread') : t('messages.emptyRead')}
+            </Text>
+          )}
           <View style={{ gap: 8, marginTop: 16 }}>
-            {(threads ?? []).map((row) => {
+            {shown.map((row) => {
               const isEvent = row.thread.type === 'event_group';
               const person = other(row);
               const title = isEvent

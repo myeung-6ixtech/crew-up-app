@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { BackGlyph, CircleButton, CrewAvatar } from '@/components/crew/kit';
 import { personName, personRoleBase, type PersonProfile } from '@/components/crew/people';
@@ -67,7 +67,7 @@ export default function ChatScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const { userId } = useAuth();
   const ensureGuidelines = useGuidelinesGate();
@@ -269,7 +269,7 @@ export default function ChatScreen() {
         ) : null}
       </View>
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={Platform.OS === 'android' ? -insets.bottom : 0}>
         {messages && !messages.length && !isEvent ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10, paddingHorizontal: 40 }}>
             <CrewAvatar size={76} name={title} fileId={info.other?.avatar_file_id} seed={info.otherId} />

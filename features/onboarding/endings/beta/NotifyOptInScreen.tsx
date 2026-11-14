@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import Svg, { Path } from 'react-native-svg';
 import { SCREENS } from '@/constants/screens';
 import { useSession } from '@/hooks/useSession';
@@ -25,7 +25,7 @@ export function NotifyOptInScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const { refreshProfile } = useSession();
   const [saving, setSaving] = useState<'notify' | 'skip' | null>(null);
   const [error, setError] = useState('');

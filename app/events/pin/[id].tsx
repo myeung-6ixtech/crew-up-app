@@ -4,7 +4,7 @@ import * as Clipboard from 'expo-clipboard';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Svg, { Path, Rect } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { CircleButton } from '@/components/crew/kit';
 import { LockGlyph } from '@/components/events/pin';
 import { Screen, Toast } from '@/components/ui';
@@ -26,7 +26,7 @@ export default function PinReadyScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const [pin, setPin] = useState<string | null>(null);
   const [title, setTitle] = useState('');

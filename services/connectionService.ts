@@ -153,11 +153,15 @@ export async function updateConnectionStatus(
   client: ApolloClient,
   id: string,
   status: 'accepted',
+  otherUserId?: string,
 ) {
   const { data } = await client.mutate({
     mutation: UPDATE_CONNECTION,
     variables: { id, status },
   });
+  if (status === 'accepted') {
+    await callClientFunction('trips/rematch', { body: otherUserId ? { user_id: otherUserId } : {} }).catch(() => {});
+  }
   return (data as any)?.update_connections_by_pk;
 }
 
@@ -181,9 +185,12 @@ export async function discoverProfiles(
     excludeUserIds?: string[];
   },
 ) {
-  const where: Record<string, unknown> = { is_verified: { _eq: true } };
+  const where: Record<string, unknown> = {};
   if (params.airlineId) where.airline_id = { _eq: params.airlineId };
-  if (params.baseAirport) where.base_airport = { _eq: params.baseAirport };
+  const base = params.baseAirport?.trim().toUpperCase();
+  if (base) {
+    where._or = [{ base_airport_iata: { _eq: base } }, { base_airport: { _ilike: base } }];
+  }
   if (params.roleType) where.role_type = { _eq: params.roleType };
   if (params.excludeUserIds?.length) {
     where.user_id = { _nin: params.excludeUserIds };
@@ -196,6 +203,7 @@ export async function discoverProfiles(
       limit: params.limit ?? 30,
       offset: params.offset ?? 0,
     },
+    fetchPolicy: 'network-only',
   });
   return (data as any)?.profiles ?? [];
 }
@@ -257,7 +265,9 @@ export type SuggestedProfile = {
   user_id: string;
   display_name: string;
   role_type?: string | null;
+  crew_role?: string | null;
   base_airport?: string | null;
+  base_airport_iata?: string | null;
   avatar_file_id?: string | null;
 };
 
@@ -299,7 +309,7 @@ export async function fetchSuggestedFriends(
   return [...sameBase, ...others].slice(0, limit);
 }
 
-/** Verified crew on the platform, excluding self, connections, and blocks. */
+/** Crew on the platform, excluding self, connections, and blocks. */
 export async function fetchDiscoverableUsers(
   client: ApolloClient,
   userId: string,

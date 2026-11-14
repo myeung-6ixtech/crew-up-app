@@ -4,7 +4,7 @@ import { BlurView } from 'expo-blur';
 import { useRouter, type Href } from 'expo-router';
 import type { BottomTabBarProps } from 'expo-router/build/react-navigation/bottom-tabs/types';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { SCREENS } from '@/constants/screens';
 import { TAB_BAR_FLOAT_OFFSET } from '@/constants/tabBar';
 import { useTabBarScrollContext } from '@/contexts/TabBarScrollContext';
@@ -94,7 +94,7 @@ export function NavPill({
 }) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const progress = useRef(new Animated.Value(compact ? 1 : 0)).current;
 
   useEffect(() => {

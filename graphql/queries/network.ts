@@ -79,7 +79,9 @@ export const DISCOVER_PROFILES = gql`
       user_id
       display_name
       role_type
+      crew_role
       base_airport
+      base_airport_iata
       airline_id
       is_verified
       avatar_file_id

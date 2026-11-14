@@ -3,7 +3,7 @@ import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { AirportPickerModal } from '@/components/roster/AirportPickerModal';
 import { CalendarGlyph, FlowFooter, FlowTitle, FlowTopBar, SwapGlyph } from '@/components/roster/flowKit';
 import { BottomSheet, Screen } from '@/components/ui';
@@ -56,7 +56,7 @@ export default function AddTripScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const { profile } = useAuth();
   const [origin, setOrigin] = useState<Airport | undefined>();
   const [destination, setDestination] = useState<Airport | undefined>();

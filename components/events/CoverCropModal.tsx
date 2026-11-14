@@ -4,7 +4,7 @@ import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-g
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { fontFamily } from '@/theme';
 
 /**
@@ -42,7 +42,7 @@ export function CoverCropModal({
   onDone: (result: CropResult) => void;
 }) {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const { width: screenW } = useWindowDimensions();
   const frameW = screenW - 32;
   const frameH = (frameW * 9) / 16;

@@ -2,7 +2,7 @@ import { useCallback, type ReactNode } from 'react';
 import { Alert, BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View, type TextStyle } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { PROFILE_STEPS, isProfileStep, previousStep, type OnboardingStep } from '@crewup/shared';
 import { PickerFieldVariantProvider } from '@/components/profile/pickerFieldShared';
 import { Screen } from '@/components/ui';
@@ -96,7 +96,7 @@ export function StepScaffold({
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const { mode } = useAppMode();
   const confirmSignOut = useConfirmSignOut();
   const inFlow = context !== 'edit';
@@ -234,7 +234,7 @@ export function StepScaffold({
         </View>
       ) : null}
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={Platform.OS === 'android' ? -insets.bottom : 0}>
         <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           {title ? <StepTitle style={titleStyle}>{title}</StepTitle> : null}
           {subtitle ? <StepSubtitle>{subtitle}</StepSubtitle> : null}

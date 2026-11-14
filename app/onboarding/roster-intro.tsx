@@ -1,7 +1,7 @@
 import { ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { FlowFooter } from '@/components/roster/flowKit';
 import { Screen } from '@/components/ui';
 import { SCREENS } from '@/constants/screens';
@@ -21,7 +21,7 @@ export default function RosterIntroScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const clearDraft = useRosterDraftStore((state) => state.clear);
   const month = new Date().toLocaleDateString(undefined, { month: 'short' });
 

@@ -700,6 +700,10 @@
   },
   "messages": {
     "title": "Messages",
+    "unread": "Unread",
+    "read": "Read",
+    "emptyUnread": "You're all caught up.",
+    "emptyRead": "No read conversations yet.",
     "placeholder": "Type a message…",
     "send": "Send",
     "emptyTitle": "No conversations yet.",

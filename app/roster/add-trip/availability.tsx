@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { WhenTiles } from '@/components/events/WhenTiles';
 import { FlowFooter, FlowHeader, FlowTopBar } from '@/components/roster/flowKit';
 import { Screen, combineDateAndTime } from '@/components/ui';
@@ -151,7 +151,7 @@ export default function AddTripAvailabilityScreen() {
   );
 
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
 
   const onSave = async () => {
     const leg: TripLegInput | null = selectionToken

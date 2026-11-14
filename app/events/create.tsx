@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { PushedTopBar } from '@/components/crew/kit';
 import { ActivityPickerField } from '@/components/events/ActivityPickerField';
 import { EventCoverField, uploadEventCover, type EventCoverPick } from '@/components/events/EventCoverField';
@@ -80,7 +80,7 @@ export default function CreateEventScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const ensureGuidelines = useGuidelinesGate();
   const { userId, profile } = useAuth();
@@ -197,7 +197,7 @@ export default function CreateEventScreen() {
       <View style={{ paddingTop: insets.top }}>
         <PushedTopBar title={t('events.create')} onBack={() => router.back()} />
       </View>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={Platform.OS === 'android' ? -insets.bottom : 0}>
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 32 }}>
           <MeetKindCard kind={kind} onChange={() => setKindSheet(true)} />
 

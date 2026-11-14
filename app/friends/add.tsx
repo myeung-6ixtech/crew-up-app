@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { CrewAvatar, PushedTopBar } from '@/components/crew/kit';
 import { personRoleBase } from '@/components/crew/people';
 import { StandaloneNavPill } from '@/components/navigation/FloatingTabBar';
@@ -14,7 +14,7 @@ import { formatFriendId, normalizeFriendId } from '@/lib/friendId';
 import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
 import {
   ConnectionRequestError,
-  fetchDiscoverableUsers,
+  fetchSuggestedFriends,
   lookupByFriendId,
   requestConnection,
   requestConnectionByFriendId,
@@ -74,9 +74,10 @@ export default function AddFriendScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const { userId, profile } = useAuth();
+  const base = profile?.base_airport_iata ?? profile?.base_airport ?? null;
 
   const [suggested, setSuggested] = useState<SuggestedProfile[]>([]);
   const [suggestedLoading, setSuggestedLoading] = useState(true);
@@ -94,11 +95,11 @@ export default function AddFriendScreen() {
   useEffect(() => {
     if (!userId) return;
     setSuggestedLoading(true);
-    void fetchDiscoverableUsers(client, userId)
+    void fetchSuggestedFriends(client, userId, base)
       .then(setSuggested)
       .catch(() => setSuggested([]))
       .finally(() => setSuggestedLoading(false));
-  }, [client, userId]);
+  }, [base, client, userId]);
 
   const errorMessage = useCallback(
     (e: unknown) => {
@@ -178,8 +179,6 @@ export default function AddFriendScreen() {
       setSending(false);
     }
   };
-
-  const base = profile?.base_airport_iata ?? profile?.base_airport;
 
   return (
     <Screen style={{ padding: 0 }}>

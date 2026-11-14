@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, Text, View, type TextInputProps } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import { BackGlyph, CircleButton } from '@/components/crew/kit';
@@ -42,11 +42,11 @@ export function AuthPage({
   footer?: ReactNode;
   centered?: boolean;
 }) {
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   return (
     <Screen style={{ padding: 0 }}>
       <View style={{ paddingTop: insets.top }}>{onBack ? <AuthTopBar onBack={onBack} /> : null}</View>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={Platform.OS === 'android' ? -insets.bottom : 0}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={centered ? { flexGrow: 1 } : { flexGrow: 1, paddingTop: 28, paddingHorizontal: 24, paddingBottom: 16 }}>

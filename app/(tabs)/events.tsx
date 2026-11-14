@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { PlusGlyph, TabTitle } from '@/components/crew/kit';
 import { EventCard, NoMeetsCard, eventTagNames, isPlatformEvent, type EventAccess } from '@/components/events/EventCard';
 import { LockGlyph } from '@/components/events/pin';
@@ -37,7 +37,7 @@ export default function EventsTab() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const { openCreateEvent, meetTypeOverlay } = useCreateEventFlow();
   const { userId } = useAuth();

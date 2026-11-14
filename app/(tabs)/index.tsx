@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { CircleButton, CrewAvatar, MenuGlyph, RowChevron } from '@/components/crew/kit';
 import { DiscoverEmpty, openMatchProfile } from '@/components/discover/DiscoverEmpty';
 import { MatchCard } from '@/components/discover/MatchCard';
@@ -85,7 +85,7 @@ export default function HomeScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const insets = useScreenInsets();
   const client = useApolloClient();
   const { userId, profile } = useAuth();
   const { open: openMenu } = useAppMenu();
@@ -94,7 +94,7 @@ export default function HomeScreen() {
   const [data, setData] = useState<HomeData | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [toast, setToast] = useState('');
-  const [tab, setTab] = useState<HomeTab>('matches');
+  const [tab, setTab] = useState<HomeTab>('next');
   const { waved, waving, wave } = useWave(setToast);
   const airlines = useAirlines();
   const [airlineOnly, setAirlineOnly] = useState(false);

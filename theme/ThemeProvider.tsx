@@ -87,6 +87,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    let cancelled = false;
+    // `dark` is dark buttons for a light page. `light` is light buttons for a dark page.
+    // A binary built before this package was added should not take the app down.
+    void import('expo-navigation-bar')
+      .then((NavigationBar) => {
+        if (cancelled) return;
+        NavigationBar.setStyle(mode === 'dark' ? 'light' : 'dark');
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [mode]);
+
   const setColorScheme = useCallback((next: ThemePreference) => {
     const stored = next === 'system' ? null : next;
     setPreference(stored);
