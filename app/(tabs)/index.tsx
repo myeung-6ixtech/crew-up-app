@@ -95,7 +95,7 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [toast, setToast] = useState('');
   const [tab, setTab] = useState<HomeTab>('next');
-  const { waved, waving, wave } = useWave(setToast);
+  const { isWaved, waving, wave } = useWave(setToast);
   const airlines = useAirlines();
   const [airlineOnly, setAirlineOnly] = useState(false);
   const tabScroll = useTabBarScroll({ contentContainerStyle: { paddingHorizontal: 24 } });
@@ -212,9 +212,9 @@ export default function HomeScreen() {
                 match={match}
                 airline={match.matchedUser?.profile?.airline_id ? airlines.get(match.matchedUser.profile.airline_id) : null}
                 myAirline={Boolean(profile?.airline_id) && match.matchedUser?.profile?.airline_id === profile?.airline_id}
-                waved={waved.has(match.matched_user_id)}
+                waved={isWaved(match)}
                 waving={waving === match.matched_user_id}
-                onWave={() => void wave(match.matched_user_id)}
+                onWave={() => void wave(match)}
                 onPress={() => openMatchProfile(router, match, t)}
               />
             ))}

@@ -148,6 +148,16 @@ export interface MessageItem {
   /** Null once the sender's account has been deleted. */
   sender_id: string | null;
   body?: string | null;
+  /** text, or wave for a layover nudge rendered from meta. */
+  kind?: 'text' | 'wave' | string | null;
+  meta?: {
+    overlap_key?: string;
+    city?: string;
+    match_type?: string;
+    overlap_start?: string;
+    overlap_end?: string;
+    flight_number?: string;
+  } | null;
   /** Set when moderation or account deletion cleared the message. */
   removed_at?: string | null;
   created_at: string;

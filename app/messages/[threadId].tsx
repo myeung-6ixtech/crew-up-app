@@ -16,7 +16,16 @@ import { useApolloClient, useSubscription } from '@/lib/apolloHooks';
 import { messageSendError } from '@/lib/contentErrors';
 import { hapticImpact, hapticWarning } from '@/lib/haptics';
 import { blockUser, fetchPublicProfile } from '@/services/connectionService';
-import { fetchMessages, fetchThreads, markThreadRead, MESSAGES_SUBSCRIPTION, sendMessage } from '@/services/messagingService';
+import { waveCaption } from '@/components/discover/wave';
+import {
+  fetchMessages,
+  fetchThreads,
+  markThreadRead,
+  messageWaveColumns,
+  MESSAGES_SUBSCRIPTION,
+  MESSAGES_SUBSCRIPTION_PLAIN,
+  sendMessage,
+} from '@/services/messagingService';
 import { reportUser } from '@/services/safetyService';
 import { fontFamily, useTheme } from '@/theme';
 import type { MessageItem } from '@/types/domain';
@@ -72,6 +81,7 @@ export default function ChatScreen() {
   const { userId } = useAuth();
   const ensureGuidelines = useGuidelinesGate();
   const [messages, setMessages] = useState<MessageItem[] | null>(null);
+  const [waveLive, setWaveLive] = useState(true);
   const [hasMore, setHasMore] = useState(false);
   const [loadingEarlier, setLoadingEarlier] = useState(false);
   const [liveSince, setLiveSince] = useState<string | null>(null);
@@ -86,6 +96,7 @@ export default function ChatScreen() {
       .mutate({ mutation: INSERT_THREAD_PARTICIPANT, variables: { object: { thread_id: threadId, user_id: userId } } })
       .catch(() => undefined);
     const page = await fetchMessages(client, threadId);
+    setWaveLive(messageWaveColumns());
     setMessages(page.messages);
     setHasMore(page.hasMore);
     const newest = page.messages[page.messages.length - 1]?.created_at;
@@ -95,18 +106,21 @@ export default function ChatScreen() {
     if (mine) {
       const participant = mine.thread.participants?.find((p: { user_id: string }) => p.user_id !== userId);
       const otherId = participant?.user_id ?? withUserId ?? null;
+      let other = participant?.user?.profile ?? null;
+      if (!personName(other) && otherId) {
+        other = (await fetchPublicProfile(client, otherId).catch(() => null)) ?? other;
+      }
       setInfo({
         type: mine.thread.type,
         eventId: mine.thread.event_id,
         eventTitle: mine.thread.event?.title,
         otherId,
-        other: participant?.user?.profile ?? null,
+        other,
       });
-      if (!participant && otherId) {
-        const profile = await fetchPublicProfile(client, otherId).catch(() => null);
-        if (profile) setInfo((current) => ({ ...current, other: profile }));
-      }
       await markThreadRead(client, mine.id);
+    } else if (withUserId) {
+      const profile = await fetchPublicProfile(client, withUserId).catch(() => null);
+      setInfo({ type: 'direct', otherId: withUserId, other: profile });
     }
   }, [client, threadId, userId, withUserId]);
 
@@ -129,7 +143,7 @@ export default function ChatScreen() {
     }
   };
 
-  useSubscription(MESSAGES_SUBSCRIPTION, {
+  useSubscription(waveLive ? MESSAGES_SUBSCRIPTION : MESSAGES_SUBSCRIPTION_PLAIN, {
     variables: { threadId, since: liveSince },
     skip: !threadId || !liveSince,
     onData: (result) => {
@@ -298,6 +312,24 @@ export default function ChatScreen() {
             renderItem={({ item }) => {
               const mine = item.sender_id === userId;
               const removed = Boolean(item.removed_at);
+              if (item.kind === 'wave' && !removed) {
+                return (
+                  <View style={{ alignItems: 'center', paddingVertical: 4 }}>
+                    <View
+                      style={{
+                        maxWidth: '88%',
+                        backgroundColor: theme.colors.accentSubtle,
+                        borderRadius: 14,
+                        paddingVertical: 8,
+                        paddingHorizontal: 14,
+                      }}>
+                      <Text style={{ textAlign: 'center', fontFamily: fontFamily.interMedium, fontSize: 12.5, lineHeight: 18, color: theme.colors.accentText }}>
+                        {waveCaption(item.meta, { mine, name: firstName }, t)}
+                      </Text>
+                    </View>
+                  </View>
+                );
+              }
               return (
                 <Pressable
                   onLongPress={() => onLongPressMessage(item)}

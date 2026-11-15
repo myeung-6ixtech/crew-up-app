@@ -20,8 +20,9 @@ import { useApolloClient } from '@/lib/apolloHooks';
 import { formatFriendId } from '@/lib/friendId';
 import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
 import { fetchActivityPreferences } from '@/services/activityService';
+import { waveMetaFromRoute } from '@/components/discover/wave';
 import { ConnectionRequestError, fetchConnections, fetchPublicProfile, requestConnection } from '@/services/connectionService';
-import { ensureDirectThread } from '@/services/messagingService';
+import { ensureDirectThread, postLayoverNudge } from '@/services/messagingService';
 import { fetchAirlines } from '@/services/profileService';
 import { reportAndBlock, reportUser } from '@/services/safetyService';
 import { fontFamily, shouldUppercaseLabels, useTheme } from '@/theme';
@@ -55,6 +56,11 @@ type Params = {
   userId: string;
   /** From Discover: Wave instead of Connect, and the overlap shown in a lime card. */
   wave?: string;
+  waveCity?: string;
+  waveMatchType?: string;
+  waveStart?: string;
+  waveEnd?: string;
+  waveFlight?: string;
   matchLabel?: string;
   matchTitle?: string;
   matchDetail?: string;
@@ -185,20 +191,37 @@ export default function PublicProfileScreen() {
 
   const connect = async () => {
     if (!profile) return;
+    const meta = wave ? waveMetaFromRoute(params) : undefined;
     setSending(true);
     try {
-      await requestConnection(client, profile.user_id, wave ? t('home.waveMessage') : undefined);
+      const result = await requestConnection(client, profile.user_id, wave ? t('home.waveMessage') : undefined, meta);
+      if (meta && result.outcome === 'accepted') {
+        await postLayoverNudge(client, profile.user_id, meta);
+        hapticSuccess();
+        await load();
+        setToast(t('messages.waveSent'));
+        return;
+      }
       hapticSuccess();
       await load();
       setToast(t('friends.requestSentToast'));
     } catch (e) {
+      if (meta && e instanceof ConnectionRequestError && e.code === 'ALREADY_FRIENDS') {
+        try {
+          await postLayoverNudge(client, profile.user_id, meta);
+          hapticSuccess();
+          await load();
+          setToast(t('messages.waveSent'));
+          return;
+        } catch {
+          hapticError();
+          setToast(t('onboarding.genericError'));
+          return;
+        }
+      }
       hapticError();
       setToast(
-        e instanceof ConnectionRequestError && e.code === 'ALREADY_FRIENDS'
-          ? t('friends.alreadyFriends')
-          : e instanceof ConnectionRequestError && e.code === 'BLOCKED'
-            ? t('friends.requestBlocked')
-            : t('onboarding.genericError'),
+        e instanceof ConnectionRequestError && e.code === 'BLOCKED' ? t('friends.requestBlocked') : t('onboarding.genericError'),
       );
     } finally {
       setSending(false);

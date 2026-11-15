@@ -13,12 +13,13 @@ import { useAuth } from '@/hooks/useSession';
 import { useTabBarScroll } from '@/hooks/useTabBarScroll';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticSelection } from '@/lib/haptics';
-import { fetchBlocks } from '@/services/connectionService';
-import { fetchThreads, isThreadUnread } from '@/services/messagingService';
+import { fetchBlocks, fetchPublicProfile } from '@/services/connectionService';
+import { waveCaption, type WaveMeta } from '@/components/discover/wave';
+import { fetchDirectCounterparts, fetchThreads, isThreadUnread, type DirectCounterpart } from '@/services/messagingService';
 import { useSafetyStore } from '@/stores/safetyStore';
 import { fontFamily, useTheme } from '@/theme';
 
-type InboxTab = 'unread' | 'read';
+type InboxTab = 'all' | 'read' | 'unread';
 
 type ThreadRow = {
   id: string;
@@ -28,7 +29,7 @@ type ThreadRow = {
     type: string;
     updated_at?: string;
     event?: { title?: string | null } | null;
-    messages?: { body?: string | null; sender_id?: string | null; created_at?: string }[];
+    messages?: { body?: string | null; kind?: string | null; meta?: WaveMeta | null; sender_id?: string | null; created_at?: string }[];
     participants?: { user_id: string; user?: { profile?: PersonProfile } }[];
   };
 };
@@ -51,22 +52,37 @@ export default function MessagesTab() {
   const { userId } = useAuth();
   const { nudgeVisible, checkNudge, dismissNudge } = useSafetyStore();
   const [threads, setThreads] = useState<ThreadRow[] | null>(null);
-  const [tab, setTab] = useState<InboxTab>('read');
+  const [peers, setPeers] = useState<Map<string, DirectCounterpart>>(new Map());
+  const [tab, setTab] = useState<InboxTab>('all');
   const [refreshing, setRefreshing] = useState(false);
   const tabScroll = useTabBarScroll({ contentContainerStyle: { paddingHorizontal: 24 } });
 
   const load = useCallback(async () => {
     if (!userId) return;
-    const [rows, blocks]: [ThreadRow[], { blocked_id: string }[]] = await Promise.all([
-      fetchThreads(client, userId),
-      fetchBlocks(client, userId).catch(() => []),
-    ]);
+    let rows: ThreadRow[];
+    try {
+      rows = await fetchThreads(client, userId);
+    } catch {
+      return;
+    }
+    const blocks: { blocked_id: string }[] = await fetchBlocks(client, userId).catch(() => []);
     const blocked = new Set(blocks.map((block) => block.blocked_id));
     const visible = rows.filter(
       (row) => row.thread.type !== 'direct' || !row.thread.participants?.some((p) => p.user_id !== userId && blocked.has(p.user_id)),
     );
     const latest = (row: ThreadRow) => row.thread.messages?.[0]?.created_at ?? row.thread.updated_at ?? '';
-    setThreads(visible.sort((a, b) => (latest(a) < latest(b) ? 1 : -1)));
+    const ordered = visible.sort((a, b) => (latest(a) < latest(b) ? 1 : -1));
+    const directIds = ordered.filter((row) => row.thread.type === 'direct').map((row) => row.thread_id);
+    const found = await fetchDirectCounterparts(client, userId, directIds).catch(() => []);
+    await Promise.all(
+      found.map(async (peer) => {
+        if (personName(peer.profile)) return;
+        const profile = await fetchPublicProfile(client, peer.user_id).catch(() => null);
+        if (profile) peer.profile = profile;
+      }),
+    );
+    setPeers(new Map(found.map((peer) => [peer.thread_id, peer])));
+    setThreads(ordered);
     void checkNudge();
   }, [client, userId, checkNudge]);
 
@@ -77,8 +93,13 @@ export default function MessagesTab() {
   );
 
   const other = (row: ThreadRow) => row.thread.participants?.find((participant) => participant.user_id !== userId);
-  const shown = (threads ?? []).filter((row) => (userId ? isThreadUnread(row, userId) : false) === (tab === 'unread'));
+  const unreadCount = (threads ?? []).filter((row) => (userId ? isThreadUnread(row, userId) : false)).length;
+  const shown = (threads ?? []).filter((row) => {
+    if (tab === 'all') return true;
+    return (userId ? isThreadUnread(row, userId) : false) === (tab === 'unread');
+  });
   const tabs: { key: InboxTab; label: string }[] = [
+    { key: 'all', label: t('messages.all') },
     { key: 'read', label: t('messages.read') },
     { key: 'unread', label: t('messages.unread') },
   ];
@@ -95,6 +116,7 @@ export default function MessagesTab() {
                 key={item.key}
                 accessibilityRole="tab"
                 accessibilityState={{ selected }}
+                accessibilityLabel={item.key === 'unread' ? `${item.label}, ${unreadCount}` : item.label}
                 onPress={() => {
                   hapticSelection();
                   setTab(item.key);
@@ -106,9 +128,16 @@ export default function MessagesTab() {
                   backgroundColor: selected ? theme.colors.ink : theme.colors.field,
                   justifyContent: 'center',
                 }}>
-                <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 13.5, color: selected ? theme.colors.ground : theme.colors.textPrimary }}>
-                  {item.label}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 13.5, color: selected ? theme.colors.ground : theme.colors.textPrimary }}>
+                    {item.label}
+                  </Text>
+                  {item.key === 'unread' ? (
+                    <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 13.5, color: selected ? theme.colors.ground : theme.colors.textSecondary }}>
+                      {unreadCount}
+                    </Text>
+                  ) : null}
+                </View>
               </Pressable>
             );
           })}
@@ -171,23 +200,34 @@ export default function MessagesTab() {
           }>
           {shown.length ? null : (
             <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, lineHeight: 21, color: theme.colors.textSecondary, textAlign: 'center', marginTop: 48 }}>
-              {tab === 'unread' ? t('messages.emptyUnread') : t('messages.emptyRead')}
+              {tab === 'unread' ? t('messages.emptyUnread') : tab === 'read' ? t('messages.emptyRead') : t('messages.emptyAll')}
             </Text>
           )}
           <View style={{ gap: 8, marginTop: 16 }}>
             {shown.map((row) => {
               const isEvent = row.thread.type === 'event_group';
               const person = other(row);
+              const peer = peers.get(row.thread_id);
+              const otherId = person?.user_id ?? peer?.user_id;
+              const profile = person?.user?.profile ?? peer?.profile;
               const title = isEvent
                 ? row.thread.event?.title || t('messages.eventChat')
-                : personName(person?.user?.profile, t('messages.directMessage'));
-              const last = row.thread.messages?.[0]?.body;
+                : personName(profile, t('messages.directMessage'));
+              const last = row.thread.messages?.[0];
+              const preview =
+                last?.kind === 'wave'
+                  ? waveCaption(last.meta, { mine: last.sender_id === userId, inbox: true }, t)
+                  : last?.body
+                    ? last.sender_id === userId
+                      ? `${t('messages.you')}: ${last.body}`
+                      : last.body
+                    : t('messages.noMessagesYet');
               return (
                 <Pressable
                   key={row.id}
                   accessibilityRole="button"
-                  accessibilityLabel={`${title}. ${last ?? t('messages.noMessagesYet')}`}
-                  onPress={() => router.push(SCREENS.messages.thread(row.thread_id, person?.user_id))}
+                  accessibilityLabel={`${title}. ${preview}`}
+                  onPress={() => router.push(SCREENS.messages.thread(row.thread_id, otherId))}
                   style={({ pressed }) => ({
                     backgroundColor: theme.colors.card,
                     borderRadius: 18,
@@ -203,7 +243,7 @@ export default function MessagesTab() {
                       <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 16, color: '#A8E05F' }}>EV</Text>
                     </View>
                   ) : (
-                    <CrewAvatar name={title} fileId={person?.user?.profile?.avatar_file_id} seed={person?.user_id} />
+                    <CrewAvatar name={title} fileId={profile?.avatar_file_id} seed={otherId} />
                   )}
                   <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
                     <Text numberOfLines={1} style={{ fontFamily: fontFamily.interMedium, fontSize: 15, color: theme.colors.textPrimary }}>
@@ -211,8 +251,8 @@ export default function MessagesTab() {
                     </Text>
                     <Text
                       numberOfLines={1}
-                      style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: last ? theme.colors.textSecondary : theme.colors.textTertiary }}>
-                      {last ?? t('messages.noMessagesYet')}
+                      style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: last?.body ? theme.colors.textSecondary : theme.colors.textTertiary }}>
+                      {preview}
                     </Text>
                   </View>
                 </Pressable>

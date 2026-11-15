@@ -49,7 +49,7 @@ export default function SearchLayoversScreen() {
   const [closeness, setCloseness] = useState<Closeness[]>(CLOSENESS);
   const [longOnly, setLongOnly] = useState(false);
   const [toast, setToast] = useState('');
-  const { waved, waving, wave } = useWave(setToast);
+  const { isWaved, waving, wave } = useWave(setToast);
   const { profile } = useAuth();
   const airlines = useAirlines();
   const [airlineOnly, setAirlineOnly] = useState(false);
@@ -206,9 +206,9 @@ export default function SearchLayoversScreen() {
                   match={match}
                   airline={match.matchedUser?.profile?.airline_id ? airlines.get(match.matchedUser.profile.airline_id) : null}
                   myAirline={Boolean(profile?.airline_id) && match.matchedUser?.profile?.airline_id === profile?.airline_id}
-                  waved={waved.has(match.matched_user_id)}
+                  waved={isWaved(match)}
                   waving={waving === match.matched_user_id}
-                  onWave={() => void wave(match.matched_user_id)}
+                  onWave={() => void wave(match)}
                   onPress={() => openMatchProfile(router, match, t)}
                 />
               ))}

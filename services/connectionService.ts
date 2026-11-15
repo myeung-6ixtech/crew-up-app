@@ -1,4 +1,5 @@
 import type { ApolloClient } from '@apollo/client';
+import type { WaveMeta } from '@/components/discover/wave';
 import { apiEndpoints } from '@/lib/api/endpoints';
 import { callClientFunction } from '@/lib/api/functions';
 import { nhost } from '@/lib/nhost';
@@ -94,6 +95,7 @@ async function postConnectionRequest(body: {
   addressee_id?: string;
   friend_id?: string;
   message?: string;
+  wave_meta?: WaveMeta;
 }): Promise<ConnectionRequestResult> {
   const headers = await authHeaders();
   const response = await fetch(`${apiEndpoints.functions}/client/friends/request`, {
@@ -125,9 +127,9 @@ export async function requestConnection(
   _client: ApolloClient,
   addresseeId: string,
   message?: string,
-): Promise<ConnectionRequestResult['connection']> {
-  const result = await postConnectionRequest({ addressee_id: addresseeId, message });
-  return result.connection;
+  waveMeta?: WaveMeta,
+): Promise<ConnectionRequestResult> {
+  return postConnectionRequest({ addressee_id: addresseeId, message, wave_meta: waveMeta });
 }
 
 export async function requestConnectionByFriendId(

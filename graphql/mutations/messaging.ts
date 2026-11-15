@@ -20,6 +20,8 @@ export const GET_MY_THREADS = gql`
         }
         messages(limit: 1, order_by: { created_at: desc }) {
           body
+          kind
+          meta
           sender_id
           created_at
         }
@@ -29,6 +31,51 @@ export const GET_MY_THREADS = gql`
             profile {
               display_name
               preferred_name
+              full_name
+              avatar_file_id
+              crew_role
+              role_type
+              base_airport
+              base_airport_iata
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+/** Same inbox query without wave columns, for a server that has not applied that migration yet. */
+export const GET_MY_THREADS_PLAIN = gql`
+  query GetMyThreadsPlain($userId: uuid!) {
+    thread_participants(
+      where: { user_id: { _eq: $userId } }
+      order_by: { joined_at: desc }
+    ) {
+      id
+      thread_id
+      last_read_at
+      thread {
+        id
+        type
+        updated_at
+        event_id
+        event {
+          title
+          city
+        }
+        messages(limit: 1, order_by: { created_at: desc }) {
+          body
+          sender_id
+          created_at
+        }
+        participants {
+          user_id
+          user {
+            profile {
+              display_name
+              preferred_name
+              full_name
               avatar_file_id
               crew_role
               role_type
@@ -53,9 +100,46 @@ export const GET_THREAD_MESSAGES = gql`
       thread_id
       sender_id
       body
+      kind
+      meta
       removed_at
       created_at
       updated_at
+    }
+  }
+`;
+
+export const GET_THREAD_MESSAGES_PLAIN = gql`
+  query GetThreadMessagesPlain($threadId: uuid!, $before: timestamptz!, $limit: Int!) {
+    messages(
+      where: { thread_id: { _eq: $threadId }, created_at: { _lt: $before } }
+      order_by: { created_at: desc }
+      limit: $limit
+    ) {
+      id
+      thread_id
+      sender_id
+      body
+      removed_at
+      created_at
+      updated_at
+    }
+  }
+`;
+
+export const GET_MY_WAVES = gql`
+  query GetMyWaves($userId: uuid!) {
+    messages(
+      where: { sender_id: { _eq: $userId }, kind: { _eq: "wave" } }
+      order_by: { created_at: desc }
+      limit: 200
+    ) {
+      meta
+      thread {
+        participants {
+          user_id
+        }
+      }
     }
   }
 `;
@@ -104,6 +188,30 @@ export const UPDATE_LAST_READ = gql`
   }
 `;
 
+/** The other member of direct threads, including one this user started by sending first. */
+export const GET_DIRECT_COUNTERPARTS = gql`
+  query GetDirectCounterparts($userId: uuid!, $threadIds: [uuid!]!) {
+    thread_participants(
+      where: { user_id: { _neq: $userId }, thread_id: { _in: $threadIds }, thread: { type: { _eq: direct } } }
+    ) {
+      thread_id
+      user_id
+      user {
+        profile {
+          display_name
+          preferred_name
+          full_name
+          avatar_file_id
+          crew_role
+          role_type
+          base_airport
+          base_airport_iata
+        }
+      }
+    }
+  }
+`;
+
 export const UNREAD_DIRECT = gql`
   query UnreadDirect($userId: uuid!) {
     thread_participants(
@@ -139,6 +247,26 @@ export const DIRECT_MESSAGE_WAKE = gql`
   }
 `;
 
+export const MESSAGES_SUBSCRIPTION_PLAIN = gql`
+  subscription MessagesSubscriptionPlain($threadId: uuid!, $since: timestamptz!) {
+    messages(
+      where: {
+        thread_id: { _eq: $threadId }
+        _or: [{ created_at: { _gte: $since } }, { updated_at: { _gte: $since } }]
+      }
+      order_by: { created_at: asc }
+    ) {
+      id
+      thread_id
+      sender_id
+      body
+      removed_at
+      created_at
+      updated_at
+    }
+  }
+`;
+
 export const MESSAGES_SUBSCRIPTION = gql`
   subscription MessagesSubscription($threadId: uuid!, $since: timestamptz!) {
     messages(
@@ -152,6 +280,8 @@ export const MESSAGES_SUBSCRIPTION = gql`
       thread_id
       sender_id
       body
+      kind
+      meta
       removed_at
       created_at
       updated_at

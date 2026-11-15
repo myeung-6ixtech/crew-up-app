@@ -15,6 +15,11 @@ export function openMatchProfile(router: ReturnType<typeof useRouter>, match: Tr
     params: {
       userId: match.matched_user_id,
       wave: '1',
+      waveCity: matchCityName(match),
+      waveMatchType: match.match_type,
+      waveStart: match.overlap_start ?? '',
+      waveEnd: match.overlap_end ?? '',
+      waveFlight: match.flight_number ?? '',
       matchLabel: matchReason(match, t),
       matchTitle: [match.flight_number, route].filter(Boolean).join(' · ') || matchCityName(match),
       matchDetail: [overlapWindow(match), hours !== null ? t('discover.overlap', { duration: overlapLabel(hours) }) : null]

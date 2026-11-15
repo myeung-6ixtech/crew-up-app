@@ -7,6 +7,9 @@ import { hapticImpact } from '@/lib/haptics';
 import { isAppleSignInAvailable, signInWithApple } from '@/services/authService';
 import { fontFamily } from '@/theme';
 
+/** Off while Sign in with Apple moves to the new Apple Developer account. Set true to show the button again. */
+const APPLE_SIGN_IN_ENABLED = false;
+
 /**
  * Continue with Apple (Guideline 4.8). A custom button so its title matches Continue with Google (Jakarta Bold 16):
  * Apple's native button sizes its font from the button height. It keeps what the HIG requires of custom buttons —
@@ -19,10 +22,11 @@ export function AppleSignInButton({ variant, onError }: { variant: 'white' | 'bl
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (!APPLE_SIGN_IN_ENABLED) return;
     void isAppleSignInAvailable().then(setAvailable);
   }, []);
 
-  if (!available) return null;
+  if (!APPLE_SIGN_IN_ENABLED || !available) return null;
 
   const fg = variant === 'white' ? '#000000' : '#FFFFFF';
   const bg = variant === 'white' ? '#FFFFFF' : '#000000';
