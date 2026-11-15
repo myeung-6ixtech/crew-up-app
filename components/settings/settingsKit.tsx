@@ -277,7 +277,7 @@ export function OutlineButton({ label, onPress, icon }: { label: string; onPress
   );
 }
 
-/** "CREWUP 1.0.0" in mono under the drawer and Settings. */
+/** "CREWUP {version}" in mono under the drawer and Settings. Version comes from app.json. */
 export function VersionStamp({ version, center }: { version?: string | null; center?: boolean }) {
   const theme = useTheme();
   if (!version) return null;

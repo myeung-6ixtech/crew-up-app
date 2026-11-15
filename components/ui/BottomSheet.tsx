@@ -3,14 +3,12 @@ import {
   Animated,
   Dimensions,
   Keyboard,
-  LayoutAnimation,
   Modal,
   Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  UIManager,
   View,
   type KeyboardEvent,
   type ViewStyle,
@@ -20,17 +18,6 @@ import { useThemedStyles, useTheme } from '@/theme';
 
 const SHEET_OFFSCREEN_Y = Dimensions.get('window').height;
 const DEFAULT_SHEET_HEIGHT_RATIO = 0.75;
-
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
-
-function animateWithKeyboard(event: KeyboardEvent) {
-  const duration = event.duration || 250;
-  LayoutAnimation.configureNext(
-    LayoutAnimation.create(duration, LayoutAnimation.Types.keyboard, LayoutAnimation.Properties.opacity),
-  );
-}
 
 export function BottomSheet({
   visible,
@@ -112,20 +99,20 @@ export function BottomSheet({
     if (!visible && !modalVisible) return;
     const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
     const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
-    const showSub = Keyboard.addListener(showEvent, (event) => {
-      animateWithKeyboard(event);
+    const showSub = Keyboard.addListener(showEvent, (event: KeyboardEvent) => {
       const coveredByKeyboard = Platform.OS === 'android' ? insets.bottom : 0;
-      setKeyboardHeight(Math.max(0, event.endCoordinates.height - coveredByKeyboard));
+      const reported = Math.max(0, event.endCoordinates.height - coveredByKeyboard);
+      // A first keyboard event inside a modal can report the whole screen and collapse the sheet.
+      setKeyboardHeight(Math.min(reported, windowHeight * 0.7));
     });
-    const hideSub = Keyboard.addListener(hideEvent, (event) => {
-      animateWithKeyboard(event);
+    const hideSub = Keyboard.addListener(hideEvent, () => {
       setKeyboardHeight(0);
     });
     return () => {
       showSub.remove();
       hideSub.remove();
     };
-  }, [visible, modalVisible, insets.bottom]);
+  }, [visible, modalVisible, insets.bottom, windowHeight]);
 
   useEffect(() => {
     if (visible || modalVisible || !presentedRef.current || notifiedRef.current) return;

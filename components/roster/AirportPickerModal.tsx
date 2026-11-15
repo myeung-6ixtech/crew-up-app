@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
+import { FlatList, Pressable, Text, TextInput, View, type LayoutChangeEvent } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { searchAirports } from '@/constants/airports';
 import { BottomSheet } from '@/components/ui';
@@ -24,6 +24,11 @@ export function AirportPickerModal({ visible, title, selectedIata, excludeIata, 
   const theme = useTheme();
   const inputRef = useRef<TextInput>(null);
   const [query, setQuery] = useState('');
+  const [listHeight, setListHeight] = useState(0);
+  const onListLayout = (event: LayoutChangeEvent) => {
+    const next = Math.round(event.nativeEvent.layout.height);
+    setListHeight((current) => (current === next ? current : next));
+  };
 
   useEffect(() => {
     if (!visible) {
@@ -84,9 +89,13 @@ export function AirportPickerModal({ visible, title, selectedIata, excludeIata, 
         />
       </View>
       {filtered.length ? <MonoLabel style={{ fontSize: 10.5, color: theme.colors.textTertiary, paddingTop: 20, paddingBottom: 6, paddingHorizontal: 8 }}>{t('airport.airports')}</MonoLabel> : null}
+      <View style={{ flex: 1 }} onLayout={onListLayout}>
+      {listHeight > 0 ? (
       <FlatList
-        style={{ flex: 1 }}
+        style={{ height: listHeight }}
         data={filtered}
+        extraData={query}
+        removeClippedSubviews={false}
         keyExtractor={(item) => item.iata}
         keyboardShouldPersistTaps="handled"
         ListEmptyComponent={
@@ -134,6 +143,8 @@ export function AirportPickerModal({ visible, title, selectedIata, excludeIata, 
           );
         }}
       />
+      ) : null}
+      </View>
     </BottomSheet>
   );
 }

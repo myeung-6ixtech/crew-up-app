@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { FlatList, Pressable, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View, type LayoutChangeEvent } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AppIcon } from '@/components/icons';
 import {
@@ -25,6 +25,11 @@ export function CityPickerField({ label, value, onChange, error }: CityPickerFie
   const theme = useTheme();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [listHeight, setListHeight] = useState(0);
+  const onListLayout = (event: LayoutChangeEvent) => {
+    const next = Math.round(event.nativeEvent.layout.height);
+    setListHeight((current) => (current === next ? current : next));
+  };
 
   const selected = useMemo(() => findEventCity(value), [value]);
   const filtered = useMemo(() => searchEventCities(query), [query]);
@@ -145,9 +150,13 @@ export function CityPickerField({ label, value, onChange, error }: CityPickerFie
           autoCapitalize="words"
         />
 
+        <View style={styles.list} onLayout={onListLayout}>
+        {listHeight > 0 ? (
         <FlatList
-          style={styles.list}
+          style={{ height: listHeight }}
           data={filtered}
+          extraData={query}
+          removeClippedSubviews={false}
           keyExtractor={(item) => `${item.city}|${item.country}`}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator
@@ -178,6 +187,8 @@ export function CityPickerField({ label, value, onChange, error }: CityPickerFie
             );
           }}
         />
+        ) : null}
+        </View>
       </BottomSheet>
     </>
   );

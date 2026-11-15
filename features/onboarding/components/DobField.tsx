@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
+import { DatePicker } from '@quidone/react-native-wheel-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { getLocales } from 'expo-localization';
 import { useTranslation } from 'react-i18next';
 import { BottomSheet } from '@/components/ui';
 import { createDatePickerHandlers } from '@/lib/dateTimePickerHandlers';
@@ -10,7 +12,21 @@ import { PillCta } from './kit';
 
 const pad = (value: number) => String(value).padStart(2, '0');
 
-/** Day / Month / Year tiles that open the native date picker. */
+function toIsoDate(date: Date): string {
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+function fromIsoDate(value: string): Date {
+  const [year, month, day] = value.slice(0, 10).split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+/** Local noon. The wheel parses date strings with `new Date`, which treats YYYY-MM-DD as UTC. */
+function toPickerDate(date: Date): string {
+  return `${toIsoDate(date)}T12:00:00`;
+}
+
+/** Day / Month / Year tiles. iOS opens the system wheel; Android scrolls wheels in the same sheet. */
 export function DobField({
   label,
   value,
@@ -109,15 +125,39 @@ export function DobField({
         </BottomSheet>
       ) : null}
 
-      {open && Platform.OS === 'android' ? (
-        <DateTimePicker
-          value={initial}
-          mode="date"
-          display="default"
-          minimumDate={minimumDate}
-          maximumDate={maximumDate}
-          {...handlers}
-        />
+      {Platform.OS === 'android' ? (
+        <BottomSheet visible={open} onClose={close} title={label} scrollable={false} heightRatio={0.52}>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <DatePicker
+              date={toPickerDate(initial)}
+              minDate={minimumDate ? toPickerDate(minimumDate) : undefined}
+              maxDate={maximumDate ? toPickerDate(maximumDate) : undefined}
+              locale={getLocales()[0]?.languageTag ?? 'en'}
+              onDateChanged={({ date }) => onChange(fromIsoDate(date))}
+              itemHeight={44}
+              visibleItemCount={5}
+              enableScrollByTapOnItem
+              itemTextStyle={{
+                fontFamily: fontFamily.jakartaMedium,
+                fontSize: 20,
+                color: theme.colors.textPrimary,
+              }}
+              overlayItemStyle={{ backgroundColor: theme.colors.ink, opacity: 0.08 }}
+              renderDate={() => <DatePicker.Date width={64} />}
+              renderMonth={() => <DatePicker.Month width={148} />}
+              renderYear={() => <DatePicker.Year width={88} />}
+            />
+          </View>
+          <View style={{ marginTop: theme.spacing.md }}>
+            <PillCta
+              label={t('onboarding.language.done')}
+              onPress={() => {
+                if (!value) onChange(initial);
+                close();
+              }}
+            />
+          </View>
+        </BottomSheet>
       ) : null}
     </>
   );

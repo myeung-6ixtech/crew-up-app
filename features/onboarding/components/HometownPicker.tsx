@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, SectionList, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, SectionList, Text, TextInput, View, type LayoutChangeEvent } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { countryName } from '@crewup/shared';
 import { BottomSheet } from '@/components/ui';
@@ -41,6 +41,11 @@ export function HometownPicker({ label, hint, value, onChange, error, allowClear
   const [pending, setPending] = useState<PlaceHit | null>(null);
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState('');
+  const [listHeight, setListHeight] = useState(0);
+  const onListLayout = (event: LayoutChangeEvent) => {
+    const next = Math.round(event.nativeEvent.layout.height);
+    setListHeight((current) => (current === next ? current : next));
+  };
   const styles = useThemedStyles((th) => ({
     trigger: {
       height: 52,
@@ -277,9 +282,13 @@ export function HometownPicker({ label, hint, value, onChange, error, allowClear
         {searching && !results.length ? (
           <ActivityIndicator color={theme.colors.accentText} style={{ marginTop: theme.spacing.lg }} />
         ) : null}
+        <View style={{ flex: 1 }} onLayout={onListLayout}>
+        {listHeight > 0 ? (
         <SectionList
-          style={{ flex: 1 }}
+          style={{ height: listHeight }}
           sections={sections}
+          extraData={`${query}:${results.length}:${searching}`}
+          removeClippedSubviews={false}
           keyExtractor={(item) => item.id}
           keyboardShouldPersistTaps="handled"
           stickySectionHeadersEnabled={false}
@@ -327,6 +336,8 @@ export function HometownPicker({ label, hint, value, onChange, error, allowClear
             );
           }}
         />
+        ) : null}
+        </View>
         <View style={{ paddingTop: theme.spacing.md }}>
           <PillCta
             label={pending ? t('onboarding.residence.confirmCity', { city: pending.name }) : t('onboarding.residence.pickCity')}
