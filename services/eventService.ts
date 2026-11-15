@@ -1,4 +1,5 @@
 import type { ApolloClient } from '@apollo/client';
+import { selectableIds } from '@crewup/shared';
 import { apiEndpoints } from '@/lib/api/endpoints';
 import { nhost } from '@/lib/nhost';
 import {
@@ -17,6 +18,7 @@ import {
 import { DELETE_EVENT_ACTIVITIES, INSERT_EVENT_ACTIVITIES } from '@/graphql/queries/activities';
 import { GET_EVENT_THREAD, INSERT_THREAD_PARTICIPANT } from '@/graphql/mutations/messaging';
 import { normalizeEventVisibilityScope } from '@/lib/visibilityOptions';
+import { fetchActivities } from '@/services/activityService';
 
 function withNormalizedVisibilityScope(
   object: Record<string, unknown>,
@@ -226,11 +228,14 @@ async function ensureEventThreadMembership(
   }
 }
 
+/** Attaches activities and interests to a meet. Only child rows are sent; a parent group is never attached. */
 export async function insertEventActivities(
   client: ApolloClient,
   eventId: string,
-  activityIds: string[],
+  ids: string[],
 ) {
+  if (ids.length === 0) return;
+  const activityIds = selectableIds(await fetchActivities(client), ids);
   if (activityIds.length === 0) return;
   await client.mutate({
     mutation: INSERT_EVENT_ACTIVITIES,

@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
+import { catalogGroups, isSelectable } from '@crewup/shared';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { PillCta } from '@/features/onboarding/components/kit';
 import { hapticSelection } from '@/lib/haptics';
@@ -46,32 +47,6 @@ function Cross({ color, size = 10 }: { color: string; size?: number }) {
   );
 }
 
-type Group = { key: string; label: string; items: Activity[] };
-
-/** "Your activities" first (activities only), then the catalogue's groups in their sort order. */
-function buildGroups(items: Activity[], mineIds: string[], yourLabel: string, query: string, resultsLabel: string): Group[] {
-  const q = query.trim().toLowerCase();
-  if (q) {
-    const hits = items.filter((item) => item.name.toLowerCase().includes(q));
-    return hits.length ? [{ key: 'results', label: resultsLabel, items: hits }] : [];
-  }
-  const groups: Group[] = [];
-  const mine = items.filter((item) => mineIds.includes(item.id));
-  if (mine.length) groups.push({ key: 'mine', label: yourLabel, items: mine });
-  const byParent = new Map<string, { order: number; items: Activity[] }>();
-  for (const item of items) {
-    if (mineIds.includes(item.id)) continue;
-    const name = item.parent?.name ?? item.category;
-    const entry = byParent.get(name) ?? { order: item.parent?.sort_order ?? 999, items: [] };
-    entry.items.push(item);
-    byParent.set(name, entry);
-  }
-  [...byParent.entries()]
-    .sort((a, b) => a[1].order - b[1].order || a[0].localeCompare(b[0]))
-    .forEach(([name, entry]) => groups.push({ key: name, label: name, items: entry.items }));
-  return groups;
-}
-
 export function ActivityPickerField({
   kind,
   items,
@@ -98,11 +73,12 @@ export function ActivityPickerField({
   const slide = useRef(new Animated.Value(height)).current;
 
   const ownIds = useMemo(() => new Set(items.map((item) => item.id)), [items]);
-  const picked = items.filter((item) => selectedIds.includes(item.id));
+  const picked = items.filter((item) => isSelectable(item) && selectedIds.includes(item.id));
   const isActivity = kind === 'activity';
+  // Children only, search on child names (never a parent's), Your activities first without repeats, empty groups hidden.
   const groups = useMemo(
-    () => buildGroups(items, isActivity ? mineIds : [], t('events.yourActivities'), query, t('events.picker.results')),
-    [isActivity, items, mineIds, query, t],
+    () => catalogGroups(items, { kind, query, mineIds: isActivity ? mineIds : [], yourLabel: t('events.yourActivities') }),
+    [isActivity, items, kind, mineIds, query, t],
   );
 
   useEffect(() => {

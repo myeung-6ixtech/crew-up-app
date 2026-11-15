@@ -18,7 +18,7 @@ import { hapticError, hapticSuccess } from '@/lib/haptics';
 import { fontFamily, useTheme } from '@/theme';
 import { getAboutDraft, setAboutDraft, type AboutDraft, type Gender } from '../aboutDraft';
 import { DobField } from '../components/DobField';
-import { InterestsFields } from '../components/InterestsFields';
+import { OnboardingActivityFields, OnboardingInterestFields } from '../components/InterestsFields';
 import { ChoicePill, MonoLabel } from '../components/kit';
 import { LanguagePills } from '../components/LanguagePills';
 import { StepScaffold } from '../components/StepScaffold';
@@ -82,8 +82,8 @@ export function AboutStep({ context }: { context: StepContext }) {
   const { save, saving, formError } = useStepSave('about', context);
   const inFlow = context === 'flow';
   const remembered = getAboutDraft();
-  const [phase, setPhase] = useState<'details' | 'languages' | 'into'>(() =>
-    inFlow && (remembered?.screen === 'languages' || remembered?.screen === 'into') ? remembered.screen : 'details',
+  const [phase, setPhase] = useState<'details' | 'languages' | 'into' | 'interests'>(() =>
+    inFlow && remembered && remembered.screen !== 'details' ? remembered.screen : 'details',
   );
   const interests = useActivitySelection(inFlow ? userId : null);
   const [phaseError, setPhaseError] = useState('');
@@ -204,9 +204,25 @@ export function AboutStep({ context }: { context: StepContext }) {
     await saveLanguages(values);
   };
 
-  const onIntoNext = async () => {
+  /** Step 1 (activities) → step 2 (interests). Nothing is saved until step 2. */
+  const toInterests = () => {
+    setPhaseError('');
+    const values = getValues();
+    if (values.gender) remember('interests', values, values.gender);
+    setPhase('interests');
+  };
+
+  const backToActivities = () => {
+    setPhaseError('');
+    const values = getValues();
+    if (values.gender) remember('into', values, values.gender);
+    setPhase('into');
+  };
+
+  /** Next saves both steps' picks; Skip on step 2 keeps the activities from step 1 and drops the interests. */
+  const onInterestsDone = async (includeInterests: boolean) => {
     try {
-      await interests.save();
+      await interests.save(includeInterests ? undefined : interests.idsOfKind('activity'));
       await finishAbout();
     } catch {
       hapticError();
@@ -288,6 +304,7 @@ export function AboutStep({ context }: { context: StepContext }) {
   );
 
   if (inFlow && phase === 'into') {
+    const picked = interests.countOf('activity');
     return (
       <StepScaffold
         step="about"
@@ -300,18 +317,39 @@ export function AboutStep({ context }: { context: StepContext }) {
           setPhase('languages');
         }}
         title={t('onboarding.about.intoTitle')}
-        titleStyle={{ marginBottom: -8 }}
-        headerAction={{ label: t('onboarding.skipShort'), onPress: () => void finishAbout() }}
-        primaryLabel={
-          interests.selectedIds.length
-            ? t('onboarding.about.nextPicked', { count: interests.selectedIds.length })
-            : t('onboarding.next')
-        }
-        onPrimary={() => void onIntoNext()}
+        subtitle={t('onboarding.about.activitiesSubtitle')}
+        headerAction={{ label: t('onboarding.skipShort'), onPress: toInterests }}
+        primaryLabel={picked ? t('onboarding.about.nextPicked', { count: picked }) : t('onboarding.next')}
+        onPrimary={toInterests}
+        primaryDisabled={interests.loading || interests.failed}
+        error={formError || phaseError || (interests.failed ? t('onboarding.genericError') : '')}>
+        <OnboardingActivityFields
+          activities={interests.activities}
+          selectedIds={interests.selectedIds}
+          onToggle={interests.toggle}
+          loading={interests.loading}
+        />
+      </StepScaffold>
+    );
+  }
+
+  if (inFlow && phase === 'interests') {
+    const picked = interests.countOf('interest');
+    return (
+      <StepScaffold
+        step="about"
+        context={context}
+        progressCurrent={5}
+        onLeadingPress={backToActivities}
+        title={t('onboarding.about.intoTitle')}
+        subtitle={t('onboarding.about.interestsSubtitle')}
+        headerAction={{ label: t('onboarding.skipShort'), onPress: () => void onInterestsDone(false) }}
+        primaryLabel={picked ? t('onboarding.about.nextPicked', { count: picked }) : t('onboarding.next')}
+        onPrimary={() => void onInterestsDone(true)}
         primaryLoading={interests.saving || saving}
         primaryDisabled={interests.loading || interests.failed}
         error={formError || phaseError || (interests.failed ? t('onboarding.genericError') : '')}>
-        <InterestsFields
+        <OnboardingInterestFields
           activities={interests.activities}
           selectedIds={interests.selectedIds}
           onToggle={interests.toggle}

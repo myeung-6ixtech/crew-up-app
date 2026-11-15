@@ -14,7 +14,11 @@ export const GET_ACTIVITIES = gql`
       kind
       icon
       sort_order
+      parent_id
+      show_in_onboarding
+      onboarding_sort
       parent {
+        slug
         name
         sort_order
       }

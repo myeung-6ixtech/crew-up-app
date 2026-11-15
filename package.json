@@ -73,7 +73,8 @@
     "typecheck": "tsc --noEmit",
     "check:store": "node scripts/check-store-build.mjs",
     "test:timezone": "node --experimental-strip-types --test scripts/timezone.test.mjs",
-    "licenses": "node scripts/generate-licenses.mjs"
+    "licenses": "node scripts/generate-licenses.mjs",
+    "icons:activities": "node scripts/generate-activity-icons.mjs"
   },
   "private": true
 }

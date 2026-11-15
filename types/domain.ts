@@ -98,8 +98,13 @@ export interface Activity {
   kind?: ActivityKind | null;
   icon?: string | null;
   sort_order: number;
-  /** The group it sits in (Food & drink, Outdoors, …). */
-  parent?: { name: string; sort_order: number } | null;
+  parent_id?: string | null;
+  /** The group it sits in (Food, Drinks, Outdoors, …). Groups are headers only and are never selectable. */
+  parent?: { slug?: string | null; name: string; sort_order: number } | null;
+  /** In the short list offered on the onboarding activity step. */
+  show_in_onboarding?: boolean | null;
+  /** Order within that step. */
+  onboarding_sort?: number | null;
 }
 
 export interface ActivityPreference {

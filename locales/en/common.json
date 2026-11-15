@@ -189,8 +189,8 @@
       "dateOfBirthHint": "Confirms you're 18 or over. Crew never see it.",
       "languagesHint": "Pick at least one.",
       "nextPicked": "Next · {{count}} picked",
-      "activitiesLabel": "Activities · do with crew",
-      "interestsLabel": "Interests · on your profile"
+      "activitiesSubtitle": "Things you like to do with other crew.",
+      "interestsSubtitle": "What you’re into, beyond a plan to meet."
     },
     "residence": {
       "title": "Where do you live?",

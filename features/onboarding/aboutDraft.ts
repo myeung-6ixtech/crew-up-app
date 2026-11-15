@@ -2,7 +2,7 @@ export type Gender = 'male' | 'female' | 'unspecified';
 
 /** Answers collected on About you before the places page can save them. */
 export type AboutDraft = {
-  screen: 'details' | 'languages' | 'into';
+  screen: 'details' | 'languages' | 'into' | 'interests';
   dateOfBirth: string;
   gender: Gender;
   showGender: boolean;

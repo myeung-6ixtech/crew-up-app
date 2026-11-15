@@ -1,4 +1,5 @@
 import type { ApolloClient } from '@apollo/client';
+import { selectableIds } from '@crewup/shared';
 import {
   DELETE_ACTIVITY_PREFERENCES,
   GET_ACTIVITIES,
@@ -42,12 +43,17 @@ export async function fetchActivityPreferences(
   );
 }
 
-/** Replaces the signed-in member's activity and interest tags. */
+/**
+ * Replaces the signed-in member's activity and interest tags. Only child rows are kept: a parent group (or a stale
+ * id) never reaches the API. The database rejects a parent too (profile_activity_preferences_not_group).
+ */
 export async function replaceActivityPreferences(
   client: ApolloClient,
   userId: string,
-  activityIds: string[],
+  ids: string[],
+  catalogue?: Activity[],
 ): Promise<void> {
+  const activityIds = selectableIds(catalogue ?? (await fetchActivities(client)), ids);
   await client.mutate({
     mutation: DELETE_ACTIVITY_PREFERENCES,
     variables: { userId },
