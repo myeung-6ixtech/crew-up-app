@@ -13,6 +13,8 @@ const P = {
   food: { slug: 'food_drink', name: 'Food', sort_order: 20 },
   drinks: { slug: 'drinks', name: 'Drinks', sort_order: 25 },
   nightlife: { slug: 'nightlife', name: 'Nightlife', sort_order: 30 },
+  outdoors: { slug: 'outdoors', name: 'Outdoors', sort_order: 40 },
+  water: { slug: 'water', name: 'Water & beach', sort_order: 50 },
   sports: { slug: 'sports_fitness', name: 'Sports & fitness', sort_order: 60 },
   events: { slug: 'events', name: 'Events', sort_order: 65 },
   wellness: { slug: 'wellness', name: 'Wellness', sort_order: 70 },
@@ -38,11 +40,27 @@ const CATALOGUE = [
   row('coffee', 'Coffee', P.drinks, onb(40)),
   row('detox_juice', 'Detox juice', P.drinks, onb(50)),
   row('karaoke', 'Karaoke', P.nightlife),
-  // Catalogue order is Yoga, Tennis, Pickleball; onboarding order is the reverse.
+  row('hiking', 'Hiking', P.outdoors, onb(10)),
+  row('city_walk', 'City walk', P.outdoors),
+  row('rock_climbing', 'Rock climbing', P.outdoors, onb(20)),
+  row('fishing', 'Fishing', P.outdoors, onb(30)),
+  row('snorkeling', 'Snorkeling', P.water),
+  row('scuba', 'Scuba diving', P.water, onb(20)),
+  row('sailing', 'Sailing', P.water, onb(10)),
+  // Catalogue order differs from onboarding order (Gym and Running come first in the full list).
+  row('gym', 'Gym / workout', P.sports, onb(100)),
+  row('running', 'Running', P.sports, onb(60)),
+  row('swimming', 'Swimming', P.sports),
   row('yoga', 'Yoga', P.sports, onb(30)),
   row('tennis', 'Tennis', P.sports, onb(20)),
+  row('badminton', 'Badminton', P.sports, onb(70)),
   row('pickleball', 'Pickleball', P.sports, onb(10)),
-  row('gym', 'Gym', P.sports),
+  row('padel', 'Padel', P.sports, onb(40)),
+  row('golf', 'Golf', P.sports, onb(110)),
+  row('basketball', 'Basketball', P.sports, onb(50)),
+  row('football', 'Football', P.sports, onb(80)),
+  row('soccer', 'Soccer', P.sports, onb(90)),
+  row('volleyball', 'Volleyball', P.sports, onb(120)),
   row('sports_bar', 'Sports bar', P.sports),
   row('marathon', 'Marathons & races', P.sports, { kind: 'interest' }),
   row('sporting_events', 'Sporting events', P.events, onb(10)),
@@ -55,12 +73,19 @@ const CATALOGUE = [
 const byId = (slug) => CATALOGUE.find((item) => item.slug === slug && item.parent).id;
 const names = (groups) => groups.map((group) => [group.label, group.items.map((item) => item.name)]);
 
-test('onboarding step 1 shows exactly the 10 flagged activities in Drinks, Sports & fitness, Events', () => {
-  assert.deepEqual(names(onboardingActivityGroups(CATALOGUE)), [
+test('onboarding step 1 shows exactly the 24 flagged activities in five sections', () => {
+  const groups = onboardingActivityGroups(CATALOGUE);
+  assert.deepEqual(names(groups), [
     ['Drinks', ['Cocktail', 'Wine', 'Beer', 'Coffee', 'Detox juice']],
-    ['Sports & fitness', ['Pickleball', 'Tennis', 'Yoga']],
+    ['Outdoors', ['Hiking', 'Rock climbing', 'Fishing']],
+    ['Water & beach', ['Sailing', 'Scuba diving']],
+    [
+      'Sports & fitness',
+      ['Pickleball', 'Tennis', 'Yoga', 'Padel', 'Basketball', 'Running', 'Badminton', 'Football', 'Soccer', 'Gym / workout', 'Golf', 'Volleyball'],
+    ],
     ['Events', ['Sporting events', 'Music event / festival']],
   ]);
+  assert.equal(groups.flatMap((group) => group.items).length, 24);
 });
 
 test('one pick in each onboarding section counts as 3 activities', () => {
@@ -90,6 +115,7 @@ test('a parent is never offered or saved', () => {
 
 test('search matches child names only', () => {
   assert.deepEqual(names(catalogGroups(CATALOGUE, { kind: 'activity', query: 'yoga' })), [['Sports & fitness', ['Yoga']]]);
+  assert.deepEqual(names(catalogGroups(CATALOGUE, { kind: 'activity', query: 'soccer' })), [['Sports & fitness', ['Soccer']]]);
   // "sports" is in the parent's name, but only a child whose own name matches comes back.
   assert.deepEqual(names(catalogGroups(CATALOGUE, { kind: 'activity', query: 'sports' })), [['Sports & fitness', ['Sports bar']]]);
   assert.deepEqual(catalogGroups(CATALOGUE, { kind: 'activity', query: 'fitness' }), []);
@@ -101,7 +127,7 @@ test('Your activities comes first and those rows are not repeated under their pa
   assert.deepEqual(groups[0].items.map((item) => item.name).sort(), ['Cocktail', 'Yoga']);
   const rest = groups.slice(1).flatMap((group) => group.items.map((item) => item.name));
   assert.ok(!rest.includes('Cocktail') && !rest.includes('Yoga'));
-  assert.deepEqual(groups.slice(1).map((group) => group.label), ['Food', 'Drinks', 'Nightlife', 'Sports & fitness', 'Events', 'Music & dance']);
+  assert.deepEqual(groups.slice(1).map((group) => group.label), ['Food', 'Drinks', 'Nightlife', 'Outdoors', 'Water & beach', 'Sports & fitness', 'Events', 'Music & dance']);
 });
 
 test('the Interests sheet has no Your activities group', () => {

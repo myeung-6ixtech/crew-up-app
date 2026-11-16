@@ -33,6 +33,8 @@ if (!flat) throw new Error(`No CREWUP_ICONS.FLAT in ${source}`);
 const p = (d) => `<path d="${d}"/>`;
 const c = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}"/>`;
 const dot = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="currentColor" stroke="none"/>`;
+const e = (x, y, rx, ry) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}"/>`;
+const g = (transform, inner) => `<g transform="${transform}">${inner}</g>`;
 
 /** New or redrawn for the Drinks and Events groups (activities restructure, Nov 2026). */
 const OVERRIDES = {
@@ -46,7 +48,18 @@ const OVERRIDES = {
     'M4 26c0-5 9-9 20-9s20 4 20 9v10c0 5-9 9-20 9S4 41 4 36z M4 26c0 5 9 9 20 9s20-4 20-9 M12 23.5c2-2 7-3 12-3s10 1 12 3 M24 17V4 M24 4l8 3-8 3',
   ),
   music_event: p('M4 42h40 M8 42V22h32v20 M6 22l4-6h28l4 6 M15 16L9 4 M33 16l6-12 M22 37V28l8-2v9') + c(20, 37, 2) + c(28, 35, 2),
+  // Onboarding set of 24 (Nov 2026): Fishing is new; Football is now American football.
+  fishing: p('M6 40L34 8 M34 8v20 M34 28c0 3.5-4 3.5-4 .5 M24 40c3-4 9-4 12 0-3 4-9 4-12 0z M36 40l5-3.5v7z') + c(12, 33, 3),
+  football: g(
+    'rotate(-40 24 24)',
+    e(24, 24, 19, 11) +
+      p('M16 24h16 M18 21v6 M22 21v6 M26 21v6 M30 21v6 M10 17c2.5 3.5 2.5 10.5 0 14 M38 17c-2.5 3.5-2.5 10.5 0 14'),
+  ),
 };
+
+/** Soccer takes the design's round ball, which was drawn for "football" before it meant American football. */
+if (!flat.football) throw new Error('The design set has no football (soccer ball) icon to move to soccer.');
+OVERRIDES.soccer = flat.football.svg;
 
 const icons = Object.fromEntries(Object.entries(flat).map(([slug, item]) => [slug, item.svg]));
 Object.assign(icons, OVERRIDES);

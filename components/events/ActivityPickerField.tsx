@@ -16,7 +16,8 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import { catalogGroups, isSelectable } from '@crewup/shared';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
-import { PillCta } from '@/features/onboarding/components/kit';
+import { MonoLabel, PillCta } from '@/features/onboarding/components/kit';
+import { ActivityBubbleGrid, InterestPillWrap } from '@/components/activities/ActivityChoice';
 import { hapticSelection } from '@/lib/haptics';
 import { fontFamily, useTheme } from '@/theme';
 import type { Activity } from '@/types/domain';
@@ -98,13 +99,15 @@ export function ActivityPickerField({
     }
   }, [height, open, scrim, slide, visible]);
 
+  /** For the bubbles and pills, which give their own haptic. */
+  const toggleQuiet = (id: string) =>
+    onChange(selectedIds.includes(id) ? selectedIds.filter((item) => item !== id) : [...selectedIds, id]);
   const toggle = (id: string) => {
     hapticSelection();
     onChange(selectedIds.includes(id) ? selectedIds.filter((item) => item !== id) : [...selectedIds, id]);
   };
   const clearMine = () => onChange(selectedIds.filter((id) => !ownIds.has(id)));
   const close = () => setOpen(false);
-  const line = theme.mode === 'dark' ? '#262C30' : '#E6E9E1';
 
   return (
     <>
@@ -246,31 +249,13 @@ export function ActivityPickerField({
               <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={{ paddingTop: 4, paddingHorizontal: 20, paddingBottom: 20 }}>
                 {groups.map((group) => (
                   <View key={group.key}>
-                    <Text style={{ fontFamily: fontFamily.monoMedium, fontSize: 10.5, letterSpacing: 1, color: theme.colors.textSecondary, paddingTop: 18, paddingBottom: 4 }}>
-                      {group.label.toUpperCase()}
-                    </Text>
-                    {group.items.map((item) => {
-                      const on = selectedIds.includes(item.id);
-                      return (
-                        <Pressable
-                          key={`${group.key}-${item.id}`}
-                          accessibilityRole="checkbox"
-                          accessibilityState={{ checked: on }}
-                          onPress={() => toggle(item.id)}
-                          style={({ pressed }) => ({ minHeight: 52, flexDirection: 'row', alignItems: 'center', gap: 12, borderBottomWidth: 1, borderBottomColor: line, opacity: pressed ? 0.7 : 1 })}>
-                          <Text style={{ flex: 1, fontFamily: fontFamily.interMedium, fontSize: 15.5, color: theme.colors.textPrimary }}>{item.name}</Text>
-                          {on ? (
-                            <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: LIME, alignItems: 'center', justifyContent: 'center' }}>
-                              <Svg width={11} height={9} viewBox="0 0 10 8">
-                                <Path d="M1 4l2.8 2.8L9 1.2" stroke={INK} strokeWidth={1.8} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                              </Svg>
-                            </View>
-                          ) : (
-                            <View style={{ width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: '#C9CEC1' }} />
-                          )}
-                        </Pressable>
-                      );
-                    })}
+                    <MonoLabel style={{ marginTop: 20 }}>{group.label}</MonoLabel>
+                    {/* The same selectors as onboarding: bubbles for activities (step 1), pills for interests (step 2). */}
+                    {isActivity ? (
+                      <ActivityBubbleGrid items={group.items} selectedIds={selectedIds} onToggle={toggleQuiet} />
+                    ) : (
+                      <InterestPillWrap items={group.items} selectedIds={selectedIds} onToggle={toggleQuiet} />
+                    )}
                   </View>
                 ))}
                 {!groups.length ? (

@@ -30,7 +30,14 @@ export function InterestsStep() {
     [interests.activities],
   );
 
+  // Save stays off ("Saved") until the picks differ from what's on the profile. Back just leaves: nothing is written.
+  const dirty = useMemo(() => {
+    const saved = new Set(interests.savedIds);
+    return interests.selectedIds.length !== saved.size || interests.selectedIds.some((id) => !saved.has(id));
+  }, [interests.savedIds, interests.selectedIds]);
+
   const onSave = async () => {
+    if (!dirty) return;
     setError('');
     try {
       await interests.save();
@@ -45,10 +52,10 @@ export function InterestsStep() {
     <StepScaffold
       context="edit"
       title={t('onboarding.about.intoTitle')}
-      primaryLabel={t('onboarding.save')}
+      primaryLabel={dirty ? t('onboarding.save') : t('privacy.saved')}
       onPrimary={() => void onSave()}
       primaryLoading={interests.saving}
-      primaryDisabled={interests.loading || interests.failed}
+      primaryDisabled={interests.loading || interests.failed || !dirty}
       error={error || (interests.failed ? t('onboarding.genericError') : '')}>
       {interests.loading ? (
         <BodyText muted>{t('common.loading')}</BodyText>

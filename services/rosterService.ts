@@ -1,4 +1,6 @@
 import type { ApolloClient } from '@apollo/client';
+import * as Crypto from 'expo-crypto';
+import { runRosterRead, type RosterReadEvent } from '@/lib/rosterRead';
 import { callClientFunction } from '@/lib/api/functions';
 import { parseRoster } from '@/services/actionService';
 import { STORAGE_BUCKETS } from '@/constants/storage';
@@ -11,21 +13,42 @@ import {
 } from '@/graphql/mutations/roster';
 import type { ParsedRosterEntry, RosterEntry } from '@/types/domain';
 
-export async function uploadAndParseRoster(
+/**
+ * Reads a roster with retries (lib/rosterRead.ts). The function deletes the uploaded file after every attempt, so
+ * each attempt uploads the same local file again; nothing is kept on the server between tries. Parsing saves nothing,
+ * so a retry can't create duplicate trips; trips are only written from the confirm screen.
+ */
+export async function readRosterWithRetries(
   client: ApolloClient,
   params: { uri: string; name: string; mimeType: string },
-  /** Called once the file is stored, before it is read. */
-  onUploaded?: () => void,
+  options: {
+    signal: AbortSignal;
+    /** Called when an attempt's upload finishes and reading starts. */
+    onUploaded?: () => void;
+    onEvent?: (event: RosterReadEvent) => void;
+  },
 ) {
-  const fileId = await uploadFile({
-    uri: params.uri,
-    name: params.name,
-    mimeType: params.mimeType,
-    bucketId: STORAGE_BUCKETS.rosters,
+  const readId = Crypto.randomUUID();
+  return runRosterRead({
+    signal: options.signal,
+    onEvent: (event) => {
+      // Status codes, retries and timings are for logs only, never for the screen.
+      if (event.type !== 'attempt') console.info('[roster-read]', JSON.stringify({ readId, ...event }));
+      options.onEvent?.(event);
+    },
+    attempt: async (attempt, signal, elapsedMs) => {
+      const fileId = await uploadFile({
+        uri: params.uri,
+        name: params.name,
+        mimeType: params.mimeType,
+        bucketId: STORAGE_BUCKETS.rosters,
+        signal,
+      });
+      options.onUploaded?.();
+      const parsed = await parseRoster(client, fileId, { signal, read: { id: readId, attempt, elapsedMs } });
+      return { fileId, parsed };
+    },
   });
-  onUploaded?.();
-  const parsed = await parseRoster(client, fileId);
-  return { fileId, parsed };
 }
 
 export function mapParsedToRosterInsert(

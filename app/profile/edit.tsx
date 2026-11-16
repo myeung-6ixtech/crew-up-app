@@ -146,7 +146,14 @@ export default function EditProfileScreen() {
     useCallback(() => {
       if (!userId) return;
       void fetchActivityPreferences(client, userId)
-        .then((rows) => setPreferenceSummary(rows.map((row) => row.name).join(', ')))
+        // Saved activities, then saved interests, each in catalogue order (5A).
+        .then((rows) =>
+          setPreferenceSummary(
+            [...rows.filter((row) => row.kind === 'activity'), ...rows.filter((row) => row.kind === 'interest')]
+              .map((row) => row.name)
+              .join(', '),
+          ),
+        )
         .catch(() => setPreferenceSummary(''));
     }, [client, userId]),
   );

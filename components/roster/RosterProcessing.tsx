@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
+import { AccessibilityInfo, Animated, Easing, Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useTranslation } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
-import { DarkLimePill, MonoLabel, TextPillAction } from '@/features/onboarding/components/kit';
+import { DarkLimePill, DarkOutlinePill, MonoLabel, TextPillAction } from '@/features/onboarding/components/kit';
+import { ROSTER_READ_CONFIG } from '@/lib/rosterRead';
 import { fontFamily } from '@/theme';
 
 const INK = '#0E1113';
@@ -34,9 +35,55 @@ export type ProcessingPhase = 'uploading' | 'reading' | 'done';
  * advance on a timer (the parser doesn't report progress) and hold short of 100% until the result arrives.
  * The counters only show real numbers once it's done.
  */
+const THINKING_STAGES = ['rosterFlow.stage.thinking', 'rosterFlow.stage.reasoning', 'rosterFlow.stage.checkingTimes'] as const;
+
+/** "Thinking…" with three dots that fill in turn. */
+function AnimatedDots({ color }: { color: string }) {
+  const [count, setCount] = useState(1);
+  useEffect(() => {
+    const timer = setInterval(() => setCount((value) => (value % 3) + 1), 400);
+    return () => clearInterval(timer);
+  }, []);
+  return (
+    <Text accessibilityElementsHidden importantForAccessibility="no" style={{ fontFamily: fontFamily.monoMedium, fontSize: 10.5, color, width: 18 }}>
+      {'.'.repeat(count)}
+    </Text>
+  );
+}
+
+/** A soft lime sweep over the held bar, so a frozen value still reads as working. */
+function Shimmer() {
+  const x = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    const loop = Animated.loop(Animated.timing(x, { toValue: 1, duration: 1400, easing: Easing.inOut(Easing.ease), useNativeDriver: true }));
+    loop.start();
+    return () => loop.stop();
+  }, [x]);
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={{
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        width: 60,
+        backgroundColor: 'rgba(237,241,242,0.35)',
+        transform: [{ translateX: x.interpolate({ inputRange: [0, 1], outputRange: [-60, 320] }) }],
+      }}
+    />
+  );
+}
+
+const clockLabel = (ms: number) => {
+  const seconds = Math.max(0, Math.floor(ms / 1000));
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+};
+
 export function RosterProcessing({
   fileName,
   phase,
+  thinking = false,
+  startedAt,
   trips,
   flights,
   layovers,
@@ -45,6 +92,10 @@ export function RosterProcessing({
 }: {
   fileName: string;
   phase: ProcessingPhase;
+  /** The provider was busy once: rotate "Thinking…" and hold the bar (it never moves back). */
+  thinking?: boolean;
+  /** When the read started, for "Taking longer than expected" and the elapsed time. */
+  startedAt?: number;
   trips: number;
   flights: number;
   layovers: number;
@@ -56,11 +107,28 @@ export function RosterProcessing({
   const [progress, setProgress] = useState(0);
   const phaseRef = useRef(phase);
   phaseRef.current = phase;
+  const thinkingRef = useRef(thinking);
+  thinkingRef.current = thinking;
+  const [now, setNow] = useState(() => Date.now());
+  const [stageIndex, setStageIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!thinking) return;
+    const timer = setInterval(() => setStageIndex((index) => (index + 1) % THINKING_STAGES.length), 2500);
+    return () => clearInterval(timer);
+  }, [thinking]);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setProgress((current) => {
         if (phaseRef.current === 'done') return 100;
+        // Thinking holds the bar where it is: it may pause, but never goes backwards.
+        if (thinkingRef.current) return current;
         // Uploading tops out at 15%; reading eases towards 92% and waits there.
         const cap = phaseRef.current === 'uploading' ? 15 : 92;
         const step = current < 40 ? 1.4 : 0.6;
@@ -71,8 +139,26 @@ export function RosterProcessing({
   }, []);
 
   const done = phase === 'done' && progress >= 100;
+  const elapsedMs = startedAt ? now - startedAt : 0;
+  const slow = !done && Boolean(startedAt) && elapsedMs >= ROSTER_READ_CONFIG.slowAfterMs;
+  const mode: 'reading' | 'thinking' | 'slow' | 'done' = done ? 'done' : slow ? 'slow' : thinking ? 'thinking' : 'reading';
+
+  // Say each change of state out loud once (the visible text also sits in live regions).
+  const announced = useRef(mode);
+  useEffect(() => {
+    if (announced.current === mode) return;
+    announced.current = mode;
+    const message =
+      mode === 'thinking' ? t('rosterFlow.thinkingBody') : mode === 'slow' ? t('rosterFlow.slowTitle') : mode === 'done' ? t('rosterFlow.readyTitle') : '';
+    if (message) AccessibilityInfo.announceForAccessibility(message);
+  }, [mode, t]);
+
   const stage =
-    done ? t('rosterFlow.stage.done') : progress < 15 ? t('rosterFlow.stage.uploading') : progress < 40 ? t('rosterFlow.stage.reading') : progress < 75 ? t('rosterFlow.stage.finding') : t('rosterFlow.stage.checking');
+    mode === 'slow'
+      ? t('rosterFlow.stage.stillReasoning')
+      : mode === 'thinking'
+        ? t(THINKING_STAGES[stageIndex])
+        : done ? t('rosterFlow.stage.done') : progress < 15 ? t('rosterFlow.stage.uploading') : progress < 40 ? t('rosterFlow.stage.reading') : progress < 75 ? t('rosterFlow.stage.finding') : t('rosterFlow.stage.checking');
   const litRows = Math.floor((progress / 100) * DOC_ROWS.length);
   const scanTop = `${((progress % 34) / 34) * 100}%` as const;
 
@@ -139,25 +225,41 @@ export function RosterProcessing({
         </View>
 
         <View style={{ alignItems: 'center', gap: 8, marginTop: 34 }}>
-          <Text accessibilityRole="header" style={{ fontFamily: fontFamily.jakartaBold, fontSize: 27, letterSpacing: -0.7, color: PALE, textAlign: 'center' }}>
-            {done ? t('rosterFlow.readyTitle') : t('rosterFlow.readingTitle')}
+          <Text
+            accessibilityRole="header"
+            accessibilityLiveRegion="polite"
+            style={{ fontFamily: fontFamily.jakartaBold, fontSize: 27, letterSpacing: -0.7, color: PALE, textAlign: 'center' }}>
+            {done ? t('rosterFlow.readyTitle') : mode === 'slow' ? t('rosterFlow.slowTitle') : t('rosterFlow.readingTitle')}
           </Text>
-          <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, lineHeight: 21, color: MUTED, textAlign: 'center', maxWidth: 290 }}>
+          <Text
+            accessibilityLiveRegion="polite"
+            style={{ fontFamily: fontFamily.interRegular, fontSize: 14, lineHeight: 21, color: MUTED, textAlign: 'center', maxWidth: 300 }}>
             {done
               ? t('rosterFlow.readyBody', { count: trips })
-              : progress < 40
-                ? t('rosterFlow.readingRedacting')
-                : t('rosterFlow.readingFinding')}
+              : mode === 'slow'
+                ? t('rosterFlow.slowBody')
+                : mode === 'thinking'
+                  ? t('rosterFlow.thinkingBody')
+                  : progress < 40
+                    ? t('rosterFlow.readingRedacting')
+                    : t('rosterFlow.readingFinding')}
           </Text>
         </View>
 
         <View style={{ gap: 8, marginTop: 22 }} accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: 100, now: Math.floor(progress) }}>
           <View style={{ height: 6, borderRadius: 3, backgroundColor: LINE, overflow: 'hidden' }}>
-            <View style={{ width: `${progress}%`, height: '100%', borderRadius: 3, backgroundColor: LIME }} />
+            <View style={{ width: `${progress}%`, height: '100%', borderRadius: 3, backgroundColor: LIME, overflow: 'hidden' }}>
+              {mode === 'thinking' || mode === 'slow' ? <Shimmer /> : null}
+            </View>
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <MonoLabel style={{ fontSize: 10.5, color: LIME }}>{stage}</MonoLabel>
-            <Text style={{ fontFamily: fontFamily.monoMedium, fontSize: 10.5, color: FAINT }}>{`${Math.floor(progress)}%`}</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <MonoLabel style={{ fontSize: 10.5, color: LIME }}>{stage}</MonoLabel>
+              {mode === 'thinking' || mode === 'slow' ? <AnimatedDots color={LIME} /> : null}
+            </View>
+            <Text style={{ fontFamily: fontFamily.monoMedium, fontSize: 10.5, color: FAINT }}>
+              {mode === 'slow' ? clockLabel(elapsedMs) : `${Math.floor(progress)}%`}
+            </Text>
           </View>
         </View>
 
@@ -178,11 +280,54 @@ export function RosterProcessing({
             <DarkLimePill label={t('rosterFlow.reviewTrips')} onPress={onReview} />
           ) : (
             <>
-              <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, color: FAINT, textAlign: 'center' }}>{t('rosterFlow.keepOpen')}</Text>
+              <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, lineHeight: 18, color: FAINT, textAlign: 'center' }}>
+                {mode === 'slow' ? t('rosterFlow.slowFooter') : t('rosterFlow.keepOpen')}
+              </Text>
               <TextPillAction label={t('rosterFlow.cancelImport')} color={MUTED} onPress={onCancel} />
             </>
           )}
         </View>
+      </View>
+    </View>
+  );
+}
+
+/**
+ * The reader stayed busy past the retries or the time budget. Calm copy only: no red, no "error", no status code.
+ * Try again reads the same file from the phone again.
+ */
+export function RosterTryLater({ onTryAgain, onManual, onNotNow }: { onTryAgain: () => void; onManual: () => void; onNotNow: () => void }) {
+  const { t } = useTranslation();
+  const insets = useScreenInsets();
+  useEffect(() => {
+    AccessibilityInfo.announceForAccessibility(t('rosterFlow.tryLaterTitle'));
+  }, [t]);
+  return (
+    <View style={{ flex: 1, backgroundColor: INK, paddingTop: insets.top, paddingHorizontal: 28 }}>
+      <StatusBar style="light" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12 }}>
+        <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: CARD, borderWidth: 1, borderColor: LINE, alignItems: 'center', justifyContent: 'center' }}>
+          <Text accessibilityElementsHidden importantForAccessibility="no" style={{ fontFamily: fontFamily.jakartaBold, fontSize: 26, color: LIME }}>
+            ⋯
+          </Text>
+        </View>
+        <Text
+          accessibilityRole="header"
+          accessibilityLiveRegion="polite"
+          style={{ fontFamily: fontFamily.jakartaBold, fontSize: 27, letterSpacing: -0.7, color: PALE, textAlign: 'center', marginTop: 10 }}>
+          {t('rosterFlow.tryLaterTitle')}
+        </Text>
+        <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14.5, lineHeight: 22, color: MUTED, textAlign: 'center', maxWidth: 310 }}>
+          {t('rosterFlow.tryLaterBody')}
+        </Text>
+        <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13, lineHeight: 19, color: FAINT, textAlign: 'center', maxWidth: 300, marginTop: 4 }}>
+          {t('rosterFlow.tryLaterNote')}
+        </Text>
+      </View>
+      <View style={{ gap: 10, paddingBottom: Math.max(insets.bottom, 14) }}>
+        <DarkLimePill label={t('rosterFlow.tryAgain')} onPress={onTryAgain} />
+        <DarkOutlinePill label={t('rosterFlow.addManually')} onPress={onManual} />
+        <TextPillAction label={t('rosterFlow.notNow')} color={MUTED} onPress={onNotNow} />
       </View>
     </View>
   );

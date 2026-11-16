@@ -9,14 +9,15 @@ import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { RowChevron } from '@/components/crew/kit';
 import { LegalNotice } from '@/components/legal/LegalNotice';
 import { FlowFooter, FlowTitle, FlowTopBar, WarnChip } from '@/components/roster/flowKit';
-import { RosterProcessing, type ProcessingPhase } from '@/components/roster/RosterProcessing';
+import { RosterProcessing, RosterTryLater, type ProcessingPhase } from '@/components/roster/RosterProcessing';
 import { Screen } from '@/components/ui';
 import { SCREENS } from '@/constants/screens';
 import { MonoLabel } from '@/features/onboarding/components/kit';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { formatApolloError, graphQLErrorCode } from '@/lib/graphqlError';
 import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
-import { acceptRosterConsent, fetchRosterConsent, uploadAndParseRoster } from '@/services/rosterService';
+import { RosterReadCancelled, RosterReadGaveUp } from '@/lib/rosterRead';
+import { acceptRosterConsent, fetchRosterConsent, readRosterWithRetries } from '@/services/rosterService';
 import { useRosterDraftStore } from '@/stores/rosterDraftStore';
 import { fontFamily, useTheme } from '@/theme';
 import type { ParsedRosterEntry, ParsedRosterTrip } from '@/types/domain';
@@ -232,6 +233,10 @@ export default function RosterUploadScreen() {
   const [phase, setPhase] = useState<ProcessingPhase | null>(null);
   const [result, setResult] = useState<{ fileId: string; entries: ParsedRosterEntry[]; trips: ParsedRosterTrip[]; skipped: number } | null>(null);
   const runRef = useRef(0);
+  const readAbortRef = useRef<AbortController | null>(null);
+  const [thinking, setThinking] = useState(false);
+  const [tryLater, setTryLater] = useState(false);
+  const [readStartedAt, setReadStartedAt] = useState(0);
   const [consent, setConsent] = useState<ConsentState>({ status: 'checking' });
   const [consentSaving, setConsentSaving] = useState(false);
   const [consentError, setConsentError] = useState('');
@@ -280,18 +285,31 @@ export default function RosterUploadScreen() {
 
   const submitRoster = async (picked: PickedFile) => {
     const run = ++runRef.current;
+    readAbortRef.current?.abort();
+    const controller = new AbortController();
+    readAbortRef.current = controller;
     setFile(picked);
     setError('');
     setResult(null);
+    setTryLater(false);
+    setThinking(false);
+    setReadStartedAt(Date.now());
     setPhase('uploading');
     try {
-      const { fileId, parsed } = await uploadAndParseRoster(client, picked, () => {
-        if (runRef.current === run) setPhase('reading');
+      const { fileId, parsed } = await readRosterWithRetries(client, picked, {
+        signal: controller.signal,
+        onUploaded: () => {
+          if (runRef.current === run) setPhase('reading');
+        },
+        // The first busy answer switches the wait screen to "Thinking…"; it never goes back to plain reading.
+        onEvent: (event) => {
+          if (runRef.current === run && event.type === 'retrying') setThinking(true);
+        },
       });
       if (runRef.current !== run) return;
       const entries = parsed?.entries ?? [];
       // Older function builds only return layovers; each one becomes its own trip.
-      const trips = parsed?.trips ?? entries.map((entry) => ({ legs: [], layovers: [entry] }));
+      const trips: ParsedRosterTrip[] = parsed?.trips ?? entries.map((entry) => ({ legs: [], layovers: [entry] }));
       if (!trips.length) {
         hapticError();
         setPhase(null);
@@ -302,9 +320,14 @@ export default function RosterUploadScreen() {
       setResult({ fileId, entries, trips, skipped: parsed?.skippedDuties ?? 0 });
       setPhase('done');
     } catch (e) {
-      if (runRef.current !== run) return;
-      hapticError();
+      if (runRef.current !== run || e instanceof RosterReadCancelled) return;
       setPhase(null);
+      if (e instanceof RosterReadGaveUp) {
+        // Busy past the retries or the budget: a calm "try again later", never an error or a status code.
+        setTryLater(true);
+        return;
+      }
+      hapticError();
       if (graphQLErrorCode(e) === 'ROSTER_CONSENT_REQUIRED') {
         setFile(null);
         void checkConsent();
@@ -314,12 +337,17 @@ export default function RosterUploadScreen() {
     }
   };
 
-  // Cancel stops waiting for this read; anything that comes back afterwards is ignored.
+  // Cancel aborts the request in flight and every pending retry; anything that still comes back is ignored.
   const cancel = () => {
     runRef.current += 1;
+    readAbortRef.current?.abort();
+    readAbortRef.current = null;
     setPhase(null);
     setResult(null);
+    setThinking(false);
   };
+
+  useEffect(() => () => readAbortRef.current?.abort(), []);
 
   const review = () => {
     if (!result) return;
@@ -370,11 +398,29 @@ export default function RosterUploadScreen() {
     );
   }
 
+  if (tryLater && file) {
+    return (
+      <RosterTryLater
+        onTryAgain={() => void submitRoster(file)}
+        onManual={() => {
+          setTryLater(false);
+          enterManually();
+        }}
+        onNotNow={() => {
+          setTryLater(false);
+          setFile(null);
+        }}
+      />
+    );
+  }
+
   if (phase && file) {
     return (
       <RosterProcessing
         fileName={file.name}
         phase={phase}
+        thinking={thinking}
+        startedAt={readStartedAt}
         trips={result?.trips.length ?? 0}
         flights={result?.trips.reduce((sum, trip) => sum + trip.legs.length, 0) ?? 0}
         layovers={result?.trips.reduce((sum, trip) => sum + trip.layovers.length, 0) ?? 0}

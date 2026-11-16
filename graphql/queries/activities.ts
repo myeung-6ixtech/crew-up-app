@@ -28,7 +28,10 @@ export const GET_ACTIVITIES = gql`
 
 export const GET_ACTIVITY_PREFERENCES = gql`
   query GetActivityPreferences($userId: uuid!) {
-    profile_activity_preferences(where: { user_id: { _eq: $userId } }) {
+    profile_activity_preferences(
+      where: { user_id: { _eq: $userId } }
+      order_by: [{ activity: { parent: { sort_order: asc } } }, { activity: { sort_order: asc } }]
+    ) {
       activity_id
       activity {
         id

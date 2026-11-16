@@ -6,6 +6,7 @@ import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { FlowTitle, FlowTopBar, PlaneGlyph } from '@/components/roster/flowKit';
 import { NoTripsCard, TripCard } from '@/components/roster/TripCard';
 import { Screen, Toast } from '@/components/ui';
+import { SCREENS } from '@/constants/screens';
 import { useAddTripFlow } from '@/hooks/useAddTripFlow';
 import { useAuth } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
@@ -120,7 +121,15 @@ export default function TripsScreen() {
           {loading ? (
             <ActivityIndicator color={theme.colors.accentText} style={{ marginTop: 32 }} />
           ) : trips.length ? (
-            trips.map((trip) => <TripCard key={trip.id} trip={trip} onRemove={tab === 'upcoming' ? () => remove(trip) : undefined} />)
+            trips.map((trip) => (
+              <TripCard
+                key={trip.id}
+                trip={trip}
+                // Same as Home: a trip with a layover opens its Layovers page ("Free until …").
+                onPress={trip.stays?.length ? () => router.push(SCREENS.discover.layover(trip.id)) : undefined}
+                onRemove={tab === 'upcoming' ? () => remove(trip) : undefined}
+              />
+            ))
           ) : tab === 'upcoming' ? (
             <NoTripsCard icon={<PlaneGlyph color={theme.colors.textSecondary} />} />
           ) : (

@@ -1252,7 +1252,11 @@
       "reading": "Reading pages",
       "finding": "Finding flights",
       "checking": "Checking schedules",
-      "done": "Done"
+      "done": "Done",
+      "thinking": "Thinking",
+      "reasoning": "Reasoning",
+      "checkingTimes": "Checking times",
+      "stillReasoning": "Still reasoning"
     },
     "readingTitle": "Reading your roster",
     "readyTitle": "Your month is ready",
@@ -1294,7 +1298,17 @@
     "flagResult": "Something's wrong with this result",
     "flagTitle": "What looks wrong?",
     "flagIntro": "Tell us what we got wrong, like a missing flight or the wrong city. We only see the counts below and your note, not your roster file.",
-    "flagThanks": "Thanks. This helps us read rosters better. You can still fix trips here before saving."
+    "flagThanks": "Thanks. This helps us read rosters better. You can still fix trips here before saving.",
+    "thinkingBody": "The AI is thinking through your schedule. Hang tight.",
+    "slowTitle": "Taking longer than expected",
+    "slowBody": "It’s busier than usual right now. We’re still working on it, and nothing is lost.",
+    "slowFooter": "You can keep waiting, or cancel and try again later.",
+    "tryLaterTitle": "Let’s try this again later",
+    "tryLaterBody": "Our roster reader is very busy right now, so we couldn’t finish this time. Nothing was saved or shared.",
+    "tryLaterNote": "Your roster stays on this phone, ready for your next try.",
+    "tryAgain": "Try again",
+    "addManually": "Add layovers manually",
+    "notNow": "Not now"
   },
   "privacy": {
     "intro": "Nothing changes until you save.",

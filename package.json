@@ -1,7 +1,7 @@
 {
   "name": "crew-up-app",
   "main": "expo-router/entry",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "dependencies": {
     "@apollo/client": "^4.2.8",
     "@crewup/shared": "file:./packages/shared",
@@ -74,7 +74,8 @@
     "check:store": "node scripts/check-store-build.mjs",
     "test:timezone": "node --experimental-strip-types --test scripts/timezone.test.mjs",
     "licenses": "node scripts/generate-licenses.mjs",
-    "icons:activities": "node scripts/generate-activity-icons.mjs"
+    "icons:activities": "node scripts/generate-activity-icons.mjs",
+    "test:roster-read": "node --experimental-strip-types --test scripts/roster-read.test.mjs"
   },
   "private": true
 }
