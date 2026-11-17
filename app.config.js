@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const app = require('./app.json');
 
 const STORE_PROFILES = new Set(['preview', 'production', 'testflight']);
@@ -14,6 +16,14 @@ module.exports = () => {
     return plugin;
   });
   expo.plugins.push('./plugins/withIosNodeBinary');
+
+  // EAS file env during a cloud build, or a gitignored local copy. Never commit the file.
+  const googleServicesFile =
+    process.env.GOOGLE_SERVICES_JSON ||
+    (fs.existsSync(path.join(__dirname, 'google-services.json')) ? './google-services.json' : undefined);
+  if (googleServicesFile) {
+    expo.android.googleServicesFile = googleServicesFile;
+  }
 
   return { expo };
 };

@@ -55,7 +55,6 @@
     },
     "android": {
       "package": "com.the6ixtech.crewup",
-      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#0E1113",
         "foregroundImage": "./assets/android/adaptive-icon/ic_launcher_foreground.png",
