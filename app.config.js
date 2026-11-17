@@ -16,6 +16,7 @@ module.exports = () => {
     return plugin;
   });
   expo.plugins.push('./plugins/withIosNodeBinary');
+  expo.plugins.push('./plugins/withAndroidAuthSchemes');
 
   // EAS file env during a cloud build, or a gitignored local copy. Never commit the file.
   const googleServicesFile =
