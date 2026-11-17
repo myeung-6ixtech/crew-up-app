@@ -7,11 +7,14 @@ import { nhost } from '@/lib/nhost';
 
 WebBrowser.maybeCompleteAuthSession();
 
+/**
+ * Google must return to a scheme URL with a host. `Linking.createURL('/')` is `crewup:///`,
+ * and Android leaves that page open instead of handing the session back to the app.
+ * `crewup://` in the Nhost allow list already covers this URL.
+ */
 function getOAuthRedirectUrl() {
-  const fromLinking = Linking.createURL('/');
-  if (fromLinking) return fromLinking;
   const scheme = process.env.EXPO_PUBLIC_APP_SCHEME ?? 'crewup';
-  return `${scheme}://`;
+  return `${scheme}://auth/callback`;
 }
 
 function extractRefreshToken(url: string): string | null {
@@ -31,25 +34,36 @@ export async function signInWithGoogle() {
   const redirectTo = getOAuthRedirectUrl();
   const authUrl = nhost.auth.signInProviderURL('google', { redirectTo });
 
-  const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectTo, {
-    preferEphemeralSession: true,
+  // Android often delivers the return URL through a linking event and then dismisses the browser.
+  let linkedToken: string | null = null;
+  const subscription = Linking.addEventListener('url', ({ url }) => {
+    linkedToken = extractRefreshToken(url) ?? linkedToken;
   });
 
-  if (result.type === 'cancel' || result.type === 'dismiss') {
-    throw new Error('Google sign-in was cancelled');
-  }
+  try {
+    const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectTo, {
+      preferEphemeralSession: Platform.OS === 'ios',
+    });
 
-  if (result.type !== 'success') {
-    throw new Error('Google sign-in failed');
-  }
+    if (!linkedToken && result.type !== 'success') {
+      await new Promise((resolve) => setTimeout(resolve, 400));
+    }
 
-  const refreshToken = extractRefreshToken(result.url);
-  if (!refreshToken) {
-    throw new Error('No session returned from Google sign-in');
-  }
+    const refreshToken =
+      (result.type === 'success' ? extractRefreshToken(result.url) : null) ?? linkedToken;
 
-  await nhost.auth.refreshToken({ refreshToken });
-  await nhost.refreshSession(0);
+    if (!refreshToken) {
+      if (result.type === 'cancel' || result.type === 'dismiss') {
+        throw new Error('Google sign-in was cancelled');
+      }
+      throw new Error('No session returned from Google sign-in');
+    }
+
+    await nhost.auth.refreshToken({ refreshToken });
+    await nhost.refreshSession(0);
+  } finally {
+    subscription.remove();
+  }
 }
 
 /** iOS only. Apple gets the SHA-256 of the nonce; Nhost gets the raw value and checks it against the token. */
