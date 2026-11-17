@@ -13,7 +13,8 @@ import { useOnboardingState } from '@/features/onboarding/hooks/useOnboardingSta
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useSession } from '@/hooks/useSession';
 import { hasCompletedOnboarding } from '@/lib/profileCompletion';
-import { registerForPushNotifications } from '@/services/notificationService';
+import { openPushNotification, registerForPushNotifications } from '@/services/notificationService';
+import { pushNotificationsEnabled } from '@/lib/pushNotificationsEnabled';
 import { fontAssets } from '@/theme';
 import { useTheme } from '@/theme';
 
@@ -29,6 +30,23 @@ function RootNavigator() {
       void registerForPushNotifications();
     }
   }, [session?.user?.id, onboarding]);
+  useEffect(() => {
+    if (!pushNotificationsEnabled) return;
+    let active = true;
+    let remove = () => {};
+    void import('expo-notifications').then((Notifications) => {
+      if (!active) return;
+      void Notifications.getLastNotificationResponseAsync().then((response) => {
+        if (active && response) openPushNotification(response);
+      });
+      const subscription = Notifications.addNotificationResponseReceivedListener(openPushNotification);
+      remove = () => subscription.remove();
+    });
+    return () => {
+      active = false;
+      remove();
+    };
+  }, []);
   // Signed in: stay on the splash until the guard knows where to send them, so Home never flashes first.
   const routing = Boolean(session?.user?.id) && (status === 'idle' || status === 'loading');
 

@@ -54,7 +54,8 @@
       }
     },
     "android": {
-      "package": "com.banamedia.crewup",
+      "package": "com.the6ixtech.crewup",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#0E1113",
         "foregroundImage": "./assets/android/adaptive-icon/ic_launcher_foreground.png",
@@ -126,6 +127,6 @@
         "projectId": "db038f44-b6c1-47d4-857a-63c376fec720"
       }
     },
-    "owner": "myeung-bana"
+    "owner": "the-6ixtech-studios"
   }
 }

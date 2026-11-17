@@ -143,6 +143,8 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   }, [refreshProfile, clearAccount]);
 
   const signOut = useCallback(async () => {
+    const { unregisterStoredPushToken } = await import('@/services/notificationService');
+    await unregisterStoredPushToken();
     const current = nhost.getUserSession();
     if (current?.refreshToken) {
       try {

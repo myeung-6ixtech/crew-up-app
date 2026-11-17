@@ -1,6 +1,8 @@
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
+import { callClientFunction } from '@/lib/api/functions';
 
 const EAS_PROJECT_ID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -46,9 +48,20 @@ export async function registerForPushNotificationsImpl(storageKey: string) {
   }
   if (finalStatus !== 'granted') return null;
 
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('messages', {
+      name: 'Messages',
+      importance: Notifications.AndroidImportance.HIGH,
+    });
+  }
+
   try {
     const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
     await SecureStore.setItemAsync(storageKey, token);
+    const platform = Platform.OS === 'ios' ? 'ios' : 'android';
+    await callClientFunction('push/register', {
+      body: { expo_push_token: token, platform },
+    });
     return token;
   } catch (error) {
     if (__DEV__) {
