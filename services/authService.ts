@@ -43,6 +43,9 @@ export async function signInWithGoogle() {
   try {
     const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectTo, {
       preferEphemeralSession: Platform.OS === 'ios',
+      // Android: keep the sheet in the app's own task. In a separate task (the default), the return to
+      // crewup://auth/callback only brings the app forward and the URL never reaches it, so sign-in looks cancelled.
+      createTask: false,
     });
 
     if (!linkedToken && result.type !== 'success') {

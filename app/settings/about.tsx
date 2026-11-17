@@ -7,7 +7,7 @@ import { SCREENS } from '@/constants/screens';
 import { legal, openPrivacyPolicy, openSupportEmail, openTerms } from '@/lib/legal';
 import { fontFamily, useTheme } from '@/theme';
 
-/** Hosts shown under each legal row, e.g. crewup.app/privacy. */
+/** Hosts shown under each legal row, e.g. 6ixtech.xyz/privacy. */
 function shortUrl(url: string) {
   return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 }

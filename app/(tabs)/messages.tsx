@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, type TFunction } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
 import Svg, { Path } from 'react-native-svg';
 import { CrewAvatar, TabTitle } from '@/components/crew/kit';
@@ -42,6 +42,22 @@ function EventGlyph({ color }: { color: string }) {
   );
 }
 
+/** Short stamp for the latest message: now, 5m, 3h, 2d, then a short date. */
+function shortRelativeTime(iso: string, now: number, t: TFunction): string {
+  const then = Date.parse(iso);
+  if (!Number.isFinite(then)) return '';
+  const minutes = Math.floor(Math.max(0, now - then) / 60_000);
+  if (minutes < 1) return t('messages.justNow');
+  if (minutes < 60) return t('messages.minutesAgo', { count: minutes });
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return t('messages.hoursAgo', { count: hours });
+  const days = Math.floor(hours / 24);
+  if (days < 7) return t('messages.daysAgo', { count: days });
+  const date = new Date(then);
+  const sameYear = date.getFullYear() === new Date(now).getFullYear();
+  return date.toLocaleDateString(undefined, sameYear ? { day: 'numeric', month: 'short' } : { day: 'numeric', month: 'short', year: '2-digit' });
+}
+
 /** One card per thread: who (or which meet), then the latest line. Event chats share the inbox. */
 export default function MessagesTab() {
   const { t } = useTranslation();
@@ -55,6 +71,7 @@ export default function MessagesTab() {
   const [peers, setPeers] = useState<Map<string, DirectCounterpart>>(new Map());
   const [tab, setTab] = useState<InboxTab>('all');
   const [refreshing, setRefreshing] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
   const tabScroll = useTabBarScroll({ contentContainerStyle: { paddingHorizontal: 24 } });
 
   const load = useCallback(async () => {
@@ -85,6 +102,11 @@ export default function MessagesTab() {
     setThreads(ordered);
     void checkNudge();
   }, [client, userId, checkNudge]);
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(id);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -214,6 +236,8 @@ export default function MessagesTab() {
                 ? row.thread.event?.title || t('messages.eventChat')
                 : personName(profile, t('messages.directMessage'));
               const last = row.thread.messages?.[0];
+              const stamp = last?.created_at ? shortRelativeTime(last.created_at, now, t) : '';
+              const unread = userId ? isThreadUnread(row, userId) : false;
               const preview =
                 last?.kind === 'wave'
                   ? waveCaption(last.meta, { mine: last.sender_id === userId, inbox: true }, t)
@@ -226,7 +250,7 @@ export default function MessagesTab() {
                 <Pressable
                   key={row.id}
                   accessibilityRole="button"
-                  accessibilityLabel={`${title}. ${preview}`}
+                  accessibilityLabel={stamp ? `${title}. ${stamp}. ${preview}` : `${title}. ${preview}`}
                   onPress={() => router.push(SCREENS.messages.thread(row.thread_id, otherId))}
                   style={({ pressed }) => ({
                     backgroundColor: theme.colors.card,
@@ -246,9 +270,16 @@ export default function MessagesTab() {
                     <CrewAvatar name={title} fileId={profile?.avatar_file_id} seed={otherId} />
                   )}
                   <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
-                    <Text numberOfLines={1} style={{ fontFamily: fontFamily.interMedium, fontSize: 15, color: theme.colors.textPrimary }}>
-                      {title}
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                      <Text numberOfLines={1} style={{ flex: 1, fontFamily: fontFamily.interMedium, fontSize: 15, color: theme.colors.textPrimary }}>
+                        {title}
+                      </Text>
+                      {stamp ? (
+                        <Text style={{ fontFamily: unread ? fontFamily.interMedium : fontFamily.interRegular, fontSize: 12, color: unread ? theme.colors.textPrimary : theme.colors.textTertiary }}>
+                          {stamp}
+                        </Text>
+                      ) : null}
+                    </View>
                     <Text
                       numberOfLines={1}
                       style={{ fontFamily: fontFamily.interRegular, fontSize: 13, color: last?.body ? theme.colors.textSecondary : theme.colors.textTertiary }}>

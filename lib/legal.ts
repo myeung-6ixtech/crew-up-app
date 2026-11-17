@@ -6,9 +6,9 @@ type LegalConfig = { privacyUrl: string; termsUrl: string; supportEmail: string;
 
 /** Store-listed links, set in app.json `extra.legal`. The same URLs go into App Store Connect and Play Console. */
 export const legal: LegalConfig = (Constants.expoConfig?.extra as { legal?: LegalConfig } | undefined)?.legal ?? {
-  privacyUrl: 'https://crewup.app/privacy',
-  termsUrl: 'https://crewup.app/terms',
-  supportEmail: 'support@crewup.app',
+  privacyUrl: 'https://6ixtech.xyz/privacy',
+  termsUrl: 'https://6ixtech.xyz/terms',
+  supportEmail: 'support@6ixtech.xyz',
   deletionUrl: 'https://crewup.app/delete-account',
 };
 
