@@ -33,12 +33,20 @@ export async function fetchActivityPreferences(
     (data as {
       profile_activity_preferences?: Array<{
         activity_id: string;
-        activity: { id: string; name: string; kind?: string | null } | null;
+        activity: { id: string; slug?: string | null; name: string; kind?: string | null; icon?: string | null } | null;
       }>;
     })?.profile_activity_preferences ?? [];
   return rows.flatMap((row) =>
     row.activity
-      ? [{ activityId: row.activity.id, name: row.activity.name, kind: asKind(row.activity.kind) }]
+      ? [
+          {
+            activityId: row.activity.id,
+            slug: row.activity.slug ?? null,
+            name: row.activity.name,
+            kind: asKind(row.activity.kind),
+            icon: row.activity.icon ?? null,
+          },
+        ]
       : [],
   );
 }

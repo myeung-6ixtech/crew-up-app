@@ -3,9 +3,9 @@ import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native'
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
-import { LANGUAGES } from '@crewup/shared';
-import { CrewAvatar, CircleButton, MenuGlyph, PillGroup, SmallPillButton } from '@/components/crew/kit';
+import { CrewAvatar, CircleButton, MenuGlyph, SmallPillButton } from '@/components/crew/kit';
 import { CrewIdDarkCard, useCrewIdActions } from '@/components/crew/CrewIdDarkCard';
+import { ProfileDetails } from '@/components/profile/ProfileDetails';
 import { AppIcon, Screen } from '@/components/ui';
 import { findAirportByIata } from '@/constants/airports';
 import { SCREENS } from '@/constants/screens';
@@ -18,13 +18,12 @@ import { fetchActivityPreferences } from '@/services/activityService';
 import { fetchHomeData } from '@/services/presenceService';
 import { fetchAirlines } from '@/services/profileService';
 import { fontFamily, useTheme } from '@/theme';
+import type { ActivityPreference } from '@/types/domain';
 import type { TripEntry } from '@/types/trip';
-
-const LANGUAGE_NAMES = new Map(LANGUAGES.map(([code, name]) => [code, name]));
 
 type ProfileStats = { trips: number; cities: number; friends: number };
 
-/** Profile tab: counts, two equal actions, the Crew ID card, then the pills that echo onboarding. */
+/** Profile tab: counts, two equal actions, the Crew ID card, then the same details as someone else's profile (ProfileDetails). */
 export default function ProfileTab() {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -37,8 +36,7 @@ export default function ProfileTab() {
   const [stats, setStats] = useState<ProfileStats>({ trips: 0, cities: 0, friends: 0 });
   const [airlineName, setAirlineName] = useState<string | null>(null);
   const airlines = useAirlines();
-  const [activities, setActivities] = useState<string[]>([]);
-  const [interests, setInterests] = useState<string[]>([]);
+  const [preferences, setPreferences] = useState<ActivityPreference[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const tabScroll = useTabBarScroll({ contentContainerStyle: { paddingHorizontal: 24 } });
 
@@ -55,8 +53,7 @@ export default function ProfileTab() {
       cities: new Set(trips.flatMap((trip) => trip.stays?.map((stay) => stay.city.toUpperCase()) ?? [])).size,
       friends: home.connections?.length ?? 0,
     });
-    setActivities(preferences.filter((item) => item.kind === 'activity').map((item) => item.name));
-    setInterests(preferences.filter((item) => item.kind === 'interest').map((item) => item.name));
+    setPreferences(preferences);
     setAirlineName((airlines as { id: string; name: string }[]).find((row) => row.id === profile?.airline_id)?.name ?? null);
   }, [client, profile?.airline_id, userId]);
 
@@ -76,15 +73,8 @@ export default function ProfileTab() {
     .filter(Boolean)
     .join(' · ');
   const crewLine = [airlineName, roleBase].filter(Boolean).join(' · ');
-  const placesLine = [
-    profile?.residence_city ? t('onboarding.review.livesIn', { place: profile.residence_city }) : null,
-    profile?.hometown_city ? t('onboarding.review.from', { place: profile.hometown_city }) : null,
-  ]
-    .filter(Boolean)
-    .join(' · ');
   const showGenderIcon =
     profile?.own_show_gender !== false && (profile?.visible_gender === 'male' || profile?.visible_gender === 'female');
-  const languages = (profile?.languages ?? []).map((code) => LANGUAGE_NAMES.get(code) ?? code);
   const statItems = [
     { key: 'trips', value: stats.trips, label: t('home.statsTrips'), onPress: () => router.push(SCREENS.trips) },
     { key: 'cities', value: stats.cities, label: t('home.statsCities') },
@@ -169,9 +159,6 @@ export default function ProfileTab() {
           ) : crewLine ? (
             <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textSecondary }}>{crewLine}</Text>
           ) : null}
-          {placesLine ? (
-            <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textSecondary }}>{placesLine}</Text>
-          ) : null}
         </View>
 
         <View style={{ flexDirection: 'row', gap: 8, marginTop: 14 }}>
@@ -183,11 +170,7 @@ export default function ProfileTab() {
           <CrewIdDarkCard friendId={profile?.friend_id} />
         </View>
 
-        <View style={{ gap: 14, marginTop: 18 }}>
-          <PillGroup label={t('onboarding.review.languagesSection')} names={languages} />
-          <PillGroup label={t('onboarding.review.activitiesSection')} names={activities} />
-          <PillGroup label={t('onboarding.review.interestsSection')} names={interests} />
-        </View>
+        {profile ? <ProfileDetails person={profile} airlineName={airlineName} preferences={preferences} expandable /> : null}
       </ScrollView>
     </Screen>
   );

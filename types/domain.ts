@@ -109,8 +109,12 @@ export interface Activity {
 
 export interface ActivityPreference {
   activityId: string;
+  /** For the activity's icon. */
+  slug?: string | null;
   name: string;
   kind: ActivityKind;
+  /** The catalogue's emoji, used when there's no drawn icon. */
+  icon?: string | null;
 }
 
 export interface EventItem {

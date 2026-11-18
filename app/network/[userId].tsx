@@ -4,10 +4,10 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
 import Svg, { Path, Rect } from 'react-native-svg';
-import { LANGUAGES } from '@crewup/shared';
-import { CrewAvatar, FactRow, PillGroup, PushedTopBar, WhiteCard } from '@/components/crew/kit';
+import { CrewAvatar, PushedTopBar } from '@/components/crew/kit';
 import { personName } from '@/components/crew/people';
 import { StandaloneNavPill } from '@/components/navigation/FloatingTabBar';
+import { ProfileDetails } from '@/components/profile/ProfileDetails';
 import { ReportSheet } from '@/components/ReportSheet';
 import { AppIcon, Screen, Toast } from '@/components/ui';
 import { findAirportByIata } from '@/constants/airports';
@@ -17,7 +17,6 @@ import { memberSinceWhen } from '@/features/onboarding/memberSince';
 import { useAuth } from '@/hooks/useSession';
 import { AirlineLine, AirlineMark, useAirlines } from '@/components/crew/airline';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { formatFriendId } from '@/lib/friendId';
 import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
 import { fetchActivityPreferences } from '@/services/activityService';
 import { waveMetaFromRoute } from '@/components/discover/wave';
@@ -26,8 +25,7 @@ import { ensureDirectThread, postLayoverNudge } from '@/services/messagingServic
 import { fetchAirlines } from '@/services/profileService';
 import { reportAndBlock, reportUser } from '@/services/safetyService';
 import { fontFamily, shouldUppercaseLabels, useTheme } from '@/theme';
-
-const LANGUAGE_NAMES = new Map(LANGUAGES.map(([code, name]) => [code, name]));
+import type { ActivityPreference } from '@/types/domain';
 
 type PublicProfile = {
   user_id: string;
@@ -40,7 +38,6 @@ type PublicProfile = {
   base_airport?: string | null;
   base_airport_iata?: string | null;
   airline_id?: string | null;
-  friend_id?: string | null;
   residence_city?: string | null;
   residence_country_code?: string | null;
   hometown_city?: string | null;
@@ -146,8 +143,7 @@ export default function PublicProfileScreen() {
   const airlines = useAirlines();
   const [profile, setProfile] = useState<PublicProfile | null>(null);
   const [airlineName, setAirlineName] = useState<string | null>(null);
-  const [activityNames, setActivityNames] = useState<string[]>([]);
-  const [interestNames, setInterestNames] = useState<string[]>([]);
+  const [preferences, setPreferences] = useState<ActivityPreference[]>([]);
   const [relationship, setRelationship] = useState<Relationship>('none');
   const [sending, setSending] = useState(false);
   const [opening, setOpening] = useState(false);
@@ -163,8 +159,7 @@ export default function PublicProfileScreen() {
       fetchConnections(client, userId).catch(() => []),
     ]);
     setProfile(nextProfile);
-    setActivityNames(preferences.filter((item) => item.kind === 'activity').map((item) => item.name));
-    setInterestNames(preferences.filter((item) => item.kind === 'interest').map((item) => item.name));
+    setPreferences(preferences);
     const row = (connections as { status: string; requester_id: string; addressee_id: string }[]).find(
       (c) =>
         (c.requester_id === userId && c.addressee_id === params.userId) ||
@@ -265,22 +260,9 @@ export default function PublicProfileScreen() {
   const theirAirline = profile?.airline_id ? airlines.get(profile.airline_id) : null;
   const roleBase = [role, airport?.iata ?? profile?.base_airport].filter(Boolean).join(' · ');
   const flightCode = params.matchTitle?.match(/^([A-Z0-9]{2})\d/)?.[1] ?? null;
-  const place = (city?: string | null, code?: string | null) => [city, code].filter(Boolean).join(', ');
-  const placesLine = [
-    profile?.residence_city ? t('onboarding.review.livesIn', { place: place(profile.residence_city, profile.residence_country_code) }) : null,
-    profile?.hometown_city ? t('onboarding.review.from', { place: place(profile.hometown_city, profile.home_country_code) }) : null,
-  ]
-    .filter(Boolean)
-    .join(' · ');
-  const languages = (profile?.languages ?? []).map((code) => LANGUAGE_NAMES.get(code) ?? code);
   const since = profile?.created_at ? memberSinceWhen(profile.created_at, t) : '';
   const friends = relationship === 'friends';
   const pending = relationship === 'requested';
-  const facts = [
-    role ? { label: t('onboarding.crew.role'), value: role } : null,
-    airlineName ? { label: t('onboarding.crew.airline'), value: airlineName } : null,
-    airport || profile?.base_airport ? { label: t('profile.base'), value: airport ? `${airport.iata} · ${airport.city}` : (profile?.base_airport ?? '') } : null,
-  ].filter((fact): fact is { label: string; value: string } => fact !== null);
 
   return (
     <Screen style={{ padding: 0 }}>
@@ -303,11 +285,6 @@ export default function PublicProfileScreen() {
               <AirlineLine airline={theirAirline} mine={theirAirline.id === me?.airline_id} rest={roleBase} />
             ) : headline ? (
               <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textSecondary }}>{headline}</Text>
-            ) : null}
-            {profile.friend_id ? (
-              <Text selectable style={{ fontFamily: fontFamily.monoMedium, fontSize: 11.5, color: theme.colors.accentText, marginTop: 2 }}>
-                {`${t('friends.crewId')}: ${formatFriendId(profile.friend_id)}`}
-              </Text>
             ) : null}
             {friends ? (
               <Text
@@ -373,25 +350,8 @@ export default function PublicProfileScreen() {
             )}
           </View>
 
-          {facts.length ? (
-            <WhiteCard style={{ marginTop: 16, paddingHorizontal: 16, paddingVertical: 4 }}>
-              {facts.map((fact, index) => (
-                <FactRow key={fact.label} label={fact.label} value={fact.value} last={index === facts.length - 1} />
-              ))}
-            </WhiteCard>
-          ) : null}
-
-          <View style={{ gap: 14, marginTop: 18 }}>
-            {placesLine ? (
-              <View style={{ gap: 8 }}>
-                <MonoLabel style={{ fontSize: 10.5 }}>{t('onboarding.review.placesSection')}</MonoLabel>
-                <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textPrimary }}>{placesLine}</Text>
-              </View>
-            ) : null}
-            <PillGroup label={t('onboarding.review.languagesSection')} names={languages} />
-            <PillGroup label={t('onboarding.review.activitiesSection')} names={activityNames} />
-            <PillGroup label={t('onboarding.review.interestsSection')} names={interestNames} />
-          </View>
+          {/* No Crew ID here: it's owner-only, and Connect is how you add someone from their profile. */}
+          <ProfileDetails person={profile} airlineName={airlineName} preferences={preferences} />
 
           <View
             style={{

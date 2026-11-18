@@ -1048,6 +1048,8 @@
     "copyCrewId": "Copy Crew ID",
     "copied": "Copied",
     "shareCrewId": "Share Crew ID",
+    "seeAllActivities": "See all {{count}}",
+    "showTopActivities": "Show top {{count}}",
     "base": "Base",
     "wavedSent": "Waved · request sent",
     "acceptOnFriends": "Respond in Friends",

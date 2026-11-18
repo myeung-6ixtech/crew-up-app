@@ -15,7 +15,8 @@ export const GET_MY_PROFILE = gql`
       notification_mode
       is_verified
       avatar_file_id
-      friend_id
+      # Owner-only: other crew never receive a Crew ID.
+      friend_id: own_friend_id
       full_name
       full_name_native
       preferred_name

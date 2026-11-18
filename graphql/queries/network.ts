@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 export const GET_MY_FRIEND_ID = gql`
   query GetMyFriendId($userId: uuid!) {
     profiles_by_pk(user_id: $userId) {
-      friend_id
+      friend_id: own_friend_id
     }
   }
 `;
@@ -105,7 +105,6 @@ export const GET_PUBLIC_PROFILE = gql`
       is_verified
       show_rank
       rank
-      friend_id
       residence_city
       residence_country_code
       hometown_city

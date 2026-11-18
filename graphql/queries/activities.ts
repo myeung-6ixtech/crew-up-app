@@ -35,8 +35,10 @@ export const GET_ACTIVITY_PREFERENCES = gql`
       activity_id
       activity {
         id
+        slug
         name
         kind
+        icon
       }
     }
   }
