@@ -140,7 +140,7 @@ export async function sendWave(client: ApolloClient, threadId: string, meta: Wav
   try {
     const { data } = await client.mutate({
       mutation: INSERT_MESSAGE,
-      variables: { object: { thread_id: threadId, body: 'Waved', kind: 'wave', meta } },
+      variables: { object: { thread_id: threadId, body: 'Poked', kind: 'wave', meta } },
     });
     return (data as { insert_messages_one?: { id: string } } | undefined)?.insert_messages_one ?? null;
   } catch (error) {

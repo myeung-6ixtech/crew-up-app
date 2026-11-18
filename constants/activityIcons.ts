@@ -182,6 +182,7 @@ export const ACTIVITY_ICONS: Record<string, string> = {
   tennis: "<g transform=\"rotate(-40 24 24)\"><ellipse cx=\"24\" cy=\"15\" rx=\"10\" ry=\"12\"/><path d=\"M20.5 3.8v22.4M27.5 3.8v22.4M14.4 11.5h19.2M14.4 18.5h19.2 M19.5 25.8l2.5 5.2M28.5 25.8l-2.5 5.2\"/><rect x=\"21.5\" y=\"31\" width=\"5\" height=\"12\" rx=\"2\"/></g><circle cx=\"38.5\" cy=\"10\" r=\"5.5\"/><path d=\"M33.3 8.3c2.6.6 4 3 3.6 6.8M43.7 11.7c-2.6-.6-4-3-3.6-6.8\"/>",
   theatre: "<path d=\"M4 6h40 M6 6c0 14 6 22 14 24 M42 6c0 14-6 22-14 24 M20 30l-2 12 M28 30l2 12 M10 42h28\"/>",
   theme_park: "<circle cx=\"24\" cy=\"20\" r=\"14\"/><circle cx=\"24\" cy=\"20\" r=\"2\"/><path d=\"M24 6v28 M10 20h28 M14 10l20 20 M34 10L14 30 M18 42l6-20 6 20 M14 42h20\"/>",
+  track_racing: "<path d=\"M12 44V6 M12 8h24v18H12 M18 8v18 M24 8v18 M30 8v18 M12 14h24 M12 20h24\"/>",
   trail_running: "<path d=\"M5 32c0-3 1.5-5 4-5.5l7-1.5 5-9 5 2.5c2 4 6 6.5 12 7.5 3.5.6 5 2.6 5 5.5V34H5z M5 38h38 M20 22l3 1.5 M18 26l3 1.5\"/><path d=\"M4 16l6-9 4 5 3-4 5 8\"/>",
   travel: "<circle cx=\"24\" cy=\"24\" r=\"17\"/><path d=\"M7 24h34 M24 7c5 5 7 11 7 17s-2 12-7 17c-5-5-7-11-7-17s2-12 7-17z\"/>",
   urban_sketching: "<rect x=\"5\" y=\"10\" width=\"22\" height=\"30\" rx=\"2\"/><path d=\"M10 18h12 M10 24h12 M10 30h8 M39 7l4 4-14 14-6 2 2-6z\"/>",
