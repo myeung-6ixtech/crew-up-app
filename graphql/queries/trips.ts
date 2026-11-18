@@ -75,7 +75,7 @@ export const GET_MY_TRIPS = gql`
 `;
 
 export const GET_TRIP_HISTORY = gql`
-  query GetTripHistory($userId: uuid!, $now: timestamptz!, $limit: Int!) {
+  query GetTripHistory($userId: uuid!, $now: timestamptz!, $upcomingLimit: Int!, $pastLimit: Int!) {
     upcomingTrips: user_trips(
       where: {
         user_id: { _eq: $userId }
@@ -85,8 +85,8 @@ export const GET_TRIP_HISTORY = gql`
           { _and: [{ ends_at: { _is_null: true } }, { starts_at: { _gte: $now } }] }
         ]
       }
-      order_by: { starts_at: asc }
-      limit: $limit
+      order_by: [{ starts_at: asc }, { id: asc }]
+      limit: $upcomingLimit
     ) {
       id
       title
@@ -106,7 +106,7 @@ export const GET_TRIP_HISTORY = gql`
           scheduled_arrival
         }
       }
-      stays(order_by: { starts_at: asc }, limit: 1) {
+      stays(order_by: { starts_at: asc }) {
         id
         city
         airport_iata
@@ -123,8 +123,8 @@ export const GET_TRIP_HISTORY = gql`
           { _and: [{ ends_at: { _is_null: true } }, { starts_at: { _lt: $now } }] }
         ]
       }
-      order_by: { starts_at: desc }
-      limit: $limit
+      order_by: [{ starts_at: desc }, { id: asc }]
+      limit: $pastLimit
     ) {
       id
       title
@@ -144,7 +144,7 @@ export const GET_TRIP_HISTORY = gql`
           scheduled_arrival
         }
       }
-      stays(order_by: { starts_at: asc }, limit: 1) {
+      stays(order_by: { starts_at: asc }) {
         id
         city
         airport_iata

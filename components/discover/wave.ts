@@ -58,7 +58,7 @@ function waveDuration(meta?: { overlap_start?: string; overlap_end?: string } | 
   return overlapLabel(ms / 3_600_000);
 }
 
-/** Centred chat card, or the inbox line. Inbox does not repeat the friend's name. */
+/** Centred chat card, or the inbox line: "You poked Sam" / "Sam poked you", with the place and overlap after it. */
 export function waveCaption(
   meta: Pick<WaveMeta, 'city' | 'overlap_start' | 'overlap_end'> | null | undefined,
   options: { mine: boolean; name?: string; inbox?: boolean },
@@ -66,13 +66,8 @@ export function waveCaption(
 ): string {
   const city = meta?.city?.trim();
   const duration = waveDuration(meta);
-  const lead = options.inbox
-    ? options.mine
-      ? t('messages.waveYou')
-      : t('messages.waveInbox')
-    : options.mine
-      ? t('messages.waveYou')
-      : t('messages.waveThem', { name: options.name || t('home.crewMember') });
+  const name = options.name?.trim() || t('home.crewMember');
+  const lead = options.mine ? t('messages.waveYou', { name }) : t('messages.waveThem', { name });
   const detail = [city ? t('messages.wavePlace', { city }) : null, duration ? t('discover.overlap', { duration }) : null].filter(Boolean);
   return detail.length ? `${lead} · ${detail.join(' · ')}` : lead;
 }

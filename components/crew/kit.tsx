@@ -78,7 +78,7 @@ export function CircleButton({
   children: ReactNode;
   onPress: () => void;
   accessibilityLabel: string;
-  tone?: 'field' | 'ink';
+  tone?: 'field' | 'ink' | 'card';
 }) {
   const theme = useTheme();
   return (
@@ -91,7 +91,7 @@ export function CircleButton({
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: tone === 'ink' ? theme.colors.ink : theme.colors.field,
+        backgroundColor: tone === 'ink' ? theme.colors.ink : tone === 'card' ? theme.colors.card : theme.colors.field,
         alignItems: 'center',
         justifyContent: 'center',
         opacity: pressed ? 0.7 : 1,

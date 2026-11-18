@@ -261,6 +261,14 @@ export default function PublicProfileScreen() {
   const roleBase = [role, airport?.iata ?? profile?.base_airport].filter(Boolean).join(' · ');
   const flightCode = params.matchTitle?.match(/^([A-Z0-9]{2})\d/)?.[1] ?? null;
   const since = profile?.created_at ? memberSinceWhen(profile.created_at, t) : '';
+  // Home and hometown sit in the header (above the Friends tag), so the details below skip PLACES.
+  const place = (city?: string | null, code?: string | null) => [city, code].filter(Boolean).join(', ');
+  const placesLine = [
+    profile?.residence_city ? t('onboarding.review.livesIn', { place: place(profile.residence_city, profile.residence_country_code) }) : null,
+    profile?.hometown_city ? t('onboarding.review.from', { place: place(profile.hometown_city, profile.home_country_code) }) : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
   const friends = relationship === 'friends';
   const pending = relationship === 'requested';
 
@@ -285,6 +293,11 @@ export default function PublicProfileScreen() {
               <AirlineLine airline={theirAirline} mine={theirAirline.id === me?.airline_id} rest={roleBase} />
             ) : headline ? (
               <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textSecondary }}>{headline}</Text>
+            ) : null}
+            {placesLine ? (
+              <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textSecondary, textAlign: 'center', marginTop: 2 }}>
+                {placesLine}
+              </Text>
             ) : null}
             {friends ? (
               <Text
@@ -351,7 +364,7 @@ export default function PublicProfileScreen() {
           </View>
 
           {/* No Crew ID here: it's owner-only, and Connect is how you add someone from their profile. */}
-          <ProfileDetails person={profile} airlineName={airlineName} preferences={preferences} />
+          <ProfileDetails person={profile} airlineName={airlineName} preferences={preferences} showPlaces={false} />
 
           <View
             style={{

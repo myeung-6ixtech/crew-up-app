@@ -98,6 +98,9 @@ function RootNavigator() {
       <Stack.Screen name="events/attendees/[id]" options={{ headerShown: false }} />
       <Stack.Screen name="messages/[threadId]" options={{ headerShown: false }} />
       <Stack.Screen name="friends/add" options={{ headerShown: false }} />
+      <Stack.Screen name="friends/scan" options={{ headerShown: false, presentation: 'fullScreenModal', animation: 'fade' }} />
+      <Stack.Screen name="friends/found/[crewId]" options={{ headerShown: false }} />
+      <Stack.Screen name="c/[crewId]" options={{ headerShown: false }} />
       <Stack.Screen name="discover/search" options={{ headerShown: false }} />
       <Stack.Screen name="discover/layover/[tripId]" options={{ headerShown: false }} />
       <Stack.Screen name="profile/edit" options={{ headerShown: false }} />

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { Alert, FlatList, Keyboard, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
@@ -71,12 +71,27 @@ function MoreGlyph({ color }: { color: string }) {
 }
 
 /** Direct thread or event chat. Yours on the right in lime, theirs on white cards. No timestamps, no read receipts. */
+
+/** Extra lift above the Android keyboard (its suggestion strip isn't always in the reported height). */
+const ANDROID_KEYBOARD_GAP = 24;
 export default function ChatScreen() {
   const { threadId, with: withUserId } = useLocalSearchParams<{ threadId: string; with?: string }>();
   const { t } = useTranslation();
   const theme = useTheme();
   const router = useRouter();
   const insets = useScreenInsets();
+  // Android: while the keyboard is up the nav-bar inset no longer applies, and some keyboards report a height that
+  // leaves out their suggestion strip, so the composer gets lifted clear of it instead of tucking underneath.
+  const [androidKeyboard, setAndroidKeyboard] = useState(false);
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    const show = Keyboard.addListener('keyboardDidShow', () => setAndroidKeyboard(true));
+    const hide = Keyboard.addListener('keyboardDidHide', () => setAndroidKeyboard(false));
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
   const client = useApolloClient();
   const { userId } = useAuth();
   const ensureGuidelines = useGuidelinesGate();
@@ -283,7 +298,7 @@ export default function ChatScreen() {
         ) : null}
       </View>
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={Platform.OS === 'android' ? -insets.bottom : 0}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={Platform.OS === 'android' ? (androidKeyboard ? ANDROID_KEYBOARD_GAP : -insets.bottom) : 0}>
         {messages && !messages.length && !isEvent ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10, paddingHorizontal: 40 }}>
             <CrewAvatar size={76} name={title} fileId={info.other?.avatar_file_id} seed={info.otherId} />
@@ -367,7 +382,7 @@ export default function ChatScreen() {
           style={{
             paddingTop: 10,
             paddingHorizontal: 16,
-            paddingBottom: Math.max(insets.bottom, 10),
+            paddingBottom: androidKeyboard ? 14 : Math.max(insets.bottom, 10),
             gap: 8,
             borderTopWidth: 1,
             borderTopColor: theme.colors.hairline,

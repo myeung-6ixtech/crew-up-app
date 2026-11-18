@@ -2,11 +2,13 @@ import type { TextStyle } from 'react-native';
 import {
   Inter_400Regular,
   Inter_500Medium,
+  Inter_600SemiBold,
 } from '@expo-google-fonts/inter';
 import {
   PlusJakartaSans_500Medium,
   PlusJakartaSans_600SemiBold,
   PlusJakartaSans_700Bold,
+  PlusJakartaSans_800ExtraBold,
 } from '@expo-google-fonts/plus-jakarta-sans';
 import { IBMPlexMono_500Medium } from '@expo-google-fonts/ibm-plex-mono';
 
@@ -15,18 +17,22 @@ const tabularNums = ['tabular-nums'] as TextStyle['fontVariant'];
 export const fontAssets = {
   Inter_400Regular,
   Inter_500Medium,
+  Inter_600SemiBold,
   PlusJakartaSans_500Medium,
   PlusJakartaSans_600SemiBold,
   PlusJakartaSans_700Bold,
+  PlusJakartaSans_800ExtraBold,
   IBMPlexMono_500Medium,
 };
 
 export const fontFamily = {
   interRegular: 'Inter_400Regular',
   interMedium: 'Inter_500Medium',
+  interSemiBold: 'Inter_600SemiBold',
   jakartaMedium: 'PlusJakartaSans_500Medium',
   jakartaSemiBold: 'PlusJakartaSans_600SemiBold',
   jakartaBold: 'PlusJakartaSans_700Bold',
+  jakartaExtraBold: 'PlusJakartaSans_800ExtraBold',
   monoMedium: 'IBMPlexMono_500Medium',
 } as const;
 

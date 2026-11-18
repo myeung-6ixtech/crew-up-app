@@ -57,17 +57,20 @@ function ActivityTile({ activity }: { activity: ActivityPreference }) {
 /**
  * The profile body shared by your own Profile and someone else's: role / airline / base, places, languages,
  * activities (top 8 as icon tiles) and interests. `expandable` (own profile) adds See all / Show top 8.
+ * `showPlaces={false}` (own profile) leaves out PLACES, which that screen already shows under the name.
  */
 export function ProfileDetails({
   person,
   airlineName,
   preferences,
   expandable = false,
+  showPlaces = true,
 }: {
   person: ProfileDetailsPerson;
   airlineName?: string | null;
   preferences: ActivityPreference[];
   expandable?: boolean;
+  showPlaces?: boolean;
 }) {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -104,8 +107,8 @@ export function ProfileDetails({
         </WhiteCard>
       ) : null}
 
-      <View style={{ gap: 14, marginTop: 18 }}>
-        {placesLine ? (
+      <View style={{ gap: 20, marginTop: 20 }}>
+        {showPlaces && placesLine ? (
           <View style={{ gap: 8 }}>
             <MonoLabel style={{ fontSize: 10.5 }}>{t('onboarding.review.placesSection')}</MonoLabel>
             <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textPrimary }}>{placesLine}</Text>

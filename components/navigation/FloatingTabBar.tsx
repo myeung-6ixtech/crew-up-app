@@ -36,6 +36,10 @@ const TAB_LABELS: Record<NavTab, string> = {
 
 export const NAV_PILL_HEIGHT = 64;
 
+
+/** Unread dot on a tab icon (including its 2px ground ring). */
+const UNREAD_DOT = 10.35;
+const UNREAD_DOT_CENTRE = { top: 11.5, right: 13.5 };
 function NavAvatar({ active }: { active: boolean }) {
   const theme = useTheme();
   const { profile } = useAuth();
@@ -183,11 +187,12 @@ export function NavPill({
                     pointerEvents="none"
                     style={{
                       position: 'absolute',
-                      top: 7,
-                      right: 9,
-                      width: 9,
-                      height: 9,
-                      borderRadius: 5,
+                      // 15% larger than the old 9px dot, with its centre kept at 11.5 from the top and 13.5 from the right.
+                      top: UNREAD_DOT_CENTRE.top - UNREAD_DOT / 2,
+                      right: UNREAD_DOT_CENTRE.right - UNREAD_DOT / 2,
+                      width: UNREAD_DOT,
+                      height: UNREAD_DOT,
+                      borderRadius: UNREAD_DOT / 2,
                       backgroundColor: theme.colors.fill,
                       borderWidth: 2,
                       borderColor: theme.colors.ground,

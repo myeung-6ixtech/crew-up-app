@@ -29,6 +29,10 @@ export const SCREENS = {
     rosterIntro: '/onboarding/roster-intro',
   },
   trips: '/trips',
+  /** Your trips opened on its Trips view (Home's Upcoming Trips count). */
+  tripsUpcoming: { pathname: '/trips', params: { view: 'trips' } } as const,
+  /** Your trips opened on its Layovers view (Home's Cities count). */
+  tripsLayovers: { pathname: '/trips', params: { view: 'layovers' } } as const,
   roster: {
     upload: '/roster/upload',
     confirm: '/roster/confirm',
@@ -64,6 +68,10 @@ export const SCREENS = {
   },
   friends: {
     add: '/friends/add',
+    /** Crew QR scanner. */
+    scan: '/friends/scan',
+    /** Add friend after a QR scan (or a crewup.app/c/… link). */
+    found: (crewId: string) => ({ pathname: '/friends/found/[crewId]' as const, params: { crewId } }),
   },
   profile: {
     edit: '/profile/edit',

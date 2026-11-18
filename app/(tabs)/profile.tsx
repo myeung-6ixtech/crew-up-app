@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { CrewAvatar, CircleButton, MenuGlyph, SmallPillButton } from '@/components/crew/kit';
 import { CrewIdDarkCard, useCrewIdActions } from '@/components/crew/CrewIdDarkCard';
+import { ScanFrameGlyph } from '@/components/crew/qrGlyphs';
 import { ProfileDetails } from '@/components/profile/ProfileDetails';
 import { AppIcon, Screen } from '@/components/ui';
 import { findAirportByIata } from '@/constants/airports';
@@ -16,6 +17,7 @@ import { AirlineLine, useAirlines } from '@/components/crew/airline';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { fetchActivityPreferences } from '@/services/activityService';
 import { fetchHomeData } from '@/services/presenceService';
+import { tripStats } from '@/lib/tripStats';
 import { fetchAirlines } from '@/services/profileService';
 import { fontFamily, useTheme } from '@/theme';
 import type { ActivityPreference } from '@/types/domain';
@@ -47,12 +49,8 @@ export default function ProfileTab() {
       fetchActivityPreferences(client, userId).catch(() => []),
       profile?.airline_id ? fetchAirlines(client).catch(() => []) : Promise.resolve([]),
     ]);
-    const trips = home.allTrips ?? [];
-    setStats({
-      trips: trips.length,
-      cities: new Set(trips.flatMap((trip) => trip.stays?.map((stay) => stay.city.toUpperCase()) ?? [])).size,
-      friends: home.connections?.length ?? 0,
-    });
+    const counts = tripStats(home.allTrips ?? []);
+    setStats({ trips: counts.upcoming, cities: counts.cities, friends: home.connections?.length ?? 0 });
     setPreferences(preferences);
     setAirlineName((airlines as { id: string; name: string }[]).find((row) => row.id === profile?.airline_id)?.name ?? null);
   }, [client, profile?.airline_id, userId]);
@@ -73,11 +71,19 @@ export default function ProfileTab() {
     .filter(Boolean)
     .join(' · ');
   const crewLine = [airlineName, roleBase].filter(Boolean).join(' · ');
+  // Home and hometown sit under the name here, so the details below skip PLACES.
+  const placesLine = [
+    profile?.residence_city ? t('onboarding.review.livesIn', { place: profile.residence_city }) : null,
+    profile?.hometown_city ? t('onboarding.review.from', { place: profile.hometown_city }) : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
   const showGenderIcon =
     profile?.own_show_gender !== false && (profile?.visible_gender === 'male' || profile?.visible_gender === 'female');
   const statItems = [
-    { key: 'trips', value: stats.trips, label: t('home.statsTrips'), onPress: () => router.push(SCREENS.trips) },
-    { key: 'cities', value: stats.cities, label: t('home.statsCities') },
+    // Same counts and taps as Home: upcoming trips, and the cities of upcoming layovers.
+    { key: 'trips', value: stats.trips, label: t('home.statsTrips'), onPress: () => router.push(SCREENS.tripsUpcoming) },
+    { key: 'cities', value: stats.cities, label: t('home.statsCities'), onPress: () => router.push(SCREENS.tripsLayovers) },
     { key: 'friends', value: stats.friends, label: t('tabs.friends'), onPress: () => router.navigate(SCREENS.tabs.friends) },
   ];
 
@@ -97,9 +103,14 @@ export default function ProfileTab() {
           style={{ flex: 1, fontFamily: fontFamily.jakartaBold, fontSize: 19, color: theme.colors.textPrimary }}>
           {profile?.username ? `@${profile.username}` : name}
         </Text>
-        <CircleButton accessibilityLabel={t('menu.open')} onPress={openMenu}>
-          <MenuGlyph color={theme.colors.textPrimary} />
-        </CircleButton>
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          <CircleButton accessibilityLabel={t('friends.scanCrewQr')} onPress={() => router.push(SCREENS.friends.scan)}>
+            <ScanFrameGlyph color={theme.colors.textPrimary} />
+          </CircleButton>
+          <CircleButton accessibilityLabel={t('menu.open')} onPress={openMenu}>
+            <MenuGlyph color={theme.colors.textPrimary} />
+          </CircleButton>
+        </View>
       </View>
       <ScrollView
         {...tabScroll}
@@ -122,9 +133,8 @@ export default function ProfileTab() {
             {statItems.map((item, index) => (
               <Pressable
                 key={item.key}
-                accessibilityRole={item.onPress ? 'button' : undefined}
+                accessibilityRole="button"
                 accessibilityLabel={`${item.value} ${item.label}`}
-                disabled={!item.onPress}
                 onPress={item.onPress}
                 style={{
                   flex: 1,
@@ -159,6 +169,9 @@ export default function ProfileTab() {
           ) : crewLine ? (
             <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textSecondary }}>{crewLine}</Text>
           ) : null}
+          {placesLine ? (
+            <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textSecondary }}>{placesLine}</Text>
+          ) : null}
         </View>
 
         <View style={{ flexDirection: 'row', gap: 8, marginTop: 14 }}>
@@ -170,7 +183,7 @@ export default function ProfileTab() {
           <CrewIdDarkCard friendId={profile?.friend_id} />
         </View>
 
-        {profile ? <ProfileDetails person={profile} airlineName={airlineName} preferences={preferences} expandable /> : null}
+        {profile ? <ProfileDetails person={profile} airlineName={airlineName} preferences={preferences} expandable showPlaces={false} /> : null}
       </ScrollView>
     </Screen>
   );

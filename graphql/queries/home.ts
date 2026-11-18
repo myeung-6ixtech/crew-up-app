@@ -1,8 +1,11 @@
 import { gql } from '@apollo/client';
 
-export const GET_HOME_DATA = gql`
-  query GetHomeData($userId: uuid!, $now: timestamptz!) {
-    upcomingTrips: user_trips(
+/** What's next shows this many trips, then loads the same number again as you scroll (infinite scroll). */
+export const UPCOMING_TRIPS_PAGE = 5;
+
+/** Trips still ahead (or under way), oldest first; `id` keeps the order stable across pages. */
+const UPCOMING_TRIPS = `
+    user_trips(
       where: {
         user_id: { _eq: $userId }
         is_active: { _eq: true }
@@ -11,8 +14,9 @@ export const GET_HOME_DATA = gql`
           { _and: [{ ends_at: { _is_null: true } }, { starts_at: { _gte: $now } }] }
         ]
       }
-      order_by: { starts_at: asc }
-      limit: 10
+      order_by: [{ starts_at: asc }, { id: asc }]
+      limit: $upcomingLimit
+      offset: $upcomingOffset
     ) {
       id
       title
@@ -34,6 +38,18 @@ export const GET_HOME_DATA = gql`
         ends_at
       }
     }
+`;
+
+export const GET_UPCOMING_TRIPS = gql`
+  query GetUpcomingTrips($userId: uuid!, $now: timestamptz!, $upcomingLimit: Int!, $upcomingOffset: Int!) {
+    upcomingTrips: ${UPCOMING_TRIPS}
+  }
+`;
+
+export const GET_HOME_DATA = gql`
+  query GetHomeData($userId: uuid!, $now: timestamptz!, $upcomingLimit: Int!, $upcomingOffset: Int!) {
+    upcomingTrips: ${UPCOMING_TRIPS}
+    # Home stats: upcoming trips and the cities of upcoming layovers (worked out the same way as Your trips › Layovers).
     allTrips: user_trips(
       where: { user_id: { _eq: $userId }, is_active: { _eq: true } }
       order_by: { starts_at: asc_nulls_last }
@@ -41,8 +57,22 @@ export const GET_HOME_DATA = gql`
       id
       starts_at
       ends_at
-      stays {
+      flightLegs(order_by: { sequence_number: asc }, limit: 1) {
+        id
+        flight {
+          flight_number
+          departure_airport
+          arrival_airport
+          scheduled_departure
+          scheduled_arrival
+        }
+      }
+      stays(order_by: { starts_at: asc }) {
+        id
         city
+        airport_iata
+        starts_at
+        ends_at
       }
     }
     tripMatches: trip_matches(

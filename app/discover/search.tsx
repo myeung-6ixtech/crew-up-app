@@ -6,7 +6,7 @@ import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { PushedTopBar } from '@/components/crew/kit';
 import { openMatchProfile } from '@/components/discover/DiscoverEmpty';
 import { MatchCard } from '@/components/discover/MatchCard';
-import { MyAirlineCard, airlineCounts } from '@/components/discover/MyAirlineCard';
+import { MyAirlineCard } from '@/components/discover/MyAirlineCard';
 import { useAirlines } from '@/components/crew/airline';
 import { useAuth } from '@/hooks/useSession';
 import {
@@ -190,9 +190,8 @@ export default function SearchLayoversScreen() {
             {myAirline ? (
               <MyAirlineCard
                 airline={myAirline}
-                {...airlineCounts(results, profile?.airline_id)}
                 active={airlineOnly}
-                onToggle={() => setAirlineOnly((value) => !value)}
+                onToggle={setAirlineOnly}
               />
             ) : null}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 14 }}>

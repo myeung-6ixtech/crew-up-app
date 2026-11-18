@@ -20,6 +20,7 @@
     "expo": "~57.0.32",
     "expo-apple-authentication": "~57.0.2",
     "expo-blur": "~57.0.3",
+    "expo-camera": "~57.0.6",
     "expo-clipboard": "~57.0.2",
     "expo-constants": "~57.0.8",
     "expo-crypto": "~57.0.4",
@@ -50,6 +51,7 @@
     "react-i18next": "^17.0.11",
     "react-native": "0.86.3",
     "react-native-gesture-handler": "~2.32.0",
+    "react-native-qrcode-svg": "^6.3.54",
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
@@ -75,7 +77,9 @@
     "test:timezone": "node --experimental-strip-types --test scripts/timezone.test.mjs",
     "licenses": "node scripts/generate-licenses.mjs",
     "icons:activities": "node scripts/generate-activity-icons.mjs",
-    "test:roster-read": "node --experimental-strip-types --test scripts/roster-read.test.mjs"
+    "test:roster-read": "node --experimental-strip-types --test scripts/roster-read.test.mjs",
+    "test:layovers": "node --experimental-strip-types --test scripts/layovers.test.mjs",
+    "test:crew-link": "node --experimental-strip-types --test scripts/crew-link.test.mjs"
   },
   "private": true
 }

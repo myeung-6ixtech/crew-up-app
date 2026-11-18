@@ -4,6 +4,7 @@ import {
   Dimensions,
   Keyboard,
   Modal,
+  PanResponder,
   Platform,
   Pressable,
   ScrollView,
@@ -48,6 +49,22 @@ export function BottomSheet({
   const [modalVisible, setModalVisible] = useState(visible);
   const scrimOpacity = useRef(new Animated.Value(0)).current;
   const sheetTranslateY = useRef(new Animated.Value(SHEET_OFFSCREEN_Y)).current;
+  // Swipe down on the grabber to close; a short drag springs back.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+  const pan = useRef(
+    PanResponder.create({
+      // The grab zone owns its touches, so a drag that starts there always moves the sheet.
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, gesture) => gesture.dy > 4 && Math.abs(gesture.dy) > Math.abs(gesture.dx),
+      onPanResponderMove: (_, gesture) => sheetTranslateY.setValue(Math.max(0, gesture.dy)),
+      onPanResponderRelease: (_, gesture) => {
+        if (gesture.dy > 90 || gesture.vy > 0.9) onCloseRef.current();
+        else Animated.spring(sheetTranslateY, { toValue: 0, useNativeDriver: true, bounciness: 4 }).start();
+      },
+      onPanResponderTerminate: () => Animated.spring(sheetTranslateY, { toValue: 0, useNativeDriver: true }).start(),
+    }),
+  ).current;
   const onDismissedRef = useRef(onDismissed);
   const presentedRef = useRef(false);
   const notifiedRef = useRef(false);
@@ -192,7 +209,9 @@ export function BottomSheet({
               scrollable ? { maxHeight: availableHeight } : { height: sheetHeight },
               { transform: [{ translateY: sheetTranslateY }] },
             ]}>
-            <View style={styles.handle} accessibilityElementsHidden />
+            <View {...pan.panHandlers} style={{ height: 30, marginBottom: -18, zIndex: 1 }} accessibilityElementsHidden>
+              <View style={styles.handle} />
+            </View>
             {scrollable ? (
               <ScrollView
                 keyboardShouldPersistTaps="handled"

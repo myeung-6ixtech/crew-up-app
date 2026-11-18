@@ -1,83 +1,168 @@
-import { useEffect, useRef } from 'react';
-import { AccessibilityInfo, Animated, Easing, Image, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { AccessibilityInfo, Animated, Easing, Image, Platform, Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
+import { useTranslation } from 'react-i18next';
+import { fontFamily } from '@/theme';
 
 const INK = '#0E1113';
+const TRAY = '#080A0B';
+const TILE = '#1C2124';
+const TILE_TOP = '#22282B';
+const HINGE = '#0A0C0D';
 const LIME = '#A8E05F';
+const FLICKER = 'rgba(237,241,242,0.75)';
 
 /**
- * Launch splash — design/…/CrewUp - Add Trip Flow.dc.html, 00 Splash. Dark ground and the lime wordmark, the
- * same as the sign-up entry screen. It matches the native splash, so the hand-off is invisible; then the logo
- * beats and three lime dots bounce until the session resolves and the guard routes on.
+ * Wordmark size, matching the native splash (app.json → expo-splash-screen). Android 12+ crops the splash icon to a
+ * 192dp circle, so a 210dp-wide wordmark loses its ends there; 180dp (about 52dp tall) fits inside it.
+ */
+const LOGO_WIDTH = Platform.OS === 'android' ? 180 : 210;
+const LOGO_HEIGHT = Math.round((LOGO_WIDTH * 60) / 210);
+
+/** The board's words and timing. Words are centred and padded to TILE_COUNT. */
+export const SPLASH_BOARD = {
+  words: ['WELCOME', 'BOARDING', 'CREW UP'],
+  tileCount: 8,
+  /** One word, flicker to settled to the hold before the next. */
+  wordMs: 3_200,
+  /** Random characters change this often while a tile flickers. */
+  flickerMs: 70,
+  /** The first tile settles this long into a word… */
+  settleStartMs: 250,
+  /** …then one more tile every this many ms, left to right. */
+  settleStepMs: 110,
+} as const;
+
+const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+const randomChar = () => CHARS[Math.floor(Math.random() * CHARS.length)];
+
+/** "CREW UP" → " CREW UP" style centring inside the tile row. */
+export function padWord(word: string, count: number = SPLASH_BOARD.tileCount) {
+  const text = word.toUpperCase().slice(0, count);
+  const left = Math.floor((count - text.length) / 2);
+  return text.padStart(left + text.length, ' ').padEnd(count, ' ');
+}
+
+/**
+ * The board runs on one clock shared across mounts: the splash remounts as fonts, the session and routing resolve,
+ * and the board should carry on rather than restart.
+ */
+let boardEpoch = 0;
+
+type Tile = { char: string; settled: boolean };
+
+function boardAt(elapsedMs: number): Tile[] {
+  const { words, tileCount, wordMs, settleStartMs, settleStepMs } = SPLASH_BOARD;
+  const target = padWord(words[Math.floor(elapsedMs / wordMs) % words.length]);
+  const inWord = elapsedMs % wordMs;
+  return Array.from({ length: tileCount }, (_, index) =>
+    inWord >= settleStartMs + index * settleStepMs ? { char: target[index], settled: true } : { char: randomChar(), settled: false },
+  );
+}
+
+function FlapTile({ tile }: { tile: Tile }) {
+  return (
+    <View style={{ width: 30, height: 42, borderRadius: 5, backgroundColor: TILE, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+      {/* Lighter top flap and the hinge across the middle. */}
+      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 21, backgroundColor: TILE_TOP }} />
+      <Text
+        allowFontScaling={false}
+        style={{
+          fontFamily: fontFamily.monoMedium,
+          fontSize: 22,
+          color: tile.settled ? LIME : FLICKER,
+          // A mid-flip flap reads slightly squashed.
+          transform: [{ scaleY: tile.settled ? 1 : 0.86 }],
+        }}>
+        {tile.char === ' ' ? '' : tile.char}
+      </Text>
+      <View style={{ position: 'absolute', top: 20.5, left: 0, right: 0, height: 1, backgroundColor: HINGE }} />
+    </View>
+  );
+}
+
+function PulseDot({ still }: { still: boolean }) {
+  const pulse = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    if (still) return;
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, { toValue: 0.3, duration: 600, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(pulse, { toValue: 1, duration: 600, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [pulse, still]);
+  return <Animated.View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: LIME, opacity: pulse }} />;
+}
+
+/**
+ * Launch splash — Add Trip Flow, frame 4A. The lime wordmark sits where the native splash draws it, so the hand-off is
+ * invisible; below it a split-flap departure board cycles WELCOME → BOARDING → CREW UP until the session resolves and
+ * the guard routes on. The parent unmounts it the moment loading ends, mid-word if need be. Reduce Motion shows the
+ * settled word without flicker.
  */
 export function AppSplash() {
-  const beat = useRef(new Animated.Value(1)).current;
-  const dots = useRef([0, 1, 2].map(() => new Animated.Value(0))).current;
+  const { t } = useTranslation();
+  const [reduceMotion, setReduceMotion] = useState<boolean | null>(null);
+  const [tiles, setTiles] = useState<Tile[]>(() => padWord(SPLASH_BOARD.words[0]).split('').map((char) => ({ char, settled: true })));
 
   useEffect(() => {
-    let loops: Animated.CompositeAnimation[] = [];
-    let cancelled = false;
+    let active = true;
     void AccessibilityInfo.isReduceMotionEnabled().then((reduce) => {
-      if (cancelled || reduce) return;
-      // Two quick beats then a rest, like the design's cuHeartbeat (1.4s).
-      const heartbeat = Animated.loop(
-        Animated.sequence([
-          Animated.timing(beat, { toValue: 1.08, duration: 196, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-          Animated.timing(beat, { toValue: 1, duration: 196, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-          Animated.timing(beat, { toValue: 1.05, duration: 196, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-          Animated.timing(beat, { toValue: 1, duration: 392, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-          Animated.delay(420),
-        ]),
-      );
-      // cuBounce: up 12px at 40% of 1.2s, staggered 160ms.
-      const bounces = dots.map((dot, index) =>
-        Animated.sequence([
-          Animated.delay(index * 160),
-          Animated.loop(
-            Animated.sequence([
-              Animated.timing(dot, { toValue: 1, duration: 480, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-              Animated.timing(dot, { toValue: 0, duration: 480, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-              Animated.delay(240),
-            ]),
-          ),
-        ]),
-      );
-      loops = [heartbeat, ...bounces];
-      loops.forEach((loop) => loop.start());
+      if (active) setReduceMotion(reduce);
     });
+    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
     return () => {
-      cancelled = true;
-      loops.forEach((loop) => loop.stop());
+      active = false;
+      subscription.remove();
     };
-  }, [beat, dots]);
+  }, []);
+
+  useEffect(() => {
+    if (reduceMotion !== false) return;
+    if (!boardEpoch) boardEpoch = Date.now();
+    const tick = () => setTiles(boardAt(Date.now() - boardEpoch));
+    tick();
+    const timer = setInterval(tick, SPLASH_BOARD.flickerMs);
+    return () => clearInterval(timer);
+  }, [reduceMotion]);
 
   return (
-    <View
-      accessibilityRole="progressbar"
-      accessibilityLabel="CrewUp, loading"
-      onLayout={() => void SplashScreen.hideAsync()}
-      style={{ flex: 1, backgroundColor: INK, alignItems: 'center', justifyContent: 'center' }}>
+    <View onLayout={() => void SplashScreen.hideAsync()} style={{ flex: 1, backgroundColor: INK, alignItems: 'center', justifyContent: 'center' }}>
       <StatusBar style="light" />
-      {/* Logo dead centre, where the native splash draws it; the dots hang below without moving it. */}
+      {/* Logo dead centre; the board hangs below without moving it. */}
       <View style={{ alignItems: 'center' }}>
-        <Animated.View style={{ transform: [{ scale: beat }] }}>
-          <Image source={require('@/assets/logos/crewup-wordmark-lime-2400.png')} resizeMode="contain" style={{ width: 210, height: 60 }} />
-        </Animated.View>
-        <View style={{ position: 'absolute', top: 60 + 36, flexDirection: 'row', gap: 10, height: 28, alignItems: 'flex-end' }}>
-          {dots.map((dot, index) => (
-            <Animated.View
-              key={index}
-              style={{
-                width: 12,
-                height: 12,
-                borderRadius: 6,
-                backgroundColor: LIME,
-                opacity: dot.interpolate({ inputRange: [0, 1], outputRange: [0.55, 1] }),
-                transform: [{ translateY: dot.interpolate({ inputRange: [0, 1], outputRange: [0, -12] }) }],
-              }}
-            />
-          ))}
+        <Image
+          accessibilityIgnoresInvertColors
+          accessible
+          accessibilityLabel="CrewUp"
+          source={require('@/assets/logos/crewup-wordmark-lime-2400.png')}
+          resizeMode="contain"
+          style={{ width: LOGO_WIDTH, height: LOGO_HEIGHT }}
+        />
+        <View style={{ position: 'absolute', top: LOGO_HEIGHT + 32, alignItems: 'center', gap: 16 }}>
+          <View
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+            style={{ flexDirection: 'row', gap: 4, padding: 10, borderRadius: 12, backgroundColor: TRAY }}>
+            {tiles.map((tile, index) => (
+              <FlapTile key={index} tile={tile} />
+            ))}
+          </View>
+          <View
+            accessible
+            accessibilityRole="progressbar"
+            accessibilityLabel={t('splash.loading')}
+            accessibilityLiveRegion="polite"
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <PulseDot still={reduceMotion !== false} />
+            <Text allowFontScaling={false} style={{ fontFamily: fontFamily.monoMedium, fontSize: 10.5, letterSpacing: 1.2, color: 'rgba(237,241,242,0.6)' }}>
+              {t('splash.loadingTrips')}
+            </Text>
+          </View>
         </View>
       </View>
     </View>

@@ -18,6 +18,10 @@ import {
 export type FriendProfilePreview = {
   user_id: string;
   display_name: string;
+  preferred_name?: string | null;
+  crew_role?: string | null;
+  airline_id?: string | null;
+  base_airport_iata?: string | null;
   role_type?: string | null;
   base_airport?: string | null;
   avatar_file_id?: string | null;
@@ -66,7 +70,15 @@ export async function fetchMyFriendId(client: ApolloClient, userId: string): Pro
   return (data as { profiles_by_pk?: { friend_id?: string | null } | null })?.profiles_by_pk?.friend_id ?? null;
 }
 
+/** How you stand with the person behind a Crew ID (from the lookup). */
+export type CrewRelationship = 'self' | 'none' | 'friends' | 'pending_sent' | 'pending_received';
+
 export async function lookupByFriendId(friendId: string): Promise<FriendProfilePreview> {
+  return (await lookupCrewCode(friendId)).profile;
+}
+
+/** A Crew ID lookup with your relationship to them. A block either way throws BLOCKED; no match throws NOT_FOUND. */
+export async function lookupCrewCode(friendId: string): Promise<{ profile: FriendProfilePreview; relationship: CrewRelationship }> {
   const headers = await authHeaders();
   const response = await fetch(`${apiEndpoints.functions}/client/friends/lookup`, {
     method: 'POST',
@@ -76,6 +88,7 @@ export async function lookupByFriendId(friendId: string): Promise<FriendProfileP
 
   const payload = (await response.json()) as {
     profile?: FriendProfilePreview;
+    relationship?: CrewRelationship;
     error?: { code?: string; message?: string };
     message?: string;
   };
@@ -88,7 +101,8 @@ export async function lookupByFriendId(friendId: string): Promise<FriendProfileP
     throw new ConnectionRequestError('NOT_FOUND', 'No crew member found with that Crew ID');
   }
 
-  return payload.profile;
+  // Older function builds don't send a relationship; Add friend then starts from "none" and the request settles it.
+  return { profile: payload.profile, relationship: payload.relationship ?? 'none' };
 }
 
 async function postConnectionRequest(body: {

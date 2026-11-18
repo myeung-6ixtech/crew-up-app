@@ -2,7 +2,7 @@ import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { findAirportByIata } from '@/constants/airports';
 import { TextAction } from '@/features/onboarding/components/kit';
-import { airportDayOffset, formatAirportDate, formatAirportTimeWithZone } from '@/lib/airportTime';
+import { airportDateKey, airportDayOffset, formatAirportDate, formatAirportTime, formatAirportTimeWithZone } from '@/lib/airportTime';
 import { fontFamily, shouldUppercaseLabels, useTheme } from '@/theme';
 import { tripFlight, tripRouteLabel, type TripEntry } from '@/types/trip';
 
@@ -27,17 +27,47 @@ function Clock({ iso, code }: { iso: string; code: string | null }) {
   );
 }
 
-/** A saved trip: flight and route with a status dot, local times with zones, then the free window. */
+/** "Free until 2:30 PM" plus the weekday when the free time ends on a later local day than it began. */
+function freeUntilLabel(stay: NonNullable<TripEntry['stays']>[number], always = false) {
+  const code = stay.airport_iata ?? null;
+  const time = formatAirportTime(stay.ends_at, code);
+  const sameDay = airportDateKey(stay.starts_at, code) === airportDateKey(stay.ends_at, code);
+  return always || !sameDay ? `${time} ${formatAirportDate(stay.ends_at, code, { weekday: 'short' })}` : time;
+}
+
+/** "Flight EK318, Dubai to Tokyo, Wednesday 14 October, departs 2:55 AM, arrives 5:35 PM" for screen readers. */
+function tripSpokenLabel(trip: TripEntry, t: (key: string, options?: Record<string, unknown>) => string) {
+  const flight = tripFlight(trip);
+  const stay = trip.stays?.[0];
+  if (!flight) return stay ? stayCity(stay) : tripRouteLabel(trip);
+  const from = findAirportByIata(flight.departure_airport)?.city ?? flight.departure_airport;
+  const to = findAirportByIata(flight.arrival_airport)?.city ?? flight.arrival_airport;
+  return t('trips.flightA11y', {
+    flight: flight.flight_number,
+    from,
+    to,
+    date: formatAirportDate(flight.scheduled_departure, flight.departure_airport, { weekday: 'long', day: 'numeric', month: 'long' }),
+    departs: formatAirportTime(flight.scheduled_departure, flight.departure_airport),
+    arrives: formatAirportTime(flight.scheduled_arrival, flight.arrival_airport),
+  });
+}
+
+/**
+ * A saved trip: flight and route with a status dot, local times with zones, then the free window.
+ * `past` dims it, greys the dot and reads "Was free until …"; past trips can't be removed.
+ */
 export function TripCard({
   trip,
   matchCount,
   onPress,
   onRemove,
+  past = false,
 }: {
   trip: TripEntry;
   matchCount?: number;
   onPress?: () => void;
   onRemove?: () => void;
+  past?: boolean;
 }) {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -50,12 +80,27 @@ export function TripCard({
   const dayOffset = flight
     ? airportDayOffset(flight.scheduled_departure, flight.departure_airport, flight.scheduled_arrival, flight.arrival_airport)
     : 0;
+  const removeColor = theme.mode === 'dark' ? '#FF7A66' : '#B23A26';
+  const spoken = tripSpokenLabel(trip, t);
 
   const body = (
-    <View style={{ backgroundColor: theme.colors.card, borderRadius: 20, paddingVertical: 16, paddingHorizontal: 18, gap: 12 }}>
+    <View
+      accessible={!onPress && !onRemove}
+      accessibilityLabel={!onPress && !onRemove ? spoken : undefined}
+      style={{ backgroundColor: theme.colors.card, borderRadius: 20, paddingVertical: 16, paddingHorizontal: 18, gap: 12, opacity: past ? 0.62 : 1 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexShrink: 1 }}>
-          <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: theme.colors.fill, borderWidth: 3, borderColor: theme.colors.accentSubtle, padding: 0 }} />
+          <View
+            style={{
+              width: 9,
+              height: 9,
+              borderRadius: 5,
+              backgroundColor: past ? theme.colors.textTertiary : theme.colors.fill,
+              borderWidth: 3,
+              borderColor: past ? theme.colors.field : theme.colors.accentSubtle,
+              padding: 0,
+            }}
+          />
           <Text numberOfLines={1} style={{ flexShrink: 1, fontFamily: fontFamily.jakartaBold, fontSize: 16, color: theme.colors.textPrimary }}>
             {title}
           </Text>
@@ -82,7 +127,7 @@ export function TripCard({
           ) : null}
         </View>
       ) : null}
-      {stay || onRemove ? (
+      {stay || (onRemove && !past) ? (
         <View
           style={{
             flexDirection: 'row',
@@ -94,17 +139,18 @@ export function TripCard({
             paddingTop: flight ? 12 : 0,
           }}>
           {stay ? (
-            <Text numberOfLines={1} style={{ flexShrink: 1, fontFamily: fontFamily.interMedium, fontSize: 13, color: theme.colors.accentText }}>
-              {t('trips.freeUntilIn', {
-                time: formatAirportTimeWithZone(stay.ends_at, stay.airport_iata ?? null).split(' ')[0],
-                city: stayCity(stay),
-              })}
+            <Text
+              numberOfLines={1}
+              style={{ flexShrink: 1, fontFamily: fontFamily.interMedium, fontSize: 13, color: past ? theme.colors.textSecondary : theme.colors.accentText }}>
+              {past
+                ? t('trips.wasFreeUntilIn', { time: freeUntilLabel(stay, true), city: stayCity(stay) })
+                : t('trips.freeUntilIn', { time: freeUntilLabel(stay), city: stayCity(stay) })}
             </Text>
           ) : (
             <View />
           )}
-          {onRemove ? (
-            <TextAction label={t('trips.removeTrip')} onPress={onRemove} style={{ fontSize: 12.5, color: theme.colors.textSecondary }} />
+          {onRemove && !past ? (
+            <TextAction label={t('trips.removeTrip')} onPress={onRemove} style={{ fontSize: 12.5, color: removeColor }} />
           ) : matchCount !== undefined ? (
             <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, color: theme.colors.textSecondary }}>
               {matchCount ? t('trips.matchCount', { count: matchCount }) : t('trips.findingMatches')}
@@ -117,7 +163,7 @@ export function TripCard({
 
   if (!onPress) return body;
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress} style={({ pressed }) => ({ opacity: pressed ? 0.88 : 1 })}>
+    <Pressable accessibilityRole="button" accessibilityLabel={spoken} onPress={onPress} style={({ pressed }) => ({ opacity: pressed ? 0.88 : 1 })}>
       {body}
     </Pressable>
   );

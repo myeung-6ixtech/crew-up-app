@@ -51,7 +51,10 @@
             ]
           }
         ]
-      }
+      },
+      "associatedDomains": [
+        "applinks:crewup.app"
+      ]
     },
     "android": {
       "package": "com.the6ixtech.crewup",
@@ -69,6 +72,23 @@
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_BACKGROUND_LOCATION"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "crewup.app",
+              "pathPrefix": "/c/"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
       ]
     },
     "web": {
@@ -84,7 +104,10 @@
           "image": "./assets/images/splash-wordmark-lime.png",
           "resizeMode": "contain",
           "backgroundColor": "#0E1113",
-          "imageWidth": 210
+          "imageWidth": 210,
+          "android": {
+            "imageWidth": 180
+          }
         }
       ],
       "@react-native-community/datetimepicker",
@@ -106,8 +129,16 @@
         "expo-image-picker",
         {
           "photosPermission": "CrewUp uses your photos so you can choose a profile picture or import a screenshot of your roster.",
-          "cameraPermission": "CrewUp uses the camera so you can take a profile picture.",
+          "cameraPermission": "CrewUp uses the camera to take a profile picture and to scan Crew QR codes. Nothing is recorded or saved without you.",
           "microphonePermission": false
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "CrewUp uses the camera to take a profile picture and to scan Crew QR codes. Nothing is recorded or saved without you.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
         }
       ]
     ],

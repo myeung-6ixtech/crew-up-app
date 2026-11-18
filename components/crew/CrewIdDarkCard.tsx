@@ -1,8 +1,13 @@
 import { useCallback, useState } from 'react';
-import { Pressable, Share, Text, View } from 'react-native';
+import { AccessibilityInfo, Pressable, Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { CrewQrSheet } from '@/components/crew/CrewQrSheet';
+import { CheckGlyph as SmallCheck, CopyGlyph, QrGlyph } from '@/components/crew/qrGlyphs';
+import { SCREENS } from '@/constants/screens';
 import { copyToClipboard } from '@/lib/clipboard';
+import { shareCrewLink } from '@/lib/shareCrewLink';
 import { formatFriendId } from '@/lib/friendId';
 import { hapticSelection, hapticSuccess } from '@/lib/haptics';
 import { fontFamily } from '@/theme';
@@ -23,24 +28,18 @@ export function useCrewIdActions(friendId: string | null | undefined) {
     await copyToClipboard(code);
     hapticSuccess();
     setCopied(true);
+    AccessibilityInfo.announceForAccessibility(t('friends.crewIdCopied'));
     setTimeout(() => setCopied(false), 1800);
-  }, [code]);
-
-  const share = useCallback(async () => {
-    if (!code) return;
-    hapticSelection();
-    await Share.share({ message: t('friends.shareCrewIdMessage', { crewId: code }) });
   }, [code, t]);
 
-  return { code, copied, copy, share };
-}
+  // Shares the Crew ID with the CrewUp link that opens Add friend.
+  const share = useCallback(async () => {
+    if (!code || !friendId) return;
+    hapticSelection();
+    await shareCrewLink(friendId, t);
+  }, [code, friendId, t]);
 
-function CheckGlyph() {
-  return (
-    <Svg width={12} height={10} viewBox="0 0 10 8">
-      <Path d="M1 4l2.8 2.8L9 1.2" stroke={INK} strokeWidth={2} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
-  );
+  return { code, copied, copy, share };
 }
 
 function ShareGlyph() {
@@ -51,11 +50,23 @@ function ShareGlyph() {
   );
 }
 
-function Chip({ label, onPress, tone, icon }: { label: string; onPress: () => void; tone: 'lime' | 'pale'; icon?: React.ReactNode }) {
+function Chip({
+  label,
+  onPress,
+  tone,
+  icon,
+  accessibilityLabel,
+}: {
+  label: string;
+  onPress: () => void;
+  tone: 'lime' | 'pale';
+  icon?: React.ReactNode;
+  accessibilityLabel?: string;
+}) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={label}
+      accessibilityLabel={accessibilityLabel ?? label}
       onPress={onPress}
       style={({ pressed }) => ({
         height: 32,
@@ -73,10 +84,15 @@ function Chip({ label, onPress, tone, icon }: { label: string; onPress: () => vo
   );
 }
 
-/** Dark Crew ID card: the code in lime mono, Copy (icon flips to a check) and Share. */
+/**
+ * Dark Crew ID card: QR (opens "Your Crew QR") and Share, then the code in lime mono with a round copy button beside
+ * it (flips to a check and announces "Crew ID copied").
+ */
 export function CrewIdDarkCard({ friendId }: { friendId: string | null | undefined }) {
   const { t } = useTranslation();
+  const router = useRouter();
   const { code, copied, copy, share } = useCrewIdActions(friendId);
+  const [qrOpen, setQrOpen] = useState(false);
   if (!code) return null;
   return (
     <View style={{ backgroundColor: INK, borderRadius: 20, paddingVertical: 16, paddingHorizontal: 18, gap: 10 }}>
@@ -85,17 +101,48 @@ export function CrewIdDarkCard({ friendId }: { friendId: string | null | undefin
         <View style={{ flexDirection: 'row', gap: 8 }}>
           <Chip
             tone="lime"
-            label={copied ? t('friends.copiedCrewId') : t('friends.copyCrewId')}
-            icon={copied ? <CheckGlyph /> : undefined}
-            onPress={() => void copy()}
+            label={t('friends.qr')}
+            accessibilityLabel={t('friends.showMyQr')}
+            icon={<QrGlyph color={INK} />}
+            onPress={() => {
+              hapticSelection();
+              setQrOpen(true);
+            }}
           />
           <Chip tone="pale" label={t('friends.shareCrewId')} icon={<ShareGlyph />} onPress={() => void share()} />
         </View>
       </View>
-      <Text selectable style={{ fontFamily: fontFamily.monoMedium, fontSize: 22, letterSpacing: 1.3, color: LIME }}>
-        {code}
-      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <Text selectable style={{ flexShrink: 1, fontFamily: fontFamily.monoMedium, fontSize: 22, letterSpacing: 1.3, color: LIME }}>
+          {code}
+        </Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={copied ? t('friends.crewIdCopied') : t('friends.copyCrewId')}
+          onPress={() => void copy()}
+          hitSlop={6}
+          style={({ pressed }) => ({
+            width: 32,
+            height: 32,
+            borderRadius: 16,
+            backgroundColor: copied ? LIME : 'rgba(237,241,242,0.12)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            opacity: pressed ? 0.75 : 1,
+          })}>
+          {copied ? <SmallCheck color={INK} size={12} /> : <CopyGlyph color={PALE} />}
+        </Pressable>
+      </View>
       <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, lineHeight: 18, color: MUTED }}>{t('friends.crewIdHint')}</Text>
+      <CrewQrSheet
+        visible={qrOpen}
+        onClose={() => setQrOpen(false)}
+        onScan={() => {
+          // Open the camera once the sheet has slid away.
+          setQrOpen(false);
+          setTimeout(() => router.push(SCREENS.friends.scan), 320);
+        }}
+      />
     </View>
   );
 }

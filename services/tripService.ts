@@ -138,7 +138,9 @@ export async function fetchMyTrips(
   };
 }
 
-export const TRIP_HISTORY_LIMIT = 20;
+/** Rosters are about a month ahead, so 50 upcoming trips covers a full schedule (and every layover in the total). */
+export const UPCOMING_TRIPS_LIMIT = 50;
+export const PAST_TRIPS_LIMIT = 20;
 
 export async function fetchTripHistory(
   client: ApolloClient,
@@ -146,7 +148,7 @@ export async function fetchTripHistory(
 ): Promise<{ upcoming: TripEntry[]; past: TripEntry[] }> {
   const { data } = await client.query({
     query: GET_TRIP_HISTORY,
-    variables: { userId, now: new Date().toISOString(), limit: TRIP_HISTORY_LIMIT },
+    variables: { userId, now: new Date().toISOString(), upcomingLimit: UPCOMING_TRIPS_LIMIT, pastLimit: PAST_TRIPS_LIMIT },
     fetchPolicy: 'network-only',
   });
   const result = data as { upcomingTrips?: TripEntry[]; pastTrips?: TripEntry[] };

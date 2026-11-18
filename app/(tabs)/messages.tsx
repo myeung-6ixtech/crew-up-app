@@ -240,7 +240,7 @@ export default function MessagesTab() {
               const unread = userId ? isThreadUnread(row, userId) : false;
               const preview =
                 last?.kind === 'wave'
-                  ? waveCaption(last.meta, { mine: last.sender_id === userId, inbox: true }, t)
+                  ? waveCaption(last.meta, { mine: last.sender_id === userId, name: title.split(' ')[0], inbox: true }, t)
                   : last?.body
                     ? last.sender_id === userId
                       ? `${t('messages.you')}: ${last.body}`

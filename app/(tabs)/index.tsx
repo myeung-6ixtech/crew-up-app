@@ -1,18 +1,21 @@
-import { useCallback, useMemo, useState } from 'react';
-import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { Pressable, RefreshControl, ScrollView, Text, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { CircleButton, CrewAvatar, MenuGlyph, RowChevron } from '@/components/crew/kit';
 import { DiscoverEmpty, openMatchProfile } from '@/components/discover/DiscoverEmpty';
 import { MatchCard } from '@/components/discover/MatchCard';
-import { MyAirlineCard, airlineCounts } from '@/components/discover/MyAirlineCard';
+import { MyAirlineCard, onlyAirline } from '@/components/discover/MyAirlineCard';
+import { MatchCardSkeleton } from '@/components/discover/MatchCardSkeleton';
+import { useAirlineOnlyPreference } from '@/hooks/useAirlineOnlyPreference';
 import { useAirlines } from '@/components/crew/airline';
 import { isCurrent } from '@/components/discover/matches';
 import { useWave } from '@/components/discover/useWave';
 import { PlaneGlyph } from '@/components/roster/flowKit';
 import { NoTripsCard, TripCard } from '@/components/roster/TripCard';
-import { Screen, Toast } from '@/components/ui';
+import { tripStats } from '@/lib/tripStats';
+import { Screen, Skeleton, Toast } from '@/components/ui';
 import { SCREENS } from '@/constants/screens';
 import { useAppMenu } from '@/contexts/AppMenuContext';
 import { MonoLabel, SearchGlyph } from '@/features/onboarding/components/kit';
@@ -22,7 +25,8 @@ import { useAuth } from '@/hooks/useSession';
 import { useTabBarScroll } from '@/hooks/useTabBarScroll';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticSelection } from '@/lib/haptics';
-import { fetchHomeData } from '@/services/presenceService';
+import { UPCOMING_TRIPS_PAGE } from '@/graphql/queries/home';
+import { fetchHomeData, fetchUpcomingTrips } from '@/services/presenceService';
 import { dedupeTripMatches } from '@/services/tripService';
 import { fontFamily, useTheme } from '@/theme';
 import type { TripEntry, TripMatchEntry } from '@/types/trip';
@@ -97,12 +101,30 @@ export default function HomeScreen() {
   const [tab, setTab] = useState<HomeTab>('next');
   const { isWaved, waving, wave } = useWave(setToast);
   const airlines = useAirlines();
-  const [airlineOnly, setAirlineOnly] = useState(false);
+  const [airlineOnly, setAirlineOnly] = useAirlineOnlyPreference(userId);
   const tabScroll = useTabBarScroll({ contentContainerStyle: { paddingHorizontal: 24 } });
+
+  // What's next: 5 trips, then 5 more each time you scroll near the end (while the server has more).
+  const [moreTrips, setMoreTrips] = useState<TripEntry[]>([]);
+  const [hasMoreTrips, setHasMoreTrips] = useState(false);
+  const [loadingMoreTrips, setLoadingMoreTrips] = useState(false);
+  const nowRef = useRef('');
+  const shownTripsRef = useRef(UPCOMING_TRIPS_PAGE);
+  const pagingRef = useRef(false);
+  const loadRef = useRef(0);
 
   const load = useCallback(async () => {
     if (!userId) return;
-    setData((await fetchHomeData(client, userId)) as HomeData);
+    const run = ++loadRef.current;
+    const now = new Date().toISOString();
+    // A refresh (or coming back to the tab) keeps as many trips as were already showing.
+    const limit = Math.max(UPCOMING_TRIPS_PAGE, Math.ceil(shownTripsRef.current / UPCOMING_TRIPS_PAGE) * UPCOMING_TRIPS_PAGE);
+    const next = (await fetchHomeData(client, userId, now, limit)) as HomeData;
+    if (run !== loadRef.current) return;
+    nowRef.current = now;
+    setData(next);
+    setMoreTrips([]);
+    setHasMoreTrips((next.upcomingTrips?.length ?? 0) >= limit);
   }, [client, userId]);
 
   useFocusEffect(
@@ -111,13 +133,44 @@ export default function HomeScreen() {
     }, [load]),
   );
 
-  const matches = useMemo(
-    () => dedupeTripMatches((data?.tripMatches ?? []).filter((match) => isCurrent(match))).slice(0, MAX_MATCHES),
-    [data?.tripMatches],
-  );
+  const upcomingTrips = useMemo(() => {
+    const seen = new Set<string>();
+    return [...(data?.upcomingTrips ?? []), ...moreTrips].filter((trip) => (seen.has(trip.id) ? false : (seen.add(trip.id), true)));
+  }, [data?.upcomingTrips, moreTrips]);
+  shownTripsRef.current = upcomingTrips.length;
+
+  const loadMoreTrips = async () => {
+    if (!userId || !hasMoreTrips || pagingRef.current || !nowRef.current) return;
+    pagingRef.current = true;
+    setLoadingMoreTrips(true);
+    const run = loadRef.current;
+    try {
+      const page = await fetchUpcomingTrips(client, userId, nowRef.current, upcomingTrips.length);
+      if (run !== loadRef.current) return;
+      setMoreTrips((current) => [...current, ...page]);
+      setHasMoreTrips(page.length >= UPCOMING_TRIPS_PAGE);
+    } catch {
+      // Leave hasMore as is, so the next scroll tries again.
+    } finally {
+      pagingRef.current = false;
+      setLoadingMoreTrips(false);
+    }
+  };
+
+  const onHomeScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    tabScroll.onScroll(event);
+    if (tab !== 'next') return;
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 400) void loadMoreTrips();
+  };
+
   const myAirline = profile?.airline_id ? airlines.get(profile.airline_id) : undefined;
-  const mineCounts = airlineCounts(matches, profile?.airline_id);
-  const shownMatches = airlineOnly ? matches.filter((match) => match.matchedUser?.profile?.airline_id === profile?.airline_id) : matches;
+  // The filter needs the user's own airline; without one it can't apply. Filter first, then cap, so it's up to 12 of theirs.
+  const filtering = airlineOnly && Boolean(myAirline);
+  const shownMatches = useMemo(() => {
+    const current = dedupeTripMatches((data?.tripMatches ?? []).filter((match) => isCurrent(match)));
+    return (filtering ? onlyAirline(current, profile?.airline_id) : current).slice(0, MAX_MATCHES);
+  }, [data?.tripMatches, filtering, profile?.airline_id]);
   const connections = (data?.connections ?? [])
     .slice()
     .sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
@@ -128,15 +181,17 @@ export default function HomeScreen() {
   const name = profile?.preferred_name || profile?.full_name || profile?.display_name || '';
   const crewLine = [myAirline?.name, profile?.crew_role ? t(`onboarding.crewRoles.${profile.crew_role}`) : null].filter(Boolean).join(' · ');
   const allTrips = data?.allTrips ?? [];
+  // Upcoming trips and upcoming layover cities, the same as Profile and Your trips.
+  const { upcoming: upcomingCount, cities: layoverCities } = tripStats(allTrips);
   const stats = [
-    { key: 'trips', value: allTrips.length, label: t('home.statsTrips'), onPress: () => router.push(SCREENS.trips) },
+    { key: 'trips', value: upcomingCount, label: t('home.statsTrips'), onPress: () => router.push(SCREENS.tripsUpcoming) },
     {
       key: 'cities',
-      value: new Set(allTrips.flatMap((trip) => trip.stays?.map((stay) => stay.city.toUpperCase()) ?? [])).size,
+      value: layoverCities,
       label: t('home.statsCities'),
-      onPress: undefined,
+      onPress: () => router.push(SCREENS.tripsLayovers),
     },
-    { key: 'connections', value: data?.connections?.length ?? 0, label: t('home.statsConnections'), onPress: () => router.navigate(SCREENS.tabs.friends) },
+    { key: 'connections', value: data?.connections?.length ?? 0, label: t('tabs.friends'), onPress: () => router.navigate(SCREENS.tabs.friends) },
   ];
 
   const tabs: { key: HomeTab; label: string }[] = [
@@ -192,19 +247,18 @@ export default function HomeScreen() {
         {myAirline ? (
           <MyAirlineCard
             airline={myAirline}
-            count={mineCounts.count}
-            onFlight={mineCounts.onFlight}
             active={airlineOnly}
-            onToggle={() => setAirlineOnly((value) => !value)}
+            onToggle={setAirlineOnly}
           />
         ) : null}
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 16 }}>
-          <MonoLabel style={{ fontSize: 10.5 }}>{t('discover.crossingPaths')}</MonoLabel>
-          <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textTertiary }}>
-            {t('discover.ofMax', { count: shownMatches.length, max: MAX_MATCHES })}
-          </Text>
-        </View>
-        {shownMatches.length ? (
+        <MonoLabel style={{ fontSize: 10.5, marginTop: 16 }}>{t('discover.crossingPaths')}</MonoLabel>
+        {data === null ? (
+          <View accessibilityLabel={t('common.loading')} style={{ gap: 8, marginTop: 10 }}>
+            {[0, 1, 2].map((index) => (
+              <MatchCardSkeleton key={index} />
+            ))}
+          </View>
+        ) : shownMatches.length ? (
           <View style={{ gap: 8, marginTop: 10 }}>
             {shownMatches.map((match) => (
               <MatchCard
@@ -221,7 +275,9 @@ export default function HomeScreen() {
           </View>
         ) : (
           <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 14, lineHeight: 21, color: theme.colors.textSecondary, marginTop: 16 }}>
-            {t('home.emptyCrossingBody')}
+            {filtering && myAirline
+              ? t('discover.airlineFilterEmpty', { airline: myAirline.name.split(' ')[0] })
+              : t('home.emptyCrossingBody')}
           </Text>
         )}
       </>
@@ -332,6 +388,7 @@ export default function HomeScreen() {
       {addTripMethodOverlay}
       <ScrollView
         {...tabScroll}
+        onScroll={onHomeScroll}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -388,9 +445,8 @@ export default function HomeScreen() {
           {stats.map((item, index) => (
             <Pressable
               key={item.key}
-              accessibilityRole={item.onPress ? 'button' : undefined}
+              accessibilityRole="button"
               accessibilityLabel={`${item.value} ${item.label}`}
-              disabled={!item.onPress}
               onPress={item.onPress}
               style={({ pressed }) => ({
                 flex: 1,
@@ -454,8 +510,8 @@ export default function HomeScreen() {
         </View>
         {tab === 'next' ? (
           <View style={{ gap: 10, marginTop: 16 }}>
-            {(data?.upcomingTrips ?? []).length ? (
-              (data?.upcomingTrips ?? []).map((trip) => (
+            {upcomingTrips.length ? (
+              upcomingTrips.map((trip) => (
                 <TripCard
                   key={trip.id}
                   trip={trip}
@@ -466,6 +522,7 @@ export default function HomeScreen() {
             ) : data ? (
               <NoTripsCard icon={<PlaneGlyph color={theme.colors.textSecondary} />} />
             ) : null}
+            {loadingMoreTrips ? <Skeleton height={112} borderRadius={20} /> : null}
           </View>
         ) : tab === 'matches' ? (
           renderMatches()
