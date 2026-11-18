@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Constants from 'expo-constants';
 import { Image, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -12,6 +13,10 @@ import { DARK, DarkLimePill, DarkOutlinePill, TextPillAction } from '@/features/
 import { useSession } from '@/hooks/useSession';
 import { signInWithGoogle } from '@/services/authService';
 import { fontFamily } from '@/theme';
+
+const appBuild = Constants.expoConfig?.ios?.buildNumber ?? Constants.expoConfig?.android?.versionCode?.toString();
+/** e.g. "1.2.0 (14)", the same version Settings › About shows. */
+const appVersion = Constants.expoConfig?.version ? `${Constants.expoConfig.version}${appBuild ? ` (${appBuild})` : ''}` : null;
 
 /** Entry screen. Shares the dark ground with house rules: one lime primary, one outlined secondary, one text tertiary. */
 export default function WelcomeScreen() {
@@ -107,6 +112,11 @@ export default function WelcomeScreen() {
               paddingTop: 4,
             }}
           />
+          {appVersion ? (
+            <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 10, color: DARK.faint, textAlign: 'center', opacity: 0.8 }}>
+              {`${t('settings.version')} ${appVersion}`}
+            </Text>
+          ) : null}
         </View>
       </ScrollView>
     </View>

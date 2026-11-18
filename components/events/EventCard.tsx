@@ -12,12 +12,15 @@ export function isPlatformEvent(event: Pick<EventItem, 'host_type'>) {
   return event.host_type === 'platform';
 }
 
-/** Activities and interests on a meet, split by kind. */
+/**
+ * Activities and interests on a meet, split by kind. A tag whose activity was retired from the catalogue comes back
+ * as `activity: null` (users only see active activities), so it's skipped.
+ */
 export function eventTagNames(event: Pick<EventItem, 'eventActivities'>) {
-  const rows = event.eventActivities ?? [];
+  const tags = (event.eventActivities ?? []).flatMap((row) => (row?.activity ? [row.activity] : []));
   return {
-    activities: rows.filter((row) => (row.activity.kind ?? 'activity') === 'activity').map((row) => row.activity.name),
-    interests: rows.filter((row) => row.activity.kind === 'interest').map((row) => row.activity.name),
+    activities: tags.filter((tag) => (tag.kind ?? 'activity') === 'activity').map((tag) => tag.name),
+    interests: tags.filter((tag) => tag.kind === 'interest').map((tag) => tag.name),
   };
 }
 

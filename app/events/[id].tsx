@@ -132,6 +132,9 @@ function UnlockedNote() {
   );
 }
 
+
+/** Report on the meet page is hidden for now. Set back to true to bring it back; the sheet and flow are unchanged. */
+const SHOW_REPORT_EVENT = false;
 /**
  * The meet. Guests read it, RSVP, or report it; Going does not let them leave here.
  * The host sees Host controls instead of RSVP: edit, attendees, and close (stop RSVPs or cancel).
@@ -334,14 +337,14 @@ export default function EventDetailScreen() {
               <CircleButton accessibilityLabel={t('eventHost.more')} onPress={openHostMenu}>
                 <DotsGlyph color={theme.colors.textPrimary} />
               </CircleButton>
-            ) : (
+            ) : SHOW_REPORT_EVENT ? (
               <Text
                 accessibilityRole="button"
                 onPress={() => setReportOpen(true)}
                 style={{ fontFamily: fontFamily.interMedium, fontSize: 13.5, color: theme.colors.textPrimary }}>
                 {t('safety.report')}
               </Text>
-            )
+            ) : null
           }
         />
       </View>

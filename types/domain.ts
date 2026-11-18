@@ -135,7 +135,8 @@ export interface EventItem {
   rsvp_closed_at?: string | null;
   cancelled_at?: string | null;
   eventActivities?: Array<{
-    activity: { id?: string; slug: string; name: string; icon?: string | null; kind?: ActivityKind | null };
+    /** Null when the tagged activity has since been retired from the catalogue. */
+    activity: { id?: string; slug: string; name: string; icon?: string | null; kind?: ActivityKind | null } | null;
   }>;
 }
 
