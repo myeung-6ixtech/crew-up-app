@@ -187,3 +187,15 @@ export const INSERT_THREAD_PARTICIPANT = gql`
     }
   }
 `;
+
+/** The searched place behind a meet's venue. Separate from GET_EVENT so the meet page still loads on a backend without these columns. */
+export const GET_EVENT_VENUE_PLACE = gql`
+  query GetEventVenuePlace($id: uuid!) {
+    events_by_pk(id: $id) {
+      id
+      venue_place_id
+      venue_lat
+      venue_lng
+    }
+  }
+`;

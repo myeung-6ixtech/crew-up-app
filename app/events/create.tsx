@@ -9,7 +9,8 @@ import { EventCoverField, uploadEventCover, type EventCoverPick } from '@/compon
 import { EventMeetTypeOverlay } from '@/components/events/EventMeetTypeOverlay';
 import { MeetKindCard, PrivateHiddenNote } from '@/components/events/MeetKindCard';
 import { EventTagsField } from '@/components/events/EventTagsField';
-import { MeetWhereFields } from '@/components/events/MeetWhereFields';
+import { MeetWhereFields, type VenuePlaceRef } from '@/components/events/MeetWhereFields';
+import { useActivitySlugs } from '@/components/events/VenuePickerField';
 import { WhenTiles } from '@/components/events/WhenTiles';
 import { Screen, combineDateAndTime } from '@/components/ui';
 import { EVENT_MEET_VISIBILITY, type EventMeetType, meetTypeFromVisibilityScope } from '@/constants/events';
@@ -92,6 +93,7 @@ export default function CreateEventScreen() {
   const [city, setCity] = useState('');
   const [cityError, setCityError] = useState('');
   const [venueName, setVenueName] = useState('');
+  const [venuePlace, setVenuePlace] = useState<VenuePlaceRef>(null);
   const [venueAddress, setVenueAddress] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -120,6 +122,7 @@ export default function CreateEventScreen() {
     };
   }, [client, userId]);
 
+  const activitySlugs = useActivitySlugs(selectedIds, catalog);
   const { activities, interests } = useMemo(
     () => ({
       activities: catalog.filter((item) => (item.kind ?? 'activity') === 'activity'),
@@ -160,6 +163,8 @@ export default function CreateEventScreen() {
           city: city.trim(),
           venue_name: venueName.trim() || null,
           venue_address: venueAddress.trim() || null,
+          // Only sent when a searched place was picked, so a custom venue works on a backend without these columns.
+          ...(venuePlace ? { venue_place_id: venuePlace.placeId, venue_lat: venuePlace.lat, venue_lng: venuePlace.lng } : {}),
           description: description.trim(),
           starts_at: startsAt.toISOString(),
           tags,
@@ -247,6 +252,9 @@ export default function CreateEventScreen() {
               onVenueChange={setVenueName}
               address={venueAddress}
               onAddressChange={setVenueAddress}
+              venuePlace={venuePlace}
+              onVenuePlaceChange={setVenuePlace}
+              activitySlugs={activitySlugs}
             />
           </View>
           {kind === 'private' ? <PrivateHiddenNote /> : null}

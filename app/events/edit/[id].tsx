@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { ActivityPickerField } from '@/components/events/ActivityPickerField';
 import { EventCoverField, uploadEventCover, type EventCoverPick } from '@/components/events/EventCoverField';
-import { MeetWhereFields } from '@/components/events/MeetWhereFields';
+import { MeetWhereFields, type VenuePlaceRef } from '@/components/events/MeetWhereFields';
+import { useActivitySlugs } from '@/components/events/VenuePickerField';
 import { WhenTiles } from '@/components/events/WhenTiles';
 import { Screen, combineDateAndTime } from '@/components/ui';
 import { SCREENS } from '@/constants/screens';
@@ -15,7 +16,7 @@ import { useApolloClient } from '@/lib/apolloHooks';
 import { contentBlockedMessage } from '@/lib/contentErrors';
 import { hapticError, hapticSelection, hapticSuccess } from '@/lib/haptics';
 import { fetchActivities, fetchActivityPreferences } from '@/services/activityService';
-import { fetchEvent, replaceEventActivities, updateEvent } from '@/services/eventService';
+import { fetchEventVenuePlace, fetchEvent, replaceEventActivities, updateEvent } from '@/services/eventService';
 import { fontFamily, useTheme } from '@/theme';
 import type { Activity } from '@/types/domain';
 
@@ -60,6 +61,13 @@ export default function EditEventScreen() {
   const [catalog, setCatalog] = useState<Activity[]>([]);
   const [mineIds, setMineIds] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [venuePlace, setVenuePlaceState] = useState<VenuePlaceRef>(null);
+  // Only a venue changed here writes the place columns, so editing works on a backend without them.
+  const [venuePlaceTouched, setVenuePlaceTouched] = useState(false);
+  const setVenuePlace = (next: VenuePlaceRef) => {
+    setVenuePlaceState(next);
+    setVenuePlaceTouched(true);
+  };
   const [error, setError] = useState('');
 
   const load = useCallback(async () => {
@@ -77,6 +85,8 @@ export default function EditEventScreen() {
     setCity(next.city ?? '');
     setVenue(next.venue_name ?? '');
     setAddress(next.venue_address ?? '');
+    setVenuePlaceState(await fetchEventVenuePlace(client, id));
+    setVenuePlaceTouched(false);
     setNotes(next.description ?? '');
     setCapacity(next.capacity ?? 1);
     setCoverFileId(next.featured_image_file_id ?? null);
@@ -100,6 +110,7 @@ export default function EditEventScreen() {
     };
   }, [client, userId]);
 
+  const activitySlugs = useActivitySlugs(selectedIds, catalog);
   const { activities, interests } = useMemo(
     () => ({
       activities: catalog.filter((item) => (item.kind ?? 'activity') === 'activity'),
@@ -146,6 +157,9 @@ export default function EditEventScreen() {
           starts_at: startsAt.toISOString(),
           venue_name: venue.trim() || null,
           venue_address: address.trim() || null,
+          ...(venuePlaceTouched
+            ? { venue_place_id: venuePlace?.placeId ?? null, venue_lat: venuePlace?.lat ?? null, venue_lng: venuePlace?.lng ?? null }
+            : {}),
           description: notes.trim(),
           capacity,
           featured_image_file_id: featuredImageFileId,
@@ -219,6 +233,9 @@ export default function EditEventScreen() {
                 onVenueChange={setVenue}
                 address={address}
                 onAddressChange={setAddress}
+                venuePlace={venuePlace}
+                onVenuePlaceChange={setVenuePlace}
+                activitySlugs={activitySlugs}
               />
             </View>
             <MonoLabel style={{ fontSize: 10.5, marginTop: 8, marginBottom: 8 }}>{t('events.activitiesTitle')}</MonoLabel>

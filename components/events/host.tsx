@@ -427,18 +427,32 @@ export function EventLocation({ venue, address, city }: { venue?: string | null;
   const { t } = useTranslation();
   const theme = useTheme();
   const query = encodeURIComponent([venue, address, city].filter(Boolean).join(', '));
-  const mapHtml = `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body,iframe{margin:0;padding:0;border:0;width:100%;height:100%}</style></head><body><iframe src="https://maps.google.com/maps?q=${query}&z=15&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></body></html>`;
+  /*
+   * The keyless Google embed, loaded as the page itself. Inside an iframe in an inline HTML page it had no origin or
+   * referrer, and Google can refuse to draw the map (a blank or "can't load" box).
+   */
+  const mapUrl = `https://maps.google.com/maps?q=${query}&z=15&output=embed`;
   return (
     <>
       <MonoLabel style={{ fontSize: 10.5, marginTop: 24 }}>{t('events.location')}</MonoLabel>
       <View style={{ backgroundColor: theme.colors.card, borderRadius: 20, overflow: 'hidden', marginTop: 10 }}>
         <View style={{ height: 180, backgroundColor: theme.colors.field }} accessibilityLabel={t('events.mapOf', { place: venue || city })}>
           <WebView
-            source={{ html: mapHtml }}
-            originWhitelist={['*']}
+            source={{ uri: mapUrl }}
+            originWhitelist={['https://*']}
             scrollEnabled={false}
+            javaScriptEnabled
+            domStorageEnabled
             style={{ backgroundColor: theme.colors.field }}
-            onShouldStartLoadWithRequest={(request) => request.url.startsWith('about:') || request.url.includes('google.com/maps')}
+            onShouldStartLoadWithRequest={(request) => {
+              // The embed and its redirect load in place; anything tapped inside it (View larger map, a pin) opens Maps.
+              if (request.url === 'about:blank' || /google\.com\/maps\/embed|maps\.google\.com\/maps\?.*output=embed/.test(request.url)) return true;
+              if (request.navigationType === 'click' || /google\.com\/maps/.test(request.url)) {
+                void Linking.openURL(request.url);
+                return false;
+              }
+              return true;
+            }}
           />
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, paddingHorizontal: 16 }}>

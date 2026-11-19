@@ -4,6 +4,7 @@ import { apiEndpoints } from '@/lib/api/endpoints';
 import { nhost } from '@/lib/nhost';
 import {
   GET_EVENT,
+  GET_EVENT_VENUE_PLACE,
   GET_EVENT_PIN,
   GET_EVENT_PREVIEW,
   GET_EVENTS,
@@ -61,6 +62,17 @@ export async function fetchEvent(client: ApolloClient, id: string) {
     fetchPolicy: 'network-only',
   });
   return (data as any)?.events_by_pk ?? null;
+}
+
+/** The venue's place id and coordinates, or null (custom venue, or a backend without the columns). */
+export async function fetchEventVenuePlace(client: ApolloClient, id: string) {
+  try {
+    const { data } = await client.query({ query: GET_EVENT_VENUE_PLACE, variables: { id }, fetchPolicy: 'network-only' });
+    const row = (data as { events_by_pk?: { venue_place_id?: string | null; venue_lat?: number | null; venue_lng?: number | null } | null })?.events_by_pk;
+    return row?.venue_place_id ? { placeId: row.venue_place_id, lat: row.venue_lat ?? null, lng: row.venue_lng ?? null } : null;
+  } catch {
+    return null;
+  }
 }
 
 /** List-card fields for a meet, including a private one that is still locked. */
