@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
-import Svg, { Path, Rect } from 'react-native-svg';
-import { CrewAvatar, PushedTopBar } from '@/components/crew/kit';
+import { BackGlyph, CircleButton, CrewAvatar } from '@/components/crew/kit';
 import { personName } from '@/components/crew/people';
+import { DotsGlyph } from '@/components/events/host';
 import { StandaloneNavPill } from '@/components/navigation/FloatingTabBar';
 import { ProfileDetails } from '@/components/profile/ProfileDetails';
-import { ReportSheet } from '@/components/ReportSheet';
+import { SafetySheet, type SafetyAction } from '@/components/safety/SafetySheet';
 import { AppIcon, Screen, Toast } from '@/components/ui';
 import { findAirportByIata } from '@/constants/airports';
 import { SCREENS } from '@/constants/screens';
@@ -19,13 +19,13 @@ import { AirlineLine, AirlineMark, useAirlines } from '@/components/crew/airline
 import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
 import { fetchActivityPreferences } from '@/services/activityService';
-import { waveMetaFromRoute } from '@/components/discover/wave';
+import { waveMetaFromRoute, type WaveMeta } from '@/components/discover/wave';
 import { ConnectionRequestError, fetchConnections, fetchPublicProfile, requestConnection } from '@/services/connectionService';
 import { ensureDirectThread, postLayoverNudge } from '@/services/messagingService';
 import { fetchAirlines } from '@/services/profileService';
-import { reportAndBlock, reportUser } from '@/services/safetyService';
 import { fontFamily, shouldUppercaseLabels, useTheme } from '@/theme';
 import type { ActivityPreference } from '@/types/domain';
+import { PlacesLine } from '@/components/profile/PlacesLine';
 
 type PublicProfile = {
   user_id: string;
@@ -49,9 +49,12 @@ type PublicProfile = {
 
 type Relationship = 'none' | 'requested' | 'incoming' | 'friends';
 
+/** One poke per person per day from a profile (the database allows one per overlap key). */
+const profilePokeMeta = (): WaveMeta => ({ overlap_key: `profile:${new Date().toISOString().slice(0, 10)}` });
+
 type Params = {
   userId: string;
-  /** From Discover: Wave instead of Connect, and the overlap shown in a lime card. */
+  /** From Discover / Crossing Paths: the overlap ("why you match"), used for the card and the poke. */
   wave?: string;
   waveCity?: string;
   waveMatchType?: string;
@@ -63,15 +66,6 @@ type Params = {
   matchDetail?: string;
 };
 
-function LockGlyph({ color }: { color: string }) {
-  return (
-    <Svg width={13} height={15} viewBox="0 0 16 18">
-      <Rect x={2} y={8} width={12} height={9} rx={2} fill={color} />
-      <Path d="M5 8V5.5a3 3 0 016 0V8" stroke={color} strokeWidth={1.8} fill="none" />
-    </Svg>
-  );
-}
-
 function BigButton({
   label,
   onPress,
@@ -82,13 +76,13 @@ function BigButton({
 }: {
   label: string;
   onPress?: () => void;
-  tone: 'lime' | 'done' | 'outline' | 'locked';
+  tone: 'lime' | 'done' | 'outline';
   height?: number;
   loading?: boolean;
   icon?: React.ReactNode;
 }) {
   const theme = useTheme();
-  const inactive = tone === 'done' || tone === 'locked' || !onPress;
+  const inactive = tone === 'done' || !onPress;
   return (
     <Pressable
       accessibilityRole="button"
@@ -102,9 +96,8 @@ function BigButton({
         height,
         borderRadius: height / 2,
         backgroundColor: tone === 'lime' ? theme.colors.fill : tone === 'done' ? theme.colors.field : 'transparent',
-        borderWidth: tone === 'outline' || tone === 'locked' ? 1.5 : 0,
-        borderStyle: tone === 'locked' ? 'dashed' : 'solid',
-        borderColor: '#C9CEC1',
+        borderWidth: tone === 'outline' ? 1.5 : 0,
+        borderColor: theme.mode === 'dark' ? theme.colors.hairline : '#C9CEC1',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -121,7 +114,7 @@ function BigButton({
             style={{
               fontFamily: fontFamily.jakartaBold,
               fontSize: height >= 52 ? 16 : 14,
-              color: tone === 'locked' ? theme.colors.textTertiary : tone === 'done' ? theme.colors.textSecondary : theme.colors.onFill,
+              color: tone === 'done' ? theme.colors.textSecondary : tone === 'outline' ? theme.colors.textPrimary : theme.colors.onFill,
             }}>
             {label}
           </Text>
@@ -131,7 +124,11 @@ function BigButton({
   );
 }
 
-/** Someone else's profile. Friends get Message; everyone else gets Connect (or Wave from Discover), and Message unlocks once they accept. */
+/**
+ * Someone else's profile (frames 7A–7F): one screen, two states. Friends get Message + Poke; everyone else gets
+ * Add friend (Requested / Accept request) + Poke, and Message unlocks once they accept. Unfriend, Report and Block live
+ * in the ⋯ sheet (SafetySheet), not on the page. The Crew ID is never shown.
+ */
 export default function PublicProfileScreen() {
   const params = useLocalSearchParams<Params>();
   const { t } = useTranslation();
@@ -146,10 +143,11 @@ export default function PublicProfileScreen() {
   const [preferences, setPreferences] = useState<ActivityPreference[]>([]);
   const [relationship, setRelationship] = useState<Relationship>('none');
   const [sending, setSending] = useState(false);
+  const [poking, setPoking] = useState(false);
+  const [poked, setPoked] = useState(false);
   const [opening, setOpening] = useState(false);
-  const [reportOpen, setReportOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [toast, setToast] = useState('');
-  const wave = params.wave === '1';
 
   const load = useCallback(async () => {
     if (!params.userId || !userId) return;
@@ -184,42 +182,60 @@ export default function PublicProfileScreen() {
     void load();
   }, [load]);
 
-  const connect = async () => {
+  const errorToast = (e: unknown) => {
+    hapticError();
+    setToast(e instanceof ConnectionRequestError && e.code === 'BLOCKED' ? t('friends.requestBlocked') : t('onboarding.genericError'));
+  };
+
+  /** Add friend, or Accept request when they asked first (a request back accepts theirs). */
+  const addFriend = async () => {
     if (!profile) return;
-    const meta = wave ? waveMetaFromRoute(params) : undefined;
     setSending(true);
     try {
-      const result = await requestConnection(client, profile.user_id, wave ? t('home.waveMessage') : undefined, meta);
-      if (meta && result.outcome === 'accepted') {
-        await postLayoverNudge(client, profile.user_id, meta);
-        hapticSuccess();
-        await load();
-        setToast(t('messages.waveSent'));
-        return;
-      }
+      const result = await requestConnection(client, profile.user_id);
       hapticSuccess();
-      await load();
-      setToast(t('friends.requestSentToast'));
+      setRelationship(result.outcome === 'accepted' || result.outcome === 'already_friends' ? 'friends' : 'requested');
+      setToast(result.outcome === 'accepted' ? t('profile.nowFriends') : t('friends.requestSentToast'));
     } catch (e) {
-      if (meta && e instanceof ConnectionRequestError && e.code === 'ALREADY_FRIENDS') {
-        try {
-          await postLayoverNudge(client, profile.user_id, meta);
-          hapticSuccess();
-          await load();
-          setToast(t('messages.waveSent'));
-          return;
-        } catch {
-          hapticError();
-          setToast(t('onboarding.genericError'));
-          return;
-        }
-      }
-      hapticError();
-      setToast(
-        e instanceof ConnectionRequestError && e.code === 'BLOCKED' ? t('friends.requestBlocked') : t('onboarding.genericError'),
-      );
+      if (e instanceof ConnectionRequestError && e.code === 'ALREADY_FRIENDS') setRelationship('friends');
+      else errorToast(e);
     } finally {
       setSending(false);
+    }
+  };
+
+  /**
+   * Poke: a friend gets it in your chat; anyone else gets it as a friend request (notified as a poke). From Crossing
+   * Paths it carries the overlap; from a profile, one a day.
+   */
+  const poke = async () => {
+    if (!profile) return;
+    const meta = waveMetaFromRoute(params) ?? profilePokeMeta();
+    setPoking(true);
+    try {
+      if (relationship === 'friends') {
+        await postLayoverNudge(client, profile.user_id, meta);
+      } else {
+        const result = await requestConnection(client, profile.user_id, t('home.waveMessage'), meta);
+        if (result.outcome === 'accepted') {
+          await postLayoverNudge(client, profile.user_id, meta).catch(() => undefined);
+          setRelationship('friends');
+        } else {
+          setRelationship('requested');
+        }
+      }
+      hapticSuccess();
+      setPoked(true);
+      setToast(t('messages.waveSent'));
+    } catch (e) {
+      // Already poked for this overlap (or today): that's the same end state.
+      if (e instanceof Error && /unique|duplicate|already/i.test(e.message)) setPoked(true);
+      else if (e instanceof ConnectionRequestError && e.code === 'ALREADY_FRIENDS') {
+        setRelationship('friends');
+        await postLayoverNudge(client, profile.user_id, meta).then(() => setPoked(true), errorToast);
+      } else errorToast(e);
+    } finally {
+      setPoking(false);
     }
   };
 
@@ -237,19 +253,12 @@ export default function PublicProfileScreen() {
     }
   };
 
-  const confirmBlock = () => {
-    if (!profile) return;
-    Alert.alert(t('safety.blockConfirmTitle', { name: personName(profile) }), t('safety.blockConfirmBody'), [
-      { text: t('common.cancel'), style: 'cancel' },
-      {
-        text: t('safety.block'),
-        style: 'destructive',
-        onPress: async () => {
-          await reportAndBlock(client, profile.user_id, 'blocked_from_profile');
-          router.back();
-        },
-      },
-    ]);
+  const afterSafety = (action: SafetyAction) => {
+    if (action === 'blocked') router.back();
+    else if (action === 'unfriended') {
+      setRelationship('none');
+      setPoked(false);
+    }
   };
 
   const name = profile ? personName(profile) : '';
@@ -261,21 +270,31 @@ export default function PublicProfileScreen() {
   const roleBase = [role, airport?.iata ?? profile?.base_airport].filter(Boolean).join(' · ');
   const flightCode = params.matchTitle?.match(/^([A-Z0-9]{2})\d/)?.[1] ?? null;
   const since = profile?.created_at ? memberSinceWhen(profile.created_at, t) : '';
-  // Home and hometown sit in the header (above the Friends tag), so the details below skip PLACES.
-  const place = (city?: string | null, code?: string | null) => [city, code].filter(Boolean).join(', ');
-  const placesLine = [
-    profile?.residence_city ? t('onboarding.review.livesIn', { place: place(profile.residence_city, profile.residence_country_code) }) : null,
-    profile?.hometown_city ? t('onboarding.review.from', { place: place(profile.hometown_city, profile.home_country_code) }) : null,
-  ]
-    .filter(Boolean)
-    .join(' · ');
   const friends = relationship === 'friends';
-  const pending = relationship === 'requested';
+  const requested = relationship === 'requested';
+  const incoming = relationship === 'incoming';
+  const pokeButton = (
+    <View style={{ flex: 1 }}>
+      <BigButton tone={poked ? 'done' : 'outline'} label={poked ? t('profile.poked') : t('profile.poke')} loading={poking} onPress={poked ? undefined : () => void poke()} />
+    </View>
+  );
 
   return (
     <Screen style={{ padding: 0 }}>
-      <View style={{ paddingTop: insets.top }}>
-        <PushedTopBar title={profile?.username ? `@${profile.username}` : name} onBack={() => router.back()} />
+      <View style={{ paddingTop: insets.top, flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 20 }}>
+        <CircleButton accessibilityLabel={t('common.back')} onPress={() => router.back()}>
+          <BackGlyph color={theme.colors.textPrimary} />
+        </CircleButton>
+        <Text accessibilityRole="header" numberOfLines={1} style={{ flex: 1, textAlign: 'center', fontFamily: fontFamily.jakartaBold, fontSize: 16, color: theme.colors.textPrimary }}>
+          {profile?.username ? `@${profile.username}` : name}
+        </Text>
+        {profile ? (
+          <CircleButton accessibilityLabel={t('safetySheet.moreOptions', { name: firstName })} onPress={() => setMenuOpen(true)}>
+            <DotsGlyph color={theme.colors.textPrimary} />
+          </CircleButton>
+        ) : (
+          <View style={{ width: 40 }} />
+        )}
       </View>
       {!profile ? (
         <ActivityIndicator color={theme.colors.accentText} style={{ marginTop: 80 }} />
@@ -294,11 +313,8 @@ export default function PublicProfileScreen() {
             ) : headline ? (
               <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textSecondary }}>{headline}</Text>
             ) : null}
-            {placesLine ? (
-              <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textSecondary, textAlign: 'center', marginTop: 2 }}>
-                {placesLine}
-              </Text>
-            ) : null}
+            <PlacesLine person={profile} style={{ textAlign: 'center', marginTop: 2 }} />
+            {since ? <MonoLabel style={{ fontSize: 10, color: theme.colors.textTertiary, marginTop: 2 }}>{t('onboarding.review.memberSince', { when: since })}</MonoLabel> : null}
             {friends ? (
               <Text
                 style={{
@@ -316,12 +332,10 @@ export default function PublicProfileScreen() {
                 }}>
                 {t('tabs.friends')}
               </Text>
-            ) : since ? (
-              <MonoLabel style={{ fontSize: 10, color: theme.colors.textTertiary }}>{t('onboarding.review.memberSince', { when: since })}</MonoLabel>
             ) : null}
           </View>
 
-          {params.matchTitle ? (
+          {!friends && params.matchTitle ? (
             <View style={{ backgroundColor: theme.colors.accentSubtle, borderRadius: 16, paddingVertical: 12, paddingHorizontal: 14, marginTop: 16, gap: 3 }}>
               {params.matchLabel ? <MonoLabel style={{ fontSize: 10, color: theme.colors.accentText }}>{params.matchLabel}</MonoLabel> : null}
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -334,64 +348,41 @@ export default function PublicProfileScreen() {
             </View>
           ) : null}
 
-          <View style={{ gap: 8, marginTop: params.matchTitle ? 14 : 18 }}>
-            {friends ? (
-              <BigButton tone="lime" label={t('chat.message')} loading={opening} onPress={() => void message()} />
-            ) : (
-              <>
-                <BigButton
-                  tone={pending ? 'done' : 'lime'}
-                  label={
-                    pending
-                      ? wave
-                        ? t('profile.wavedSent')
-                        : t('friends.requestSent')
-                      : relationship === 'incoming'
-                        ? t('profile.acceptOnFriends')
-                        : wave
-                          ? t('home.wave')
-                          : t('network.connect')
-                  }
-                  loading={sending}
-                  onPress={relationship === 'incoming' ? () => router.navigate(SCREENS.tabs.friends) : pending ? undefined : () => void connect()}
-                />
-                <BigButton tone="locked" height={46} label={t('chat.message')} icon={<LockGlyph color={theme.colors.textTertiary} />} />
-                <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textTertiary, textAlign: 'center' }}>
-                  {wave ? t('profile.messageUnlocksWave', { name: firstName }) : t('profile.messageUnlocks', { name: firstName })}
-                </Text>
-              </>
+          <View style={{ gap: 8, marginTop: !friends && params.matchTitle ? 14 : 18 }}>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              <View style={{ flex: 1 }}>
+                {friends ? (
+                  <BigButton tone="lime" label={t('chat.message')} loading={opening} onPress={() => void message()} />
+                ) : (
+                  <BigButton
+                    tone={requested ? 'done' : 'lime'}
+                    label={requested ? t('profile.requested') : incoming ? t('friends.acceptRequest') : t('friends.addFriend')}
+                    loading={sending}
+                    onPress={requested ? undefined : () => void addFriend()}
+                  />
+                )}
+              </View>
+              {pokeButton}
+            </View>
+            {friends ? null : (
+              <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textTertiary, textAlign: 'center' }}>
+                {t('profile.messageUnlocksShort', { name: firstName })}
+              </Text>
             )}
           </View>
 
-          {/* No Crew ID here: it's owner-only, and Connect is how you add someone from their profile. */}
+          {/* No Crew ID here: it's owner-only. */}
           <ProfileDetails person={profile} airlineName={airlineName} preferences={preferences} showPlaces={false} />
-
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              gap: 28,
-              marginTop: 24,
-              paddingTop: 16,
-              borderTopWidth: 1,
-              borderTopColor: theme.colors.hairline,
-            }}>
-            <Text accessibilityRole="button" onPress={() => setReportOpen(true)} style={{ fontFamily: fontFamily.interMedium, fontSize: 14, color: theme.colors.textSecondary }}>
-              {t('safety.report')}
-            </Text>
-            <Text accessibilityRole="button" onPress={confirmBlock} style={{ fontFamily: fontFamily.interMedium, fontSize: 14, color: '#9B2C1F' }}>
-              {t('safety.block')}
-            </Text>
-          </View>
         </ScrollView>
       )}
       {profile ? (
-        <ReportSheet
-          visible={reportOpen}
-          onClose={() => setReportOpen(false)}
-          onSubmit={async (reason, details) => {
-            await reportUser(client, { reason, details, reportedUserId: profile.user_id });
-          }}
+        <SafetySheet
+          visible={menuOpen}
+          onClose={() => setMenuOpen(false)}
+          person={{ userId: profile.user_id, name: firstName }}
+          isFriend={friends}
+          context={{ source: 'profile', relationship, match: params.matchTitle }}
+          onDone={afterSafety}
         />
       ) : null}
       <Toast message={toast} visible={Boolean(toast)} onHide={() => setToast('')} />

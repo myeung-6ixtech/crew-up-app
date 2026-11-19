@@ -1,4 +1,35 @@
 {
+  "safetySheet": {
+    "moreOptions": "More options for {{name}}",
+    "unfriend": "Unfriend",
+    "unfriendSub": "Remove {{name}} from your friends.",
+    "report": "Report",
+    "reportSub": "Tell our team. {{name}} won't know it was you.",
+    "block": "Block",
+    "blockSub": "{{name}} won't be able to find or message you.",
+    "unfriendTitle": "Unfriend {{name}}?",
+    "unfriendBody": "You'll be removed from each other's friends and your chat will close. {{name}} won't be notified. You can send a new request later.",
+    "unfriendDone": "You're no longer friends",
+    "blockTitle": "Block {{name}}?",
+    "blockBody": "{{name}} won't be able to find you, see your trips or message you (and you'll no longer be friends). They won't be notified. You can unblock in Settings › Privacy.",
+    "blockDone": "{{name}} is blocked",
+    "reportTitle": "Report {{name}}",
+    "reportIntro": "What's going on? Reports are anonymous: {{name}} won't know who reported them.",
+    "reasons": {
+      "fake_profile": "Fake profile or not crew",
+      "harassment": "Harassment or hate",
+      "inappropriate": "Inappropriate photos or messages",
+      "spam": "Spam or scam",
+      "safety": "Safety concern",
+      "other": "Something else"
+    },
+    "notePlaceholder": "Add details (optional)",
+    "alsoBlock": "Also block {{name}}",
+    "submitReport": "Submit report",
+    "reportDone": "Thanks for telling us. Our team reviews every report within 24 hours.",
+    "done": "Done",
+    "failed": "That didn't go through. Check your connection and try again."
+  },
   "splash": {
     "loading": "Loading",
     "loadingTrips": "LOADING YOUR TRIPS"
@@ -735,6 +766,8 @@
     }
   },
   "messages": {
+    "today": "Today",
+    "yesterday": "Yesterday",
     "title": "Messages",
     "all": "All",
     "unread": "Unread",
@@ -1107,6 +1140,11 @@
     "wavedSent": "Poked · request sent",
     "acceptOnFriends": "Respond in Friends",
     "messageUnlocks": "Message unlocks once {{name}} accepts your request.",
+    "messageUnlocksShort": "Message unlocks once {{name}} accepts.",
+    "poke": "Poke",
+    "poked": "Poked",
+    "requested": "Requested",
+    "nowFriends": "You're now friends",
     "messageUnlocksWave": "Message unlocks once {{name}} accepts your poke."
   },
   "chat": {

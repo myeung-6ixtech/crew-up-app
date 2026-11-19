@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Alert, FlatList, Keyboard, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Alert, Animated, FlatList, Keyboard, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View, type ViewToken } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { BackGlyph, CircleButton, CrewAvatar } from '@/components/crew/kit';
 import { personName, personRoleBase, type PersonProfile } from '@/components/crew/people';
-import { ReportSheet } from '@/components/ReportSheet';
+import { SafetySheet } from '@/components/safety/SafetySheet';
 import { Screen } from '@/components/ui';
 import { SCREENS } from '@/constants/screens';
 import { useGuidelinesGate } from '@/features/legal/guidelinesGate';
@@ -14,8 +14,8 @@ import { INSERT_THREAD_PARTICIPANT } from '@/graphql/mutations/messaging';
 import { useAuth } from '@/hooks/useSession';
 import { useApolloClient, useSubscription } from '@/lib/apolloHooks';
 import { messageSendError } from '@/lib/contentErrors';
-import { hapticImpact, hapticWarning } from '@/lib/haptics';
-import { blockUser, fetchPublicProfile } from '@/services/connectionService';
+import { hapticImpact } from '@/lib/haptics';
+import { fetchPublicProfile } from '@/services/connectionService';
 import { waveCaption } from '@/components/discover/wave';
 import {
   fetchMessages,
@@ -26,9 +26,9 @@ import {
   MESSAGES_SUBSCRIPTION_PLAIN,
   sendMessage,
 } from '@/services/messagingService';
-import { reportUser } from '@/services/safetyService';
 import { fontFamily, useTheme } from '@/theme';
 import type { MessageItem } from '@/types/domain';
+import { dayLabel, isDayRow, withDayDividers, type DayRow } from '@/lib/chatDay';
 
 type ThreadInfo = {
   type: string;
@@ -38,7 +38,19 @@ type ThreadInfo = {
   other: (PersonProfile & { user_id?: string }) | null;
 };
 
-type ReportTarget = { kind: 'person' } | { kind: 'meet' } | { kind: 'message'; messageId: string; senderId: string | null };
+/** What the shared safety sheet opens on: the person menu, or straight to reporting a message or the meet. */
+type SafetyTarget = {
+  start: 'menu' | 'report';
+  person: { userId: string; name: string };
+  report?: { messageId?: string; eventId?: string; userId?: string | null };
+};
+
+/** "9:41 AM" in the reader's own time, beside each message. */
+function messageTime(iso: string | null | undefined) {
+  const at = iso ? new Date(iso) : null;
+  if (!at || Number.isNaN(at.getTime())) return '';
+  return at.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+}
 
 /** Apply live rows onto the open page. New rows append. A removal updates a row already on screen. */
 function mergeLive(current: MessageItem[], incoming: MessageItem[], since: string): MessageItem[] {
@@ -103,7 +115,27 @@ export default function ChatScreen() {
   const [info, setInfo] = useState<ThreadInfo>({ type: 'direct', otherId: withUserId ?? null, other: null });
   const [body, setBody] = useState('');
   const [sendError, setSendError] = useState('');
-  const [reportTarget, setReportTarget] = useState<ReportTarget | null>(null);
+  const [safety, setSafety] = useState<SafetyTarget | null>(null);
+  // Floating day pill (WhatsApp-style): shows the day of the top message while scrolling, then fades.
+  const [pillLabel, setPillLabel] = useState('');
+  const pillOpacity = useRef(new Animated.Value(0)).current;
+  const pillTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showPill = () => {
+    if (pillTimer.current) clearTimeout(pillTimer.current);
+    Animated.timing(pillOpacity, { toValue: 1, duration: 120, useNativeDriver: true }).start();
+  };
+  const hidePillSoon = () => {
+    if (pillTimer.current) clearTimeout(pillTimer.current);
+    pillTimer.current = setTimeout(() => Animated.timing(pillOpacity, { toValue: 0, duration: 250, useNativeDriver: true }).start(), 1200);
+  };
+  const dayLabels = { today: t('messages.today'), yesterday: t('messages.yesterday') };
+  const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+    // Inverted list: the highest index on screen is the one at the top.
+    const top = viewableItems.reduce<ViewToken | null>((best, token) => (best === null || (token.index ?? 0) > (best.index ?? 0) ? token : best), null);
+    const row = top?.item as (MessageItem | DayRow) | undefined;
+    const at = row ? (isDayRow(row) ? row.at : row.created_at) : null;
+    if (at) setPillLabel(at);
+  }).current;
 
   const load = useCallback(async () => {
     if (!threadId || !userId) return;
@@ -197,57 +229,33 @@ export default function ChatScreen() {
   const isEvent = info.type === 'event_group';
   const title = isEvent ? info.eventTitle || t('messages.eventChat') : personName(info.other, t('messages.directMessage'));
 
-  const block = () => {
-    if (!info.otherId) return;
-    const otherId = info.otherId;
-    Alert.alert(t('safety.blockConfirmTitle', { name: title }), t('safety.blockConfirmBody'), [
-      { text: t('common.cancel'), style: 'cancel' },
-      {
-        text: t('safety.block'),
-        style: 'destructive',
-        onPress: async () => {
-          hapticWarning();
-          await blockUser(client, otherId).catch(() => undefined);
-          router.back();
-        },
-      },
-    ]);
-  };
-
   const openActions = () => {
     if (isEvent) {
-      Alert.alert(title, undefined, [
-        { text: t('report.meet'), onPress: () => setReportTarget({ kind: 'meet' }) },
-        { text: t('common.cancel'), style: 'cancel' },
-      ]);
+      // A meet chat: report the meet (there's no single person to block from here).
+      setSafety({ start: 'report', person: { userId: '', name: title }, report: { eventId: info.eventId ?? undefined, userId: null } });
       return;
     }
-    Alert.alert(title, undefined, [
-      { text: t('report.person', { name: title }), onPress: () => setReportTarget({ kind: 'person' }) },
-      { text: t('safety.block'), style: 'destructive', onPress: block },
-      { text: t('common.cancel'), style: 'cancel' },
-    ]);
+    if (!info.otherId) return;
+    setSafety({ start: 'menu', person: { userId: info.otherId, name: title.split(' ')[0] } });
   };
 
   const onLongPressMessage = (item: MessageItem) => {
     if (item.sender_id === userId || item.removed_at) return;
     hapticImpact();
     Alert.alert(t('report.messageTitle'), item.body ?? undefined, [
-      { text: t('report.message'), onPress: () => setReportTarget({ kind: 'message', messageId: item.id, senderId: item.sender_id }) },
+      {
+        text: t('report.message'),
+        onPress: () =>
+          setSafety({
+            start: 'report',
+            person: { userId: item.sender_id ?? '', name: isEvent ? '' : title.split(' ')[0] },
+            report: { messageId: item.id, userId: item.sender_id },
+          }),
+      },
       { text: t('common.cancel'), style: 'cancel' },
     ]);
   };
 
-  const submitReport = async (reason: string, details: string) => {
-    if (!reportTarget) return;
-    if (reportTarget.kind === 'message') {
-      await reportUser(client, { reason, details, reportedMessageId: reportTarget.messageId, reportedUserId: reportTarget.senderId ?? undefined });
-    } else if (reportTarget.kind === 'meet') {
-      if (info.eventId) await reportUser(client, { reason, details, reportedEventId: info.eventId });
-    } else if (info.otherId) {
-      await reportUser(client, { reason, details, reportedUserId: info.otherId });
-    }
-  };
   const subtitle = isEvent ? null : personRoleBase(info.other, t);
   const firstName = title.split(' ')[0];
   const canSend = Boolean(body.trim());
@@ -310,10 +318,17 @@ export default function ChatScreen() {
             </Text>
           </View>
         ) : (
+          <View style={{ flex: 1 }}>
           <FlatList
             inverted
-            data={[...(messages ?? [])].reverse()}
+            data={withDayDividers([...(messages ?? [])].reverse())}
             keyExtractor={(item) => item.id}
+            onViewableItemsChanged={onViewableItemsChanged}
+            viewabilityConfig={{ itemVisiblePercentThreshold: 10 }}
+            onScrollBeginDrag={showPill}
+            onScrollEndDrag={hidePillSoon}
+            onMomentumScrollBegin={showPill}
+            onMomentumScrollEnd={hidePillSoon}
             contentContainerStyle={{ flexGrow: 1, gap: 6, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 16 }}
             ListFooterComponent={
               hasMore ? (
@@ -324,7 +339,28 @@ export default function ChatScreen() {
                 </Pressable>
               ) : null
             }
-            renderItem={({ item }) => {
+            renderItem={({ item: row }) => {
+              if (isDayRow(row)) {
+                // Day divider between days, like WhatsApp.
+                return (
+                  <View accessibilityRole="header" style={{ alignItems: 'center', paddingVertical: 8 }}>
+                    <Text
+                      style={{
+                        fontFamily: fontFamily.interMedium,
+                        fontSize: 11.5,
+                        color: theme.colors.textSecondary,
+                        backgroundColor: theme.colors.field,
+                        paddingHorizontal: 12,
+                        paddingVertical: 4,
+                        borderRadius: 10,
+                        overflow: 'hidden',
+                      }}>
+                      {dayLabel(row.at, dayLabels)}
+                    </Text>
+                  </View>
+                );
+              }
+              const item = row as MessageItem;
               const mine = item.sender_id === userId;
               const removed = Boolean(item.removed_at);
               if (item.kind === 'wave' && !removed) {
@@ -345,15 +381,27 @@ export default function ChatScreen() {
                   </View>
                 );
               }
+              const time = messageTime(item.created_at);
+              const stamp = time ? (
+                <Text
+                  accessibilityElementsHidden
+                  importantForAccessibility="no"
+                  style={{ fontFamily: fontFamily.interRegular, fontSize: 10.5, color: theme.colors.textTertiary, marginBottom: 3 }}>
+                  {time}
+                </Text>
+              ) : null;
               return (
                 <Pressable
                   onLongPress={() => onLongPressMessage(item)}
                   disabled={mine || removed}
                   accessibilityHint={mine || removed ? undefined : t('report.message')}
-                  style={{ flexDirection: 'row', justifyContent: mine ? 'flex-end' : 'flex-start' }}>
+                  accessibilityLabel={removed ? undefined : [item.body, time].filter(Boolean).join(', ')}
+                  style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6, justifyContent: mine ? 'flex-end' : 'flex-start' }}>
+                  {/* Time sits on the outer side: left of your bubbles, right of theirs. */}
+                  {mine ? stamp : null}
                   <View
                     style={{
-                      maxWidth: '76%',
+                      maxWidth: '72%',
                       paddingVertical: 10,
                       paddingHorizontal: 14,
                       borderRadius: 18,
@@ -373,10 +421,38 @@ export default function ChatScreen() {
                       </Text>
                     )}
                   </View>
+                  {mine ? null : stamp}
                 </Pressable>
               );
             }}
           />
+          {/* Floating day pill at the top while scrolling ("Today", "Yesterday", …). */}
+          <Animated.View
+            pointerEvents="none"
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+            style={{ position: 'absolute', top: 8, left: 0, right: 0, alignItems: 'center', opacity: pillOpacity }}>
+            {pillLabel ? (
+              <Text
+                style={{
+                  fontFamily: fontFamily.interMedium,
+                  fontSize: 11.5,
+                  color: theme.colors.textPrimary,
+                  backgroundColor: theme.colors.card,
+                  paddingHorizontal: 12,
+                  paddingVertical: 5,
+                  borderRadius: 11,
+                  overflow: 'hidden',
+                  shadowColor: '#0E1113',
+                  shadowOpacity: 0.08,
+                  shadowRadius: 6,
+                  shadowOffset: { width: 0, height: 2 },
+                }}>
+                {dayLabel(pillLabel, dayLabels)}
+              </Text>
+            ) : null}
+          </Animated.View>
+          </View>
         )}
         <View
           style={{
@@ -445,12 +521,21 @@ export default function ChatScreen() {
           ) : null}
         </View>
       </KeyboardAvoidingView>
-      <ReportSheet
-        visible={reportTarget !== null}
-        title={reportTarget?.kind === 'message' ? t('report.messageTitle') : reportTarget?.kind === 'meet' ? t('report.meet') : undefined}
-        onClose={() => setReportTarget(null)}
-        onSubmit={submitReport}
-      />
+      {safety ? (
+        <SafetySheet
+          visible
+          onClose={() => setSafety(null)}
+          person={safety.person}
+          isFriend={!isEvent}
+          start={safety.start}
+          report={safety.report}
+          context={{ source: isEvent ? 'event' : 'chat', relationship: isEvent ? undefined : 'friends' }}
+          onDone={(action) => {
+            // Unfriending or blocking closes this chat.
+            if (action === 'blocked' || action === 'unfriended') router.back();
+          }}
+        />
+      ) : null}
     </Screen>
   );
 }

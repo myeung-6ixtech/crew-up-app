@@ -1,5 +1,6 @@
 import type { ApolloClient } from '@apollo/client';
-import { PARSE_ROSTER, SUBMIT_REPORT } from '@/graphql/mutations/actions';
+import { PARSE_ROSTER, SUBMIT_REPORT,
+  SUBMIT_REPORT_WITH_CONTEXT } from '@/graphql/mutations/actions';
 import type { ParsedRosterEntry, ParsedRosterTrip } from '@/types/domain';
 
 export interface ParsedRosterResult {
@@ -44,13 +45,28 @@ export async function submitReport(
     reportedUserId?: string;
     reportedMessageId?: string;
     reportedEventId?: string;
+    /** Where it was reported and the relationship then; the server adds a profile snapshot. */
+    context?: Record<string, unknown>;
   },
 ) {
+  const { context, ...rest } = input;
+  if (context) {
+    try {
+      const { data } = await client.mutate<{ submitReport: { reportId: string; status: string } }>({
+        mutation: SUBMIT_REPORT_WITH_CONTEXT,
+        variables: { ...rest, context },
+      });
+      return (data as any)?.submitReport;
+    } catch (error) {
+      // A backend without the context field rejects the argument; the report itself still goes in without it.
+      if (!/context/i.test(error instanceof Error ? error.message : '')) throw error;
+    }
+  }
   const { data } = await client.mutate<{
     submitReport: { reportId: string; status: string };
   }>({
     mutation: SUBMIT_REPORT,
-    variables: input,
+    variables: rest,
   });
   return (data as any)?.submitReport;
 }

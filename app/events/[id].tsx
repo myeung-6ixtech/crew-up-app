@@ -19,7 +19,7 @@ import {
 } from '@/components/events/host';
 import { EventPinCard, EventPinGate, LockGlyph, PrivateEventBadge } from '@/components/events/pin';
 import { NAV_PILL_HEIGHT, StandaloneNavPill } from '@/components/navigation/FloatingTabBar';
-import { ReportSheet } from '@/components/ReportSheet';
+import { SafetySheet } from '@/components/safety/SafetySheet';
 import { Screen, Toast } from '@/components/ui';
 import { isPrivateEvent } from '@/constants/events';
 import { SCREENS } from '@/constants/screens';
@@ -30,7 +30,6 @@ import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
 import { useGuidelinesGate } from '@/features/legal/guidelinesGate';
 import { fetchEvent, fetchEventPreview, rsvpEvent, setEventClosure } from '@/services/eventService';
-import { reportUser } from '@/services/safetyService';
 import { fontFamily, useTheme } from '@/theme';
 import type { EventItem } from '@/types/domain';
 
@@ -532,11 +531,16 @@ export default function EventDetailScreen() {
             </View>
           ) : null}
 
-          <ReportSheet
+          {/* Same sheet as profiles and chats. A CrewUp-hosted meet has no host to block. */}
+          <SafetySheet
             visible={reportOpen}
             onClose={() => setReportOpen(false)}
-            onSubmit={async (reason, details) => {
-              await reportUser(client, { reason, details, reportedEventId: event.id, reportedUserId: event.creator_id });
+            start="report"
+            person={{ userId: platform ? '' : (hostId ?? ''), name: platform ? t('events.hostedByCrewUp') : shortName(hostName ?? '') }}
+            report={{ eventId: event.id, userId: platform ? null : event.creator_id }}
+            context={{ source: 'event' }}
+            onDone={(action) => {
+              if (action === 'blocked') router.back();
             }}
           />
           {isHost ? (

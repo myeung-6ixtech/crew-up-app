@@ -18,6 +18,7 @@ import { useApolloClient } from '@/lib/apolloHooks';
 import { fetchActivityPreferences } from '@/services/activityService';
 import { fetchHomeData } from '@/services/presenceService';
 import { tripStats } from '@/lib/tripStats';
+import { PlacesLine } from '@/components/profile/PlacesLine';
 import { fetchAirlines } from '@/services/profileService';
 import { fontFamily, useTheme } from '@/theme';
 import type { ActivityPreference } from '@/types/domain';
@@ -72,12 +73,6 @@ export default function ProfileTab() {
     .join(' · ');
   const crewLine = [airlineName, roleBase].filter(Boolean).join(' · ');
   // Home and hometown sit under the name here, so the details below skip PLACES.
-  const placesLine = [
-    profile?.residence_city ? t('onboarding.review.livesIn', { place: profile.residence_city }) : null,
-    profile?.hometown_city ? t('onboarding.review.from', { place: profile.hometown_city }) : null,
-  ]
-    .filter(Boolean)
-    .join(' · ');
   const showGenderIcon =
     profile?.own_show_gender !== false && (profile?.visible_gender === 'male' || profile?.visible_gender === 'female');
   const statItems = [
@@ -169,9 +164,7 @@ export default function ProfileTab() {
           ) : crewLine ? (
             <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textSecondary }}>{crewLine}</Text>
           ) : null}
-          {placesLine ? (
-            <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 13.5, color: theme.colors.textSecondary }}>{placesLine}</Text>
-          ) : null}
+          <PlacesLine person={profile} />
         </View>
 
         <View style={{ flexDirection: 'row', gap: 8, marginTop: 14 }}>
