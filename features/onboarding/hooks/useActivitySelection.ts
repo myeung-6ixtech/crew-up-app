@@ -46,6 +46,21 @@ export function useActivitySelection(userId?: string | null) {
     setSelectedIds((current) => (current.includes(id) ? current.filter((item) => item !== id) : [...current, id]));
   };
 
+  /**
+   * Toggle with a limit per kind: removing always works; adding stops at `cap` picks of that kind.
+   * Returns false when the pick was refused (already at the cap).
+   */
+  const toggleCapped = (id: string, cap: number) => {
+    if (selectedIds.includes(id)) {
+      setSelectedIds((current) => current.filter((item) => item !== id));
+      return true;
+    }
+    const item = activities.find((row) => row.id === id);
+    if (item && countPicked(activities, selectedIds, kindOf(item)) >= cap) return false;
+    setSelectedIds((current) => (current.includes(id) ? current : [...current, id]));
+    return true;
+  };
+
   /** Picks of one kind, e.g. "Next · 3 picked" on each onboarding step. */
   const countOf = (kind: CatalogKind) => countPicked(activities, selectedIds, kind);
 
@@ -63,5 +78,5 @@ export function useActivitySelection(userId?: string | null) {
     }
   };
 
-  return { activities, selectedIds, savedIds, setSelectedIds, toggle, save, countOf, idsOfKind, loading, failed, saving };
+  return { activities, selectedIds, savedIds, setSelectedIds, toggle, toggleCapped, save, countOf, idsOfKind, loading, failed, saving };
 }

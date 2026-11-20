@@ -111,3 +111,18 @@ export async function fetchAirlines(client: ApolloClient) {
   });
   return (data as any)?.airlines ?? [];
 }
+
+/**
+ * Saves this phone's IANA time zone (for the 8 AM daily digest). Best effort: never throws, so it can't block a save,
+ * and a backend without the column simply ignores it.
+ */
+export async function saveDeviceTimeZone(client: ApolloClient, userId: string): Promise<void> {
+  try {
+    const zone =
+      (await import('expo-localization')).getCalendars()[0]?.timeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (!zone) return;
+    await updateProfile(client, userId, { time_zone: zone });
+  } catch {
+    // Older backend (no time_zone column) or offline: the digest falls back to the base airport's zone.
+  }
+}

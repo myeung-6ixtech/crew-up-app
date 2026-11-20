@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useAirlines } from '@/components/crew/airline';
@@ -11,7 +11,7 @@ import { formatApolloError } from '@/lib/graphqlError';
 import { hapticError, hapticSuccess } from '@/lib/haptics';
 import { normalizeVisibilityForAffiliation, visibilityLevelsForAffiliation } from '@/lib/visibilityOptions';
 import { useAuth, useSession } from '@/hooks/useSession';
-import { updateProfile } from '@/services/profileService';
+import { saveDeviceTimeZone, updateProfile } from '@/services/profileService';
 import { fontFamily, useTheme } from '@/theme';
 
 type Audience = Exclude<VisibilityLevel, 'off'>;
@@ -22,6 +22,12 @@ type NotificationMode = 'realtime' | 'digest';
  * audience switches status back to Available. Same airline only shows with an airline. Save stays grey until
  * something changes.
  */
+/** Thin line between the page's sections. */
+function Divider() {
+  const theme = useTheme();
+  return <View style={{ height: StyleSheet.hairlineWidth, backgroundColor: theme.colors.hairline }} />;
+}
+
 export default function PrivacySettingsScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -82,6 +88,8 @@ export default function PrivacySettingsScreen() {
         default_visibility: hidden || !audience ? 'off' : normalizeVisibilityForAffiliation(audience, airlineId),
         notification_mode: notifications,
       });
+      // The 8 AM digest uses this phone's time zone. Best effort: the setting above is already saved.
+      await saveDeviceTimeZone(client, userId);
       await refreshSession();
       await refreshProfile();
       hapticSuccess();
@@ -97,7 +105,6 @@ export default function PrivacySettingsScreen() {
   return (
     <SettingsPage
       title={t('menu.privacy')}
-      subtitle={t('privacy.intro')}
       footer={
         <PillCta
           label={justSaved && !dirty ? t('privacy.saved') : t('privacy.save')}
@@ -106,11 +113,12 @@ export default function PrivacySettingsScreen() {
           onPress={() => void onSave()}
         />
       }>
-      <SettingsSection label={t('home.statusDefault')} sub={t('privacy.statusHint')}>
+      <SettingsSection label={t('privacy.discoverVisibility')}>
         <RadioRow label={t('privacy.status.available')} detail={t('privacy.statusSub.available')} selected={!hidden} onPress={() => pickStatus(false)} />
         <RadioRow label={t('privacy.status.hidden')} detail={t('privacy.statusSub.hidden')} selected={hidden} onPress={() => pickStatus(true)} />
       </SettingsSection>
 
+      <Divider />
       <SettingsSection label={t('privacy.whoCanSee')}>
         {audiences.map((level) => (
           <RadioRow
@@ -123,13 +131,26 @@ export default function PrivacySettingsScreen() {
           />
         ))}
       </SettingsSection>
-      <SettingsHint>{hidden ? t('privacy.hiddenHint') : t('privacy.audienceHint')}</SettingsHint>
+      {hidden ? <SettingsHint>{t('privacy.hiddenHint')}</SettingsHint> : null}
 
+      <Divider />
       <SettingsSection label={t('home.notifications')}>
-        <RadioRow label={t('privacy.realtime')} selected={notifications === 'realtime'} onPress={() => setNotifications('realtime')} />
-        <RadioRow label={t('privacy.digest')} selected={notifications === 'digest'} onPress={() => setNotifications('digest')} />
+        <RadioRow
+          label={t('privacy.realtime')}
+          detail={t('privacy.realtimeSub')}
+          selected={notifications === 'realtime'}
+          onPress={() => setNotifications('realtime')}
+        />
+        <RadioRow
+          label={t('privacy.digest')}
+          detail={t('privacy.digestSub')}
+          selected={notifications === 'digest'}
+          onPress={() => setNotifications('digest')}
+        />
       </SettingsSection>
+      <SettingsHint>{t('privacy.notificationsHint')}</SettingsHint>
 
+      <Divider />
       <SettingsSection>
         <SettingsRow label={t('blocked.title')} onPress={() => router.push(SCREENS.profile.blocked)} />
       </SettingsSection>

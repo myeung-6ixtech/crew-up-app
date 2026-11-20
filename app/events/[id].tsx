@@ -29,7 +29,7 @@ import { useAuth } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
 import { useGuidelinesGate } from '@/features/legal/guidelinesGate';
-import { fetchEvent, fetchEventPreview, rsvpEvent, setEventClosure } from '@/services/eventService';
+import { fetchEventVenuePlace, fetchEvent, fetchEventPreview, rsvpEvent, setEventClosure } from '@/services/eventService';
 import { fontFamily, useTheme } from '@/theme';
 import type { EventItem } from '@/types/domain';
 
@@ -158,6 +158,8 @@ export default function EventDetailScreen() {
   const [reopened, setReopened] = useState(false);
   const [toast, setToast] = useState('');
   const [justUnlocked, setJustUnlocked] = useState(false);
+  // The venue's place id and coordinates (separate query, so the page still loads on a backend without them).
+  const [venuePlace, setVenuePlace] = useState<{ placeId: string; lat: number | null; lng: number | null } | null>(null);
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -166,6 +168,7 @@ export default function EventDetailScreen() {
       setEvent(full);
       setPreview(null);
       setMissing(false);
+      setVenuePlace(await fetchEventVenuePlace(client, id));
       return;
     }
     const listed = await fetchEventPreview(client, id);
@@ -463,7 +466,7 @@ export default function EventDetailScreen() {
             {isHost || state !== 'open' ? (
               venue ? <VenueChip venue={event.venue_name || venue} detail={event.venue_name ? event.venue_address : event.city} /> : null
             ) : event.venue_name || event.venue_address ? (
-              <EventLocation venue={event.venue_name} address={event.venue_address} city={event.city} />
+              <EventLocation venue={event.venue_name} address={event.venue_address} city={event.city} place={venuePlace} />
             ) : null}
 
             {!isHost ? (

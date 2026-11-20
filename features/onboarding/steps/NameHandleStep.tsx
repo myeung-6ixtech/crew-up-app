@@ -22,7 +22,8 @@ import {
   type DisplayNameStyle,
 } from '../displayName';
 import { useStepNavigation, useStepSave } from '../hooks/useStepForm';
-import type { StepContext } from '../navigation';
+import { FROM_BACK_PARAM, type StepContext } from '../navigation';
+import { useLocalSearchParams } from 'expo-router';
 import { OnboardingRequestError, savePreferredName, saveStep } from '../services/onboardingService';
 
 const NamePartSchema = z
@@ -56,8 +57,10 @@ export function NameHandleStep({ context }: { context: StepContext }) {
   const { profile } = useAuth();
   const { refreshProfile } = useSession();
   const [usernameStatus, setUsernameStatus] = useState<UsernameStatus>('idle');
+  const { from } = useLocalSearchParams<{ from?: string }>();
   const [phase, setPhase] = useState<'details' | 'display'>(() =>
-    context === 'flow' && profile?.username && profile?.full_name && !profile?.preferred_name ? 'display' : 'details',
+    // Back from About opens the last sub-screen (display name + photo).
+    context === 'flow' && profile?.username && profile?.full_name && (from === FROM_BACK_PARAM || !profile?.preferred_name) ? 'display' : 'details',
   );
   const [detailsError, setDetailsError] = useState('');
   const [savingDetails, setSavingDetails] = useState(false);

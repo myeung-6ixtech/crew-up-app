@@ -13,6 +13,8 @@ export interface Profile {
   preferred_language: string;
   default_visibility: VisibilityLevel;
   notification_mode: string;
+  /** IANA zone of the member's phone, for the 8 AM daily digest. Written by the app; not read back. */
+  time_zone?: string | null;
   is_verified: boolean;
   avatar_file_id?: string | null;
   friend_id?: string | null;

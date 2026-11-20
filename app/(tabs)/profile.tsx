@@ -4,7 +4,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { CrewAvatar, CircleButton, MenuGlyph, SmallPillButton } from '@/components/crew/kit';
-import { CrewIdDarkCard, useCrewIdActions } from '@/components/crew/CrewIdDarkCard';
+import { CrewIdDarkCard } from '@/components/crew/CrewIdDarkCard';
 import { ScanFrameGlyph } from '@/components/crew/qrGlyphs';
 import { ProfileDetails } from '@/components/profile/ProfileDetails';
 import { AppIcon, Screen } from '@/components/ui';
@@ -35,7 +35,6 @@ export default function ProfileTab() {
   const client = useApolloClient();
   const { open: openMenu } = useAppMenu();
   const { profile, userId } = useAuth();
-  const { share } = useCrewIdActions(profile?.friend_id);
   const [stats, setStats] = useState<ProfileStats>({ trips: 0, cities: 0, friends: 0 });
   const [airlineName, setAirlineName] = useState<string | null>(null);
   const airlines = useAirlines();
@@ -169,7 +168,6 @@ export default function ProfileTab() {
 
         <View style={{ flexDirection: 'row', gap: 8, marginTop: 14 }}>
           <SmallPillButton style={{ flex: 1 }} label={t('profile.editTitle')} onPress={() => router.push(SCREENS.profile.edit)} />
-          <SmallPillButton style={{ flex: 1 }} label={t('profile.shareCrewId')} onPress={() => void share()} />
         </View>
 
         <View style={{ marginTop: 16 }}>

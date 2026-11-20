@@ -42,7 +42,10 @@ export async function signInWithGoogle() {
 
   try {
     const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectTo, {
-      preferEphemeralSession: Platform.OS === 'ios',
+      // Nhost's sign-in state is only valid for 60 seconds. A private (ephemeral) browser forgets the Google
+      // session, so every attempt means typing email, password and 2-step code, which often runs past that and
+      // fails with "invalid state token". A shared session lets Google show the account picker and return in seconds.
+      preferEphemeralSession: false,
       // Android: keep the sheet in the app's own task. In a separate task (the default), the return to
       // crewup://auth/callback only brings the app forward and the URL never reaches it, so sign-in looks cancelled.
       createTask: false,

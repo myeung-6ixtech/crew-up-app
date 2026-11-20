@@ -423,35 +423,59 @@ export function VenueChip({ venue, detail }: { venue: string; detail?: string | 
 }
 
 /** Location: a live map, venue and address, then Directions and Open in Maps. */
-export function EventLocation({ venue, address, city }: { venue?: string | null; address?: string | null; city: string }) {
+export function EventLocation({
+  venue,
+  address,
+  city,
+  place,
+}: {
+  venue?: string | null;
+  address?: string | null;
+  city: string;
+  /** The searched place behind the venue (id and coordinates), when there is one. */
+  place?: { placeId: string; lat: number | null; lng: number | null } | null;
+}) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const query = encodeURIComponent([venue, address, city].filter(Boolean).join(', '));
   /*
-   * The keyless Google embed, loaded as the page itself. Inside an iframe in an inline HTML page it had no origin or
-   * referrer, and Google can refuse to draw the map (a blank or "can't load" box).
+   * What the map points at, most exact first: the venue's coordinates; its street address (Google's formatted
+   * address, which already names the city); otherwise the venue name in the city. Gluing name + address + city
+   * together often matched nothing, or the wrong place.
    */
-  const mapUrl = `https://maps.google.com/maps?q=${query}&z=15&output=embed`;
+  const hasCoordinates = typeof place?.lat === 'number' && typeof place?.lng === 'number';
+  const target = hasCoordinates
+    ? `${place!.lat},${place!.lng}`
+    : address?.trim()
+      ? [address.trim(), address.toLowerCase().includes(city.toLowerCase()) ? null : city].filter(Boolean).join(', ')
+      : [venue, city].filter(Boolean).join(', ');
+  const query = encodeURIComponent(target);
+  // Open in Maps / Directions land on the place itself (its page, reviews, hours) when we know it.
+  const placeParam = place?.placeId ? `&query_place_id=${encodeURIComponent(place.placeId)}` : '';
+  const destinationParam = place?.placeId ? `&destination_place_id=${encodeURIComponent(place.placeId)}` : '';
+  /*
+   * Google's keyless embed only draws inside an iframe (loaded on its own it shows "must be used in an iframe").
+   * The iframe sits in a small page given a real https origin (baseUrl below), so Google has an origin and referrer.
+   */
+  const mapUrl = `https://maps.google.com/maps?q=${query}&z=16&output=embed`;
+  const mapHtml = `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body,iframe{margin:0;padding:0;border:0;width:100%;height:100%;overflow:hidden}</style></head><body><iframe src="${mapUrl}" loading="eager" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></body></html>`;
   return (
     <>
       <MonoLabel style={{ fontSize: 10.5, marginTop: 24 }}>{t('events.location')}</MonoLabel>
       <View style={{ backgroundColor: theme.colors.card, borderRadius: 20, overflow: 'hidden', marginTop: 10 }}>
         <View style={{ height: 180, backgroundColor: theme.colors.field }} accessibilityLabel={t('events.mapOf', { place: venue || city })}>
           <WebView
-            source={{ uri: mapUrl }}
-            originWhitelist={['https://*']}
+            source={{ html: mapHtml, baseUrl: 'https://crewup.app' }}
+            originWhitelist={['*']}
             scrollEnabled={false}
             javaScriptEnabled
             domStorageEnabled
             style={{ backgroundColor: theme.colors.field }}
             onShouldStartLoadWithRequest={(request) => {
-              // The embed and its redirect load in place; anything tapped inside it (View larger map, a pin) opens Maps.
-              if (request.url === 'about:blank' || /google\.com\/maps\/embed|maps\.google\.com\/maps\?.*output=embed/.test(request.url)) return true;
-              if (request.navigationType === 'click' || /google\.com\/maps/.test(request.url)) {
-                void Linking.openURL(request.url);
-                return false;
-              }
-              return true;
+              // The page itself and everything inside the iframe load in place.
+              if (!request.isTopFrame || request.url === 'about:blank' || request.url.startsWith('https://crewup.app')) return true;
+              // A tap in the map that tries to take over the whole view (View larger map, a pin) opens Google Maps instead.
+              void Linking.openURL(request.url);
+              return false;
             }}
           />
         </View>
@@ -469,13 +493,13 @@ export function EventLocation({ venue, address, city }: { venue?: string | null;
         <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingBottom: 16 }}>
           <Pressable
             accessibilityRole="link"
-            onPress={() => void Linking.openURL(`https://www.google.com/maps/dir/?api=1&destination=${query}`)}
+            onPress={() => void Linking.openURL(`https://www.google.com/maps/dir/?api=1&destination=${query}${destinationParam}`)}
             style={({ pressed }) => ({ flex: 1, height: 42, borderRadius: 21, backgroundColor: '#0E1113', alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.85 : 1 })}>
             <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 13.5, color: '#A8E05F' }}>{t('events.directions')}</Text>
           </Pressable>
           <Pressable
             accessibilityRole="link"
-            onPress={() => void Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${query}`)}
+            onPress={() => void Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${query}${placeParam}`)}
             style={({ pressed }) => ({
               flex: 1,
               height: 42,

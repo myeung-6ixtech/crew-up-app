@@ -1,13 +1,11 @@
 import { useCallback, useState } from 'react';
 import { AccessibilityInfo, Pressable, Text, View } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { CrewQrSheet } from '@/components/crew/CrewQrSheet';
 import { CheckGlyph as SmallCheck, CopyGlyph, QrGlyph } from '@/components/crew/qrGlyphs';
 import { SCREENS } from '@/constants/screens';
 import { copyToClipboard } from '@/lib/clipboard';
-import { shareCrewLink } from '@/lib/shareCrewLink';
 import { formatFriendId } from '@/lib/friendId';
 import { hapticSelection, hapticSuccess } from '@/lib/haptics';
 import { fontFamily } from '@/theme';
@@ -17,7 +15,7 @@ const LIME = '#A8E05F';
 const PALE = '#EDF1F2';
 const MUTED = '#A7B1B5';
 
-/** Copy puts the dashed form on the clipboard; Share opens the system sheet. */
+/** Copy puts the dashed form on the clipboard. Sharing the link happens from the QR sheet (shareCrewLink). */
 export function useCrewIdActions(friendId: string | null | undefined) {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
@@ -32,22 +30,7 @@ export function useCrewIdActions(friendId: string | null | undefined) {
     setTimeout(() => setCopied(false), 1800);
   }, [code, t]);
 
-  // Shares the Crew ID with the CrewUp link that opens Add friend.
-  const share = useCallback(async () => {
-    if (!code || !friendId) return;
-    hapticSelection();
-    await shareCrewLink(friendId, t);
-  }, [code, friendId, t]);
-
-  return { code, copied, copy, share };
-}
-
-function ShareGlyph() {
-  return (
-    <Svg width={12} height={13} viewBox="0 0 12 13">
-      <Path d="M6 8.5V1.5M3 4l3-3 3 3M1.5 7v3.5a1 1 0 001 1h7a1 1 0 001-1V7" stroke={INK} strokeWidth={1.7} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
-  );
+  return { code, copied, copy };
 }
 
 function Chip({
@@ -85,13 +68,13 @@ function Chip({
 }
 
 /**
- * Dark Crew ID card: QR (opens "Your Crew QR") and Share, then the code in lime mono with a round copy button beside
- * it (flips to a check and announces "Crew ID copied").
+ * Dark Crew ID card: QR (opens "Your Crew QR", where the link is shared), then the code in lime mono with a round
+ * copy button beside it (flips to a check and announces "Crew ID copied").
  */
 export function CrewIdDarkCard({ friendId }: { friendId: string | null | undefined }) {
   const { t } = useTranslation();
   const router = useRouter();
-  const { code, copied, copy, share } = useCrewIdActions(friendId);
+  const { code, copied, copy } = useCrewIdActions(friendId);
   const [qrOpen, setQrOpen] = useState(false);
   if (!code) return null;
   return (
@@ -109,7 +92,6 @@ export function CrewIdDarkCard({ friendId }: { friendId: string | null | undefin
               setQrOpen(true);
             }}
           />
-          <Chip tone="pale" label={t('friends.shareCrewId')} icon={<ShareGlyph />} onPress={() => void share()} />
         </View>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>

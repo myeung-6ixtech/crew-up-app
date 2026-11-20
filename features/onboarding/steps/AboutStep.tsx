@@ -14,7 +14,7 @@ import {
 import { UPDATE_PROFILE } from '@/graphql/mutations/profile';
 import { useAuth, useSession } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { hapticError, hapticSuccess } from '@/lib/haptics';
+import { hapticError, hapticSuccess, hapticWarning } from '@/lib/haptics';
 import { fontFamily, useTheme } from '@/theme';
 import { getAboutDraft, setAboutDraft, type AboutDraft, type Gender } from '../aboutDraft';
 import { DobField } from '../components/DobField';
@@ -24,10 +24,13 @@ import { LanguagePills } from '../components/LanguagePills';
 import { StepScaffold } from '../components/StepScaffold';
 import { useActivitySelection } from '../hooks/useActivitySelection';
 import { useStepSave } from '../hooks/useStepForm';
-import { type StepContext } from '../navigation';
+import { FROM_BACK_PARAM, type StepContext } from '../navigation';
+import { useLocalSearchParams } from 'expo-router';
 import { OnboardingRequestError, saveStep } from '../services/onboardingService';
 
 const GENDERS = ['male', 'female', 'unspecified'] as const;
+/** Most picks on each "What are you into?" page (activities, then interests). */
+const INTO_CAP = 6;
 
 const DetailsSchema = z.object({
   dateOfBirth: DateOfBirthSchema,
@@ -82,8 +85,10 @@ export function AboutStep({ context }: { context: StepContext }) {
   const { save, saving, formError } = useStepSave('about', context);
   const inFlow = context === 'flow';
   const remembered = getAboutDraft();
+  const { from } = useLocalSearchParams<{ from?: string }>();
   const [phase, setPhase] = useState<'details' | 'languages' | 'into' | 'interests'>(() =>
-    inFlow && remembered && remembered.screen !== 'details' ? remembered.screen : 'details',
+    // Back from Residence opens the last sub-screen (interests).
+    inFlow && from === FROM_BACK_PARAM ? 'interests' : inFlow && remembered && remembered.screen !== 'details' ? remembered.screen : 'details',
   );
   const interests = useActivitySelection(inFlow ? userId : null);
   const [phaseError, setPhaseError] = useState('');
@@ -220,6 +225,17 @@ export function AboutStep({ context }: { context: StepContext }) {
   };
 
   /** Next saves both steps' picks; Skip on step 2 keeps the activities from step 1 and drops the interests. */
+  /** "What are you into?": up to INTO_CAP activities, then up to INTO_CAP interests. */
+  const toggleCapped = (id: string) => {
+    // The bubble already ticks on tap; at the cap it also buzzes and says why.
+    if (!interests.toggleCapped(id, INTO_CAP)) {
+      hapticWarning();
+      setPhaseError(t('onboarding.about.intoCapReached', { cap: INTO_CAP }));
+      return;
+    }
+    setPhaseError('');
+  };
+
   const onInterestsDone = async (includeInterests: boolean) => {
     try {
       await interests.save(includeInterests ? undefined : interests.idsOfKind('activity'));
@@ -319,14 +335,14 @@ export function AboutStep({ context }: { context: StepContext }) {
         title={t('onboarding.about.intoTitle')}
         subtitle={t('onboarding.about.activitiesSubtitle')}
         headerAction={{ label: t('onboarding.skipShort'), onPress: toInterests }}
-        primaryLabel={picked ? t('onboarding.about.nextPicked', { count: picked }) : t('onboarding.next')}
+        primaryLabel={t('onboarding.about.nextOfCap', { count: picked, cap: INTO_CAP })}
         onPrimary={toInterests}
         primaryDisabled={interests.loading || interests.failed}
         error={formError || phaseError || (interests.failed ? t('onboarding.genericError') : '')}>
         <OnboardingActivityFields
           activities={interests.activities}
           selectedIds={interests.selectedIds}
-          onToggle={interests.toggle}
+          onToggle={toggleCapped}
           loading={interests.loading}
         />
       </StepScaffold>
@@ -344,7 +360,7 @@ export function AboutStep({ context }: { context: StepContext }) {
         title={t('onboarding.about.intoTitle')}
         subtitle={t('onboarding.about.interestsSubtitle')}
         headerAction={{ label: t('onboarding.skipShort'), onPress: () => void onInterestsDone(false) }}
-        primaryLabel={picked ? t('onboarding.about.nextPicked', { count: picked }) : t('onboarding.next')}
+        primaryLabel={t('onboarding.about.nextOfCap', { count: picked, cap: INTO_CAP })}
         onPrimary={() => void onInterestsDone(true)}
         primaryLoading={interests.saving || saving}
         primaryDisabled={interests.loading || interests.failed}
@@ -352,7 +368,7 @@ export function AboutStep({ context }: { context: StepContext }) {
         <OnboardingInterestFields
           activities={interests.activities}
           selectedIds={interests.selectedIds}
-          onToggle={interests.toggle}
+          onToggle={toggleCapped}
           loading={interests.loading}
         />
       </StepScaffold>

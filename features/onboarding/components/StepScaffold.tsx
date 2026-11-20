@@ -3,7 +3,7 @@ import { Alert, BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollVi
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
-import { PROFILE_STEPS, isProfileStep, previousStep, type OnboardingStep } from '@crewup/shared';
+import { PROFILE_STEPS, isProfileStep, type OnboardingStep } from '@crewup/shared';
 import { PickerFieldVariantProvider } from '@/components/profile/pickerFieldShared';
 import { Screen } from '@/components/ui';
 import { hapticWarning } from '@/lib/haptics';
@@ -12,7 +12,7 @@ import { useSession } from '@/hooks/useSession';
 import { fontFamily, useTheme, useThemedStyles } from '@/theme';
 import { Chevron, MonoLabel, PillCta, StepSubtitle, StepTitle, TextAction } from './kit';
 import { OnboardingProgress } from './OnboardingProgress';
-import { onboardingHref, type StepContext } from '../navigation';
+import { backHref, flowPreviousStep, type StepContext } from '../navigation';
 
 /** Nine stops on the lime bar (onboarding.md §Screens). */
 export const PROGRESS_TOTAL = PROFILE_STEPS.length + 2;
@@ -158,7 +158,7 @@ export function StepScaffold({
     },
   }));
 
-  const previous = step && mode && context === 'flow' ? previousStep(mode, step) : null;
+  const previous = step && mode && context === 'flow' ? flowPreviousStep(mode, step) : null;
   const showLogout = context === 'flow' && step === 'name_handle' && !onLeadingPress;
 
   const goBack = useCallback(() => {
@@ -170,8 +170,13 @@ export function StepScaffold({
       confirmSignOut();
       return;
     }
+    // In the flow, Back always opens the previous step (on its last sub-screen). History can't be trusted here:
+    // after signing in it holds the sign-in screen, and the guard would send you straight back to this step.
+    if (previous) {
+      router.replace(backHref(previous));
+      return;
+    }
     if (router.canGoBack()) router.back();
-    else if (previous) router.replace(onboardingHref(previous));
   }, [confirmSignOut, context, onLeadingPress, previous, router, showLogout, step]);
 
   useFocusEffect(

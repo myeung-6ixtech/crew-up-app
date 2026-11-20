@@ -1,24 +1,20 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
+import { CrewSearch } from '@/components/friends/CrewSearch';
 import { CrewAvatar, PushedTopBar } from '@/components/crew/kit';
 import { personRoleBase } from '@/components/crew/people';
 import { StandaloneNavPill } from '@/components/navigation/FloatingTabBar';
 import { Screen, Toast } from '@/components/ui';
-import { SearchGlyph } from '@/features/onboarding/components/kit';
 import { useAuth } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
-import { formatFriendId, normalizeFriendId } from '@/lib/friendId';
 import { hapticError, hapticImpact, hapticSuccess } from '@/lib/haptics';
 import {
   ConnectionRequestError,
   fetchSuggestedFriends,
-  lookupByFriendId,
   requestConnection,
-  requestConnectionByFriendId,
-  type FriendProfilePreview,
   type SuggestedProfile,
 } from '@/services/connectionService';
 import { fontFamily, useTheme } from '@/theme';
@@ -69,7 +65,7 @@ function SendButton({
   );
 }
 
-/** Two doors into the same request: a sideways row of suggested crew, then an exact Crew ID search. */
+/** Two doors into the same request: a sideways row of suggested crew, then Find crew (by @username or Crew ID). */
 export default function AddFriendScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -82,14 +78,6 @@ export default function AddFriendScreen() {
   const [suggested, setSuggested] = useState<SuggestedProfile[]>([]);
   const [suggestedLoading, setSuggestedLoading] = useState(true);
   const [sendingTo, setSendingTo] = useState<string | null>(null);
-  const [code, setCode] = useState('');
-  const [focused, setFocused] = useState(false);
-  const [lookupLoading, setLookupLoading] = useState(false);
-  const [preview, setPreview] = useState<FriendProfilePreview | null>(null);
-  const [notFound, setNotFound] = useState(false);
-  const [searchError, setSearchError] = useState('');
-  const [sent, setSent] = useState(false);
-  const [sending, setSending] = useState(false);
   const [toast, setToast] = useState('');
 
   useEffect(() => {
@@ -114,39 +102,6 @@ export default function AddFriendScreen() {
     [t],
   );
 
-  const runLookup = useCallback(
-    async (raw: string) => {
-      setPreview(null);
-      setNotFound(false);
-      setSearchError('');
-      setSent(false);
-      // Partial codes stay quiet: nothing is called until the code is a full Crew ID.
-      if (!normalizeFriendId(raw)) return;
-      setLookupLoading(true);
-      try {
-        setPreview(await lookupByFriendId(raw.trim()));
-      } catch (e) {
-        if (e instanceof ConnectionRequestError && e.code === 'NOT_FOUND') setNotFound(true);
-        else setSearchError(errorMessage(e));
-      } finally {
-        setLookupLoading(false);
-      }
-    },
-    [errorMessage],
-  );
-
-  // A complete, well-formed code looks itself up; the keyboard's search key does the same.
-  useEffect(() => {
-    if (!normalizeFriendId(code)) {
-      setPreview(null);
-      setNotFound(false);
-      setSearchError('');
-      return undefined;
-    }
-    const timer = setTimeout(() => void runLookup(code), 300);
-    return () => clearTimeout(timer);
-  }, [code, runLookup]);
-
   const sendSuggested = async (person: SuggestedProfile) => {
     setSendingTo(person.user_id);
     try {
@@ -159,24 +114,6 @@ export default function AddFriendScreen() {
       setToast(errorMessage(e));
     } finally {
       setSendingTo(null);
-    }
-  };
-
-  const sendByCode = async () => {
-    if (!preview || sent) return;
-    setSending(true);
-    setSearchError('');
-    try {
-      await requestConnectionByFriendId(code.trim(), t('friends.sendRequestMessage'));
-      hapticSuccess();
-      setSent(true);
-      setSuggested((current) => current.filter((item) => item.user_id !== preview.user_id));
-      setToast(t('friends.requestSentToast'));
-    } catch (e) {
-      hapticError();
-      setSearchError(errorMessage(e));
-    } finally {
-      setSending(false);
     }
   };
 
@@ -245,98 +182,10 @@ export default function AddFriendScreen() {
           </Text>
         )}
 
-        <Text style={{ fontFamily: fontFamily.jakartaBold, fontSize: 17, color: theme.colors.textPrimary, marginTop: 28 }}>
-          {t('friends.addByCrewId')}
-        </Text>
-        <View
-          style={{
-            height: 52,
-            borderRadius: 26,
-            backgroundColor: focused ? theme.colors.card : theme.colors.field,
-            borderWidth: 2,
-            borderColor: focused ? theme.colors.ink : theme.colors.field,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 10,
-            paddingHorizontal: 18,
-            marginTop: 12,
-          }}>
-          <SearchGlyph />
-          <TextInput
-            value={code}
-            onChangeText={(value) => {
-              const normalized = normalizeFriendId(value);
-              const formatted = normalized ? formatFriendId(normalized) : null;
-              const compact = value.toUpperCase().replace(/[^0-9A-Z]/g, '');
-              setCode(formatted && (compact !== normalized || value !== formatted) ? formatted : value);
-            }}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            onSubmitEditing={() => void runLookup(code)}
-            returnKeyType="search"
-            placeholder={t('friends.crewIdSearchPlaceholder')}
-            placeholderTextColor={theme.colors.textTertiary}
-            accessibilityLabel={t('friends.addByCrewId')}
-            autoCapitalize="characters"
-            autoCorrect={false}
-            autoComplete="off"
-            spellCheck={false}
-            textContentType="none"
-            style={{ flex: 1, fontFamily: fontFamily.monoMedium, fontSize: 15, letterSpacing: 0.6, color: theme.colors.textPrimary, padding: 0 }}
-          />
-          {lookupLoading ? <ActivityIndicator color={theme.colors.accentText} /> : null}
-        </View>
-        <Text style={{ fontFamily: fontFamily.interRegular, fontSize: 12, color: theme.colors.textTertiary, marginTop: 8, paddingLeft: 4 }}>
-          {t('friends.crewIdQuietHint')}
-        </Text>
-
-        {preview ? (
-          <View
-            style={{
-              backgroundColor: theme.colors.card,
-              borderRadius: 18,
-              padding: 14,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 12,
-              marginTop: 12,
-            }}>
-            <CrewAvatar name={preview.display_name} fileId={preview.avatar_file_id} seed={preview.user_id} size={52} />
-            <View style={{ flex: 1, minWidth: 0, gap: 1 }}>
-              <Text numberOfLines={1} style={{ fontFamily: fontFamily.interMedium, fontSize: 15, color: theme.colors.textPrimary }}>
-                {preview.display_name}
-              </Text>
-              <Text numberOfLines={1} style={{ fontFamily: fontFamily.interRegular, fontSize: 12.5, color: theme.colors.textTertiary }}>
-                {personRoleBase(preview, t)}
-              </Text>
-              <Text style={{ fontFamily: fontFamily.monoMedium, fontSize: 11, color: theme.colors.accentText }}>
-                {`${t('friends.crewId')}: ${preview.friend_id_display ?? formatFriendId(preview.friend_id)}`}
-              </Text>
-            </View>
-            <SendButton
-              height={36}
-              label={sent ? t('friends.requestSent') : t('friends.sendRequest')}
-              done={sent}
-              loading={sending}
-              onPress={() => void sendByCode()}
-            />
-          </View>
-        ) : null}
-
-        {notFound || searchError ? (
-          <View style={{ backgroundColor: theme.colors.card, borderRadius: 18, padding: 18, marginTop: 12 }}>
-            <Text
-              style={{
-                fontFamily: fontFamily.interRegular,
-                fontSize: 13.5,
-                lineHeight: 20,
-                color: searchError ? theme.colors.statusOnDuty : theme.colors.textSecondary,
-                textAlign: 'center',
-              }}>
-              {searchError || `${t('friends.searchNoResults')}. ${t('friends.searchNoResultsHint')}`}
-            </Text>
-          </View>
-        ) : null}
+        <CrewSearch
+          onToast={setToast}
+          onSent={(sentId) => setSuggested((current) => current.filter((item) => item.user_id !== sentId))}
+        />
       </ScrollView>
       <Toast message={toast} visible={Boolean(toast)} onHide={() => setToast('')} />
       <StandaloneNavPill active="friends" />
