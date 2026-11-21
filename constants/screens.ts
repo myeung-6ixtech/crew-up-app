@@ -54,6 +54,9 @@ export const SCREENS = {
     discover: '/network/discover',
     user: (userId: string) => `/network/${userId}` as const,
   },
+  /** Events tab filtered to a city and a time window (Layover › Related events › See all). */
+  eventsIn: (filter: { city: string; from: string; to: string }) =>
+    ({ pathname: '/(tabs)/events' as const, params: { city: filter.city, from: filter.from, to: filter.to } }),
   events: {
     detail: (id: string) => `/events/${id}` as const,
     create: '/events/create',

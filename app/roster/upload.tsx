@@ -488,9 +488,9 @@ export default function RosterUploadScreen() {
                 <View style={{ flex: 1, height: 1, backgroundColor: theme.colors.track }} />
               </View>
               <SourceCard
-                title={IOS ? t('rosterFlow.filesIos') : t('rosterFlow.filesAndroid')}
+                title={t('rosterFlow.files')}
                 tag="PDF"
-                subtitle={opening === 'files' ? t('rosterFlow.openingFiles') : IOS ? t('rosterFlow.filesBodyIos') : t('rosterFlow.filesBodyAndroid')}
+                subtitle={opening === 'files' ? t('rosterFlow.openingFiles') : t('rosterFlow.filesBody')}
                 formats={['PDF']}
                 icon={<FileGlyph color="#A8E05F" />}
                 iconBg="#0E1113"

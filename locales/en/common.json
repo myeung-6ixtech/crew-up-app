@@ -1,4 +1,10 @@
 {
+  "layover": {
+    "relatedEvents": "Related events",
+    "inCity": "In {{city}}",
+    "seeAll": "See all",
+    "seeAllEventsA11y": "See all events in {{city}}"
+  },
   "safetySheet": {
     "moreOptions": "More options for {{name}}",
     "unfriend": "Unfriend",
@@ -506,7 +512,7 @@
     "manage": "My schedule",
     "manual": "Enter manually",
     "uploadTitle": "Upload your roster",
-    "uploadBody": "Pick a screenshot from your photos or the PDF from your airline. You check everything before it's saved.",
+    "uploadBody": "Add a screenshot or file of your roster. You check everything before it's saved.",
     "uploadPrivacy": "Names, staff numbers and hotels are removed from PDFs before reading, and your file is deleted right after.",
     "chooseFile": "Choose file",
     "choosePhoto": "Choose from library",
@@ -524,9 +530,9 @@
     },
     "consent": {
       "title": "Before we read your roster",
-      "lead": "CrewUp uses {{provider}}, an AI service, to find the flights and layovers in your roster.",
+      "lead": "CrewUp uses a trusted third-party AI service to find the flights and layovers in your roster.",
       "points": [
-        "Your file is sent to {{provider}} only to read your flights.",
+        "Your file is sent to that service only to read your flights.",
         "From PDFs, we remove names, staff numbers and hotel names first. Screenshots are sent as they are, so crop out anything you'd rather not share.",
         "We delete your file right after it's read. Only the trips you confirm are saved.",
         "Prefer not to? You can enter your trips manually instead."
@@ -542,8 +548,8 @@
     "title": "Which method?",
     "search": "Search by flight",
     "searchBody": "Find one flight by number or route and add it as a trip.",
-    "roster": "Roster upload",
-    "rosterBody": "Upload your roster PDF and add a whole month of layovers at once."
+    "roster": "Roster Upload",
+    "rosterBody": "Upload your roster and add a whole month of layovers at once."
   },
   "network": {
     "connections": "Connections",
@@ -644,6 +650,7 @@
     "crewIdQuietHint": "Try another code, or clear it — partial codes stay quiet."
   },
   "events": {
+    "windowClearA11y": "Showing events in {{city}} for your layover. Clear filter",
     "create": "Create meetup",
     "createEvent": "Create Event",
     "meetTypeTitle": "What kind of meet?",
@@ -1369,10 +1376,8 @@
     "photosAndroid": "Gallery",
     "photosBody": "A screenshot of your roster app",
     "screenshotTag": "Screenshot",
-    "filesIos": "Files",
-    "filesAndroid": "Files & Drive",
-    "filesBodyIos": "The PDF from Files, Mail or iCloud Drive",
-    "filesBodyAndroid": "The PDF from Downloads or Google Drive",
+    "files": "Files",
+    "filesBody": "Your roster file saved on this phone",
     "openingPhotos": "Opening Photos…",
     "openingGallery": "Opening Gallery…",
     "openingFiles": "Opening Files…",

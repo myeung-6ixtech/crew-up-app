@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { CrewAvatar, PushedTopBar } from '@/components/crew/kit';
 import { personName } from '@/components/crew/people';
 import { isCurrent, overlapLabel } from '@/components/discover/matches';
+import { RelatedEvents } from '@/components/discover/RelatedEvents';
 import { StandaloneNavPill } from '@/components/navigation/FloatingTabBar';
 import { Screen } from '@/components/ui';
 import { findAirportByIata } from '@/constants/airports';
@@ -14,6 +15,7 @@ import { MonoLabel, PillCta } from '@/features/onboarding/components/kit';
 import { useAuth } from '@/hooks/useSession';
 import { useApolloClient } from '@/lib/apolloHooks';
 import { formatAirportDate, formatAirportTime } from '@/lib/airportTime';
+import { fetchLayoverRelatedEvents, type RelatedEvent } from '@/services/eventService';
 import { dedupeTripMatches, fetchMyTrips, fetchTripMatches } from '@/services/tripService';
 import { fontFamily, useTheme } from '@/theme';
 import type { TripEntry, TripMatchEntry } from '@/types/trip';
@@ -31,13 +33,41 @@ export default function SavedLayoverScreen() {
   const { userId } = useAuth();
   const [trip, setTrip] = useState<TripEntry | null | undefined>(undefined);
   const [matches, setMatches] = useState<TripMatchEntry[]>([]);
+  // Related events: null until loaded, and stays null if the request fails (the section then hides quietly).
+  const [related, setRelated] = useState<RelatedEvent[] | null>(null);
+  const [relatedLoading, setRelatedLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
     if (!userId || !tripId) return;
     const [trips, allMatches] = await Promise.all([fetchMyTrips(client, userId), fetchTripMatches(client).catch(() => [])]);
-    setTrip(trips.all.find((item) => item.id === tripId) ?? null);
+    const found = trips.all.find((item) => item.id === tripId) ?? null;
+    setTrip(found);
     setMatches(dedupeTripMatches(allMatches.filter((match) => match.source_trip_id === tripId && isCurrent(match))));
+    const layover = found?.stays?.[0];
+    if (!layover) {
+      setRelated(null);
+      setRelatedLoading(false);
+      return;
+    }
+    const layoverCity = findAirportByIata(layover.airport_iata)?.city ?? layover.city;
+    try {
+      setRelated(await fetchLayoverRelatedEvents(client, { city: layoverCity, from: layover.starts_at, to: layover.ends_at, limit: 4 }));
+    } catch {
+      setRelated(null);
+    } finally {
+      setRelatedLoading(false);
+    }
   }, [client, tripId, userId]);
+
+  const refresh = async () => {
+    setRefreshing(true);
+    try {
+      await load();
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
     void load();
@@ -74,7 +104,9 @@ export default function SavedLayoverScreen() {
           {t('discover.layoverMissing')}
         </Text>
       ) : (
-        <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: insets.bottom + 120 }}>
+        <ScrollView
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void refresh()} />}
+          contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: insets.bottom + 120 }}>
           <View style={{ backgroundColor: '#0E1113', borderRadius: 24, padding: 20, marginTop: 14, gap: 12 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <MonoLabel style={{ fontSize: 10.5, color: '#7D878B' }}>{t('discover.layoverSaved')}</MonoLabel>
@@ -156,6 +188,14 @@ export default function SavedLayoverScreen() {
               <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 13.5, color: theme.colors.textPrimary }}>{formatAirportTime(stay.ends_at, code)}</Text>
             </View>
           </View>
+
+          <RelatedEvents
+            city={city}
+            airportCode={code}
+            events={related}
+            loading={relatedLoading}
+            onSeeAll={() => router.navigate(SCREENS.eventsIn({ city, from: stay.starts_at, to: stay.ends_at }))}
+          />
         </ScrollView>
       )}
       <StandaloneNavPill active="index" />

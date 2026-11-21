@@ -199,3 +199,50 @@ export const GET_EVENT_VENUE_PLACE = gql`
     }
   }
 `;
+
+/**
+ * Related events on a layover: public, published meets in the layover city that overlap the rest window, soonest
+ * first. Runs with the user's permissions, which already hide private meets they haven't unlocked and anyone blocked
+ * either way. An event without an end counts as lasting 2 hours ($startsAfter = layover start − 2h).
+ */
+export const GET_LAYOVER_RELATED_EVENTS = gql`
+  query GetLayoverRelatedEvents($city: String!, $from: timestamptz!, $to: timestamptz!, $startsAfter: timestamptz!, $limit: Int!) {
+    events(
+      where: {
+        city: { _ilike: $city }
+        cancelled_at: { _is_null: true }
+        visibility_scope: { _neq: friends }
+        _or: [{ host_type: { _eq: user } }, { is_published: { _eq: true } }]
+        starts_at: { _lt: $to }
+        _and: [{ _or: [{ ends_at: { _gt: $from } }, { _and: [{ ends_at: { _is_null: true } }, { starts_at: { _gt: $startsAfter } }] }] }]
+      }
+      order_by: { starts_at: asc }
+      limit: $limit
+    ) {
+      id
+      title
+      city
+      starts_at
+      ends_at
+      venue_name
+      featured_image_file_id
+      eventActivities {
+        activity {
+          slug
+          name
+          kind
+        }
+      }
+    }
+  }
+`;
+
+/** Covers from approved event sources. Separate so the section still loads on a backend without the column. */
+export const GET_EVENT_COVER_URLS = gql`
+  query GetEventCoverUrls($ids: [uuid!]!) {
+    events(where: { id: { _in: $ids } }) {
+      id
+      cover_image_url
+    }
+  }
+`;

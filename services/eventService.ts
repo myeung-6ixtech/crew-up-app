@@ -3,6 +3,8 @@ import { selectableIds } from '@crewup/shared';
 import { apiEndpoints } from '@/lib/api/endpoints';
 import { nhost } from '@/lib/nhost';
 import {
+  GET_LAYOVER_RELATED_EVENTS,
+  GET_EVENT_COVER_URLS,
   GET_EVENT,
   GET_EVENT_VENUE_PLACE,
   GET_EVENT_PIN,
@@ -277,4 +279,64 @@ export async function createEventWithThread(
     await ensureEventThreadMembership(client, event.id, creatorId);
   }
   return event;
+}
+
+export type RelatedEvent = {
+  id: string;
+  title: string;
+  startsAt: string;
+  venueName: string | null;
+  /** Host upload (shown as a ~480px thumbnail) … */
+  coverFileId: string | null;
+  /** … or a cover from an approved event source. */
+  coverImageUrl: string | null;
+  /** The first activity on the meet, for the type label and the crew icon. */
+  typeSlug: string | null;
+  typeName: string | null;
+};
+
+/** Events in the layover city that overlap the rest window, soonest first (Layover › Related events). */
+export async function fetchLayoverRelatedEvents(
+  client: ApolloClient,
+  params: { city: string; from: string; to: string; limit?: number },
+): Promise<RelatedEvent[]> {
+  const startsAfter = new Date(Date.parse(params.from) - 2 * 60 * 60 * 1000).toISOString();
+  const { data } = await client.query({
+    query: GET_LAYOVER_RELATED_EVENTS,
+    variables: { city: params.city.replace(/[\\%_]/g, (c) => `\\${c}`), from: params.from, to: params.to, startsAfter, limit: params.limit ?? 4 },
+    fetchPolicy: 'network-only',
+  });
+  type Row = {
+    id: string;
+    title: string;
+    starts_at: string;
+    venue_name?: string | null;
+    featured_image_file_id?: string | null;
+    eventActivities?: Array<{ activity: { slug: string; name: string; kind?: string | null } | null }>;
+  };
+  const rows = ((data as { events?: Row[] } | undefined)?.events ?? []) as Row[];
+  let covers = new Map<string, string>();
+  if (rows.length) {
+    try {
+      const result = await client.query({ query: GET_EVENT_COVER_URLS, variables: { ids: rows.map((row) => row.id) }, fetchPolicy: 'network-only' });
+      const list = ((result.data as { events?: Array<{ id: string; cover_image_url?: string | null }> } | undefined)?.events ?? []);
+      covers = new Map(list.filter((row) => row.cover_image_url).map((row) => [row.id, row.cover_image_url as string]));
+    } catch {
+      // Backend without cover_image_url yet: host uploads still show.
+    }
+  }
+  return rows.map((row) => {
+    const tags = (row.eventActivities ?? []).flatMap((item) => (item?.activity ? [item.activity] : []));
+    const type = tags.find((tag) => (tag.kind ?? 'activity') === 'activity') ?? tags[0] ?? null;
+    return {
+      id: row.id,
+      title: row.title,
+      startsAt: row.starts_at,
+      venueName: row.venue_name ?? null,
+      coverFileId: row.featured_image_file_id ?? null,
+      coverImageUrl: covers.get(row.id) ?? null,
+      typeSlug: type?.slug ?? null,
+      typeName: type?.name ?? null,
+    };
+  });
 }

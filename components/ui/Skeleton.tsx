@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Animated, View, type ViewStyle } from 'react-native';
+import { AccessibilityInfo, Animated, View, type ViewStyle } from 'react-native';
 import { useThemedStyles } from '@/theme';
 
 export function Skeleton({
@@ -21,7 +21,12 @@ export function Skeleton({
   }));
 
   useEffect(() => {
-    const animation = Animated.loop(
+    let animation: Animated.CompositeAnimation | null = null;
+    let cancelled = false;
+    // Reduce Motion: a still grey block.
+    void AccessibilityInfo.isReduceMotionEnabled().then((reduce) => {
+      if (cancelled || reduce) return;
+      animation = Animated.loop(
       Animated.sequence([
         Animated.timing(opacity, {
           toValue: 1,
@@ -36,8 +41,12 @@ export function Skeleton({
       ]),
     );
 
-    animation.start();
-    return () => animation.stop();
+      animation.start();
+    });
+    return () => {
+      cancelled = true;
+      animation?.stop();
+    };
   }, [opacity]);
 
   return (

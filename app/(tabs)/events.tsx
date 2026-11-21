@@ -1,6 +1,6 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { PlusGlyph, TabTitle } from '@/components/crew/kit';
@@ -46,6 +46,16 @@ export default function EventsTab() {
   const [filter, setFilter] = useState<EventFilter>('public');
   const [query, setQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  // From a layover's "See all": events in that city during that window, shown as a clearable chip.
+  const params = useLocalSearchParams<{ city?: string; from?: string; to?: string }>();
+  const [window, setWindow] = useState<{ city: string; from: string; to: string } | null>(null);
+  useEffect(() => {
+    if (params.city && params.from && params.to) {
+      setWindow({ city: params.city, from: params.from, to: params.to });
+      setFilter('public');
+      setQuery('');
+    }
+  }, [params.city, params.from, params.to]);
   const tabScroll = useTabBarScroll({ contentContainerStyle: { paddingHorizontal: 24 } });
 
   const load = useCallback(async () => {
@@ -71,8 +81,16 @@ export default function EventsTab() {
       events
         .filter((event) => !event.cancelled_at)
         .filter((event) => (filter === 'private' ? isPrivateEvent(event) : !isPrivateEvent(event)))
-        .filter((event) => matchesQuery(event, query)),
-    [events, filter, query],
+        .filter((event) => matchesQuery(event, query))
+        .filter((event) => {
+          if (!window) return true;
+          if ((event.city ?? '').toLowerCase() !== window.city.toLowerCase()) return false;
+          // Overlaps the window; an event with no end counts as 2 hours.
+          const start = Date.parse(event.starts_at);
+          const end = event.ends_at ? Date.parse(event.ends_at) : start + 2 * 60 * 60 * 1000;
+          return start < Date.parse(window.to) && end > Date.parse(window.from);
+        }),
+    [events, filter, query, window],
   );
 
   return (
@@ -116,6 +134,33 @@ export default function EventsTab() {
             style={{ flex: 1, fontFamily: fontFamily.interRegular, fontSize: 15, color: theme.colors.textPrimary, padding: 0 }}
           />
         </View>
+        {window ? (
+          <View style={{ flexDirection: 'row', marginTop: 10, marginHorizontal: 24 }}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('events.windowClearA11y', { city: window.city })}
+              onPress={() => {
+                hapticSelection();
+                setWindow(null);
+                router.setParams({ city: undefined, from: undefined, to: undefined });
+              }}
+              style={({ pressed }) => ({
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 8,
+                height: 32,
+                paddingHorizontal: 12,
+                borderRadius: 16,
+                backgroundColor: theme.colors.accentSubtle,
+                opacity: pressed ? 0.8 : 1,
+              })}>
+              <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 13, color: theme.colors.accentText }}>
+                {`${window.city} · ${new Date(window.from).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })} – ${new Date(window.to).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}`}
+              </Text>
+              <Text style={{ fontFamily: fontFamily.interMedium, fontSize: 13, color: theme.colors.accentText }}>✕</Text>
+            </Pressable>
+          </View>
+        ) : null}
         <View
           accessibilityRole="tablist"
           style={{ flexDirection: 'row', gap: 4, marginTop: 12, marginHorizontal: 24, backgroundColor: theme.colors.field, borderRadius: 20, padding: 4 }}>
